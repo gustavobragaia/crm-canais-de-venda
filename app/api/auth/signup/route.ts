@@ -1,0 +1,80 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { hash } from 'bcryptjs'
+import { db } from '@/lib/db'
+
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json()
+    const { workspaceName, workspaceSlug, adminName, adminEmail, adminPassword } = body
+
+    if (!workspaceName || !workspaceSlug || !adminName || !adminEmail || !adminPassword) {
+      return NextResponse.json({ error: 'Todos os campos são obrigatórios.' }, { status: 400 })
+    }
+
+    if (adminPassword.length < 8) {
+      return NextResponse.json(
+        { error: 'A senha deve ter pelo menos 8 caracteres.' },
+        { status: 400 }
+      )
+    }
+
+    // Check if slug is already taken
+    const existing = await db.workspace.findUnique({ where: { slug: workspaceSlug } })
+    if (existing) {
+      return NextResponse.json(
+        { error: 'Este slug já está em uso. Tente outro.' },
+        { status: 409 }
+      )
+    }
+
+    const passwordHash = await hash(adminPassword, 12)
+    const trialEndsAt = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000) // 14 days
+
+    // Create workspace + admin in a transaction
+    const result = await db.$transaction(async (tx) => {
+      const workspace = await tx.workspace.create({
+        data: {
+          name: workspaceName,
+          slug: workspaceSlug,
+          subscriptionStatus: 'TRIAL',
+          trialEndsAt,
+        },
+      })
+
+      const admin = await tx.user.create({
+        data: {
+          workspaceId: workspace.id,
+          email: adminEmail,
+          passwordHash,
+          name: adminName,
+          role: 'ADMIN',
+        },
+      })
+
+      // Create default pipeline stages
+      await tx.pipelineStage.createMany({
+        data: [
+          { workspaceId: workspace.id, name: 'Novo Lead', position: 0, isDefault: true },
+          { workspaceId: workspace.id, name: 'Em Atendimento', position: 1 },
+          { workspaceId: workspace.id, name: 'Proposta Enviada', position: 2 },
+          { workspaceId: workspace.id, name: 'Cliente Fechado', position: 3, isFinal: true },
+          { workspaceId: workspace.id, name: 'Perdido', position: 4, isFinal: true },
+        ],
+      })
+
+      return { workspace, admin }
+    })
+
+    return NextResponse.json(
+      {
+        workspaceId: result.workspace.id,
+        workspaceSlug: result.workspace.slug,
+        userId: result.admin.id,
+      },
+      { status: 201 }
+    )
+  } catch (error) {
+    console.error('[SIGNUP]', error)
+    return NextResponse.json({ error: 'Erro interno do servidor.' }, { status: 500 })
+  }
+}

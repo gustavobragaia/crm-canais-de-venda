@@ -1,0 +1,285 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Workspace {
+  id                       String             @id @default(uuid())
+  name                     String
+  slug                     String             @unique
+  logoUrl                  String?
+  primaryColor             String             @default("#3B82F6")
+  secondaryColor           String             @default("#10B981")
+  subscriptionStatus       SubscriptionStatus @default(TRIAL)
+  stripeCustomerId         String?
+  stripeSubscriptionId     String?
+  currentPeriodEnd         DateTime?
+  trialEndsAt              DateTime?
+  maxUsers                 Int                @default(4)
+  maxConversationsPerMonth Int                @default(1000)
+  conversationsThisMonth   Int                @default(0)
+  createdAt                DateTime           @default(now())
+  updatedAt                DateTime           @updatedAt
+  analyticsDaily           AnalyticsDaily[]
+  channels                 Channel[]
+  conversations            Conversation[]
+  leads                    Lead[]
+  messages                 Message[]
+  pipelineStages           PipelineStage[]
+  users                    User[]
+  webhookLogs              WebhookLog[]
+
+  @@index([slug])
+  @@index([stripeCustomerId])
+  @@map("workspaces")
+}
+
+model User {
+  id                      String         @id @default(uuid())
+  workspaceId             String
+  email                   String
+  passwordHash            String
+  name                    String
+  role                    UserRole       @default(AGENT)
+  avatarUrl               String?
+  isActive                Boolean        @default(true)
+  lastActiveAt            DateTime?
+  createdAt               DateTime       @default(now())
+  updatedAt               DateTime       @updatedAt
+  assignedByConversations Conversation[] @relation("AssignedByConversations")
+  assignedConversations   Conversation[] @relation("AssignedConversations")
+  sentMessages            Message[]
+  workspace               Workspace      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, email])
+  @@index([workspaceId])
+  @@index([email])
+  @@index([workspaceId, role])
+  @@map("users")
+}
+
+model Channel {
+  id                String         @id @default(uuid())
+  workspaceId       String
+  type              ChannelType
+  name              String
+  accessToken       String?
+  phoneNumberId     String?
+  phoneNumber       String?
+  pageId            String?
+  pageName          String?
+  businessAccountId String?
+  isActive          Boolean        @default(true)
+  lastSyncAt        DateTime?
+  webhookVerifiedAt DateTime?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  workspace         Workspace      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  conversations     Conversation[]
+
+  @@index([workspaceId])
+  @@index([workspaceId, type])
+  @@map("channels")
+}
+
+model Conversation {
+  id                 String             @id @default(uuid())
+  workspaceId        String
+  channelId          String
+  contactName        String
+  contactPhone       String?
+  contactEmail       String?
+  contactPhotoUrl    String?
+  externalId         String
+  assignedToId       String?
+  assignedAt         DateTime?
+  assignedById       String?
+  status             ConversationStatus @default(UNASSIGNED)
+  pipelineStage      String?
+  lastMessageAt      DateTime?
+  lastMessagePreview String?
+  unreadCount        Int                @default(0)
+  tags               String[]           @default([])
+  internalNotes      String?
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  assignedBy         User?              @relation("AssignedByConversations", fields: [assignedById], references: [id])
+  assignedTo         User?              @relation("AssignedConversations", fields: [assignedToId], references: [id])
+  channel            Channel            @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  workspace          Workspace          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  lead               Lead?
+  messages           Message[]
+
+  @@unique([workspaceId, channelId, externalId])
+  @@index([workspaceId])
+  @@index([channelId])
+  @@index([assignedToId])
+  @@index([workspaceId, status])
+  @@index([workspaceId, lastMessageAt(sort: Desc)])
+  @@map("conversations")
+}
+
+model Message {
+  id             String           @id @default(uuid())
+  conversationId String
+  workspaceId    String
+  direction      MessageDirection
+  content        String
+  attachments    Json             @default("[]")
+  externalId     String?
+  status         MessageStatus    @default(SENT)
+  sentById       String?
+  sentAt         DateTime         @default(now())
+  deliveredAt    DateTime?
+  readAt         DateTime?
+  createdAt      DateTime         @default(now())
+  conversation   Conversation     @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sentBy         User?            @relation(fields: [sentById], references: [id])
+  workspace      Workspace        @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId, createdAt(sort: Desc)])
+  @@index([workspaceId])
+  @@index([externalId])
+  @@map("messages")
+}
+
+model PipelineStage {
+  id          String    @id @default(uuid())
+  workspaceId String
+  name        String
+  color       String    @default("#3B82F6")
+  position    Int
+  isDefault   Boolean   @default(false)
+  isFinal     Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, name])
+  @@index([workspaceId, position])
+  @@map("pipeline_stages")
+}
+
+model Lead {
+  id                 String       @id @default(uuid())
+  conversationId     String       @unique
+  workspaceId        String
+  sourceChannel      ChannelType
+  firstMessage       String?
+  leadScore          Int?
+  qualificationNotes String?
+  convertedAt        DateTime?
+  conversionValue    Decimal?     @db.Decimal(10, 2)
+  lostAt             DateTime?
+  lostReason         String?
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+  conversation       Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  workspace          Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
+  @@index([workspaceId, convertedAt])
+  @@map("leads")
+}
+
+model AnalyticsDaily {
+  id                     String    @id @default(uuid())
+  workspaceId            String
+  date                   DateTime  @db.Date
+  newConversations       Int       @default(0)
+  conversationsResolved  Int       @default(0)
+  conversationsActive    Int       @default(0)
+  messagesReceived       Int       @default(0)
+  messagesSent           Int       @default(0)
+  avgFirstResponseTime   Int?
+  avgResponseTime        Int?
+  whatsappConversations  Int       @default(0)
+  instagramConversations Int       @default(0)
+  facebookConversations  Int       @default(0)
+  agentStats             Json      @default("{}")
+  createdAt              DateTime  @default(now())
+  workspace              Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, date])
+  @@index([workspaceId, date(sort: Desc)])
+  @@map("analytics_daily")
+}
+
+model WebhookLog {
+  id          String     @id @default(uuid())
+  workspaceId String?
+  source      String
+  eventType   String
+  payload     Json
+  status      String     @default("PENDING")
+  error       String?
+  processedAt DateTime?
+  createdAt   DateTime   @default(now())
+  workspace   Workspace? @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, createdAt(sort: Desc)])
+  @@index([status])
+  @@map("webhook_logs")
+}
+
+model Plan {
+  id                       String   @id @default(uuid())
+  name                     String
+  slug                     String   @unique
+  priceMonthyCents         Int
+  priceAnnualCents         Int?
+  stripePriceIdMonthly     String
+  stripePriceIdAnnual      String?
+  maxUsers                 Int
+  maxConversationsPerMonth Int
+  maxChannels              Int
+  features                 Json     @default("[]")
+  isActive                 Boolean  @default(true)
+  position                 Int
+  createdAt                DateTime @default(now())
+
+  @@index([isActive, position])
+  @@map("plans")
+}
+
+enum UserRole {
+  ADMIN
+  AGENT
+}
+
+enum ChannelType {
+  WHATSAPP
+  INSTAGRAM
+  FACEBOOK
+}
+
+enum ConversationStatus {
+  UNASSIGNED
+  ASSIGNED
+  IN_PROGRESS
+  WAITING_CLIENT
+  RESOLVED
+  ARCHIVED
+}
+
+enum MessageDirection {
+  INBOUND
+  OUTBOUND
+}
+
+enum MessageStatus {
+  SENT
+  DELIVERED
+  READ
+  FAILED
+}
+
+enum SubscriptionStatus {
+  TRIAL
+  ACTIVE
+  CANCELED
+  EXPIRED
+}
