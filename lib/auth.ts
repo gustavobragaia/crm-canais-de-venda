@@ -4,6 +4,7 @@ import { compare } from 'bcryptjs'
 import { db } from '@/lib/db'
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  trustHost: true,
   providers: [
     Credentials({
       credentials: {
