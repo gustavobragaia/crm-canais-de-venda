@@ -31,7 +31,8 @@ export async function POST(req: NextRequest) {
     const trialEndsAt = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000) // 14 days
 
     // Create workspace + admin in a transaction
-    const result = await db.$transaction(async (tx) => {
+    type Tx = Parameters<Parameters<typeof db.$transaction>[0]>[0]
+    const result = await db.$transaction(async (tx: Tx) => {
       const workspace = await tx.workspace.create({
         data: {
           name: workspaceName,
