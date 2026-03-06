@@ -8,10 +8,7 @@ export default auth((req) => {
   const isPublic =
     nextUrl.pathname.startsWith('/login') ||
     nextUrl.pathname.startsWith('/signup') ||
-    nextUrl.pathname.startsWith('/onboarding') ||
     nextUrl.pathname.startsWith('/api/auth') ||
-    nextUrl.pathname.startsWith('/api/workspace/branding') ||
-    nextUrl.pathname.startsWith('/api/users/invite') ||
     nextUrl.pathname.startsWith('/api/webhooks') ||
     nextUrl.pathname.startsWith('/api/inngest')
 

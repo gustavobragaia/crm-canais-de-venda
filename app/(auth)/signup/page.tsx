@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { signIn } from 'next-auth/react'
 import Link from 'next/link'
 import { MessageCircle, Loader2 } from 'lucide-react'
 
@@ -68,6 +69,18 @@ export default function SignupPage() {
 
       if (!res.ok) {
         setError(data.error ?? 'Erro ao criar workspace.')
+        return
+      }
+
+      const signInResult = await signIn('credentials', {
+        email: form.adminEmail,
+        password: form.adminPassword,
+        workspaceSlug: form.workspaceSlug,
+        redirect: false,
+      })
+
+      if (signInResult?.error) {
+        router.push(`/login?workspace=${form.workspaceSlug}`)
         return
       }
 

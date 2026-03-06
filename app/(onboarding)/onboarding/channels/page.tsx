@@ -40,8 +40,7 @@ function ChannelsPageInner() {
   const workspaceSlug = params.get('workspace') ?? ''
 
   async function handleFinish() {
-    // Sign in and go to inbox
-    router.push(`/login?workspace=${workspaceSlug}`)
+    router.push(`/${workspaceSlug}`)
   }
 
   return (
@@ -101,7 +100,7 @@ function ChannelsPageInner() {
             onClick={handleFinish}
             className="w-full flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600 text-white font-medium py-2.5 rounded-lg text-sm transition-colors"
           >
-            Ir para o login
+            Ir para o dashboard
             <ArrowRight size={16} />
           </button>
         </div>
