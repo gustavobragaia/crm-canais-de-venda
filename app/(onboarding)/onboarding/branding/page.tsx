@@ -1,8 +1,7 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { Suspense, useState, useCallback } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { signIn } from 'next-auth/react'
 import { Upload, Loader2, CheckCircle } from 'lucide-react'
 
 const PRESET_COLORS = [
@@ -10,7 +9,7 @@ const PRESET_COLORS = [
   '#F97316', '#EAB308', '#10B981', '#14B8A6',
 ]
 
-export default function BrandingPage() {
+function BrandingPageInner() {
   const router = useRouter()
   const params = useSearchParams()
   const workspaceSlug = params.get('workspace') ?? ''
@@ -54,8 +53,12 @@ export default function BrandingPage() {
       })
 
       if (!res.ok) {
-        const data = await res.json()
-        setError(data.error ?? 'Erro ao salvar branding.')
+        try {
+          const data = await res.json()
+          setError(data.error ?? 'Erro ao salvar branding.')
+        } catch {
+          setError('Erro ao salvar branding.')
+        }
         return
       }
 
@@ -185,5 +188,13 @@ export default function BrandingPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function BrandingPage() {
+  return (
+    <Suspense fallback={null}>
+      <BrandingPageInner />
+    </Suspense>
   )
 }

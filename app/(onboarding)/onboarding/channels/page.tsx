@@ -1,8 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { signIn } from 'next-auth/react'
 import { MessageCircle, Instagram, Facebook, CheckCircle, ArrowRight } from 'lucide-react'
 
 const CHANNELS = [
@@ -35,7 +34,7 @@ const CHANNELS = [
   },
 ]
 
-export default function ChannelsPage() {
+function ChannelsPageInner() {
   const router = useRouter()
   const params = useSearchParams()
   const workspaceSlug = params.get('workspace') ?? ''
@@ -108,5 +107,13 @@ export default function ChannelsPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function ChannelsPage() {
+  return (
+    <Suspense fallback={null}>
+      <ChannelsPageInner />
+    </Suspense>
   )
 }

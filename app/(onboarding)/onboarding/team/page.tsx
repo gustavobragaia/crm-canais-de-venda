@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { UserPlus, Trash2, Loader2, CheckCircle } from 'lucide-react'
 
@@ -10,7 +10,7 @@ interface TeamMember {
   role: 'ADMIN' | 'AGENT'
 }
 
-export default function TeamPage() {
+function TeamPageInner() {
   const router = useRouter()
   const params = useSearchParams()
   const workspaceSlug = params.get('workspace') ?? ''
@@ -161,5 +161,13 @@ export default function TeamPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function TeamPage() {
+  return (
+    <Suspense fallback={null}>
+      <TeamPageInner />
+    </Suspense>
   )
 }
