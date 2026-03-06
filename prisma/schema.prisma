@@ -17,6 +17,7 @@ model Workspace {
   subscriptionStatus       SubscriptionStatus @default(TRIAL)
   stripeCustomerId         String?
   stripeSubscriptionId     String?
+  kirvanoSubscriptionId    String?
   currentPeriodEnd         DateTime?
   trialEndsAt              DateTime?
   maxUsers                 Int                @default(4)

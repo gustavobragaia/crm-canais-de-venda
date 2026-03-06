@@ -35,20 +35,23 @@ const PLANS = [
   {
     name: 'Starter',
     price: 'R$ 197/mês',
-    priceId: process.env.NEXT_PUBLIC_STRIPE_STARTER_PRICE_ID ?? '',
+    firstMonthPrice: 'R$ 37 no 1º mês',
+    checkoutUrl: process.env.NEXT_PUBLIC_KIRVANO_STARTER_URL ?? 'https://pay.kirvano.com/4f4bf484-0113-4257-8199-52f7fa0f5925',
     features: ['1 Admin + 3 Agentes', '1.000 conversas/mês', '3 canais'],
   },
   {
     name: 'Pro',
     price: 'R$ 397/mês',
-    priceId: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID ?? '',
+    firstMonthPrice: 'R$ 37 no 1º mês',
+    checkoutUrl: process.env.NEXT_PUBLIC_KIRVANO_PRO_URL ?? 'https://pay.kirvano.com/9ff16802-c829-46e8-a7b1-efc922ff5166',
     features: ['1 Admin + 9 Agentes', '5.000 conversas/mês', 'Canais ilimitados'],
     recommended: true,
   },
   {
     name: 'Enterprise',
-    price: 'R$ 997/mês',
-    priceId: process.env.NEXT_PUBLIC_STRIPE_ENTERPRISE_PRICE_ID ?? '',
+    price: 'R$ 697/mês',
+    firstMonthPrice: 'R$ 37 no 1º mês',
+    checkoutUrl: process.env.NEXT_PUBLIC_KIRVANO_ENTERPRISE_URL ?? 'https://pay.kirvano.com/28bdff0e-b8c0-4c72-ba34-ee8b9828fe0f',
     features: ['Usuários ilimitados', 'Conversas ilimitadas', 'Suporte prioritário'],
   },
 ]
@@ -165,16 +168,10 @@ export default function SettingsPage() {
     )
   }
 
-  async function handleCheckout(priceId: string) {
-    setLoading(true)
-    const res = await fetch('/api/billing/checkout', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ priceId }),
-    })
-    const { url } = await res.json()
-    if (url) window.location.href = url
-    setLoading(false)
+  function handleCheckout(checkoutUrl: string) {
+    const workspaceId = session?.user.workspaceId
+    const url = workspaceId ? `${checkoutUrl}?utm_content=${workspaceId}` : checkoutUrl
+    window.location.href = url
   }
 
   async function handleInvite() {
@@ -203,12 +200,8 @@ export default function SettingsPage() {
     setTimeout(() => setCopied(false), 2000)
   }
 
-  async function handlePortal() {
-    setLoading(true)
-    const res = await fetch('/api/billing/portal', { method: 'POST' })
-    const { url } = await res.json()
-    if (url) window.location.href = url
-    setLoading(false)
+  function handlePortal() {
+    window.open('https://kirvano.com', '_blank')
   }
 
   return (
@@ -363,7 +356,6 @@ export default function SettingsPage() {
                 <h2 className="font-semibold text-gray-900">Planos</h2>
                 <button
                   onClick={handlePortal}
-                  disabled={loading}
                   className="text-sm text-blue-600 hover:underline flex items-center gap-1"
                 >
                   Gerenciar assinatura <ExternalLink size={12} />
@@ -384,7 +376,8 @@ export default function SettingsPage() {
                       </span>
                     )}
                     <h3 className="font-bold text-gray-900 text-lg">{plan.name}</h3>
-                    <p className="text-2xl font-bold text-gray-900 my-3">{plan.price}</p>
+                    <p className="text-2xl font-bold text-gray-900 mt-3">{plan.price}</p>
+                    <p className="text-xs text-green-600 font-medium mb-3">{plan.firstMonthPrice}</p>
                     <ul className="space-y-2 mb-5">
                       {plan.features.map((f) => (
                         <li key={f} className="text-sm text-gray-600 flex items-center gap-2">
@@ -394,15 +387,14 @@ export default function SettingsPage() {
                       ))}
                     </ul>
                     <button
-                      onClick={() => handleCheckout(plan.priceId)}
-                      disabled={loading}
+                      onClick={() => handleCheckout(plan.checkoutUrl)}
                       className={`w-full py-2 rounded-lg text-sm font-medium transition-colors ${
                         plan.recommended
                           ? 'bg-blue-500 hover:bg-blue-600 text-white'
                           : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
                       }`}
                     >
-                      {loading ? <Loader2 size={14} className="animate-spin mx-auto" /> : 'Assinar'}
+                      Assinar
                     </button>
                   </div>
                 ))}

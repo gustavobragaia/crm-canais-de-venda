@@ -48,6 +48,7 @@ export type WorkspaceMinAggregateOutputType = {
   subscriptionStatus: $Enums.SubscriptionStatus | null
   stripeCustomerId: string | null
   stripeSubscriptionId: string | null
+  kirvanoSubscriptionId: string | null
   currentPeriodEnd: Date | null
   trialEndsAt: Date | null
   maxUsers: number | null
@@ -67,6 +68,7 @@ export type WorkspaceMaxAggregateOutputType = {
   subscriptionStatus: $Enums.SubscriptionStatus | null
   stripeCustomerId: string | null
   stripeSubscriptionId: string | null
+  kirvanoSubscriptionId: string | null
   currentPeriodEnd: Date | null
   trialEndsAt: Date | null
   maxUsers: number | null
@@ -86,6 +88,7 @@ export type WorkspaceCountAggregateOutputType = {
   subscriptionStatus: number
   stripeCustomerId: number
   stripeSubscriptionId: number
+  kirvanoSubscriptionId: number
   currentPeriodEnd: number
   trialEndsAt: number
   maxUsers: number
@@ -119,6 +122,7 @@ export type WorkspaceMinAggregateInputType = {
   subscriptionStatus?: true
   stripeCustomerId?: true
   stripeSubscriptionId?: true
+  kirvanoSubscriptionId?: true
   currentPeriodEnd?: true
   trialEndsAt?: true
   maxUsers?: true
@@ -138,6 +142,7 @@ export type WorkspaceMaxAggregateInputType = {
   subscriptionStatus?: true
   stripeCustomerId?: true
   stripeSubscriptionId?: true
+  kirvanoSubscriptionId?: true
   currentPeriodEnd?: true
   trialEndsAt?: true
   maxUsers?: true
@@ -157,6 +162,7 @@ export type WorkspaceCountAggregateInputType = {
   subscriptionStatus?: true
   stripeCustomerId?: true
   stripeSubscriptionId?: true
+  kirvanoSubscriptionId?: true
   currentPeriodEnd?: true
   trialEndsAt?: true
   maxUsers?: true
@@ -263,6 +269,7 @@ export type WorkspaceGroupByOutputType = {
   subscriptionStatus: $Enums.SubscriptionStatus
   stripeCustomerId: string | null
   stripeSubscriptionId: string | null
+  kirvanoSubscriptionId: string | null
   currentPeriodEnd: Date | null
   trialEndsAt: Date | null
   maxUsers: number
@@ -305,6 +312,7 @@ export type WorkspaceWhereInput = {
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFilter<"Workspace"> | $Enums.SubscriptionStatus
   stripeCustomerId?: Prisma.StringNullableFilter<"Workspace"> | string | null
   stripeSubscriptionId?: Prisma.StringNullableFilter<"Workspace"> | string | null
+  kirvanoSubscriptionId?: Prisma.StringNullableFilter<"Workspace"> | string | null
   currentPeriodEnd?: Prisma.DateTimeNullableFilter<"Workspace"> | Date | string | null
   trialEndsAt?: Prisma.DateTimeNullableFilter<"Workspace"> | Date | string | null
   maxUsers?: Prisma.IntFilter<"Workspace"> | number
@@ -332,6 +340,7 @@ export type WorkspaceOrderByWithRelationInput = {
   subscriptionStatus?: Prisma.SortOrder
   stripeCustomerId?: Prisma.SortOrderInput | Prisma.SortOrder
   stripeSubscriptionId?: Prisma.SortOrderInput | Prisma.SortOrder
+  kirvanoSubscriptionId?: Prisma.SortOrderInput | Prisma.SortOrder
   currentPeriodEnd?: Prisma.SortOrderInput | Prisma.SortOrder
   trialEndsAt?: Prisma.SortOrderInput | Prisma.SortOrder
   maxUsers?: Prisma.SortOrder
@@ -362,6 +371,7 @@ export type WorkspaceWhereUniqueInput = Prisma.AtLeast<{
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFilter<"Workspace"> | $Enums.SubscriptionStatus
   stripeCustomerId?: Prisma.StringNullableFilter<"Workspace"> | string | null
   stripeSubscriptionId?: Prisma.StringNullableFilter<"Workspace"> | string | null
+  kirvanoSubscriptionId?: Prisma.StringNullableFilter<"Workspace"> | string | null
   currentPeriodEnd?: Prisma.DateTimeNullableFilter<"Workspace"> | Date | string | null
   trialEndsAt?: Prisma.DateTimeNullableFilter<"Workspace"> | Date | string | null
   maxUsers?: Prisma.IntFilter<"Workspace"> | number
@@ -389,6 +399,7 @@ export type WorkspaceOrderByWithAggregationInput = {
   subscriptionStatus?: Prisma.SortOrder
   stripeCustomerId?: Prisma.SortOrderInput | Prisma.SortOrder
   stripeSubscriptionId?: Prisma.SortOrderInput | Prisma.SortOrder
+  kirvanoSubscriptionId?: Prisma.SortOrderInput | Prisma.SortOrder
   currentPeriodEnd?: Prisma.SortOrderInput | Prisma.SortOrder
   trialEndsAt?: Prisma.SortOrderInput | Prisma.SortOrder
   maxUsers?: Prisma.SortOrder
@@ -416,6 +427,7 @@ export type WorkspaceScalarWhereWithAggregatesInput = {
   subscriptionStatus?: Prisma.EnumSubscriptionStatusWithAggregatesFilter<"Workspace"> | $Enums.SubscriptionStatus
   stripeCustomerId?: Prisma.StringNullableWithAggregatesFilter<"Workspace"> | string | null
   stripeSubscriptionId?: Prisma.StringNullableWithAggregatesFilter<"Workspace"> | string | null
+  kirvanoSubscriptionId?: Prisma.StringNullableWithAggregatesFilter<"Workspace"> | string | null
   currentPeriodEnd?: Prisma.DateTimeNullableWithAggregatesFilter<"Workspace"> | Date | string | null
   trialEndsAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Workspace"> | Date | string | null
   maxUsers?: Prisma.IntWithAggregatesFilter<"Workspace"> | number
@@ -435,6 +447,7 @@ export type WorkspaceCreateInput = {
   subscriptionStatus?: $Enums.SubscriptionStatus
   stripeCustomerId?: string | null
   stripeSubscriptionId?: string | null
+  kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
   maxUsers?: number
@@ -462,6 +475,7 @@ export type WorkspaceUncheckedCreateInput = {
   subscriptionStatus?: $Enums.SubscriptionStatus
   stripeCustomerId?: string | null
   stripeSubscriptionId?: string | null
+  kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
   maxUsers?: number
@@ -489,6 +503,7 @@ export type WorkspaceUpdateInput = {
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
@@ -516,6 +531,7 @@ export type WorkspaceUncheckedUpdateInput = {
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
@@ -543,6 +559,7 @@ export type WorkspaceCreateManyInput = {
   subscriptionStatus?: $Enums.SubscriptionStatus
   stripeCustomerId?: string | null
   stripeSubscriptionId?: string | null
+  kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
   maxUsers?: number
@@ -562,6 +579,7 @@ export type WorkspaceUpdateManyMutationInput = {
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
@@ -581,6 +599,7 @@ export type WorkspaceUncheckedUpdateManyInput = {
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
@@ -600,6 +619,7 @@ export type WorkspaceCountOrderByAggregateInput = {
   subscriptionStatus?: Prisma.SortOrder
   stripeCustomerId?: Prisma.SortOrder
   stripeSubscriptionId?: Prisma.SortOrder
+  kirvanoSubscriptionId?: Prisma.SortOrder
   currentPeriodEnd?: Prisma.SortOrder
   trialEndsAt?: Prisma.SortOrder
   maxUsers?: Prisma.SortOrder
@@ -625,6 +645,7 @@ export type WorkspaceMaxOrderByAggregateInput = {
   subscriptionStatus?: Prisma.SortOrder
   stripeCustomerId?: Prisma.SortOrder
   stripeSubscriptionId?: Prisma.SortOrder
+  kirvanoSubscriptionId?: Prisma.SortOrder
   currentPeriodEnd?: Prisma.SortOrder
   trialEndsAt?: Prisma.SortOrder
   maxUsers?: Prisma.SortOrder
@@ -644,6 +665,7 @@ export type WorkspaceMinOrderByAggregateInput = {
   subscriptionStatus?: Prisma.SortOrder
   stripeCustomerId?: Prisma.SortOrder
   stripeSubscriptionId?: Prisma.SortOrder
+  kirvanoSubscriptionId?: Prisma.SortOrder
   currentPeriodEnd?: Prisma.SortOrder
   trialEndsAt?: Prisma.SortOrder
   maxUsers?: Prisma.SortOrder
@@ -821,6 +843,7 @@ export type WorkspaceCreateWithoutUsersInput = {
   subscriptionStatus?: $Enums.SubscriptionStatus
   stripeCustomerId?: string | null
   stripeSubscriptionId?: string | null
+  kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
   maxUsers?: number
@@ -847,6 +870,7 @@ export type WorkspaceUncheckedCreateWithoutUsersInput = {
   subscriptionStatus?: $Enums.SubscriptionStatus
   stripeCustomerId?: string | null
   stripeSubscriptionId?: string | null
+  kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
   maxUsers?: number
@@ -889,6 +913,7 @@ export type WorkspaceUpdateWithoutUsersInput = {
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
@@ -915,6 +940,7 @@ export type WorkspaceUncheckedUpdateWithoutUsersInput = {
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
@@ -941,6 +967,7 @@ export type WorkspaceCreateWithoutChannelsInput = {
   subscriptionStatus?: $Enums.SubscriptionStatus
   stripeCustomerId?: string | null
   stripeSubscriptionId?: string | null
+  kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
   maxUsers?: number
@@ -967,6 +994,7 @@ export type WorkspaceUncheckedCreateWithoutChannelsInput = {
   subscriptionStatus?: $Enums.SubscriptionStatus
   stripeCustomerId?: string | null
   stripeSubscriptionId?: string | null
+  kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
   maxUsers?: number
@@ -1009,6 +1037,7 @@ export type WorkspaceUpdateWithoutChannelsInput = {
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1035,6 +1064,7 @@ export type WorkspaceUncheckedUpdateWithoutChannelsInput = {
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1061,6 +1091,7 @@ export type WorkspaceCreateWithoutConversationsInput = {
   subscriptionStatus?: $Enums.SubscriptionStatus
   stripeCustomerId?: string | null
   stripeSubscriptionId?: string | null
+  kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
   maxUsers?: number
@@ -1087,6 +1118,7 @@ export type WorkspaceUncheckedCreateWithoutConversationsInput = {
   subscriptionStatus?: $Enums.SubscriptionStatus
   stripeCustomerId?: string | null
   stripeSubscriptionId?: string | null
+  kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
   maxUsers?: number
@@ -1129,6 +1161,7 @@ export type WorkspaceUpdateWithoutConversationsInput = {
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1155,6 +1188,7 @@ export type WorkspaceUncheckedUpdateWithoutConversationsInput = {
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1181,6 +1215,7 @@ export type WorkspaceCreateWithoutMessagesInput = {
   subscriptionStatus?: $Enums.SubscriptionStatus
   stripeCustomerId?: string | null
   stripeSubscriptionId?: string | null
+  kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
   maxUsers?: number
@@ -1207,6 +1242,7 @@ export type WorkspaceUncheckedCreateWithoutMessagesInput = {
   subscriptionStatus?: $Enums.SubscriptionStatus
   stripeCustomerId?: string | null
   stripeSubscriptionId?: string | null
+  kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
   maxUsers?: number
@@ -1249,6 +1285,7 @@ export type WorkspaceUpdateWithoutMessagesInput = {
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1275,6 +1312,7 @@ export type WorkspaceUncheckedUpdateWithoutMessagesInput = {
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1301,6 +1339,7 @@ export type WorkspaceCreateWithoutPipelineStagesInput = {
   subscriptionStatus?: $Enums.SubscriptionStatus
   stripeCustomerId?: string | null
   stripeSubscriptionId?: string | null
+  kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
   maxUsers?: number
@@ -1327,6 +1366,7 @@ export type WorkspaceUncheckedCreateWithoutPipelineStagesInput = {
   subscriptionStatus?: $Enums.SubscriptionStatus
   stripeCustomerId?: string | null
   stripeSubscriptionId?: string | null
+  kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
   maxUsers?: number
@@ -1369,6 +1409,7 @@ export type WorkspaceUpdateWithoutPipelineStagesInput = {
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1395,6 +1436,7 @@ export type WorkspaceUncheckedUpdateWithoutPipelineStagesInput = {
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1421,6 +1463,7 @@ export type WorkspaceCreateWithoutLeadsInput = {
   subscriptionStatus?: $Enums.SubscriptionStatus
   stripeCustomerId?: string | null
   stripeSubscriptionId?: string | null
+  kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
   maxUsers?: number
@@ -1447,6 +1490,7 @@ export type WorkspaceUncheckedCreateWithoutLeadsInput = {
   subscriptionStatus?: $Enums.SubscriptionStatus
   stripeCustomerId?: string | null
   stripeSubscriptionId?: string | null
+  kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
   maxUsers?: number
@@ -1489,6 +1533,7 @@ export type WorkspaceUpdateWithoutLeadsInput = {
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1515,6 +1560,7 @@ export type WorkspaceUncheckedUpdateWithoutLeadsInput = {
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1541,6 +1587,7 @@ export type WorkspaceCreateWithoutAnalyticsDailyInput = {
   subscriptionStatus?: $Enums.SubscriptionStatus
   stripeCustomerId?: string | null
   stripeSubscriptionId?: string | null
+  kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
   maxUsers?: number
@@ -1567,6 +1614,7 @@ export type WorkspaceUncheckedCreateWithoutAnalyticsDailyInput = {
   subscriptionStatus?: $Enums.SubscriptionStatus
   stripeCustomerId?: string | null
   stripeSubscriptionId?: string | null
+  kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
   maxUsers?: number
@@ -1609,6 +1657,7 @@ export type WorkspaceUpdateWithoutAnalyticsDailyInput = {
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1635,6 +1684,7 @@ export type WorkspaceUncheckedUpdateWithoutAnalyticsDailyInput = {
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1661,6 +1711,7 @@ export type WorkspaceCreateWithoutWebhookLogsInput = {
   subscriptionStatus?: $Enums.SubscriptionStatus
   stripeCustomerId?: string | null
   stripeSubscriptionId?: string | null
+  kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
   maxUsers?: number
@@ -1687,6 +1738,7 @@ export type WorkspaceUncheckedCreateWithoutWebhookLogsInput = {
   subscriptionStatus?: $Enums.SubscriptionStatus
   stripeCustomerId?: string | null
   stripeSubscriptionId?: string | null
+  kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
   maxUsers?: number
@@ -1729,6 +1781,7 @@ export type WorkspaceUpdateWithoutWebhookLogsInput = {
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1755,6 +1808,7 @@ export type WorkspaceUncheckedUpdateWithoutWebhookLogsInput = {
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1875,6 +1929,7 @@ export type WorkspaceSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   subscriptionStatus?: boolean
   stripeCustomerId?: boolean
   stripeSubscriptionId?: boolean
+  kirvanoSubscriptionId?: boolean
   currentPeriodEnd?: boolean
   trialEndsAt?: boolean
   maxUsers?: boolean
@@ -1903,6 +1958,7 @@ export type WorkspaceSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   subscriptionStatus?: boolean
   stripeCustomerId?: boolean
   stripeSubscriptionId?: boolean
+  kirvanoSubscriptionId?: boolean
   currentPeriodEnd?: boolean
   trialEndsAt?: boolean
   maxUsers?: boolean
@@ -1922,6 +1978,7 @@ export type WorkspaceSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   subscriptionStatus?: boolean
   stripeCustomerId?: boolean
   stripeSubscriptionId?: boolean
+  kirvanoSubscriptionId?: boolean
   currentPeriodEnd?: boolean
   trialEndsAt?: boolean
   maxUsers?: boolean
@@ -1941,6 +1998,7 @@ export type WorkspaceSelectScalar = {
   subscriptionStatus?: boolean
   stripeCustomerId?: boolean
   stripeSubscriptionId?: boolean
+  kirvanoSubscriptionId?: boolean
   currentPeriodEnd?: boolean
   trialEndsAt?: boolean
   maxUsers?: boolean
@@ -1950,7 +2008,7 @@ export type WorkspaceSelectScalar = {
   updatedAt?: boolean
 }
 
-export type WorkspaceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "logoUrl" | "primaryColor" | "secondaryColor" | "subscriptionStatus" | "stripeCustomerId" | "stripeSubscriptionId" | "currentPeriodEnd" | "trialEndsAt" | "maxUsers" | "maxConversationsPerMonth" | "conversationsThisMonth" | "createdAt" | "updatedAt", ExtArgs["result"]["workspace"]>
+export type WorkspaceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "logoUrl" | "primaryColor" | "secondaryColor" | "subscriptionStatus" | "stripeCustomerId" | "stripeSubscriptionId" | "kirvanoSubscriptionId" | "currentPeriodEnd" | "trialEndsAt" | "maxUsers" | "maxConversationsPerMonth" | "conversationsThisMonth" | "createdAt" | "updatedAt", ExtArgs["result"]["workspace"]>
 export type WorkspaceInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   analyticsDaily?: boolean | Prisma.Workspace$analyticsDailyArgs<ExtArgs>
   channels?: boolean | Prisma.Workspace$channelsArgs<ExtArgs>
@@ -1987,6 +2045,7 @@ export type $WorkspacePayload<ExtArgs extends runtime.Types.Extensions.InternalA
     subscriptionStatus: $Enums.SubscriptionStatus
     stripeCustomerId: string | null
     stripeSubscriptionId: string | null
+    kirvanoSubscriptionId: string | null
     currentPeriodEnd: Date | null
     trialEndsAt: Date | null
     maxUsers: number
@@ -2434,6 +2493,7 @@ export interface WorkspaceFieldRefs {
   readonly subscriptionStatus: Prisma.FieldRef<"Workspace", 'SubscriptionStatus'>
   readonly stripeCustomerId: Prisma.FieldRef<"Workspace", 'String'>
   readonly stripeSubscriptionId: Prisma.FieldRef<"Workspace", 'String'>
+  readonly kirvanoSubscriptionId: Prisma.FieldRef<"Workspace", 'String'>
   readonly currentPeriodEnd: Prisma.FieldRef<"Workspace", 'DateTime'>
   readonly trialEndsAt: Prisma.FieldRef<"Workspace", 'DateTime'>
   readonly maxUsers: Prisma.FieldRef<"Workspace", 'Int'>
