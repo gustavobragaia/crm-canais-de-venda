@@ -46,8 +46,6 @@ export type WorkspaceMinAggregateOutputType = {
   primaryColor: string | null
   secondaryColor: string | null
   subscriptionStatus: $Enums.SubscriptionStatus | null
-  stripeCustomerId: string | null
-  stripeSubscriptionId: string | null
   kirvanoSubscriptionId: string | null
   currentPeriodEnd: Date | null
   trialEndsAt: Date | null
@@ -66,8 +64,6 @@ export type WorkspaceMaxAggregateOutputType = {
   primaryColor: string | null
   secondaryColor: string | null
   subscriptionStatus: $Enums.SubscriptionStatus | null
-  stripeCustomerId: string | null
-  stripeSubscriptionId: string | null
   kirvanoSubscriptionId: string | null
   currentPeriodEnd: Date | null
   trialEndsAt: Date | null
@@ -86,8 +82,6 @@ export type WorkspaceCountAggregateOutputType = {
   primaryColor: number
   secondaryColor: number
   subscriptionStatus: number
-  stripeCustomerId: number
-  stripeSubscriptionId: number
   kirvanoSubscriptionId: number
   currentPeriodEnd: number
   trialEndsAt: number
@@ -120,8 +114,6 @@ export type WorkspaceMinAggregateInputType = {
   primaryColor?: true
   secondaryColor?: true
   subscriptionStatus?: true
-  stripeCustomerId?: true
-  stripeSubscriptionId?: true
   kirvanoSubscriptionId?: true
   currentPeriodEnd?: true
   trialEndsAt?: true
@@ -140,8 +132,6 @@ export type WorkspaceMaxAggregateInputType = {
   primaryColor?: true
   secondaryColor?: true
   subscriptionStatus?: true
-  stripeCustomerId?: true
-  stripeSubscriptionId?: true
   kirvanoSubscriptionId?: true
   currentPeriodEnd?: true
   trialEndsAt?: true
@@ -160,8 +150,6 @@ export type WorkspaceCountAggregateInputType = {
   primaryColor?: true
   secondaryColor?: true
   subscriptionStatus?: true
-  stripeCustomerId?: true
-  stripeSubscriptionId?: true
   kirvanoSubscriptionId?: true
   currentPeriodEnd?: true
   trialEndsAt?: true
@@ -267,8 +255,6 @@ export type WorkspaceGroupByOutputType = {
   primaryColor: string
   secondaryColor: string
   subscriptionStatus: $Enums.SubscriptionStatus
-  stripeCustomerId: string | null
-  stripeSubscriptionId: string | null
   kirvanoSubscriptionId: string | null
   currentPeriodEnd: Date | null
   trialEndsAt: Date | null
@@ -310,8 +296,6 @@ export type WorkspaceWhereInput = {
   primaryColor?: Prisma.StringFilter<"Workspace"> | string
   secondaryColor?: Prisma.StringFilter<"Workspace"> | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFilter<"Workspace"> | $Enums.SubscriptionStatus
-  stripeCustomerId?: Prisma.StringNullableFilter<"Workspace"> | string | null
-  stripeSubscriptionId?: Prisma.StringNullableFilter<"Workspace"> | string | null
   kirvanoSubscriptionId?: Prisma.StringNullableFilter<"Workspace"> | string | null
   currentPeriodEnd?: Prisma.DateTimeNullableFilter<"Workspace"> | Date | string | null
   trialEndsAt?: Prisma.DateTimeNullableFilter<"Workspace"> | Date | string | null
@@ -338,8 +322,6 @@ export type WorkspaceOrderByWithRelationInput = {
   primaryColor?: Prisma.SortOrder
   secondaryColor?: Prisma.SortOrder
   subscriptionStatus?: Prisma.SortOrder
-  stripeCustomerId?: Prisma.SortOrderInput | Prisma.SortOrder
-  stripeSubscriptionId?: Prisma.SortOrderInput | Prisma.SortOrder
   kirvanoSubscriptionId?: Prisma.SortOrderInput | Prisma.SortOrder
   currentPeriodEnd?: Prisma.SortOrderInput | Prisma.SortOrder
   trialEndsAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -369,8 +351,6 @@ export type WorkspaceWhereUniqueInput = Prisma.AtLeast<{
   primaryColor?: Prisma.StringFilter<"Workspace"> | string
   secondaryColor?: Prisma.StringFilter<"Workspace"> | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFilter<"Workspace"> | $Enums.SubscriptionStatus
-  stripeCustomerId?: Prisma.StringNullableFilter<"Workspace"> | string | null
-  stripeSubscriptionId?: Prisma.StringNullableFilter<"Workspace"> | string | null
   kirvanoSubscriptionId?: Prisma.StringNullableFilter<"Workspace"> | string | null
   currentPeriodEnd?: Prisma.DateTimeNullableFilter<"Workspace"> | Date | string | null
   trialEndsAt?: Prisma.DateTimeNullableFilter<"Workspace"> | Date | string | null
@@ -397,8 +377,6 @@ export type WorkspaceOrderByWithAggregationInput = {
   primaryColor?: Prisma.SortOrder
   secondaryColor?: Prisma.SortOrder
   subscriptionStatus?: Prisma.SortOrder
-  stripeCustomerId?: Prisma.SortOrderInput | Prisma.SortOrder
-  stripeSubscriptionId?: Prisma.SortOrderInput | Prisma.SortOrder
   kirvanoSubscriptionId?: Prisma.SortOrderInput | Prisma.SortOrder
   currentPeriodEnd?: Prisma.SortOrderInput | Prisma.SortOrder
   trialEndsAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -425,8 +403,6 @@ export type WorkspaceScalarWhereWithAggregatesInput = {
   primaryColor?: Prisma.StringWithAggregatesFilter<"Workspace"> | string
   secondaryColor?: Prisma.StringWithAggregatesFilter<"Workspace"> | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusWithAggregatesFilter<"Workspace"> | $Enums.SubscriptionStatus
-  stripeCustomerId?: Prisma.StringNullableWithAggregatesFilter<"Workspace"> | string | null
-  stripeSubscriptionId?: Prisma.StringNullableWithAggregatesFilter<"Workspace"> | string | null
   kirvanoSubscriptionId?: Prisma.StringNullableWithAggregatesFilter<"Workspace"> | string | null
   currentPeriodEnd?: Prisma.DateTimeNullableWithAggregatesFilter<"Workspace"> | Date | string | null
   trialEndsAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Workspace"> | Date | string | null
@@ -445,8 +421,6 @@ export type WorkspaceCreateInput = {
   primaryColor?: string
   secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
-  stripeCustomerId?: string | null
-  stripeSubscriptionId?: string | null
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
@@ -473,8 +447,6 @@ export type WorkspaceUncheckedCreateInput = {
   primaryColor?: string
   secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
-  stripeCustomerId?: string | null
-  stripeSubscriptionId?: string | null
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
@@ -501,8 +473,6 @@ export type WorkspaceUpdateInput = {
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
-  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -529,8 +499,6 @@ export type WorkspaceUncheckedUpdateInput = {
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
-  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -557,8 +525,6 @@ export type WorkspaceCreateManyInput = {
   primaryColor?: string
   secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
-  stripeCustomerId?: string | null
-  stripeSubscriptionId?: string | null
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
@@ -577,8 +543,6 @@ export type WorkspaceUpdateManyMutationInput = {
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
-  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -597,8 +561,6 @@ export type WorkspaceUncheckedUpdateManyInput = {
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
-  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -617,8 +579,6 @@ export type WorkspaceCountOrderByAggregateInput = {
   primaryColor?: Prisma.SortOrder
   secondaryColor?: Prisma.SortOrder
   subscriptionStatus?: Prisma.SortOrder
-  stripeCustomerId?: Prisma.SortOrder
-  stripeSubscriptionId?: Prisma.SortOrder
   kirvanoSubscriptionId?: Prisma.SortOrder
   currentPeriodEnd?: Prisma.SortOrder
   trialEndsAt?: Prisma.SortOrder
@@ -643,8 +603,6 @@ export type WorkspaceMaxOrderByAggregateInput = {
   primaryColor?: Prisma.SortOrder
   secondaryColor?: Prisma.SortOrder
   subscriptionStatus?: Prisma.SortOrder
-  stripeCustomerId?: Prisma.SortOrder
-  stripeSubscriptionId?: Prisma.SortOrder
   kirvanoSubscriptionId?: Prisma.SortOrder
   currentPeriodEnd?: Prisma.SortOrder
   trialEndsAt?: Prisma.SortOrder
@@ -663,8 +621,6 @@ export type WorkspaceMinOrderByAggregateInput = {
   primaryColor?: Prisma.SortOrder
   secondaryColor?: Prisma.SortOrder
   subscriptionStatus?: Prisma.SortOrder
-  stripeCustomerId?: Prisma.SortOrder
-  stripeSubscriptionId?: Prisma.SortOrder
   kirvanoSubscriptionId?: Prisma.SortOrder
   currentPeriodEnd?: Prisma.SortOrder
   trialEndsAt?: Prisma.SortOrder
@@ -841,8 +797,6 @@ export type WorkspaceCreateWithoutUsersInput = {
   primaryColor?: string
   secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
-  stripeCustomerId?: string | null
-  stripeSubscriptionId?: string | null
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
@@ -868,8 +822,6 @@ export type WorkspaceUncheckedCreateWithoutUsersInput = {
   primaryColor?: string
   secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
-  stripeCustomerId?: string | null
-  stripeSubscriptionId?: string | null
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
@@ -911,8 +863,6 @@ export type WorkspaceUpdateWithoutUsersInput = {
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
-  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -938,8 +888,6 @@ export type WorkspaceUncheckedUpdateWithoutUsersInput = {
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
-  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -965,8 +913,6 @@ export type WorkspaceCreateWithoutChannelsInput = {
   primaryColor?: string
   secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
-  stripeCustomerId?: string | null
-  stripeSubscriptionId?: string | null
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
@@ -992,8 +938,6 @@ export type WorkspaceUncheckedCreateWithoutChannelsInput = {
   primaryColor?: string
   secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
-  stripeCustomerId?: string | null
-  stripeSubscriptionId?: string | null
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
@@ -1035,8 +979,6 @@ export type WorkspaceUpdateWithoutChannelsInput = {
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
-  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1062,8 +1004,6 @@ export type WorkspaceUncheckedUpdateWithoutChannelsInput = {
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
-  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1089,8 +1029,6 @@ export type WorkspaceCreateWithoutConversationsInput = {
   primaryColor?: string
   secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
-  stripeCustomerId?: string | null
-  stripeSubscriptionId?: string | null
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
@@ -1116,8 +1054,6 @@ export type WorkspaceUncheckedCreateWithoutConversationsInput = {
   primaryColor?: string
   secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
-  stripeCustomerId?: string | null
-  stripeSubscriptionId?: string | null
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
@@ -1159,8 +1095,6 @@ export type WorkspaceUpdateWithoutConversationsInput = {
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
-  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1186,8 +1120,6 @@ export type WorkspaceUncheckedUpdateWithoutConversationsInput = {
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
-  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1213,8 +1145,6 @@ export type WorkspaceCreateWithoutMessagesInput = {
   primaryColor?: string
   secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
-  stripeCustomerId?: string | null
-  stripeSubscriptionId?: string | null
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
@@ -1240,8 +1170,6 @@ export type WorkspaceUncheckedCreateWithoutMessagesInput = {
   primaryColor?: string
   secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
-  stripeCustomerId?: string | null
-  stripeSubscriptionId?: string | null
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
@@ -1283,8 +1211,6 @@ export type WorkspaceUpdateWithoutMessagesInput = {
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
-  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1310,8 +1236,6 @@ export type WorkspaceUncheckedUpdateWithoutMessagesInput = {
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
-  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1337,8 +1261,6 @@ export type WorkspaceCreateWithoutPipelineStagesInput = {
   primaryColor?: string
   secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
-  stripeCustomerId?: string | null
-  stripeSubscriptionId?: string | null
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
@@ -1364,8 +1286,6 @@ export type WorkspaceUncheckedCreateWithoutPipelineStagesInput = {
   primaryColor?: string
   secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
-  stripeCustomerId?: string | null
-  stripeSubscriptionId?: string | null
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
@@ -1407,8 +1327,6 @@ export type WorkspaceUpdateWithoutPipelineStagesInput = {
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
-  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1434,8 +1352,6 @@ export type WorkspaceUncheckedUpdateWithoutPipelineStagesInput = {
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
-  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1461,8 +1377,6 @@ export type WorkspaceCreateWithoutLeadsInput = {
   primaryColor?: string
   secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
-  stripeCustomerId?: string | null
-  stripeSubscriptionId?: string | null
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
@@ -1488,8 +1402,6 @@ export type WorkspaceUncheckedCreateWithoutLeadsInput = {
   primaryColor?: string
   secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
-  stripeCustomerId?: string | null
-  stripeSubscriptionId?: string | null
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
@@ -1531,8 +1443,6 @@ export type WorkspaceUpdateWithoutLeadsInput = {
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
-  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1558,8 +1468,6 @@ export type WorkspaceUncheckedUpdateWithoutLeadsInput = {
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
-  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1585,8 +1493,6 @@ export type WorkspaceCreateWithoutAnalyticsDailyInput = {
   primaryColor?: string
   secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
-  stripeCustomerId?: string | null
-  stripeSubscriptionId?: string | null
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
@@ -1612,8 +1518,6 @@ export type WorkspaceUncheckedCreateWithoutAnalyticsDailyInput = {
   primaryColor?: string
   secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
-  stripeCustomerId?: string | null
-  stripeSubscriptionId?: string | null
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
@@ -1655,8 +1559,6 @@ export type WorkspaceUpdateWithoutAnalyticsDailyInput = {
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
-  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1682,8 +1584,6 @@ export type WorkspaceUncheckedUpdateWithoutAnalyticsDailyInput = {
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
-  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1709,8 +1609,6 @@ export type WorkspaceCreateWithoutWebhookLogsInput = {
   primaryColor?: string
   secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
-  stripeCustomerId?: string | null
-  stripeSubscriptionId?: string | null
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
@@ -1736,8 +1634,6 @@ export type WorkspaceUncheckedCreateWithoutWebhookLogsInput = {
   primaryColor?: string
   secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
-  stripeCustomerId?: string | null
-  stripeSubscriptionId?: string | null
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
@@ -1779,8 +1675,6 @@ export type WorkspaceUpdateWithoutWebhookLogsInput = {
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
-  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1806,8 +1700,6 @@ export type WorkspaceUncheckedUpdateWithoutWebhookLogsInput = {
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
-  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1927,8 +1819,6 @@ export type WorkspaceSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   primaryColor?: boolean
   secondaryColor?: boolean
   subscriptionStatus?: boolean
-  stripeCustomerId?: boolean
-  stripeSubscriptionId?: boolean
   kirvanoSubscriptionId?: boolean
   currentPeriodEnd?: boolean
   trialEndsAt?: boolean
@@ -1956,8 +1846,6 @@ export type WorkspaceSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   primaryColor?: boolean
   secondaryColor?: boolean
   subscriptionStatus?: boolean
-  stripeCustomerId?: boolean
-  stripeSubscriptionId?: boolean
   kirvanoSubscriptionId?: boolean
   currentPeriodEnd?: boolean
   trialEndsAt?: boolean
@@ -1976,8 +1864,6 @@ export type WorkspaceSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   primaryColor?: boolean
   secondaryColor?: boolean
   subscriptionStatus?: boolean
-  stripeCustomerId?: boolean
-  stripeSubscriptionId?: boolean
   kirvanoSubscriptionId?: boolean
   currentPeriodEnd?: boolean
   trialEndsAt?: boolean
@@ -1996,8 +1882,6 @@ export type WorkspaceSelectScalar = {
   primaryColor?: boolean
   secondaryColor?: boolean
   subscriptionStatus?: boolean
-  stripeCustomerId?: boolean
-  stripeSubscriptionId?: boolean
   kirvanoSubscriptionId?: boolean
   currentPeriodEnd?: boolean
   trialEndsAt?: boolean
@@ -2008,7 +1892,7 @@ export type WorkspaceSelectScalar = {
   updatedAt?: boolean
 }
 
-export type WorkspaceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "logoUrl" | "primaryColor" | "secondaryColor" | "subscriptionStatus" | "stripeCustomerId" | "stripeSubscriptionId" | "kirvanoSubscriptionId" | "currentPeriodEnd" | "trialEndsAt" | "maxUsers" | "maxConversationsPerMonth" | "conversationsThisMonth" | "createdAt" | "updatedAt", ExtArgs["result"]["workspace"]>
+export type WorkspaceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "logoUrl" | "primaryColor" | "secondaryColor" | "subscriptionStatus" | "kirvanoSubscriptionId" | "currentPeriodEnd" | "trialEndsAt" | "maxUsers" | "maxConversationsPerMonth" | "conversationsThisMonth" | "createdAt" | "updatedAt", ExtArgs["result"]["workspace"]>
 export type WorkspaceInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   analyticsDaily?: boolean | Prisma.Workspace$analyticsDailyArgs<ExtArgs>
   channels?: boolean | Prisma.Workspace$channelsArgs<ExtArgs>
@@ -2043,8 +1927,6 @@ export type $WorkspacePayload<ExtArgs extends runtime.Types.Extensions.InternalA
     primaryColor: string
     secondaryColor: string
     subscriptionStatus: $Enums.SubscriptionStatus
-    stripeCustomerId: string | null
-    stripeSubscriptionId: string | null
     kirvanoSubscriptionId: string | null
     currentPeriodEnd: Date | null
     trialEndsAt: Date | null
@@ -2491,8 +2373,6 @@ export interface WorkspaceFieldRefs {
   readonly primaryColor: Prisma.FieldRef<"Workspace", 'String'>
   readonly secondaryColor: Prisma.FieldRef<"Workspace", 'String'>
   readonly subscriptionStatus: Prisma.FieldRef<"Workspace", 'SubscriptionStatus'>
-  readonly stripeCustomerId: Prisma.FieldRef<"Workspace", 'String'>
-  readonly stripeSubscriptionId: Prisma.FieldRef<"Workspace", 'String'>
   readonly kirvanoSubscriptionId: Prisma.FieldRef<"Workspace", 'String'>
   readonly currentPeriodEnd: Prisma.FieldRef<"Workspace", 'DateTime'>
   readonly trialEndsAt: Prisma.FieldRef<"Workspace", 'DateTime'>

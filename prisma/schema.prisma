@@ -15,8 +15,6 @@ model Workspace {
   primaryColor             String             @default("#3B82F6")
   secondaryColor           String             @default("#10B981")
   subscriptionStatus       SubscriptionStatus @default(TRIAL)
-  stripeCustomerId         String?
-  stripeSubscriptionId     String?
   kirvanoSubscriptionId    String?
   currentPeriodEnd         DateTime?
   trialEndsAt              DateTime?
@@ -35,7 +33,6 @@ model Workspace {
   webhookLogs              WebhookLog[]
 
   @@index([slug])
-  @@index([stripeCustomerId])
   @@map("workspaces")
 }
 
@@ -233,8 +230,8 @@ model Plan {
   slug                     String   @unique
   priceMonthyCents         Int
   priceAnnualCents         Int?
-  stripePriceIdMonthly     String
-  stripePriceIdAnnual      String?
+  kirvanoPriceIdMonthly    String?
+  kirvanoPriceIdAnnual     String?
   maxUsers                 Int
   maxConversationsPerMonth Int
   maxChannels              Int

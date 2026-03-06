@@ -50,8 +50,8 @@ export type PlanMinAggregateOutputType = {
   slug: string | null
   priceMonthyCents: number | null
   priceAnnualCents: number | null
-  stripePriceIdMonthly: string | null
-  stripePriceIdAnnual: string | null
+  kirvanoPriceIdMonthly: string | null
+  kirvanoPriceIdAnnual: string | null
   maxUsers: number | null
   maxConversationsPerMonth: number | null
   maxChannels: number | null
@@ -66,8 +66,8 @@ export type PlanMaxAggregateOutputType = {
   slug: string | null
   priceMonthyCents: number | null
   priceAnnualCents: number | null
-  stripePriceIdMonthly: string | null
-  stripePriceIdAnnual: string | null
+  kirvanoPriceIdMonthly: string | null
+  kirvanoPriceIdAnnual: string | null
   maxUsers: number | null
   maxConversationsPerMonth: number | null
   maxChannels: number | null
@@ -82,8 +82,8 @@ export type PlanCountAggregateOutputType = {
   slug: number
   priceMonthyCents: number
   priceAnnualCents: number
-  stripePriceIdMonthly: number
-  stripePriceIdAnnual: number
+  kirvanoPriceIdMonthly: number
+  kirvanoPriceIdAnnual: number
   maxUsers: number
   maxConversationsPerMonth: number
   maxChannels: number
@@ -119,8 +119,8 @@ export type PlanMinAggregateInputType = {
   slug?: true
   priceMonthyCents?: true
   priceAnnualCents?: true
-  stripePriceIdMonthly?: true
-  stripePriceIdAnnual?: true
+  kirvanoPriceIdMonthly?: true
+  kirvanoPriceIdAnnual?: true
   maxUsers?: true
   maxConversationsPerMonth?: true
   maxChannels?: true
@@ -135,8 +135,8 @@ export type PlanMaxAggregateInputType = {
   slug?: true
   priceMonthyCents?: true
   priceAnnualCents?: true
-  stripePriceIdMonthly?: true
-  stripePriceIdAnnual?: true
+  kirvanoPriceIdMonthly?: true
+  kirvanoPriceIdAnnual?: true
   maxUsers?: true
   maxConversationsPerMonth?: true
   maxChannels?: true
@@ -151,8 +151,8 @@ export type PlanCountAggregateInputType = {
   slug?: true
   priceMonthyCents?: true
   priceAnnualCents?: true
-  stripePriceIdMonthly?: true
-  stripePriceIdAnnual?: true
+  kirvanoPriceIdMonthly?: true
+  kirvanoPriceIdAnnual?: true
   maxUsers?: true
   maxConversationsPerMonth?: true
   maxChannels?: true
@@ -255,8 +255,8 @@ export type PlanGroupByOutputType = {
   slug: string
   priceMonthyCents: number
   priceAnnualCents: number | null
-  stripePriceIdMonthly: string
-  stripePriceIdAnnual: string | null
+  kirvanoPriceIdMonthly: string | null
+  kirvanoPriceIdAnnual: string | null
   maxUsers: number
   maxConversationsPerMonth: number
   maxChannels: number
@@ -295,8 +295,8 @@ export type PlanWhereInput = {
   slug?: Prisma.StringFilter<"Plan"> | string
   priceMonthyCents?: Prisma.IntFilter<"Plan"> | number
   priceAnnualCents?: Prisma.IntNullableFilter<"Plan"> | number | null
-  stripePriceIdMonthly?: Prisma.StringFilter<"Plan"> | string
-  stripePriceIdAnnual?: Prisma.StringNullableFilter<"Plan"> | string | null
+  kirvanoPriceIdMonthly?: Prisma.StringNullableFilter<"Plan"> | string | null
+  kirvanoPriceIdAnnual?: Prisma.StringNullableFilter<"Plan"> | string | null
   maxUsers?: Prisma.IntFilter<"Plan"> | number
   maxConversationsPerMonth?: Prisma.IntFilter<"Plan"> | number
   maxChannels?: Prisma.IntFilter<"Plan"> | number
@@ -312,8 +312,8 @@ export type PlanOrderByWithRelationInput = {
   slug?: Prisma.SortOrder
   priceMonthyCents?: Prisma.SortOrder
   priceAnnualCents?: Prisma.SortOrderInput | Prisma.SortOrder
-  stripePriceIdMonthly?: Prisma.SortOrder
-  stripePriceIdAnnual?: Prisma.SortOrderInput | Prisma.SortOrder
+  kirvanoPriceIdMonthly?: Prisma.SortOrderInput | Prisma.SortOrder
+  kirvanoPriceIdAnnual?: Prisma.SortOrderInput | Prisma.SortOrder
   maxUsers?: Prisma.SortOrder
   maxConversationsPerMonth?: Prisma.SortOrder
   maxChannels?: Prisma.SortOrder
@@ -332,8 +332,8 @@ export type PlanWhereUniqueInput = Prisma.AtLeast<{
   name?: Prisma.StringFilter<"Plan"> | string
   priceMonthyCents?: Prisma.IntFilter<"Plan"> | number
   priceAnnualCents?: Prisma.IntNullableFilter<"Plan"> | number | null
-  stripePriceIdMonthly?: Prisma.StringFilter<"Plan"> | string
-  stripePriceIdAnnual?: Prisma.StringNullableFilter<"Plan"> | string | null
+  kirvanoPriceIdMonthly?: Prisma.StringNullableFilter<"Plan"> | string | null
+  kirvanoPriceIdAnnual?: Prisma.StringNullableFilter<"Plan"> | string | null
   maxUsers?: Prisma.IntFilter<"Plan"> | number
   maxConversationsPerMonth?: Prisma.IntFilter<"Plan"> | number
   maxChannels?: Prisma.IntFilter<"Plan"> | number
@@ -349,8 +349,8 @@ export type PlanOrderByWithAggregationInput = {
   slug?: Prisma.SortOrder
   priceMonthyCents?: Prisma.SortOrder
   priceAnnualCents?: Prisma.SortOrderInput | Prisma.SortOrder
-  stripePriceIdMonthly?: Prisma.SortOrder
-  stripePriceIdAnnual?: Prisma.SortOrderInput | Prisma.SortOrder
+  kirvanoPriceIdMonthly?: Prisma.SortOrderInput | Prisma.SortOrder
+  kirvanoPriceIdAnnual?: Prisma.SortOrderInput | Prisma.SortOrder
   maxUsers?: Prisma.SortOrder
   maxConversationsPerMonth?: Prisma.SortOrder
   maxChannels?: Prisma.SortOrder
@@ -374,8 +374,8 @@ export type PlanScalarWhereWithAggregatesInput = {
   slug?: Prisma.StringWithAggregatesFilter<"Plan"> | string
   priceMonthyCents?: Prisma.IntWithAggregatesFilter<"Plan"> | number
   priceAnnualCents?: Prisma.IntNullableWithAggregatesFilter<"Plan"> | number | null
-  stripePriceIdMonthly?: Prisma.StringWithAggregatesFilter<"Plan"> | string
-  stripePriceIdAnnual?: Prisma.StringNullableWithAggregatesFilter<"Plan"> | string | null
+  kirvanoPriceIdMonthly?: Prisma.StringNullableWithAggregatesFilter<"Plan"> | string | null
+  kirvanoPriceIdAnnual?: Prisma.StringNullableWithAggregatesFilter<"Plan"> | string | null
   maxUsers?: Prisma.IntWithAggregatesFilter<"Plan"> | number
   maxConversationsPerMonth?: Prisma.IntWithAggregatesFilter<"Plan"> | number
   maxChannels?: Prisma.IntWithAggregatesFilter<"Plan"> | number
@@ -391,8 +391,8 @@ export type PlanCreateInput = {
   slug: string
   priceMonthyCents: number
   priceAnnualCents?: number | null
-  stripePriceIdMonthly: string
-  stripePriceIdAnnual?: string | null
+  kirvanoPriceIdMonthly?: string | null
+  kirvanoPriceIdAnnual?: string | null
   maxUsers: number
   maxConversationsPerMonth: number
   maxChannels: number
@@ -408,8 +408,8 @@ export type PlanUncheckedCreateInput = {
   slug: string
   priceMonthyCents: number
   priceAnnualCents?: number | null
-  stripePriceIdMonthly: string
-  stripePriceIdAnnual?: string | null
+  kirvanoPriceIdMonthly?: string | null
+  kirvanoPriceIdAnnual?: string | null
   maxUsers: number
   maxConversationsPerMonth: number
   maxChannels: number
@@ -425,8 +425,8 @@ export type PlanUpdateInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   priceMonthyCents?: Prisma.IntFieldUpdateOperationsInput | number
   priceAnnualCents?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  stripePriceIdMonthly?: Prisma.StringFieldUpdateOperationsInput | string
-  stripePriceIdAnnual?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kirvanoPriceIdMonthly?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kirvanoPriceIdAnnual?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
   maxChannels?: Prisma.IntFieldUpdateOperationsInput | number
@@ -442,8 +442,8 @@ export type PlanUncheckedUpdateInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   priceMonthyCents?: Prisma.IntFieldUpdateOperationsInput | number
   priceAnnualCents?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  stripePriceIdMonthly?: Prisma.StringFieldUpdateOperationsInput | string
-  stripePriceIdAnnual?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kirvanoPriceIdMonthly?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kirvanoPriceIdAnnual?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
   maxChannels?: Prisma.IntFieldUpdateOperationsInput | number
@@ -459,8 +459,8 @@ export type PlanCreateManyInput = {
   slug: string
   priceMonthyCents: number
   priceAnnualCents?: number | null
-  stripePriceIdMonthly: string
-  stripePriceIdAnnual?: string | null
+  kirvanoPriceIdMonthly?: string | null
+  kirvanoPriceIdAnnual?: string | null
   maxUsers: number
   maxConversationsPerMonth: number
   maxChannels: number
@@ -476,8 +476,8 @@ export type PlanUpdateManyMutationInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   priceMonthyCents?: Prisma.IntFieldUpdateOperationsInput | number
   priceAnnualCents?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  stripePriceIdMonthly?: Prisma.StringFieldUpdateOperationsInput | string
-  stripePriceIdAnnual?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kirvanoPriceIdMonthly?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kirvanoPriceIdAnnual?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
   maxChannels?: Prisma.IntFieldUpdateOperationsInput | number
@@ -493,8 +493,8 @@ export type PlanUncheckedUpdateManyInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   priceMonthyCents?: Prisma.IntFieldUpdateOperationsInput | number
   priceAnnualCents?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  stripePriceIdMonthly?: Prisma.StringFieldUpdateOperationsInput | string
-  stripePriceIdAnnual?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kirvanoPriceIdMonthly?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kirvanoPriceIdAnnual?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
   maxChannels?: Prisma.IntFieldUpdateOperationsInput | number
@@ -510,8 +510,8 @@ export type PlanCountOrderByAggregateInput = {
   slug?: Prisma.SortOrder
   priceMonthyCents?: Prisma.SortOrder
   priceAnnualCents?: Prisma.SortOrder
-  stripePriceIdMonthly?: Prisma.SortOrder
-  stripePriceIdAnnual?: Prisma.SortOrder
+  kirvanoPriceIdMonthly?: Prisma.SortOrder
+  kirvanoPriceIdAnnual?: Prisma.SortOrder
   maxUsers?: Prisma.SortOrder
   maxConversationsPerMonth?: Prisma.SortOrder
   maxChannels?: Prisma.SortOrder
@@ -536,8 +536,8 @@ export type PlanMaxOrderByAggregateInput = {
   slug?: Prisma.SortOrder
   priceMonthyCents?: Prisma.SortOrder
   priceAnnualCents?: Prisma.SortOrder
-  stripePriceIdMonthly?: Prisma.SortOrder
-  stripePriceIdAnnual?: Prisma.SortOrder
+  kirvanoPriceIdMonthly?: Prisma.SortOrder
+  kirvanoPriceIdAnnual?: Prisma.SortOrder
   maxUsers?: Prisma.SortOrder
   maxConversationsPerMonth?: Prisma.SortOrder
   maxChannels?: Prisma.SortOrder
@@ -552,8 +552,8 @@ export type PlanMinOrderByAggregateInput = {
   slug?: Prisma.SortOrder
   priceMonthyCents?: Prisma.SortOrder
   priceAnnualCents?: Prisma.SortOrder
-  stripePriceIdMonthly?: Prisma.SortOrder
-  stripePriceIdAnnual?: Prisma.SortOrder
+  kirvanoPriceIdMonthly?: Prisma.SortOrder
+  kirvanoPriceIdAnnual?: Prisma.SortOrder
   maxUsers?: Prisma.SortOrder
   maxConversationsPerMonth?: Prisma.SortOrder
   maxChannels?: Prisma.SortOrder
@@ -579,8 +579,8 @@ export type PlanSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   slug?: boolean
   priceMonthyCents?: boolean
   priceAnnualCents?: boolean
-  stripePriceIdMonthly?: boolean
-  stripePriceIdAnnual?: boolean
+  kirvanoPriceIdMonthly?: boolean
+  kirvanoPriceIdAnnual?: boolean
   maxUsers?: boolean
   maxConversationsPerMonth?: boolean
   maxChannels?: boolean
@@ -596,8 +596,8 @@ export type PlanSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   slug?: boolean
   priceMonthyCents?: boolean
   priceAnnualCents?: boolean
-  stripePriceIdMonthly?: boolean
-  stripePriceIdAnnual?: boolean
+  kirvanoPriceIdMonthly?: boolean
+  kirvanoPriceIdAnnual?: boolean
   maxUsers?: boolean
   maxConversationsPerMonth?: boolean
   maxChannels?: boolean
@@ -613,8 +613,8 @@ export type PlanSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   slug?: boolean
   priceMonthyCents?: boolean
   priceAnnualCents?: boolean
-  stripePriceIdMonthly?: boolean
-  stripePriceIdAnnual?: boolean
+  kirvanoPriceIdMonthly?: boolean
+  kirvanoPriceIdAnnual?: boolean
   maxUsers?: boolean
   maxConversationsPerMonth?: boolean
   maxChannels?: boolean
@@ -630,8 +630,8 @@ export type PlanSelectScalar = {
   slug?: boolean
   priceMonthyCents?: boolean
   priceAnnualCents?: boolean
-  stripePriceIdMonthly?: boolean
-  stripePriceIdAnnual?: boolean
+  kirvanoPriceIdMonthly?: boolean
+  kirvanoPriceIdAnnual?: boolean
   maxUsers?: boolean
   maxConversationsPerMonth?: boolean
   maxChannels?: boolean
@@ -641,7 +641,7 @@ export type PlanSelectScalar = {
   createdAt?: boolean
 }
 
-export type PlanOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "priceMonthyCents" | "priceAnnualCents" | "stripePriceIdMonthly" | "stripePriceIdAnnual" | "maxUsers" | "maxConversationsPerMonth" | "maxChannels" | "features" | "isActive" | "position" | "createdAt", ExtArgs["result"]["plan"]>
+export type PlanOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "priceMonthyCents" | "priceAnnualCents" | "kirvanoPriceIdMonthly" | "kirvanoPriceIdAnnual" | "maxUsers" | "maxConversationsPerMonth" | "maxChannels" | "features" | "isActive" | "position" | "createdAt", ExtArgs["result"]["plan"]>
 
 export type $PlanPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Plan"
@@ -652,8 +652,8 @@ export type $PlanPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     slug: string
     priceMonthyCents: number
     priceAnnualCents: number | null
-    stripePriceIdMonthly: string
-    stripePriceIdAnnual: string | null
+    kirvanoPriceIdMonthly: string | null
+    kirvanoPriceIdAnnual: string | null
     maxUsers: number
     maxConversationsPerMonth: number
     maxChannels: number
@@ -1089,8 +1089,8 @@ export interface PlanFieldRefs {
   readonly slug: Prisma.FieldRef<"Plan", 'String'>
   readonly priceMonthyCents: Prisma.FieldRef<"Plan", 'Int'>
   readonly priceAnnualCents: Prisma.FieldRef<"Plan", 'Int'>
-  readonly stripePriceIdMonthly: Prisma.FieldRef<"Plan", 'String'>
-  readonly stripePriceIdAnnual: Prisma.FieldRef<"Plan", 'String'>
+  readonly kirvanoPriceIdMonthly: Prisma.FieldRef<"Plan", 'String'>
+  readonly kirvanoPriceIdAnnual: Prisma.FieldRef<"Plan", 'String'>
   readonly maxUsers: Prisma.FieldRef<"Plan", 'Int'>
   readonly maxConversationsPerMonth: Prisma.FieldRef<"Plan", 'Int'>
   readonly maxChannels: Prisma.FieldRef<"Plan", 'Int'>

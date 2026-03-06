@@ -47,9 +47,9 @@ npm run type-check   # TypeScript validation
 ngrok http 3000
 # Usar URL ngrok em Meta Developer Console
 
-# Stripe webhooks
-stripe listen --forward-to localhost:3000/api/webhooks/stripe
-stripe trigger checkout.session.completed
+# Kirvano webhooks (configurar no painel Kirvano → Integrações → Webhooks)
+# URL: https://SEU_DOMINIO/api/webhooks/kirvano
+# Token: valor de KIRVANO_WEBHOOK_TOKEN
 ```
 
 ## Architecture
@@ -157,8 +157,7 @@ CREATE TABLE workspaces (
   
   -- Billing
   subscription_status TEXT DEFAULT 'TRIAL',   -- TRIAL, ACTIVE, CANCELED, EXPIRED
-  stripe_customer_id TEXT,
-  stripe_subscription_id TEXT,
+  kirvano_subscription_id TEXT,
   current_period_end TIMESTAMPTZ,
   trial_ends_at TIMESTAMPTZ DEFAULT NOW() + INTERVAL '14 days',
   
@@ -172,7 +171,6 @@ CREATE TABLE workspaces (
 );
 
 CREATE INDEX idx_workspaces_slug ON workspaces(slug);
-CREATE INDEX idx_workspaces_stripe_customer ON workspaces(stripe_customer_id);
 
 -- ==================== USERS ====================
 
@@ -419,7 +417,7 @@ CREATE TABLE webhook_logs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   workspace_id UUID REFERENCES workspaces(id) ON DELETE CASCADE,
   
-  source TEXT NOT NULL,                       -- 'whatsapp', 'instagram', 'facebook', 'stripe'
+  source TEXT NOT NULL,                       -- 'whatsapp', 'instagram', 'facebook', 'kirvano'
   event_type TEXT NOT NULL,
   payload JSONB NOT NULL,
   
@@ -443,8 +441,8 @@ CREATE TABLE plans (
   -- Pricing
   price_monthly_cents INTEGER NOT NULL,       -- 19700 = R$197,00
   price_annual_cents INTEGER,                 -- NULL if no annual option
-  stripe_price_id_monthly TEXT NOT NULL,
-  stripe_price_id_annual TEXT,
+  kirvano_price_id_monthly TEXT,
+  kirvano_price_id_annual TEXT,
   
   -- Limits
   max_users INTEGER NOT NULL,
@@ -500,7 +498,7 @@ GET  /api/health                             # Health check
 POST /api/webhooks/whatsapp                  # WhatsApp Cloud API webhook
 POST /api/webhooks/instagram                 # Instagram webhook
 POST /api/webhooks/facebook                  # Facebook Messenger webhook
-POST /api/webhooks/stripe                    # Stripe billing webhook
+POST /api/webhooks/kirvano                   # Kirvano billing webhook
 GET  /api/webhooks/meta/verify               # Meta webhook verification (challenge)
 ```
 
@@ -1028,10 +1026,11 @@ FACEBOOK_ACCESS_TOKEN=stored-per-channel
 INNGEST_EVENT_KEY=your-event-key
 INNGEST_SIGNING_KEY=your-signing-key
 
-# Stripe
-STRIPE_SECRET_KEY=sk_test_...
-STRIPE_WEBHOOK_SECRET=whsec_...
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
+# Kirvano
+KIRVANO_WEBHOOK_TOKEN=your-kirvano-webhook-token
+NEXT_PUBLIC_KIRVANO_STARTER_URL=https://pay.kirvano.com/4f4bf484-0113-4257-8199-52f7fa0f5925
+NEXT_PUBLIC_KIRVANO_PRO_URL=https://pay.kirvano.com/9ff16802-c829-46e8-a7b1-efc922ff5166
+NEXT_PUBLIC_KIRVANO_ENTERPRISE_URL=https://pay.kirvano.com/28bdff0e-b8c0-4c72-ba34-ee8b9828fe0f
 
 # Vercel Blob (logo uploads)
 BLOB_READ_WRITE_TOKEN=vercel_blob_...
@@ -1402,19 +1401,15 @@ SELECT cron.schedule(
 ### Stripe
 
 ```bash
-# Create products
-# Starter: R$197/month
-# Pro: R$397/month
-# Enterprise: R$997/month
+# Planos (links fixos no Kirvano):
+# Starter: R$197/mês — https://pay.kirvano.com/4f4bf484-0113-4257-8199-52f7fa0f5925
+# Pro: R$397/mês     — https://pay.kirvano.com/9ff16802-c829-46e8-a7b1-efc922ff5166
+# Enterprise: R$697/mês — https://pay.kirvano.com/28bdff0e-b8c0-4c72-ba34-ee8b9828fe0f
 
-# Setup webhook
-# URL: https://omnicrm.com/api/webhooks/stripe
-# Events: 
-#   - checkout.session.completed
-#   - customer.subscription.created
-#   - customer.subscription.updated
-#   - customer.subscription.deleted
-#   - invoice.payment_failed
+# Setup webhook no painel Kirvano → Integrações → Webhooks
+# URL: https://omnicrm.com/api/webhooks/kirvano
+# Eventos: SALE_APPROVED, SALE_REFUSED, SUBSCRIPTION_CANCELED, SUBSCRIPTION_RENEWED,
+#          SUBSCRIPTION_OVERDUE, SALE_CHARGEBACK, REFUND
 ```
 
 ---
@@ -1428,7 +1423,7 @@ To start development:
    ```bash
    npx create-next-app@latest omnicrm --typescript --tailwind --app
    cd omnicrm
-   npm install prisma @prisma/client next-auth bcrypt pusher pusher-js inngest stripe
+   npm install prisma @prisma/client next-auth bcrypt pusher pusher-js inngest
    npm install -D @types/bcrypt
    ```
 3. **Create folder structure**:
