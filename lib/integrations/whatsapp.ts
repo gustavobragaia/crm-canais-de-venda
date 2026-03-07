@@ -43,9 +43,11 @@ export interface WhatsAppWebhookPayload {
   entry: Array<{
     id: string
     changes: Array<{
+      field: string
       value: {
-        messaging_product: string
-        metadata: { display_phone_number: string; phone_number_id: string }
+        // Regular and group messages (field: "messages")
+        messaging_product?: string
+        metadata?: { display_phone_number: string; phone_number_id: string }
         contacts?: Array<{ profile: { name: string }; wa_id: string }>
         messages?: Array<{
           from: string
@@ -56,6 +58,7 @@ export interface WhatsAppWebhookPayload {
           image?: { id: string; mime_type: string; sha256: string }
           audio?: { id: string; mime_type: string }
           document?: { id: string; filename: string; mime_type: string }
+          group?: { id: string; subject: string }
         }>
         statuses?: Array<{
           id: string
@@ -63,8 +66,14 @@ export interface WhatsAppWebhookPayload {
           timestamp: string
           recipient_id: string
         }>
+        // Group lifecycle events (field: "group_lifecycle_update")
+        group_id?: string
+        event?: string
+        // Group participants events (field: "group_participants_update")
+        participants?: Array<{ wa_id: string }>
+        // Group settings events (field: "group_settings_update")
+        subject?: string
       }
-      field: string
     }>
   }>
 }

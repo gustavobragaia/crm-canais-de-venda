@@ -16,34 +16,132 @@ export const processWhatsAppMessage = inngest.createFunction(
 
     for (const entry of payload.entry) {
       for (const change of entry.changes) {
-        const { value } = change
+        const { value, field } = change
+
+        // ---- Group lifecycle: group created/archived/deleted ----
+        if (field === 'group_lifecycle_update' && value.group_id && value.metadata) {
+          const channel = await db.channel.findFirst({
+            where: { phoneNumberId: value.metadata.phone_number_id, type: 'WHATSAPP' },
+          })
+          if (!channel) continue
+
+          if (value.event === 'group_created') {
+            await db.conversation.upsert({
+              where: {
+                workspaceId_channelId_externalId: {
+                  workspaceId: channel.workspaceId,
+                  channelId: channel.id,
+                  externalId: value.group_id,
+                },
+              },
+              create: {
+                workspaceId: channel.workspaceId,
+                channelId: channel.id,
+                externalId: value.group_id,
+                contactName: `Grupo ${value.group_id.slice(-6)}`,
+                status: 'UNASSIGNED',
+              },
+              update: {},
+            })
+          } else if (value.event === 'group_archived' || value.event === 'group_deleted') {
+            await db.conversation.updateMany({
+              where: {
+                workspaceId: channel.workspaceId,
+                channelId: channel.id,
+                externalId: value.group_id,
+              },
+              data: { status: 'ARCHIVED' },
+            })
+          }
+          continue
+        }
+
+        // ---- Group settings: name/subject changed ----
+        if (field === 'group_settings_update' && value.group_id && value.metadata) {
+          const channel = await db.channel.findFirst({
+            where: { phoneNumberId: value.metadata.phone_number_id, type: 'WHATSAPP' },
+          })
+          if (!channel || !value.subject) continue
+
+          await db.conversation.updateMany({
+            where: {
+              workspaceId: channel.workspaceId,
+              channelId: channel.id,
+              externalId: value.group_id,
+            },
+            data: { contactName: value.subject },
+          })
+          continue
+        }
+
+        // ---- Group participants: member added/removed ----
+        if (field === 'group_participants_update' && value.group_id && value.metadata) {
+          const channel = await db.channel.findFirst({
+            where: { phoneNumberId: value.metadata.phone_number_id, type: 'WHATSAPP' },
+          })
+          if (!channel) continue
+
+          const conversation = await db.conversation.findFirst({
+            where: {
+              workspaceId: channel.workspaceId,
+              channelId: channel.id,
+              externalId: value.group_id,
+            },
+          })
+          if (!conversation) continue
+
+          const participantIds = (value.participants ?? []).map((p) => p.wa_id).join(', ')
+          const action = value.event === 'participant_added' ? 'entrou no grupo' : 'saiu do grupo'
+          const content = `[Sistema] ${participantIds} ${action}`
+
+          await db.message.create({
+            data: {
+              conversationId: conversation.id,
+              workspaceId: channel.workspaceId,
+              direction: 'INBOUND',
+              content,
+              status: 'DELIVERED',
+            },
+          })
+
+          await db.conversation.update({
+            where: { id: conversation.id },
+            data: { lastMessageAt: new Date(), lastMessagePreview: content.slice(0, 100) },
+          })
+          continue
+        }
+
+        // ---- Regular and group messages ----
         if (!value.messages) continue
 
         const channel = await db.channel.findFirst({
-          where: { phoneNumberId: value.metadata.phone_number_id, type: 'WHATSAPP' },
+          where: { phoneNumberId: value.metadata?.phone_number_id, type: 'WHATSAPP' },
         })
         if (!channel) continue
 
         for (const msg of value.messages) {
           if (msg.type !== 'text') continue
 
-          const contactName =
-            value.contacts?.find((c) => c.wa_id === msg.from)?.profile?.name ?? msg.from
+          const isGroup = !!msg.group
+          const externalId = isGroup ? msg.group!.id : msg.from
+          const contactName = isGroup
+            ? (msg.group!.subject || `Grupo ${msg.group!.id.slice(-6)}`)
+            : (value.contacts?.find((c) => c.wa_id === msg.from)?.profile?.name ?? msg.from)
 
           const conversation = await db.conversation.upsert({
             where: {
               workspaceId_channelId_externalId: {
                 workspaceId: channel.workspaceId,
                 channelId: channel.id,
-                externalId: msg.from,
+                externalId,
               },
             },
             create: {
               workspaceId: channel.workspaceId,
               channelId: channel.id,
-              externalId: msg.from,
+              externalId,
               contactName,
-              contactPhone: msg.from,
+              contactPhone: isGroup ? undefined : msg.from,
               status: 'UNASSIGNED',
             },
             update: { contactName },

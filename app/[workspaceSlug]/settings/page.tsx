@@ -88,34 +88,36 @@ export default function SettingsPage() {
         ? { feature: 'whatsapp_embedded_signup', setup: {} }
         : {}
 
-      window.FB.login(async (response) => {
-        const token = response.authResponse?.accessToken
-        if (!token) {
-          setConnectingStatus((s) => ({ ...s, [channelType]: 'idle' }))
-          return
-        }
+      window.FB.login((response) => {
+        void (async () => {
+          const token = response.authResponse?.accessToken
+          if (!token) {
+            setConnectingStatus((s) => ({ ...s, [channelType]: 'idle' }))
+            return
+          }
 
-        const res = await fetch('/api/meta/connect', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ accessToken: token, channelType }),
-        })
-        const data = await res.json()
-
-        if (data.step === 'select') {
-          setPicker({ channelType: data.channelType, userToken: data.userToken, options: data.options })
-          setConnectingStatus((s) => ({ ...s, [channelType]: 'idle' }))
-        } else if (data.step === 'done') {
-          setChannels((prev) => {
-            const filtered = prev.filter((c) => c.type !== channelType)
-            return [...filtered, data.channel]
+          const res = await fetch('/api/meta/connect', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ accessToken: token, channelType }),
           })
-          setConnectingStatus((s) => ({ ...s, [channelType]: 'done' }))
-          setTimeout(() => setConnectingStatus((s) => ({ ...s, [channelType]: 'idle' })), 3000)
-        } else {
-          alert(data.error ?? 'Erro ao conectar.')
-          setConnectingStatus((s) => ({ ...s, [channelType]: 'idle' }))
-        }
+          const data = await res.json()
+
+          if (data.step === 'select') {
+            setPicker({ channelType: data.channelType, userToken: data.userToken, options: data.options })
+            setConnectingStatus((s) => ({ ...s, [channelType]: 'idle' }))
+          } else if (data.step === 'done') {
+            setChannels((prev) => {
+              const filtered = prev.filter((c) => c.type !== channelType)
+              return [...filtered, data.channel]
+            })
+            setConnectingStatus((s) => ({ ...s, [channelType]: 'done' }))
+            setTimeout(() => setConnectingStatus((s) => ({ ...s, [channelType]: 'idle' })), 3000)
+          } else {
+            alert(data.error ?? 'Erro ao conectar.')
+            setConnectingStatus((s) => ({ ...s, [channelType]: 'idle' }))
+          }
+        })()
       }, { scope, return_scopes: true, ...extras })
     } catch (e) {
       console.error(e)
