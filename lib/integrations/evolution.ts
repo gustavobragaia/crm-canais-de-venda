@@ -98,13 +98,11 @@ export async function setEvolutionWebhook(
   await evolutionFetch<unknown>(`/webhook/set/${instanceName}`, {
     method: 'POST',
     body: JSON.stringify({
-      webhook: {
-        enabled: true,
-        url: webhookUrl,
-        webhook_by_events: false,
-        webhook_base64: true,
-        events: WEBHOOK_EVENTS,
-      },
+      enabled: true,
+      url: webhookUrl,
+      webhook_by_events: false,
+      webhook_base64: true,
+      events: WEBHOOK_EVENTS,
     }),
   })
 }
@@ -112,13 +110,15 @@ export async function setEvolutionWebhook(
 export async function getEvolutionQR(
   instanceName: string
 ): Promise<{ base64: string; code: string }> {
-  const data = await evolutionFetch<{ base64?: string; code?: string; qrcode?: { base64: string; code: string } }>(
+  const data = await evolutionFetch<Record<string, unknown>>(
     `/instance/connect/${instanceName}`
   )
+  console.log('[EVOLUTION getEvolutionQR] raw response:', JSON.stringify(data))
+  const d = data as { base64?: string; code?: string; qrcode?: { base64?: string; code?: string } }
   // Evolution may return either { base64, code } or { qrcode: { base64, code } }
   return {
-    base64: data.base64 ?? data.qrcode?.base64 ?? '',
-    code: data.code ?? data.qrcode?.code ?? '',
+    base64: d.base64 ?? d.qrcode?.base64 ?? '',
+    code: d.code ?? d.qrcode?.code ?? '',
   }
 }
 

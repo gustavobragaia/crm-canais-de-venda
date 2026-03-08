@@ -25,6 +25,7 @@ export async function POST(req: NextRequest) {
 
     // Create instance in Evolution
     const created = await createEvolutionInstance(instanceName)
+    console.log('[EVOLUTION CONNECT] createEvolutionInstance response:', JSON.stringify(created))
 
     // Configure webhook (separate call)
     await setEvolutionWebhook(instanceName, webhookUrl)
@@ -33,6 +34,7 @@ export async function POST(req: NextRequest) {
     let qr = created.qrcode
     if (!qr?.base64) {
       qr = await getEvolutionQR(instanceName)
+      console.log('[EVOLUTION CONNECT] getEvolutionQR response:', JSON.stringify(qr))
     }
 
     // Save channel to DB (inactive until CONNECTION_UPDATE confirms open)
