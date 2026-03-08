@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import { getPusherClient } from '@/lib/pusher'
 import { Loader2, ExternalLink, MessageCircle, Instagram, Facebook, CreditCard, Users, UserPlus, X, Copy, Check, CheckCircle2 } from 'lucide-react'
 
 declare global {
@@ -136,6 +137,24 @@ export default function SettingsPage() {
 
   // Cleanup poll on unmount
   useEffect(() => () => stopEvolutionPoll(), [stopEvolutionPoll])
+
+  // Subscribe to Pusher for real-time QR updates while modal is open
+  useEffect(() => {
+    const workspaceId = session?.user?.workspaceId
+    if (!evolutionQR || !workspaceId) return
+    const pusher = getPusherClient()
+    const channel = pusher.subscribe(`workspace-${workspaceId}`)
+    channel.bind('evolution-qr-updated', (data: { channelId: string; qr: { base64: string; code: string } }) => {
+      if (data.channelId !== evolutionQR.channelId) return
+      if (data.qr?.base64) {
+        setEvolutionQR((prev) => prev ? { ...prev, base64: data.qr.base64, code: data.qr.code } : prev)
+      }
+    })
+    return () => {
+      channel.unbind('evolution-qr-updated')
+      pusher.unsubscribe(`workspace-${workspaceId}`)
+    }
+  }, [evolutionQR?.channelId, session?.user?.workspaceId])
 
   const handleEmbeddedSignup = useCallback(async (channelType: 'INSTAGRAM' | 'FACEBOOK') => {
     const appId = process.env.NEXT_PUBLIC_META_APP_ID

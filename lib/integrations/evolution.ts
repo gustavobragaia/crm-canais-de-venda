@@ -102,7 +102,7 @@ export async function setEvolutionWebhook(
         enabled: true,
         url: webhookUrl,
         webhook_by_events: false,
-        webhook_base64: false,
+        webhook_base64: true,
         events: WEBHOOK_EVENTS,
       },
     }),
