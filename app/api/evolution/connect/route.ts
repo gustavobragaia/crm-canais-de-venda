@@ -4,8 +4,8 @@ import { db } from '@/lib/db'
 import {
   createEvolutionInstance,
   setEvolutionWebhook,
-  getEvolutionQR,
   getEvolutionConnectionState,
+  getEvolutionWebhook,
 } from '@/lib/integrations/evolution'
 
 export async function POST(req: NextRequest) {
@@ -31,18 +31,14 @@ export async function POST(req: NextRequest) {
     // Belt-and-suspenders: also set webhook via separate call in case the create payload didn't apply it
     try {
       await setEvolutionWebhook(instanceName, webhookUrl)
+      console.log('[EVOLUTION CONNECT] webhook URL sent to Evolution:', webhookUrl)
     } catch (err) {
       console.warn('[EVOLUTION CONNECT] webhook setup failed (non-fatal):', err)
     }
 
-    // Get QR code — may already be in the create response
-    // Delay 2s to allow Baileys to initialize before fetching QR
-    let qr = created.qrcode
-    if (!qr?.base64) {
-      await new Promise((r) => setTimeout(r, 2000))
-      qr = await getEvolutionQR(instanceName)
-      console.log('[EVOLUTION CONNECT] getEvolutionQR response:', JSON.stringify(qr))
-    }
+    // QR is delivered via QRCODE_UPDATED webhook → Inngest → Pusher
+    // The create response may already include it; otherwise the UI waits for Pusher event
+    const qr = created.qrcode
 
     // Save channel to DB (inactive until CONNECTION_UPDATE confirms open)
     const channel = await db.channel.create({
@@ -98,11 +94,8 @@ export async function GET(req: NextRequest) {
       })
     }
 
-    let qr: { base64: string; code: string } | null = null
-    if (state !== 'open') {
-      try { qr = await getEvolutionQR(instanceName) } catch { /* QR ainda não disponível */ }
-    }
-    return NextResponse.json({ state, channelId: channel.id, qr })
+    const registeredWebhook = await getEvolutionWebhook(instanceName).catch(() => null)
+    return NextResponse.json({ state, channelId: channel.id, _debug: { registeredWebhook } })
   } catch (error) {
     console.error('[EVOLUTION CONNECT GET]', error)
     return NextResponse.json({ state: 'close', channelId: channel.id })

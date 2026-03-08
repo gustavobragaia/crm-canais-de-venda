@@ -120,19 +120,8 @@ export async function setEvolutionWebhook(
   })
 }
 
-export async function getEvolutionQR(
-  instanceName: string
-): Promise<{ base64: string; code: string }> {
-  const data = await evolutionFetch<Record<string, unknown>>(
-    `/instance/connect/${instanceName}`
-  )
-  console.log('[EVOLUTION getEvolutionQR] raw response:', JSON.stringify(data))
-  const d = data as { base64?: string; code?: string; qrcode?: { base64?: string; code?: string } }
-  // Evolution may return either { base64, code } or { qrcode: { base64, code } }
-  return {
-    base64: d.base64 ?? d.qrcode?.base64 ?? '',
-    code: d.code ?? d.qrcode?.code ?? '',
-  }
+export async function getEvolutionWebhook(instanceName: string): Promise<unknown> {
+  return evolutionFetch<unknown>(`/webhook/find/${instanceName}`)
 }
 
 export async function getEvolutionConnectionState(
