@@ -2,20 +2,39 @@
 version: '3.8'
 
 services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: evolution_postgres
+    restart: always
+    environment:
+      POSTGRES_DB: evolution
+      POSTGRES_USER: evolution
+      POSTGRES_PASSWORD: "${EVOLUTION_DB_PASSWORD}"
+    volumes:
+      - evolution_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U evolution"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   evolution-api:
     image: atendai/evolution-api:latest
     container_name: evolution_api
     restart: always
     ports:
       - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
     environment:
       # Autenticação — mesma chave usada em EVOLUTION_API_KEY no .env.local
       AUTHENTICATION_API_KEY: "${EVOLUTION_API_KEY}"
 
-      # Banco de dados externo (PostgreSQL já existente)
+      # Banco de dados local (PostgreSQL no mesmo compose)
       DATABASE_ENABLED: "true"
       DATABASE_PROVIDER: "postgresql"
-      DATABASE_CONNECTION_URI: "${EVOLUTION_DATABASE_URL}"
+      DATABASE_CONNECTION_URI: "postgresql://evolution:${EVOLUTION_DB_PASSWORD}@postgres:5432/evolution"
       DATABASE_SAVE_DATA_INSTANCE: "true"
       DATABASE_SAVE_DATA_NEW_MESSAGE: "true"
       DATABASE_SAVE_MESSAGE_UPDATE: "true"
@@ -31,10 +50,14 @@ services:
       # Webhook global desabilitado (configurado por instância via app)
       WEBHOOK_GLOBAL_ENABLED: "false"
 
+      # Cache — desabilitar Redis (não configurado neste ambiente)
+      CACHE_REDIS_ENABLED: "false"
+
     volumes:
       - evolution_instances:/evolution/instances
       - evolution_store:/evolution/store
 
 volumes:
+  evolution_postgres:
   evolution_instances:
   evolution_store:
