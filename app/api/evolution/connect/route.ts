@@ -23,11 +23,12 @@ export async function POST(req: NextRequest) {
     const instanceName = `${workspaceId}-wa-${Date.now()}`
     const webhookUrl = `${process.env.NEXTAUTH_URL}/api/webhooks/evolution`
 
-    // Create instance in Evolution
-    const created = await createEvolutionInstance(instanceName)
+    // Create instance in Evolution — webhook included in payload to avoid race condition
+    // (QRCODE_UPDATED fires immediately after creation; registering webhook after would miss it)
+    const created = await createEvolutionInstance(instanceName, webhookUrl)
     console.log('[EVOLUTION CONNECT] createEvolutionInstance response:', JSON.stringify(created))
 
-    // Configure webhook (separate call — non-fatal if it fails or times out)
+    // Belt-and-suspenders: also set webhook via separate call in case the create payload didn't apply it
     try {
       await setEvolutionWebhook(instanceName, webhookUrl)
     } catch (err) {
@@ -35,8 +36,10 @@ export async function POST(req: NextRequest) {
     }
 
     // Get QR code — may already be in the create response
+    // Delay 2s to allow Baileys to initialize before fetching QR
     let qr = created.qrcode
     if (!qr?.base64) {
+      await new Promise((r) => setTimeout(r, 2000))
       qr = await getEvolutionQR(instanceName)
       console.log('[EVOLUTION CONNECT] getEvolutionQR response:', JSON.stringify(qr))
     }

@@ -80,7 +80,8 @@ async function evolutionFetch<T>(path: string, options?: RequestInit): Promise<T
 // ---- Public API ----
 
 export async function createEvolutionInstance(
-  instanceName: string
+  instanceName: string,
+  webhookUrl?: string
 ): Promise<{ qrcode?: { base64: string; code: string } }> {
   return evolutionFetch<{ qrcode?: { base64: string; code: string } }>('/instance/create', {
     method: 'POST',
@@ -88,6 +89,17 @@ export async function createEvolutionInstance(
       instanceName,
       qrcode: true,
       integration: 'WHATSAPP-BAILEYS',
+      ...(webhookUrl
+        ? {
+            webhook: {
+              enabled: true,
+              url: webhookUrl,
+              webhook_by_events: false,
+              webhook_base64: true,
+              events: WEBHOOK_EVENTS,
+            },
+          }
+        : {}),
     }),
   })
 }
