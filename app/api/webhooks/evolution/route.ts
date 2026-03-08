@@ -15,19 +15,24 @@ export async function POST(req: NextRequest) {
     }
 
     const payload = JSON.parse(body) as EvolutionWebhookPayload
+    console.log('[EVOLUTION WEBHOOK] event:', payload.event, '| instance:', payload.instance)
 
     if (payload.event === 'MESSAGES_UPSERT') {
       await inngest.send({ name: 'evolution/message.received', data: payload })
+      console.log('[EVOLUTION WEBHOOK] sent evolution/message.received')
     } else if (payload.event === 'CONNECTION_UPDATE') {
       await inngest.send({ name: 'evolution/connection.update', data: payload })
+      console.log('[EVOLUTION WEBHOOK] sent evolution/connection.update')
     } else if (payload.event === 'QRCODE_UPDATED') {
       await inngest.send({ name: 'evolution/qrcode.updated', data: payload })
+      console.log('[EVOLUTION WEBHOOK] sent evolution/qrcode.updated')
+    } else {
+      console.log('[EVOLUTION WEBHOOK] unhandled event dropped:', payload.event)
     }
-    // SEND_MESSAGE echoes are silently dropped
 
     return NextResponse.json({ status: 'EVENT_RECEIVED' })
   } catch (error) {
-    console.error('[EVOLUTION WEBHOOK]', error)
+    console.error('[EVOLUTION WEBHOOK] error:', error)
     // Always return 200 — Evolution retries on non-200 responses
     return NextResponse.json({ status: 'ERROR' })
   }
