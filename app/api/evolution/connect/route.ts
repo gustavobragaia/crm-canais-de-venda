@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
 
     const workspaceId = session.user.workspaceId
     const instanceName = `${workspaceId}-wa-${Date.now()}`
-    const webhookUrl = `${process.env.NEXTAUTH_URL}/api/webhooks/evolution`
+    const webhookUrl = `${process.env.NEXTAUTH_URL?.replace(/\/$/, '')}/api/webhooks/evolution`
 
     // Create instance in Evolution — webhook included in payload to avoid race condition
     // (QRCODE_UPDATED fires immediately after creation; registering webhook after would miss it)
