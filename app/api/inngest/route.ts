@@ -1,12 +1,20 @@
 import { serve } from 'inngest/next'
 import { inngest } from '@/lib/inngest'
 import {
-  processWhatsAppMessage,
   processInstagramMessage,
   processFacebookMessage,
+  processEvolutionMessage,
+  processEvolutionConnectionUpdate,
+  processEvolutionQRCodeUpdated,
 } from '@/lib/inngest-functions'
 
 export const { GET, POST, PUT } = serve({
   client: inngest,
-  functions: [processWhatsAppMessage, processInstagramMessage, processFacebookMessage],
+  functions: [
+    processInstagramMessage,
+    processFacebookMessage,
+    processEvolutionMessage,
+    processEvolutionConnectionUpdate,
+    processEvolutionQRCodeUpdated,
+  ],
 })

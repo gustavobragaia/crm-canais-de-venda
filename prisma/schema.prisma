@@ -61,9 +61,10 @@ model User {
 }
 
 model Channel {
-  id                String         @id @default(uuid())
+  id                String          @id @default(uuid())
   workspaceId       String
   type              ChannelType
+  provider          ChannelProvider @default(META)
   name              String
   accessToken       String?
   phoneNumberId     String?
@@ -71,16 +72,18 @@ model Channel {
   pageId            String?
   pageName          String?
   businessAccountId String?
-  isActive          Boolean        @default(true)
+  instanceName      String?
+  isActive          Boolean         @default(true)
   lastSyncAt        DateTime?
   webhookVerifiedAt DateTime?
-  createdAt         DateTime       @default(now())
-  updatedAt         DateTime       @updatedAt
-  workspace         Workspace      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  workspace         Workspace       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   conversations     Conversation[]
 
   @@index([workspaceId])
   @@index([workspaceId, type])
+  @@index([instanceName])
   @@map("channels")
 }
 
@@ -253,6 +256,11 @@ enum ChannelType {
   WHATSAPP
   INSTAGRAM
   FACEBOOK
+}
+
+enum ChannelProvider {
+  META
+  EVOLUTION
 }
 
 enum ConversationStatus {

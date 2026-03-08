@@ -8,7 +8,7 @@ const CHANNELS = [
   {
     id: 'whatsapp',
     name: 'WhatsApp Business',
-    description: 'Conecte via Meta Cloud API',
+    description: 'Conecte via Evolution API (QR Code)',
     icon: MessageCircle,
     color: '#25D366',
     bg: 'bg-green-50',

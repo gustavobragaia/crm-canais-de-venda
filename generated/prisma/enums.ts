@@ -26,6 +26,14 @@ export const ChannelType = {
 export type ChannelType = (typeof ChannelType)[keyof typeof ChannelType]
 
 
+export const ChannelProvider = {
+  META: 'META',
+  EVOLUTION: 'EVOLUTION'
+} as const
+
+export type ChannelProvider = (typeof ChannelProvider)[keyof typeof ChannelProvider]
+
+
 export const ConversationStatus = {
   UNASSIGNED: 'UNASSIGNED',
   ASSIGNED: 'ASSIGNED',

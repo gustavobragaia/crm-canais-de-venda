@@ -28,6 +28,7 @@ export type ChannelMinAggregateOutputType = {
   id: string | null
   workspaceId: string | null
   type: $Enums.ChannelType | null
+  provider: $Enums.ChannelProvider | null
   name: string | null
   accessToken: string | null
   phoneNumberId: string | null
@@ -35,6 +36,7 @@ export type ChannelMinAggregateOutputType = {
   pageId: string | null
   pageName: string | null
   businessAccountId: string | null
+  instanceName: string | null
   isActive: boolean | null
   lastSyncAt: Date | null
   webhookVerifiedAt: Date | null
@@ -46,6 +48,7 @@ export type ChannelMaxAggregateOutputType = {
   id: string | null
   workspaceId: string | null
   type: $Enums.ChannelType | null
+  provider: $Enums.ChannelProvider | null
   name: string | null
   accessToken: string | null
   phoneNumberId: string | null
@@ -53,6 +56,7 @@ export type ChannelMaxAggregateOutputType = {
   pageId: string | null
   pageName: string | null
   businessAccountId: string | null
+  instanceName: string | null
   isActive: boolean | null
   lastSyncAt: Date | null
   webhookVerifiedAt: Date | null
@@ -64,6 +68,7 @@ export type ChannelCountAggregateOutputType = {
   id: number
   workspaceId: number
   type: number
+  provider: number
   name: number
   accessToken: number
   phoneNumberId: number
@@ -71,6 +76,7 @@ export type ChannelCountAggregateOutputType = {
   pageId: number
   pageName: number
   businessAccountId: number
+  instanceName: number
   isActive: number
   lastSyncAt: number
   webhookVerifiedAt: number
@@ -84,6 +90,7 @@ export type ChannelMinAggregateInputType = {
   id?: true
   workspaceId?: true
   type?: true
+  provider?: true
   name?: true
   accessToken?: true
   phoneNumberId?: true
@@ -91,6 +98,7 @@ export type ChannelMinAggregateInputType = {
   pageId?: true
   pageName?: true
   businessAccountId?: true
+  instanceName?: true
   isActive?: true
   lastSyncAt?: true
   webhookVerifiedAt?: true
@@ -102,6 +110,7 @@ export type ChannelMaxAggregateInputType = {
   id?: true
   workspaceId?: true
   type?: true
+  provider?: true
   name?: true
   accessToken?: true
   phoneNumberId?: true
@@ -109,6 +118,7 @@ export type ChannelMaxAggregateInputType = {
   pageId?: true
   pageName?: true
   businessAccountId?: true
+  instanceName?: true
   isActive?: true
   lastSyncAt?: true
   webhookVerifiedAt?: true
@@ -120,6 +130,7 @@ export type ChannelCountAggregateInputType = {
   id?: true
   workspaceId?: true
   type?: true
+  provider?: true
   name?: true
   accessToken?: true
   phoneNumberId?: true
@@ -127,6 +138,7 @@ export type ChannelCountAggregateInputType = {
   pageId?: true
   pageName?: true
   businessAccountId?: true
+  instanceName?: true
   isActive?: true
   lastSyncAt?: true
   webhookVerifiedAt?: true
@@ -211,6 +223,7 @@ export type ChannelGroupByOutputType = {
   id: string
   workspaceId: string
   type: $Enums.ChannelType
+  provider: $Enums.ChannelProvider
   name: string
   accessToken: string | null
   phoneNumberId: string | null
@@ -218,6 +231,7 @@ export type ChannelGroupByOutputType = {
   pageId: string | null
   pageName: string | null
   businessAccountId: string | null
+  instanceName: string | null
   isActive: boolean
   lastSyncAt: Date | null
   webhookVerifiedAt: Date | null
@@ -250,6 +264,7 @@ export type ChannelWhereInput = {
   id?: Prisma.StringFilter<"Channel"> | string
   workspaceId?: Prisma.StringFilter<"Channel"> | string
   type?: Prisma.EnumChannelTypeFilter<"Channel"> | $Enums.ChannelType
+  provider?: Prisma.EnumChannelProviderFilter<"Channel"> | $Enums.ChannelProvider
   name?: Prisma.StringFilter<"Channel"> | string
   accessToken?: Prisma.StringNullableFilter<"Channel"> | string | null
   phoneNumberId?: Prisma.StringNullableFilter<"Channel"> | string | null
@@ -257,6 +272,7 @@ export type ChannelWhereInput = {
   pageId?: Prisma.StringNullableFilter<"Channel"> | string | null
   pageName?: Prisma.StringNullableFilter<"Channel"> | string | null
   businessAccountId?: Prisma.StringNullableFilter<"Channel"> | string | null
+  instanceName?: Prisma.StringNullableFilter<"Channel"> | string | null
   isActive?: Prisma.BoolFilter<"Channel"> | boolean
   lastSyncAt?: Prisma.DateTimeNullableFilter<"Channel"> | Date | string | null
   webhookVerifiedAt?: Prisma.DateTimeNullableFilter<"Channel"> | Date | string | null
@@ -270,6 +286,7 @@ export type ChannelOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   workspaceId?: Prisma.SortOrder
   type?: Prisma.SortOrder
+  provider?: Prisma.SortOrder
   name?: Prisma.SortOrder
   accessToken?: Prisma.SortOrderInput | Prisma.SortOrder
   phoneNumberId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -277,6 +294,7 @@ export type ChannelOrderByWithRelationInput = {
   pageId?: Prisma.SortOrderInput | Prisma.SortOrder
   pageName?: Prisma.SortOrderInput | Prisma.SortOrder
   businessAccountId?: Prisma.SortOrderInput | Prisma.SortOrder
+  instanceName?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   lastSyncAt?: Prisma.SortOrderInput | Prisma.SortOrder
   webhookVerifiedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -293,6 +311,7 @@ export type ChannelWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.ChannelWhereInput | Prisma.ChannelWhereInput[]
   workspaceId?: Prisma.StringFilter<"Channel"> | string
   type?: Prisma.EnumChannelTypeFilter<"Channel"> | $Enums.ChannelType
+  provider?: Prisma.EnumChannelProviderFilter<"Channel"> | $Enums.ChannelProvider
   name?: Prisma.StringFilter<"Channel"> | string
   accessToken?: Prisma.StringNullableFilter<"Channel"> | string | null
   phoneNumberId?: Prisma.StringNullableFilter<"Channel"> | string | null
@@ -300,6 +319,7 @@ export type ChannelWhereUniqueInput = Prisma.AtLeast<{
   pageId?: Prisma.StringNullableFilter<"Channel"> | string | null
   pageName?: Prisma.StringNullableFilter<"Channel"> | string | null
   businessAccountId?: Prisma.StringNullableFilter<"Channel"> | string | null
+  instanceName?: Prisma.StringNullableFilter<"Channel"> | string | null
   isActive?: Prisma.BoolFilter<"Channel"> | boolean
   lastSyncAt?: Prisma.DateTimeNullableFilter<"Channel"> | Date | string | null
   webhookVerifiedAt?: Prisma.DateTimeNullableFilter<"Channel"> | Date | string | null
@@ -313,6 +333,7 @@ export type ChannelOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   workspaceId?: Prisma.SortOrder
   type?: Prisma.SortOrder
+  provider?: Prisma.SortOrder
   name?: Prisma.SortOrder
   accessToken?: Prisma.SortOrderInput | Prisma.SortOrder
   phoneNumberId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -320,6 +341,7 @@ export type ChannelOrderByWithAggregationInput = {
   pageId?: Prisma.SortOrderInput | Prisma.SortOrder
   pageName?: Prisma.SortOrderInput | Prisma.SortOrder
   businessAccountId?: Prisma.SortOrderInput | Prisma.SortOrder
+  instanceName?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   lastSyncAt?: Prisma.SortOrderInput | Prisma.SortOrder
   webhookVerifiedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -337,6 +359,7 @@ export type ChannelScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Channel"> | string
   workspaceId?: Prisma.StringWithAggregatesFilter<"Channel"> | string
   type?: Prisma.EnumChannelTypeWithAggregatesFilter<"Channel"> | $Enums.ChannelType
+  provider?: Prisma.EnumChannelProviderWithAggregatesFilter<"Channel"> | $Enums.ChannelProvider
   name?: Prisma.StringWithAggregatesFilter<"Channel"> | string
   accessToken?: Prisma.StringNullableWithAggregatesFilter<"Channel"> | string | null
   phoneNumberId?: Prisma.StringNullableWithAggregatesFilter<"Channel"> | string | null
@@ -344,6 +367,7 @@ export type ChannelScalarWhereWithAggregatesInput = {
   pageId?: Prisma.StringNullableWithAggregatesFilter<"Channel"> | string | null
   pageName?: Prisma.StringNullableWithAggregatesFilter<"Channel"> | string | null
   businessAccountId?: Prisma.StringNullableWithAggregatesFilter<"Channel"> | string | null
+  instanceName?: Prisma.StringNullableWithAggregatesFilter<"Channel"> | string | null
   isActive?: Prisma.BoolWithAggregatesFilter<"Channel"> | boolean
   lastSyncAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Channel"> | Date | string | null
   webhookVerifiedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Channel"> | Date | string | null
@@ -354,6 +378,7 @@ export type ChannelScalarWhereWithAggregatesInput = {
 export type ChannelCreateInput = {
   id?: string
   type: $Enums.ChannelType
+  provider?: $Enums.ChannelProvider
   name: string
   accessToken?: string | null
   phoneNumberId?: string | null
@@ -361,6 +386,7 @@ export type ChannelCreateInput = {
   pageId?: string | null
   pageName?: string | null
   businessAccountId?: string | null
+  instanceName?: string | null
   isActive?: boolean
   lastSyncAt?: Date | string | null
   webhookVerifiedAt?: Date | string | null
@@ -374,6 +400,7 @@ export type ChannelUncheckedCreateInput = {
   id?: string
   workspaceId: string
   type: $Enums.ChannelType
+  provider?: $Enums.ChannelProvider
   name: string
   accessToken?: string | null
   phoneNumberId?: string | null
@@ -381,6 +408,7 @@ export type ChannelUncheckedCreateInput = {
   pageId?: string | null
   pageName?: string | null
   businessAccountId?: string | null
+  instanceName?: string | null
   isActive?: boolean
   lastSyncAt?: Date | string | null
   webhookVerifiedAt?: Date | string | null
@@ -392,6 +420,7 @@ export type ChannelUncheckedCreateInput = {
 export type ChannelUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumChannelTypeFieldUpdateOperationsInput | $Enums.ChannelType
+  provider?: Prisma.EnumChannelProviderFieldUpdateOperationsInput | $Enums.ChannelProvider
   name?: Prisma.StringFieldUpdateOperationsInput | string
   accessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -399,6 +428,7 @@ export type ChannelUpdateInput = {
   pageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pageName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  instanceName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   webhookVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -412,6 +442,7 @@ export type ChannelUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   workspaceId?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumChannelTypeFieldUpdateOperationsInput | $Enums.ChannelType
+  provider?: Prisma.EnumChannelProviderFieldUpdateOperationsInput | $Enums.ChannelProvider
   name?: Prisma.StringFieldUpdateOperationsInput | string
   accessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -419,6 +450,7 @@ export type ChannelUncheckedUpdateInput = {
   pageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pageName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  instanceName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   webhookVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -431,6 +463,7 @@ export type ChannelCreateManyInput = {
   id?: string
   workspaceId: string
   type: $Enums.ChannelType
+  provider?: $Enums.ChannelProvider
   name: string
   accessToken?: string | null
   phoneNumberId?: string | null
@@ -438,6 +471,7 @@ export type ChannelCreateManyInput = {
   pageId?: string | null
   pageName?: string | null
   businessAccountId?: string | null
+  instanceName?: string | null
   isActive?: boolean
   lastSyncAt?: Date | string | null
   webhookVerifiedAt?: Date | string | null
@@ -448,6 +482,7 @@ export type ChannelCreateManyInput = {
 export type ChannelUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumChannelTypeFieldUpdateOperationsInput | $Enums.ChannelType
+  provider?: Prisma.EnumChannelProviderFieldUpdateOperationsInput | $Enums.ChannelProvider
   name?: Prisma.StringFieldUpdateOperationsInput | string
   accessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -455,6 +490,7 @@ export type ChannelUpdateManyMutationInput = {
   pageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pageName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  instanceName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   webhookVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -466,6 +502,7 @@ export type ChannelUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   workspaceId?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumChannelTypeFieldUpdateOperationsInput | $Enums.ChannelType
+  provider?: Prisma.EnumChannelProviderFieldUpdateOperationsInput | $Enums.ChannelProvider
   name?: Prisma.StringFieldUpdateOperationsInput | string
   accessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -473,6 +510,7 @@ export type ChannelUncheckedUpdateManyInput = {
   pageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pageName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  instanceName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   webhookVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -494,6 +532,7 @@ export type ChannelCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   workspaceId?: Prisma.SortOrder
   type?: Prisma.SortOrder
+  provider?: Prisma.SortOrder
   name?: Prisma.SortOrder
   accessToken?: Prisma.SortOrder
   phoneNumberId?: Prisma.SortOrder
@@ -501,6 +540,7 @@ export type ChannelCountOrderByAggregateInput = {
   pageId?: Prisma.SortOrder
   pageName?: Prisma.SortOrder
   businessAccountId?: Prisma.SortOrder
+  instanceName?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   lastSyncAt?: Prisma.SortOrder
   webhookVerifiedAt?: Prisma.SortOrder
@@ -512,6 +552,7 @@ export type ChannelMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   workspaceId?: Prisma.SortOrder
   type?: Prisma.SortOrder
+  provider?: Prisma.SortOrder
   name?: Prisma.SortOrder
   accessToken?: Prisma.SortOrder
   phoneNumberId?: Prisma.SortOrder
@@ -519,6 +560,7 @@ export type ChannelMaxOrderByAggregateInput = {
   pageId?: Prisma.SortOrder
   pageName?: Prisma.SortOrder
   businessAccountId?: Prisma.SortOrder
+  instanceName?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   lastSyncAt?: Prisma.SortOrder
   webhookVerifiedAt?: Prisma.SortOrder
@@ -530,6 +572,7 @@ export type ChannelMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   workspaceId?: Prisma.SortOrder
   type?: Prisma.SortOrder
+  provider?: Prisma.SortOrder
   name?: Prisma.SortOrder
   accessToken?: Prisma.SortOrder
   phoneNumberId?: Prisma.SortOrder
@@ -537,6 +580,7 @@ export type ChannelMinOrderByAggregateInput = {
   pageId?: Prisma.SortOrder
   pageName?: Prisma.SortOrder
   businessAccountId?: Prisma.SortOrder
+  instanceName?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   lastSyncAt?: Prisma.SortOrder
   webhookVerifiedAt?: Prisma.SortOrder
@@ -595,6 +639,10 @@ export type EnumChannelTypeFieldUpdateOperationsInput = {
   set?: $Enums.ChannelType
 }
 
+export type EnumChannelProviderFieldUpdateOperationsInput = {
+  set?: $Enums.ChannelProvider
+}
+
 export type ChannelCreateNestedOneWithoutConversationsInput = {
   create?: Prisma.XOR<Prisma.ChannelCreateWithoutConversationsInput, Prisma.ChannelUncheckedCreateWithoutConversationsInput>
   connectOrCreate?: Prisma.ChannelCreateOrConnectWithoutConversationsInput
@@ -612,6 +660,7 @@ export type ChannelUpdateOneRequiredWithoutConversationsNestedInput = {
 export type ChannelCreateWithoutWorkspaceInput = {
   id?: string
   type: $Enums.ChannelType
+  provider?: $Enums.ChannelProvider
   name: string
   accessToken?: string | null
   phoneNumberId?: string | null
@@ -619,6 +668,7 @@ export type ChannelCreateWithoutWorkspaceInput = {
   pageId?: string | null
   pageName?: string | null
   businessAccountId?: string | null
+  instanceName?: string | null
   isActive?: boolean
   lastSyncAt?: Date | string | null
   webhookVerifiedAt?: Date | string | null
@@ -630,6 +680,7 @@ export type ChannelCreateWithoutWorkspaceInput = {
 export type ChannelUncheckedCreateWithoutWorkspaceInput = {
   id?: string
   type: $Enums.ChannelType
+  provider?: $Enums.ChannelProvider
   name: string
   accessToken?: string | null
   phoneNumberId?: string | null
@@ -637,6 +688,7 @@ export type ChannelUncheckedCreateWithoutWorkspaceInput = {
   pageId?: string | null
   pageName?: string | null
   businessAccountId?: string | null
+  instanceName?: string | null
   isActive?: boolean
   lastSyncAt?: Date | string | null
   webhookVerifiedAt?: Date | string | null
@@ -678,6 +730,7 @@ export type ChannelScalarWhereInput = {
   id?: Prisma.StringFilter<"Channel"> | string
   workspaceId?: Prisma.StringFilter<"Channel"> | string
   type?: Prisma.EnumChannelTypeFilter<"Channel"> | $Enums.ChannelType
+  provider?: Prisma.EnumChannelProviderFilter<"Channel"> | $Enums.ChannelProvider
   name?: Prisma.StringFilter<"Channel"> | string
   accessToken?: Prisma.StringNullableFilter<"Channel"> | string | null
   phoneNumberId?: Prisma.StringNullableFilter<"Channel"> | string | null
@@ -685,6 +738,7 @@ export type ChannelScalarWhereInput = {
   pageId?: Prisma.StringNullableFilter<"Channel"> | string | null
   pageName?: Prisma.StringNullableFilter<"Channel"> | string | null
   businessAccountId?: Prisma.StringNullableFilter<"Channel"> | string | null
+  instanceName?: Prisma.StringNullableFilter<"Channel"> | string | null
   isActive?: Prisma.BoolFilter<"Channel"> | boolean
   lastSyncAt?: Prisma.DateTimeNullableFilter<"Channel"> | Date | string | null
   webhookVerifiedAt?: Prisma.DateTimeNullableFilter<"Channel"> | Date | string | null
@@ -695,6 +749,7 @@ export type ChannelScalarWhereInput = {
 export type ChannelCreateWithoutConversationsInput = {
   id?: string
   type: $Enums.ChannelType
+  provider?: $Enums.ChannelProvider
   name: string
   accessToken?: string | null
   phoneNumberId?: string | null
@@ -702,6 +757,7 @@ export type ChannelCreateWithoutConversationsInput = {
   pageId?: string | null
   pageName?: string | null
   businessAccountId?: string | null
+  instanceName?: string | null
   isActive?: boolean
   lastSyncAt?: Date | string | null
   webhookVerifiedAt?: Date | string | null
@@ -714,6 +770,7 @@ export type ChannelUncheckedCreateWithoutConversationsInput = {
   id?: string
   workspaceId: string
   type: $Enums.ChannelType
+  provider?: $Enums.ChannelProvider
   name: string
   accessToken?: string | null
   phoneNumberId?: string | null
@@ -721,6 +778,7 @@ export type ChannelUncheckedCreateWithoutConversationsInput = {
   pageId?: string | null
   pageName?: string | null
   businessAccountId?: string | null
+  instanceName?: string | null
   isActive?: boolean
   lastSyncAt?: Date | string | null
   webhookVerifiedAt?: Date | string | null
@@ -747,6 +805,7 @@ export type ChannelUpdateToOneWithWhereWithoutConversationsInput = {
 export type ChannelUpdateWithoutConversationsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumChannelTypeFieldUpdateOperationsInput | $Enums.ChannelType
+  provider?: Prisma.EnumChannelProviderFieldUpdateOperationsInput | $Enums.ChannelProvider
   name?: Prisma.StringFieldUpdateOperationsInput | string
   accessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -754,6 +813,7 @@ export type ChannelUpdateWithoutConversationsInput = {
   pageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pageName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  instanceName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   webhookVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -766,6 +826,7 @@ export type ChannelUncheckedUpdateWithoutConversationsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   workspaceId?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumChannelTypeFieldUpdateOperationsInput | $Enums.ChannelType
+  provider?: Prisma.EnumChannelProviderFieldUpdateOperationsInput | $Enums.ChannelProvider
   name?: Prisma.StringFieldUpdateOperationsInput | string
   accessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -773,6 +834,7 @@ export type ChannelUncheckedUpdateWithoutConversationsInput = {
   pageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pageName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  instanceName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   webhookVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -783,6 +845,7 @@ export type ChannelUncheckedUpdateWithoutConversationsInput = {
 export type ChannelCreateManyWorkspaceInput = {
   id?: string
   type: $Enums.ChannelType
+  provider?: $Enums.ChannelProvider
   name: string
   accessToken?: string | null
   phoneNumberId?: string | null
@@ -790,6 +853,7 @@ export type ChannelCreateManyWorkspaceInput = {
   pageId?: string | null
   pageName?: string | null
   businessAccountId?: string | null
+  instanceName?: string | null
   isActive?: boolean
   lastSyncAt?: Date | string | null
   webhookVerifiedAt?: Date | string | null
@@ -800,6 +864,7 @@ export type ChannelCreateManyWorkspaceInput = {
 export type ChannelUpdateWithoutWorkspaceInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumChannelTypeFieldUpdateOperationsInput | $Enums.ChannelType
+  provider?: Prisma.EnumChannelProviderFieldUpdateOperationsInput | $Enums.ChannelProvider
   name?: Prisma.StringFieldUpdateOperationsInput | string
   accessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -807,6 +872,7 @@ export type ChannelUpdateWithoutWorkspaceInput = {
   pageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pageName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  instanceName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   webhookVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -818,6 +884,7 @@ export type ChannelUpdateWithoutWorkspaceInput = {
 export type ChannelUncheckedUpdateWithoutWorkspaceInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumChannelTypeFieldUpdateOperationsInput | $Enums.ChannelType
+  provider?: Prisma.EnumChannelProviderFieldUpdateOperationsInput | $Enums.ChannelProvider
   name?: Prisma.StringFieldUpdateOperationsInput | string
   accessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -825,6 +892,7 @@ export type ChannelUncheckedUpdateWithoutWorkspaceInput = {
   pageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pageName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  instanceName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   webhookVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -836,6 +904,7 @@ export type ChannelUncheckedUpdateWithoutWorkspaceInput = {
 export type ChannelUncheckedUpdateManyWithoutWorkspaceInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumChannelTypeFieldUpdateOperationsInput | $Enums.ChannelType
+  provider?: Prisma.EnumChannelProviderFieldUpdateOperationsInput | $Enums.ChannelProvider
   name?: Prisma.StringFieldUpdateOperationsInput | string
   accessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -843,6 +912,7 @@ export type ChannelUncheckedUpdateManyWithoutWorkspaceInput = {
   pageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pageName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  instanceName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   webhookVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -885,6 +955,7 @@ export type ChannelSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   id?: boolean
   workspaceId?: boolean
   type?: boolean
+  provider?: boolean
   name?: boolean
   accessToken?: boolean
   phoneNumberId?: boolean
@@ -892,6 +963,7 @@ export type ChannelSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   pageId?: boolean
   pageName?: boolean
   businessAccountId?: boolean
+  instanceName?: boolean
   isActive?: boolean
   lastSyncAt?: boolean
   webhookVerifiedAt?: boolean
@@ -906,6 +978,7 @@ export type ChannelSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   id?: boolean
   workspaceId?: boolean
   type?: boolean
+  provider?: boolean
   name?: boolean
   accessToken?: boolean
   phoneNumberId?: boolean
@@ -913,6 +986,7 @@ export type ChannelSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   pageId?: boolean
   pageName?: boolean
   businessAccountId?: boolean
+  instanceName?: boolean
   isActive?: boolean
   lastSyncAt?: boolean
   webhookVerifiedAt?: boolean
@@ -925,6 +999,7 @@ export type ChannelSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   id?: boolean
   workspaceId?: boolean
   type?: boolean
+  provider?: boolean
   name?: boolean
   accessToken?: boolean
   phoneNumberId?: boolean
@@ -932,6 +1007,7 @@ export type ChannelSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   pageId?: boolean
   pageName?: boolean
   businessAccountId?: boolean
+  instanceName?: boolean
   isActive?: boolean
   lastSyncAt?: boolean
   webhookVerifiedAt?: boolean
@@ -944,6 +1020,7 @@ export type ChannelSelectScalar = {
   id?: boolean
   workspaceId?: boolean
   type?: boolean
+  provider?: boolean
   name?: boolean
   accessToken?: boolean
   phoneNumberId?: boolean
@@ -951,6 +1028,7 @@ export type ChannelSelectScalar = {
   pageId?: boolean
   pageName?: boolean
   businessAccountId?: boolean
+  instanceName?: boolean
   isActive?: boolean
   lastSyncAt?: boolean
   webhookVerifiedAt?: boolean
@@ -958,7 +1036,7 @@ export type ChannelSelectScalar = {
   updatedAt?: boolean
 }
 
-export type ChannelOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "workspaceId" | "type" | "name" | "accessToken" | "phoneNumberId" | "phoneNumber" | "pageId" | "pageName" | "businessAccountId" | "isActive" | "lastSyncAt" | "webhookVerifiedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["channel"]>
+export type ChannelOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "workspaceId" | "type" | "provider" | "name" | "accessToken" | "phoneNumberId" | "phoneNumber" | "pageId" | "pageName" | "businessAccountId" | "instanceName" | "isActive" | "lastSyncAt" | "webhookVerifiedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["channel"]>
 export type ChannelInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   workspace?: boolean | Prisma.WorkspaceDefaultArgs<ExtArgs>
   conversations?: boolean | Prisma.Channel$conversationsArgs<ExtArgs>
@@ -981,6 +1059,7 @@ export type $ChannelPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     id: string
     workspaceId: string
     type: $Enums.ChannelType
+    provider: $Enums.ChannelProvider
     name: string
     accessToken: string | null
     phoneNumberId: string | null
@@ -988,6 +1067,7 @@ export type $ChannelPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     pageId: string | null
     pageName: string | null
     businessAccountId: string | null
+    instanceName: string | null
     isActive: boolean
     lastSyncAt: Date | null
     webhookVerifiedAt: Date | null
@@ -1421,6 +1501,7 @@ export interface ChannelFieldRefs {
   readonly id: Prisma.FieldRef<"Channel", 'String'>
   readonly workspaceId: Prisma.FieldRef<"Channel", 'String'>
   readonly type: Prisma.FieldRef<"Channel", 'ChannelType'>
+  readonly provider: Prisma.FieldRef<"Channel", 'ChannelProvider'>
   readonly name: Prisma.FieldRef<"Channel", 'String'>
   readonly accessToken: Prisma.FieldRef<"Channel", 'String'>
   readonly phoneNumberId: Prisma.FieldRef<"Channel", 'String'>
@@ -1428,6 +1509,7 @@ export interface ChannelFieldRefs {
   readonly pageId: Prisma.FieldRef<"Channel", 'String'>
   readonly pageName: Prisma.FieldRef<"Channel", 'String'>
   readonly businessAccountId: Prisma.FieldRef<"Channel", 'String'>
+  readonly instanceName: Prisma.FieldRef<"Channel", 'String'>
   readonly isActive: Prisma.FieldRef<"Channel", 'Boolean'>
   readonly lastSyncAt: Prisma.FieldRef<"Channel", 'DateTime'>
   readonly webhookVerifiedAt: Prisma.FieldRef<"Channel", 'DateTime'>

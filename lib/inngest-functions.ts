@@ -2,185 +2,13 @@ import { inngest } from '@/lib/inngest'
 import { db } from '@/lib/db'
 import { pusherServer } from '@/lib/pusher'
 import { decrypt } from '@/lib/crypto'
-import type { WhatsAppWebhookPayload } from '@/lib/integrations/whatsapp'
 import type { InstagramWebhookPayload } from '@/lib/integrations/instagram'
 import type { FacebookWebhookPayload } from '@/lib/integrations/facebook'
-
-// ==================== WHATSAPP ====================
-
-export const processWhatsAppMessage = inngest.createFunction(
-  { id: 'process-whatsapp-message', retries: 3 },
-  { event: 'whatsapp/message.received' },
-  async ({ event }) => {
-    const payload = event.data as WhatsAppWebhookPayload
-
-    for (const entry of payload.entry) {
-      for (const change of entry.changes) {
-        const { value, field } = change
-
-        // ---- Group lifecycle: group created/archived/deleted ----
-        if (field === 'group_lifecycle_update' && value.group_id && value.metadata) {
-          const channel = await db.channel.findFirst({
-            where: { phoneNumberId: value.metadata.phone_number_id, type: 'WHATSAPP' },
-          })
-          if (!channel) continue
-
-          if (value.event === 'group_created') {
-            await db.conversation.upsert({
-              where: {
-                workspaceId_channelId_externalId: {
-                  workspaceId: channel.workspaceId,
-                  channelId: channel.id,
-                  externalId: value.group_id,
-                },
-              },
-              create: {
-                workspaceId: channel.workspaceId,
-                channelId: channel.id,
-                externalId: value.group_id,
-                contactName: `Grupo ${value.group_id.slice(-6)}`,
-                status: 'UNASSIGNED',
-              },
-              update: {},
-            })
-          } else if (value.event === 'group_archived' || value.event === 'group_deleted') {
-            await db.conversation.updateMany({
-              where: {
-                workspaceId: channel.workspaceId,
-                channelId: channel.id,
-                externalId: value.group_id,
-              },
-              data: { status: 'ARCHIVED' },
-            })
-          }
-          continue
-        }
-
-        // ---- Group settings: name/subject changed ----
-        if (field === 'group_settings_update' && value.group_id && value.metadata) {
-          const channel = await db.channel.findFirst({
-            where: { phoneNumberId: value.metadata.phone_number_id, type: 'WHATSAPP' },
-          })
-          if (!channel || !value.subject) continue
-
-          await db.conversation.updateMany({
-            where: {
-              workspaceId: channel.workspaceId,
-              channelId: channel.id,
-              externalId: value.group_id,
-            },
-            data: { contactName: value.subject },
-          })
-          continue
-        }
-
-        // ---- Group participants: member added/removed ----
-        if (field === 'group_participants_update' && value.group_id && value.metadata) {
-          const channel = await db.channel.findFirst({
-            where: { phoneNumberId: value.metadata.phone_number_id, type: 'WHATSAPP' },
-          })
-          if (!channel) continue
-
-          const conversation = await db.conversation.findFirst({
-            where: {
-              workspaceId: channel.workspaceId,
-              channelId: channel.id,
-              externalId: value.group_id,
-            },
-          })
-          if (!conversation) continue
-
-          const participantIds = (value.participants ?? []).map((p) => p.wa_id).join(', ')
-          const action = value.event === 'participant_added' ? 'entrou no grupo' : 'saiu do grupo'
-          const content = `[Sistema] ${participantIds} ${action}`
-
-          await db.message.create({
-            data: {
-              conversationId: conversation.id,
-              workspaceId: channel.workspaceId,
-              direction: 'INBOUND',
-              content,
-              status: 'DELIVERED',
-            },
-          })
-
-          await db.conversation.update({
-            where: { id: conversation.id },
-            data: { lastMessageAt: new Date(), lastMessagePreview: content.slice(0, 100) },
-          })
-          continue
-        }
-
-        // ---- Regular and group messages ----
-        if (!value.messages) continue
-
-        const channel = await db.channel.findFirst({
-          where: { phoneNumberId: value.metadata?.phone_number_id, type: 'WHATSAPP' },
-        })
-        if (!channel) continue
-
-        for (const msg of value.messages) {
-          if (msg.type !== 'text') continue
-
-          const isGroup = !!msg.group
-          const externalId = isGroup ? msg.group!.id : msg.from
-          const contactName = isGroup
-            ? (msg.group!.subject || `Grupo ${msg.group!.id.slice(-6)}`)
-            : (value.contacts?.find((c) => c.wa_id === msg.from)?.profile?.name ?? msg.from)
-
-          const conversation = await db.conversation.upsert({
-            where: {
-              workspaceId_channelId_externalId: {
-                workspaceId: channel.workspaceId,
-                channelId: channel.id,
-                externalId,
-              },
-            },
-            create: {
-              workspaceId: channel.workspaceId,
-              channelId: channel.id,
-              externalId,
-              contactName,
-              contactPhone: isGroup ? undefined : msg.from,
-              status: 'UNASSIGNED',
-            },
-            update: { contactName },
-          })
-
-          // Deduplication
-          const existing = await db.message.findFirst({ where: { externalId: msg.id } })
-          if (existing) continue
-
-          const savedMessage = await db.message.create({
-            data: {
-              conversationId: conversation.id,
-              workspaceId: channel.workspaceId,
-              direction: 'INBOUND',
-              content: msg.text?.body ?? '[Media]',
-              externalId: msg.id,
-              status: 'DELIVERED',
-            },
-          })
-
-          await db.conversation.update({
-            where: { id: conversation.id },
-            data: {
-              lastMessageAt: new Date(),
-              lastMessagePreview: (msg.text?.body ?? '[Media]').slice(0, 100),
-              unreadCount: { increment: 1 },
-            },
-          })
-
-          await pusherServer.trigger(
-            `workspace-${channel.workspaceId}`,
-            'new-message',
-            { conversationId: conversation.id, message: savedMessage }
-          )
-        }
-      }
-    }
-  }
-)
+import type {
+  EvolutionMessageUpsertPayload,
+  EvolutionConnectionUpdatePayload,
+  EvolutionQRCodeUpdatedPayload,
+} from '@/lib/integrations/evolution'
 
 // ==================== INSTAGRAM ====================
 
@@ -323,5 +151,135 @@ export const processFacebookMessage = inngest.createFunction(
         )
       }
     }
+  }
+)
+
+// ==================== EVOLUTION (WHATSAPP) ====================
+
+export const processEvolutionMessage = inngest.createFunction(
+  { id: 'process-evolution-message', retries: 3 },
+  { event: 'evolution/message.received' },
+  async ({ event }) => {
+    const payload = event.data as EvolutionMessageUpsertPayload
+    const { instance, data: msg } = payload
+
+    // Skip outgoing echoes
+    if (msg.key.fromMe) return
+
+    const channel = await db.channel.findFirst({
+      where: { instanceName: instance, provider: 'EVOLUTION', type: 'WHATSAPP' },
+    })
+    if (!channel) return
+
+    const remoteJid = msg.key.remoteJid
+    const isGroup = remoteJid.endsWith('@g.us')
+    const contactPhone = isGroup ? undefined : remoteJid.replace('@s.whatsapp.net', '')
+    const contactName = msg.pushName ?? contactPhone ?? remoteJid.split('@')[0]
+
+    const textContent =
+      msg.message?.conversation ??
+      msg.message?.extendedTextMessage?.text ??
+      '[Media]'
+
+    // Deduplication
+    const existing = await db.message.findFirst({ where: { externalId: msg.key.id } })
+    if (existing) return
+
+    const conversation = await db.conversation.upsert({
+      where: {
+        workspaceId_channelId_externalId: {
+          workspaceId: channel.workspaceId,
+          channelId: channel.id,
+          externalId: remoteJid,
+        },
+      },
+      create: {
+        workspaceId: channel.workspaceId,
+        channelId: channel.id,
+        externalId: remoteJid,
+        contactName,
+        contactPhone,
+        status: 'UNASSIGNED',
+      },
+      update: { contactName },
+    })
+
+    const savedMessage = await db.message.create({
+      data: {
+        conversationId: conversation.id,
+        workspaceId: channel.workspaceId,
+        direction: 'INBOUND',
+        content: textContent,
+        externalId: msg.key.id,
+        status: 'DELIVERED',
+      },
+    })
+
+    await db.conversation.update({
+      where: { id: conversation.id },
+      data: {
+        lastMessageAt: new Date(),
+        lastMessagePreview: textContent.slice(0, 100),
+        unreadCount: { increment: 1 },
+      },
+    })
+
+    await pusherServer.trigger(
+      `workspace-${channel.workspaceId}`,
+      'new-message',
+      { conversationId: conversation.id, message: savedMessage }
+    )
+  }
+)
+
+export const processEvolutionConnectionUpdate = inngest.createFunction(
+  { id: 'process-evolution-connection-update', retries: 2 },
+  { event: 'evolution/connection.update' },
+  async ({ event }) => {
+    const payload = event.data as EvolutionConnectionUpdatePayload
+    const { instance, data } = payload
+
+    const channel = await db.channel.findFirst({
+      where: { instanceName: instance, provider: 'EVOLUTION' },
+    })
+    if (!channel) return
+
+    if (data.state === 'open') {
+      await db.channel.update({
+        where: { id: channel.id },
+        data: { isActive: true, webhookVerifiedAt: new Date() },
+      })
+    } else if (data.state === 'close') {
+      await db.channel.update({
+        where: { id: channel.id },
+        data: { isActive: false },
+      })
+      await pusherServer.trigger(
+        `workspace-${channel.workspaceId}`,
+        'channel-status-update',
+        { channelId: channel.id, provider: 'EVOLUTION', state: 'close' }
+      )
+    }
+  }
+)
+
+export const processEvolutionQRCodeUpdated = inngest.createFunction(
+  { id: 'process-evolution-qrcode-updated', retries: 1 },
+  { event: 'evolution/qrcode.updated' },
+  async ({ event }) => {
+    const payload = event.data as EvolutionQRCodeUpdatedPayload
+    const { instance, data } = payload
+
+    const channel = await db.channel.findFirst({
+      where: { instanceName: instance, provider: 'EVOLUTION' },
+    })
+    if (!channel) return
+
+    // Broadcast updated QR so the UI modal can refresh without re-calling the API
+    await pusherServer.trigger(
+      `workspace-${channel.workspaceId}`,
+      'evolution-qr-updated',
+      { channelId: channel.id, qr: data.qrcode }
+    )
   }
 )

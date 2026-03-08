@@ -30,38 +30,6 @@ async function getLongLivedToken(shortToken: string): Promise<string> {
   return data.access_token ?? shortToken
 }
 
-async function getWhatsAppPhoneNumbers(userToken: string): Promise<Array<{ id: string; display_phone_number: string; verified_name: string; wabaId: string }>> {
-  // Get WhatsApp Business Accounts
-  const wabaRes = await fetch(`${GRAPH_URL}/me/businesses?fields=id,name,owned_whatsapp_business_accounts&access_token=${userToken}`)
-  const wabaData = await wabaRes.json()
-
-  const numbers: Array<{ id: string; display_phone_number: string; verified_name: string; wabaId: string }> = []
-
-  if (!wabaData.data?.length) {
-    // Try direct WABA access
-    const directRes = await fetch(`${GRAPH_URL}/me/whatsapp_business_accounts?access_token=${userToken}`)
-    const directData = await directRes.json()
-    for (const waba of directData.data ?? []) {
-      const phoneRes = await fetch(`${GRAPH_URL}/${waba.id}/phone_numbers?fields=id,display_phone_number,verified_name&access_token=${userToken}`)
-      const phoneData = await phoneRes.json()
-      for (const p of phoneData.data ?? []) {
-        numbers.push({ ...p, wabaId: waba.id })
-      }
-    }
-  } else {
-    for (const biz of wabaData.data) {
-      for (const waba of biz.owned_whatsapp_business_accounts?.data ?? []) {
-        const phoneRes = await fetch(`${GRAPH_URL}/${waba.id}/phone_numbers?fields=id,display_phone_number,verified_name&access_token=${userToken}`)
-        const phoneData = await phoneRes.json()
-        for (const p of phoneData.data ?? []) {
-          numbers.push({ ...p, wabaId: waba.id })
-        }
-      }
-    }
-  }
-
-  return numbers
-}
 
 async function getPages(userToken: string): Promise<Array<{ id: string; name: string; access_token: string }>> {
   const res = await fetch(`${GRAPH_URL}/me/accounts?fields=id,name,access_token&access_token=${userToken}`)
@@ -80,7 +48,7 @@ export async function POST(req: NextRequest) {
     const { code, accessToken: directToken, channelType, selectedId, channelName } = body as {
       code?: string
       accessToken?: string
-      channelType: 'WHATSAPP' | 'INSTAGRAM' | 'FACEBOOK'
+      channelType: 'INSTAGRAM' | 'FACEBOOK'
       selectedId?: string
       channelName?: string
     }
@@ -101,61 +69,6 @@ export async function POST(req: NextRequest) {
     }
 
     const workspaceId = session.user.workspaceId
-
-    if (channelType === 'WHATSAPP') {
-      const numbers = await getWhatsAppPhoneNumbers(userToken)
-
-      if (!numbers.length) {
-        return NextResponse.json({ error: 'Nenhum número WhatsApp encontrado nesta conta.' }, { status: 400 })
-      }
-
-      // If a specific number was selected, save it
-      if (selectedId) {
-        const selected = numbers.find((n) => n.id === selectedId)
-        if (!selected) {
-          return NextResponse.json({ error: 'Número não encontrado.' }, { status: 400 })
-        }
-
-        const encryptedToken = encrypt(userToken)
-        const existing = await db.channel.findFirst({ where: { workspaceId, type: 'WHATSAPP' } })
-        const data = {
-          name: channelName ?? selected.verified_name ?? selected.display_phone_number,
-          accessToken: encryptedToken,
-          phoneNumberId: selected.id,
-          phoneNumber: selected.display_phone_number,
-          businessAccountId: selected.wabaId,
-          pageId: null,
-          pageName: null,
-        }
-
-        const channel = existing
-          ? await db.channel.update({ where: { id: existing.id }, data })
-          : await db.channel.create({ data: { workspaceId, type: 'WHATSAPP', ...data } })
-
-        return NextResponse.json({
-          step: 'done',
-          channel: {
-            id: channel.id,
-            type: channel.type,
-            name: channel.name,
-            phoneNumberId: channel.phoneNumberId,
-            phoneNumber: channel.phoneNumber,
-          },
-        })
-      }
-
-      // Return list for user to pick
-      return NextResponse.json({
-        step: 'select',
-        channelType: 'WHATSAPP',
-        userToken,
-        options: numbers.map((n) => ({
-          id: n.id,
-          name: `${n.verified_name} (${n.display_phone_number})`,
-          wabaId: n.wabaId,
-        })),
-      })
-    }
 
     // Instagram or Facebook — pages flow
     const pages = await getPages(userToken)

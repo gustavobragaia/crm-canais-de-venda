@@ -1234,6 +1234,7 @@ export const ChannelScalarFieldEnum = {
   id: 'id',
   workspaceId: 'workspaceId',
   type: 'type',
+  provider: 'provider',
   name: 'name',
   accessToken: 'accessToken',
   phoneNumberId: 'phoneNumberId',
@@ -1241,6 +1242,7 @@ export const ChannelScalarFieldEnum = {
   pageId: 'pageId',
   pageName: 'pageName',
   businessAccountId: 'businessAccountId',
+  instanceName: 'instanceName',
   isActive: 'isActive',
   lastSyncAt: 'lastSyncAt',
   webhookVerifiedAt: 'webhookVerifiedAt',
@@ -1520,6 +1522,20 @@ export type EnumChannelTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$Pris
  * Reference to a field of type 'ChannelType[]'
  */
 export type ListEnumChannelTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ChannelType[]'>
+    
+
+
+/**
+ * Reference to a field of type 'ChannelProvider'
+ */
+export type EnumChannelProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ChannelProvider'>
+    
+
+
+/**
+ * Reference to a field of type 'ChannelProvider[]'
+ */
+export type ListEnumChannelProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ChannelProvider[]'>
     
 
 

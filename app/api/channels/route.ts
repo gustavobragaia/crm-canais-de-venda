@@ -9,22 +9,29 @@ export async function GET() {
     return NextResponse.json({ error: 'Não autorizado.' }, { status: 401 })
   }
 
-  const channels = await db.channel.findMany({
-    where: { workspaceId: session.user.workspaceId },
-    select: {
-      id: true,
-      type: true,
-      name: true,
-      phoneNumberId: true,
-      phoneNumber: true,
-      pageId: true,
-      pageName: true,
-      isActive: true,
-      createdAt: true,
-    },
-  })
+  try {
+    const channels = await db.channel.findMany({
+      where: { workspaceId: session.user.workspaceId },
+      select: {
+        id: true,
+        type: true,
+        provider: true,
+        name: true,
+        phoneNumberId: true,
+        phoneNumber: true,
+        pageId: true,
+        pageName: true,
+        instanceName: true,
+        isActive: true,
+        createdAt: true,
+      },
+    })
 
-  return NextResponse.json({ channels })
+    return NextResponse.json({ channels })
+  } catch (error) {
+    console.error('[CHANNELS GET]', error)
+    return NextResponse.json({ error: 'Erro interno do servidor.' }, { status: 500 })
+  }
 }
 
 export async function POST(req: NextRequest) {

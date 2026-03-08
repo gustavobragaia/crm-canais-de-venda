@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { pusherServer } from '@/lib/pusher'
-import { sendWhatsAppMessage } from '@/lib/integrations/whatsapp'
 import { sendInstagramMessage } from '@/lib/integrations/instagram'
 import { sendFacebookMessage } from '@/lib/integrations/facebook'
+import { sendEvolutionMessage } from '@/lib/integrations/evolution'
 import { decrypt } from '@/lib/crypto'
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -77,25 +77,25 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   const channel = conversation.channel
   let externalId: string | undefined
 
-  // Send via appropriate Meta API
+  // Send via appropriate channel API
   try {
-    const accessToken = channel.accessToken ? decrypt(channel.accessToken) : ''
-
-    if (channel.type === 'WHATSAPP' && channel.phoneNumberId) {
-      externalId = await sendWhatsAppMessage(
-        channel.phoneNumberId,
-        conversation.externalId,
-        content,
-        accessToken
-      )
+    if (channel.type === 'WHATSAPP') {
+      if (channel.instanceName) {
+        // Strip @suffix — Evolution expects plain E.164 number
+        const to = conversation.contactPhone
+          ?? conversation.externalId.replace('@s.whatsapp.net', '').replace('@g.us', '')
+        externalId = await sendEvolutionMessage(channel.instanceName, to, content)
+      }
     } else if (channel.type === 'INSTAGRAM') {
+      const accessToken = channel.accessToken ? decrypt(channel.accessToken) : ''
       externalId = await sendInstagramMessage(conversation.externalId, content, accessToken)
     } else if (channel.type === 'FACEBOOK') {
+      const accessToken = channel.accessToken ? decrypt(channel.accessToken) : ''
       externalId = await sendFacebookMessage(conversation.externalId, content, accessToken)
     }
   } catch (err) {
     console.error('[SEND_MESSAGE]', err)
-    // Continue saving even if Meta API fails (for offline testing)
+    // Continue saving even if API call fails (allows offline testing)
   }
 
   const message = await db.message.create({
