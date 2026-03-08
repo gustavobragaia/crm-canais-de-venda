@@ -123,6 +123,8 @@ export default function SettingsPage() {
             setConnectingStatus((s) => ({ ...s, EVOLUTION_WA: 'done' }))
             refreshChannels()
             setTimeout(() => setConnectingStatus((s) => ({ ...s, EVOLUTION_WA: 'idle' })), 3000)
+          } else if (pollData.qr?.base64) {
+            setEvolutionQR((prev) => prev ? { ...prev, base64: pollData.qr.base64, code: pollData.qr.code } : prev)
           }
         } catch { /* ignore poll errors */ }
       }, 3000)

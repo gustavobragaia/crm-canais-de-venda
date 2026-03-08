@@ -89,7 +89,11 @@ export async function GET(req: NextRequest) {
       })
     }
 
-    return NextResponse.json({ state, channelId: channel.id })
+    let qr: { base64: string; code: string } | null = null
+    if (state !== 'open') {
+      try { qr = await getEvolutionQR(instanceName) } catch { /* QR ainda não disponível */ }
+    }
+    return NextResponse.json({ state, channelId: channel.id, qr })
   } catch (error) {
     console.error('[EVOLUTION CONNECT GET]', error)
     return NextResponse.json({ state: 'close', channelId: channel.id })
