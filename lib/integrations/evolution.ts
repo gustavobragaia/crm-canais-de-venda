@@ -61,6 +61,7 @@ async function evolutionFetch<T>(path: string, options?: RequestInit): Promise<T
   const url = `${BASE_URL}${path}`
   const res = await fetch(url, {
     ...options,
+    signal: AbortSignal.timeout(15000),
     headers: {
       'Content-Type': 'application/json',
       apikey: API_KEY,

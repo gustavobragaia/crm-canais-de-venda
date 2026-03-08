@@ -27,8 +27,12 @@ export async function POST(req: NextRequest) {
     const created = await createEvolutionInstance(instanceName)
     console.log('[EVOLUTION CONNECT] createEvolutionInstance response:', JSON.stringify(created))
 
-    // Configure webhook (separate call)
-    await setEvolutionWebhook(instanceName, webhookUrl)
+    // Configure webhook (separate call — non-fatal if it fails or times out)
+    try {
+      await setEvolutionWebhook(instanceName, webhookUrl)
+    } catch (err) {
+      console.warn('[EVOLUTION CONNECT] webhook setup failed (non-fatal):', err)
+    }
 
     // Get QR code — may already be in the create response
     let qr = created.qrcode
