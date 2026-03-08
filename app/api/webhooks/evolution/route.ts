@@ -17,13 +17,13 @@ export async function POST(req: NextRequest) {
     const payload = JSON.parse(body) as EvolutionWebhookPayload
     console.log('[EVOLUTION WEBHOOK] event:', payload.event, '| instance:', payload.instance)
 
-    if (payload.event === 'MESSAGES_UPSERT') {
+    if (payload.event === 'messages.upsert') {
       await inngest.send({ name: 'evolution/message.received', data: payload })
       console.log('[EVOLUTION WEBHOOK] sent evolution/message.received')
-    } else if (payload.event === 'CONNECTION_UPDATE') {
+    } else if (payload.event === 'connection.update') {
       await inngest.send({ name: 'evolution/connection.update', data: payload })
       console.log('[EVOLUTION WEBHOOK] sent evolution/connection.update')
-    } else if (payload.event === 'QRCODE_UPDATED') {
+    } else if (payload.event === 'qrcode.updated') {
       await inngest.send({ name: 'evolution/qrcode.updated', data: payload })
       console.log('[EVOLUTION WEBHOOK] sent evolution/qrcode.updated')
     } else {

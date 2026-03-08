@@ -8,7 +8,7 @@ const WEBHOOK_EVENTS = ['MESSAGES_UPSERT', 'CONNECTION_UPDATE', 'QRCODE_UPDATED'
 // ---- Types ----
 
 export interface EvolutionMessageUpsertPayload {
-  event: 'MESSAGES_UPSERT'
+  event: 'messages.upsert'
   instance: string
   data: {
     key: {
@@ -30,7 +30,7 @@ export interface EvolutionMessageUpsertPayload {
 }
 
 export interface EvolutionConnectionUpdatePayload {
-  event: 'CONNECTION_UPDATE'
+  event: 'connection.update'
   instance: string
   data: {
     state: 'open' | 'connecting' | 'close'
@@ -39,7 +39,7 @@ export interface EvolutionConnectionUpdatePayload {
 }
 
 export interface EvolutionQRCodeUpdatedPayload {
-  event: 'QRCODE_UPDATED'
+  event: 'qrcode.updated'
   instance: string
   data: {
     qrcode: {
@@ -53,7 +53,7 @@ export type EvolutionWebhookPayload =
   | EvolutionMessageUpsertPayload
   | EvolutionConnectionUpdatePayload
   | EvolutionQRCodeUpdatedPayload
-  | { event: 'SEND_MESSAGE'; instance: string; data: unknown }
+  | { event: 'send.message'; instance: string; data: unknown }
 
 // ---- Internal fetch helper ----
 
