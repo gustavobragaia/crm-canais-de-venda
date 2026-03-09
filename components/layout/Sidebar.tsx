@@ -41,7 +41,7 @@ export function Sidebar() {
       {/* Logo */}
       <div className="h-16 flex items-center px-6 border-b border-gray-200">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+          <div className="w-8 h-8 bg-[var(--primary)] rounded-lg flex items-center justify-center">
             <MessageCircle size={18} className="text-white" />
           </div>
           <span className="font-semibold text-gray-900">
@@ -63,7 +63,7 @@ export function Sidebar() {
               href={item.href}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 isActive
-                  ? 'bg-blue-50 text-blue-700'
+                  ? 'bg-gray-100 text-[var(--primary)]'
                   : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
               }`}
             >

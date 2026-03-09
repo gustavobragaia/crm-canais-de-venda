@@ -2,45 +2,15 @@
 
 import { Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { MessageCircle, Instagram, Facebook, CheckCircle, ArrowRight } from 'lucide-react'
-
-const CHANNELS = [
-  {
-    id: 'whatsapp',
-    name: 'WhatsApp Business',
-    description: 'Conecte via Evolution API (QR Code)',
-    icon: MessageCircle,
-    color: '#25D366',
-    bg: 'bg-green-50',
-    border: 'border-green-200',
-  },
-  {
-    id: 'instagram',
-    name: 'Instagram Direct',
-    description: 'Mensagens diretas do Instagram',
-    icon: Instagram,
-    color: '#E4405F',
-    bg: 'bg-pink-50',
-    border: 'border-pink-200',
-  },
-  {
-    id: 'facebook',
-    name: 'Facebook Messenger',
-    description: 'Messenger da sua página',
-    icon: Facebook,
-    color: '#1877F2',
-    bg: 'bg-blue-50',
-    border: 'border-blue-200',
-  },
-]
+import { MessageCircle, CheckCircle, ArrowRight } from 'lucide-react'
 
 function ChannelsPageInner() {
   const router = useRouter()
   const params = useSearchParams()
   const workspaceSlug = params.get('workspace') ?? ''
 
-  async function handleFinish() {
-    router.push(`/${workspaceSlug}`)
+  function handleFinish() {
+    router.push(`/${workspaceSlug}/inbox`)
   }
 
   return (
@@ -67,40 +37,33 @@ function ChannelsPageInner() {
           </p>
 
           <div className="space-y-3 mb-6">
-            {CHANNELS.map((channel) => {
-              const Icon = channel.icon
-              return (
-                <div
-                  key={channel.id}
-                  className={`flex items-center gap-4 p-4 rounded-xl border ${channel.border} ${channel.bg}`}
-                >
-                  <div
-                    className="w-10 h-10 rounded-lg flex items-center justify-center text-white flex-shrink-0"
-                    style={{ backgroundColor: channel.color }}
-                  >
-                    <Icon size={20} />
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-medium text-gray-900 text-sm">{channel.name}</p>
-                    <p className="text-xs text-gray-500">{channel.description}</p>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-            <p className="text-sm text-blue-800">
-              <strong>Pronto!</strong> Após o login, vá em <strong>Configurações → Canais</strong> e clique em{' '}
-              <strong>"Conectar com Facebook"</strong> para conectar com um clique.
-            </p>
+            <div className="flex items-center gap-4 p-4 rounded-xl border border-green-200 bg-green-50">
+              <div
+                className="w-10 h-10 rounded-lg flex items-center justify-center text-white flex-shrink-0"
+                style={{ backgroundColor: '#25D366' }}
+              >
+                <MessageCircle size={20} />
+              </div>
+              <div className="flex-1">
+                <p className="font-medium text-gray-900 text-sm">WhatsApp Business</p>
+                <p className="text-xs text-gray-500">Conecte via QR Code nas configurações</p>
+              </div>
+            </div>
           </div>
 
           <button
-            onClick={handleFinish}
-            className="w-full flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600 text-white font-medium py-2.5 rounded-lg text-sm transition-colors"
+            onClick={() => router.push(`/${workspaceSlug}/settings?tab=channels`)}
+            className="w-full flex items-center justify-center gap-2 bg-[#25D366] hover:opacity-90 text-white font-medium py-2.5 rounded-lg text-sm transition-colors mb-3"
           >
-            Ir para o dashboard
+            <MessageCircle size={16} />
+            Conectar WhatsApp via QR Code
+          </button>
+
+          <button
+            onClick={handleFinish}
+            className="w-full flex items-center justify-center gap-2 border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium py-2.5 rounded-lg text-sm transition-colors"
+          >
+            Ir para a caixa de entrada
             <ArrowRight size={16} />
           </button>
         </div>

@@ -2,35 +2,9 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { getPusherClient } from '@/lib/pusher'
 import { Loader2, ExternalLink, MessageCircle, Instagram, Facebook, CreditCard, Users, UserPlus, X, Copy, Check, CheckCircle2 } from 'lucide-react'
-
-declare global {
-  interface Window {
-    FB: {
-      init: (opts: { appId: string; version: string; cookie?: boolean; xfbml?: boolean }) => void
-      login: (cb: (res: { authResponse?: { accessToken?: string; code?: string } }) => void, opts?: Record<string, unknown>) => void
-    }
-    fbAsyncInit: () => void
-  }
-}
-
-function loadFBSdk(appId: string): Promise<void> {
-  return new Promise((resolve) => {
-    if (window.FB) { resolve(); return }
-    window.fbAsyncInit = () => {
-      window.FB.init({ appId, version: 'v18.0', cookie: true, xfbml: false })
-      resolve()
-    }
-    if (!document.getElementById('fb-jssdk')) {
-      const s = document.createElement('script')
-      s.id = 'fb-jssdk'
-      s.src = 'https://connect.facebook.net/pt_BR/sdk.js'
-      document.head.appendChild(s)
-    }
-  })
-}
 
 const PLANS = [
   {
@@ -59,10 +33,11 @@ const PLANS = [
 
 export default function SettingsPage() {
   const { data: session } = useSession()
-  const router = useRouter()
-  const [activeTab, setActiveTab] = useState<'team' | 'billing' | 'channels'>('team')
+  const searchParams = useSearchParams()
+  const [activeTab, setActiveTab] = useState<'team' | 'billing' | 'channels'>(
+    (searchParams.get('tab') as 'team' | 'billing' | 'channels') ?? 'team'
+  )
   const [users, setUsers] = useState<Array<{ id: string; name: string; email: string; role: string }>>([])
-  const [loading, setLoading] = useState(false)
   const [showInvite, setShowInvite] = useState(false)
   const [inviteForm, setInviteForm] = useState({ name: '', email: '', role: 'AGENT' as 'ADMIN' | 'AGENT' })
   const [inviteResult, setInviteResult] = useState<{ tempPassword: string; email: string } | null>(null)
@@ -75,12 +50,9 @@ export default function SettingsPage() {
     name: string
     phoneNumberId?: string | null
     phoneNumber?: string | null
-    pageId?: string | null
-    pageName?: string | null
     instanceName?: string | null
     isActive?: boolean
   }>>([])
-  const [picker, setPicker] = useState<{ channelType: 'INSTAGRAM' | 'FACEBOOK'; userToken: string; options: Array<{ id: string; name: string }> } | null>(null)
   const [connectingStatus, setConnectingStatus] = useState<Record<string, 'idle' | 'loading' | 'done'>>({})
   const [uazapiQR, setUazapiQR] = useState<{ base64: string; instanceName: string; channelId: string } | null>(null)
   const uazapiPollRef = useRef<ReturnType<typeof setInterval> | null>(null)
@@ -113,7 +85,6 @@ export default function SettingsPage() {
       setUazapiQR({ base64: data.qr.base64, instanceName: data.instanceName, channelId: data.channelId })
       setConnectingStatus((s) => ({ ...s, UAZAPI_WA: 'idle' }))
 
-      // Poll every 3s until connected
       uazapiPollRef.current = setInterval(async () => {
         try {
           const pollRes = await fetch(`/api/uazapi/connect?instanceName=${encodeURIComponent(data.instanceName)}`)
@@ -152,7 +123,6 @@ export default function SettingsPage() {
       setUazapiQR({ base64: data.qr.base64, instanceName: data.instanceName, channelId: data.channelId })
       setConnectingStatus((s) => ({ ...s, [`RECONNECT_${channelId}`]: 'idle' }))
 
-      // Poll every 3s until connected (reuse same polling logic)
       uazapiPollRef.current = setInterval(async () => {
         try {
           const pollRes = await fetch(`/api/uazapi/connect?instanceName=${encodeURIComponent(data.instanceName)}`)
@@ -172,84 +142,7 @@ export default function SettingsPage() {
     }
   }, [stopUazapiPoll, refreshChannels])
 
-  // Cleanup poll on unmount
   useEffect(() => () => stopUazapiPoll(), [stopUazapiPoll])
-
-  const handleEmbeddedSignup = useCallback(async (channelType: 'INSTAGRAM' | 'FACEBOOK') => {
-    const appId = process.env.NEXT_PUBLIC_META_APP_ID
-    if (!appId) { alert('META_APP_ID não configurado.'); return }
-
-    setConnectingStatus((s) => ({ ...s, [channelType]: 'loading' }))
-
-    try {
-      await loadFBSdk(appId)
-
-      const scope = 'pages_messaging,pages_show_list,instagram_basic,instagram_manage_messages'
-      const extras = {}
-
-      window.FB.login((response) => {
-        void (async () => {
-          const token = response.authResponse?.accessToken
-          if (!token) {
-            setConnectingStatus((s) => ({ ...s, [channelType]: 'idle' }))
-            return
-          }
-
-          const res = await fetch('/api/meta/connect', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ accessToken: token, channelType }),
-          })
-          const data = await res.json()
-
-          if (data.step === 'select') {
-            setPicker({ channelType: data.channelType, userToken: data.userToken, options: data.options })
-            setConnectingStatus((s) => ({ ...s, [channelType]: 'idle' }))
-          } else if (data.step === 'done') {
-            setChannels((prev) => {
-              const filtered = prev.filter((c) => c.type !== channelType)
-              return [...filtered, data.channel]
-            })
-            setConnectingStatus((s) => ({ ...s, [channelType]: 'done' }))
-            setTimeout(() => setConnectingStatus((s) => ({ ...s, [channelType]: 'idle' })), 3000)
-          } else {
-            alert(data.error ?? 'Erro ao conectar.')
-            setConnectingStatus((s) => ({ ...s, [channelType]: 'idle' }))
-          }
-        })()
-      }, { scope, return_scopes: true, ...extras })
-    } catch (e) {
-      console.error(e)
-      setConnectingStatus((s) => ({ ...s, [channelType]: 'idle' }))
-    }
-  }, [])
-
-  const handlePickerSelect = useCallback(async (selectedId: string) => {
-    if (!picker) return
-    const { channelType, userToken, options } = picker
-    const selected = options.find((o) => o.id === selectedId)
-    setPicker(null)
-    setConnectingStatus((s) => ({ ...s, [channelType]: 'loading' }))
-
-    const res = await fetch('/api/meta/connect', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ accessToken: userToken, channelType, selectedId, channelName: selected?.name }),
-    })
-    const data = await res.json()
-
-    if (data.step === 'done') {
-      setChannels((prev) => {
-        const filtered = prev.filter((c) => c.type !== channelType)
-        return [...filtered, data.channel]
-      })
-      setConnectingStatus((s) => ({ ...s, [channelType]: 'done' }))
-      setTimeout(() => setConnectingStatus((s) => ({ ...s, [channelType]: 'idle' })), 3000)
-    } else {
-      alert(data.error ?? 'Erro ao salvar canal.')
-      setConnectingStatus((s) => ({ ...s, [channelType]: 'idle' }))
-    }
-  }, [picker])
 
   useEffect(() => {
     if (session?.user.role !== 'ADMIN') return
@@ -324,7 +217,7 @@ export default function SettingsPage() {
               onClick={() => setActiveTab(key as typeof activeTab)}
               className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
                 activeTab === key
-                  ? 'bg-blue-50 text-blue-700 font-medium'
+                  ? 'bg-gray-100 text-[var(--primary)] font-medium'
                   : 'text-gray-600 hover:bg-gray-100'
               }`}
             >
@@ -342,7 +235,7 @@ export default function SettingsPage() {
                 <h2 className="font-semibold text-gray-900">Membros da equipe</h2>
                 <button
                   onClick={() => { setShowInvite(!showInvite); setInviteResult(null) }}
-                  className="flex items-center gap-2 px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-lg transition-colors"
+                  className="flex items-center gap-2 px-3 py-2 bg-[var(--primary)] hover:opacity-90 text-white text-sm rounded-lg transition-colors"
                 >
                   <UserPlus size={15} />
                   Convidar membro
@@ -351,10 +244,10 @@ export default function SettingsPage() {
 
               {/* Invite form */}
               {showInvite && !inviteResult && (
-                <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-4">
+                <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 mb-4">
                   <div className="flex items-center justify-between mb-3">
-                    <p className="text-sm font-medium text-blue-900">Novo membro</p>
-                    <button onClick={() => setShowInvite(false)} className="text-blue-400 hover:text-blue-600">
+                    <p className="text-sm font-medium text-gray-900">Novo membro</p>
+                    <button onClick={() => setShowInvite(false)} className="text-gray-400 hover:text-gray-600">
                       <X size={16} />
                     </button>
                   </div>
@@ -364,19 +257,19 @@ export default function SettingsPage() {
                       placeholder="Nome"
                       value={inviteForm.name}
                       onChange={(e) => setInviteForm({ ...inviteForm, name: e.target.value })}
-                      className="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
+                      className="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-300 bg-white"
                     />
                     <input
                       type="email"
                       placeholder="Email"
                       value={inviteForm.email}
                       onChange={(e) => setInviteForm({ ...inviteForm, email: e.target.value })}
-                      className="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
+                      className="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-300 bg-white"
                     />
                     <select
                       value={inviteForm.role}
                       onChange={(e) => setInviteForm({ ...inviteForm, role: e.target.value as 'ADMIN' | 'AGENT' })}
-                      className="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
+                      className="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-300 bg-white"
                     >
                       <option value="AGENT">Agente</option>
                       <option value="ADMIN">Admin</option>
@@ -386,7 +279,7 @@ export default function SettingsPage() {
                     <button
                       onClick={handleInvite}
                       disabled={inviting || !inviteForm.name || !inviteForm.email}
-                      className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 disabled:opacity-50 text-white text-sm rounded-lg transition-colors"
+                      className="flex items-center gap-2 px-4 py-2 bg-[var(--primary)] hover:opacity-90 disabled:opacity-50 text-white text-sm rounded-lg transition-colors"
                     >
                       {inviting ? <Loader2 size={14} className="animate-spin" /> : <UserPlus size={14} />}
                       Convidar
@@ -457,7 +350,7 @@ export default function SettingsPage() {
                 <h2 className="font-semibold text-gray-900">Planos</h2>
                 <button
                   onClick={handlePortal}
-                  className="text-sm text-blue-600 hover:underline flex items-center gap-1"
+                  className="text-sm text-[var(--primary)] hover:underline flex items-center gap-1"
                 >
                   Gerenciar assinatura <ExternalLink size={12} />
                 </button>
@@ -468,11 +361,11 @@ export default function SettingsPage() {
                   <div
                     key={plan.name}
                     className={`bg-white border rounded-xl p-5 relative ${
-                      plan.recommended ? 'border-blue-400 shadow-md' : 'border-gray-200'
+                      plan.recommended ? 'border-[var(--primary)] shadow-md' : 'border-gray-200'
                     }`}
                   >
                     {plan.recommended && (
-                      <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-500 text-white text-xs px-3 py-1 rounded-full">
+                      <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[var(--primary)] text-white text-xs px-3 py-1 rounded-full">
                         Recomendado
                       </span>
                     )}
@@ -491,7 +384,7 @@ export default function SettingsPage() {
                       onClick={() => handleCheckout(plan.checkoutUrl)}
                       className={`w-full py-2 rounded-lg text-sm font-medium transition-colors ${
                         plan.recommended
-                          ? 'bg-blue-500 hover:bg-blue-600 text-white'
+                          ? 'bg-[var(--primary)] hover:opacity-90 text-white'
                           : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
                       }`}
                     >
@@ -509,7 +402,7 @@ export default function SettingsPage() {
               <h2 className="font-semibold text-gray-900 mb-1">Conectar canais</h2>
               <p className="text-sm text-gray-500 mb-6">Gerencie os canais de comunicação do seu workspace.</p>
 
-              {/* Evolution QR Code modal */}
+              {/* QR Code modal */}
               {uazapiQR && (
                 <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
                   <div className="bg-white rounded-xl shadow-xl p-6 w-full max-w-sm text-center">
@@ -540,31 +433,6 @@ export default function SettingsPage() {
                 </div>
               )}
 
-              {/* Meta Page picker modal */}
-              {picker && (
-                <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-                  <div className="bg-white rounded-xl shadow-xl w-full max-w-sm p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="font-semibold text-gray-900">Selecionar página</h3>
-                      <button onClick={() => setPicker(null)} className="text-gray-400 hover:text-gray-600">
-                        <X size={18} />
-                      </button>
-                    </div>
-                    <div className="space-y-2">
-                      {picker.options.map((opt) => (
-                        <button
-                          key={opt.id}
-                          onClick={() => handlePickerSelect(opt.id)}
-                          className="w-full text-left px-4 py-3 rounded-lg border border-gray-200 hover:border-blue-400 hover:bg-blue-50 text-sm transition-colors"
-                        >
-                          {opt.name}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-
               {/* WhatsApp via UazAPI */}
               <div className="mb-6">
                 <h3 className="text-sm font-medium text-gray-700 mb-3">WhatsApp</h3>
@@ -586,7 +454,7 @@ export default function SettingsPage() {
                       <button
                         onClick={() => handleUazapiReconnect(ch.id)}
                         disabled={connectingStatus[`RECONNECT_${ch.id}`] === 'loading'}
-                        className="flex items-center gap-1.5 text-xs px-3 py-1.5 bg-[#25D366] hover:bg-[#20c05c] disabled:opacity-60 text-white rounded-lg transition-colors font-medium flex-shrink-0"
+                        className="flex items-center gap-1.5 text-xs px-3 py-1.5 bg-[#25D366] hover:opacity-90 disabled:opacity-60 text-white rounded-lg transition-colors font-medium flex-shrink-0"
                       >
                         {connectingStatus[`RECONNECT_${ch.id}`] === 'loading'
                           ? <><Loader2 size={12} className="animate-spin" /> Conectando...</>
@@ -598,7 +466,7 @@ export default function SettingsPage() {
                 <button
                   onClick={handleUazapiConnect}
                   disabled={connectingStatus['UAZAPI_WA'] === 'loading'}
-                  className="flex items-center gap-2 text-sm px-4 py-2 bg-[#25D366] hover:bg-[#20c05c] disabled:opacity-60 text-white rounded-lg transition-colors font-medium"
+                  className="flex items-center gap-2 text-sm px-4 py-2 bg-[#25D366] hover:opacity-90 disabled:opacity-60 text-white rounded-lg transition-colors font-medium"
                 >
                   {connectingStatus['UAZAPI_WA'] === 'loading' ? (
                     <><Loader2 size={14} className="animate-spin" /> Criando instância...</>
@@ -610,61 +478,29 @@ export default function SettingsPage() {
                 </button>
               </div>
 
-              {/* Instagram & Facebook via Meta */}
+              {/* Instagram & Facebook — coming soon */}
               <div>
                 <h3 className="text-sm font-medium text-gray-700 mb-3">Instagram &amp; Facebook</h3>
                 <div className="space-y-3">
-                  {([
-                    { type: 'INSTAGRAM' as const, label: 'Instagram Direct', icon: Instagram, color: '#E4405F', desc: 'Mensagens diretas do Instagram' },
-                    { type: 'FACEBOOK' as const, label: 'Facebook Messenger', icon: Facebook, color: '#1877F2', desc: 'Messenger da sua página' },
-                  ]).map(({ type, label, icon: Icon, color, desc }) => {
-                    const configured = channels.find((c) => c.type === type)
-                    const status = connectingStatus[type] ?? 'idle'
-                    const isLoading = status === 'loading'
-                    const isDone = status === 'done'
-
-                    return (
-                      <div key={type} className="bg-white border border-gray-200 rounded-xl p-4 flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-lg flex items-center justify-center text-white flex-shrink-0" style={{ backgroundColor: color }}>
-                          <Icon size={20} />
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <p className="font-medium text-gray-900 text-sm">{label}</p>
-                            {configured && (
-                              <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700 font-medium flex items-center gap-1">
-                                <CheckCircle2 size={11} /> Conectado
-                              </span>
-                            )}
-                          </div>
-                          <p className="text-xs text-gray-500">
-                            {configured ? (configured.pageName ?? configured.name) : desc}
-                          </p>
-                        </div>
-                        <button
-                          onClick={() => handleEmbeddedSignup(type)}
-                          disabled={isLoading}
-                          className="flex items-center gap-2 text-sm px-4 py-2 bg-[#1877F2] hover:bg-[#166fe5] disabled:opacity-60 text-white rounded-lg transition-colors font-medium"
-                        >
-                          {isLoading ? (
-                            <Loader2 size={14} className="animate-spin" />
-                          ) : isDone ? (
-                            <CheckCircle2 size={14} />
-                          ) : (
-                            <Facebook size={14} />
-                          )}
-                          {configured ? 'Reconectar' : 'Conectar com Facebook'}
-                        </button>
+                  {[
+                    { type: 'INSTAGRAM', label: 'Instagram Direct', icon: Instagram, color: '#E4405F', desc: 'Mensagens diretas do Instagram' },
+                    { type: 'FACEBOOK', label: 'Facebook Messenger', icon: Facebook, color: '#1877F2', desc: 'Messenger da sua página' },
+                  ].map(({ type, label, icon: Icon, color, desc }) => (
+                    <div key={type} className="bg-white border border-gray-200 rounded-xl p-4 flex items-center gap-4 opacity-60">
+                      <div className="w-10 h-10 rounded-lg flex items-center justify-center text-white flex-shrink-0" style={{ backgroundColor: color }}>
+                        <Icon size={20} />
                       </div>
-                    )
-                  })}
-                </div>
-
-                <div className="mt-4 bg-blue-50 border border-blue-100 rounded-xl p-4">
-                  <p className="text-sm text-blue-800">
-                    Ao clicar em <strong>Conectar com Facebook</strong>, uma janela de autorização será aberta.
-                    Faça login com sua conta da Meta e selecione a página desejada.
-                  </p>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <p className="font-medium text-gray-900 text-sm">{label}</p>
+                          <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 font-medium">
+                            Em breve
+                          </span>
+                        </div>
+                        <p className="text-xs text-gray-500">{desc}</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
