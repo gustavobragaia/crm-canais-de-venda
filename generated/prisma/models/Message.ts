@@ -32,6 +32,7 @@ export type MessageMinAggregateOutputType = {
   content: string | null
   externalId: string | null
   status: $Enums.MessageStatus | null
+  isSystem: boolean | null
   sentById: string | null
   sentAt: Date | null
   deliveredAt: Date | null
@@ -47,6 +48,7 @@ export type MessageMaxAggregateOutputType = {
   content: string | null
   externalId: string | null
   status: $Enums.MessageStatus | null
+  isSystem: boolean | null
   sentById: string | null
   sentAt: Date | null
   deliveredAt: Date | null
@@ -63,6 +65,7 @@ export type MessageCountAggregateOutputType = {
   attachments: number
   externalId: number
   status: number
+  isSystem: number
   sentById: number
   sentAt: number
   deliveredAt: number
@@ -80,6 +83,7 @@ export type MessageMinAggregateInputType = {
   content?: true
   externalId?: true
   status?: true
+  isSystem?: true
   sentById?: true
   sentAt?: true
   deliveredAt?: true
@@ -95,6 +99,7 @@ export type MessageMaxAggregateInputType = {
   content?: true
   externalId?: true
   status?: true
+  isSystem?: true
   sentById?: true
   sentAt?: true
   deliveredAt?: true
@@ -111,6 +116,7 @@ export type MessageCountAggregateInputType = {
   attachments?: true
   externalId?: true
   status?: true
+  isSystem?: true
   sentById?: true
   sentAt?: true
   deliveredAt?: true
@@ -200,6 +206,7 @@ export type MessageGroupByOutputType = {
   attachments: runtime.JsonValue
   externalId: string | null
   status: $Enums.MessageStatus
+  isSystem: boolean
   sentById: string | null
   sentAt: Date
   deliveredAt: Date | null
@@ -237,6 +244,7 @@ export type MessageWhereInput = {
   attachments?: Prisma.JsonFilter<"Message">
   externalId?: Prisma.StringNullableFilter<"Message"> | string | null
   status?: Prisma.EnumMessageStatusFilter<"Message"> | $Enums.MessageStatus
+  isSystem?: Prisma.BoolFilter<"Message"> | boolean
   sentById?: Prisma.StringNullableFilter<"Message"> | string | null
   sentAt?: Prisma.DateTimeFilter<"Message"> | Date | string
   deliveredAt?: Prisma.DateTimeNullableFilter<"Message"> | Date | string | null
@@ -256,6 +264,7 @@ export type MessageOrderByWithRelationInput = {
   attachments?: Prisma.SortOrder
   externalId?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
+  isSystem?: Prisma.SortOrder
   sentById?: Prisma.SortOrderInput | Prisma.SortOrder
   sentAt?: Prisma.SortOrder
   deliveredAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -278,6 +287,7 @@ export type MessageWhereUniqueInput = Prisma.AtLeast<{
   attachments?: Prisma.JsonFilter<"Message">
   externalId?: Prisma.StringNullableFilter<"Message"> | string | null
   status?: Prisma.EnumMessageStatusFilter<"Message"> | $Enums.MessageStatus
+  isSystem?: Prisma.BoolFilter<"Message"> | boolean
   sentById?: Prisma.StringNullableFilter<"Message"> | string | null
   sentAt?: Prisma.DateTimeFilter<"Message"> | Date | string
   deliveredAt?: Prisma.DateTimeNullableFilter<"Message"> | Date | string | null
@@ -297,6 +307,7 @@ export type MessageOrderByWithAggregationInput = {
   attachments?: Prisma.SortOrder
   externalId?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
+  isSystem?: Prisma.SortOrder
   sentById?: Prisma.SortOrderInput | Prisma.SortOrder
   sentAt?: Prisma.SortOrder
   deliveredAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -319,6 +330,7 @@ export type MessageScalarWhereWithAggregatesInput = {
   attachments?: Prisma.JsonWithAggregatesFilter<"Message">
   externalId?: Prisma.StringNullableWithAggregatesFilter<"Message"> | string | null
   status?: Prisma.EnumMessageStatusWithAggregatesFilter<"Message"> | $Enums.MessageStatus
+  isSystem?: Prisma.BoolWithAggregatesFilter<"Message"> | boolean
   sentById?: Prisma.StringNullableWithAggregatesFilter<"Message"> | string | null
   sentAt?: Prisma.DateTimeWithAggregatesFilter<"Message"> | Date | string
   deliveredAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Message"> | Date | string | null
@@ -333,6 +345,7 @@ export type MessageCreateInput = {
   attachments?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   externalId?: string | null
   status?: $Enums.MessageStatus
+  isSystem?: boolean
   sentAt?: Date | string
   deliveredAt?: Date | string | null
   readAt?: Date | string | null
@@ -351,6 +364,7 @@ export type MessageUncheckedCreateInput = {
   attachments?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   externalId?: string | null
   status?: $Enums.MessageStatus
+  isSystem?: boolean
   sentById?: string | null
   sentAt?: Date | string
   deliveredAt?: Date | string | null
@@ -365,6 +379,7 @@ export type MessageUpdateInput = {
   attachments?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumMessageStatusFieldUpdateOperationsInput | $Enums.MessageStatus
+  isSystem?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sentAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   readAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -383,6 +398,7 @@ export type MessageUncheckedUpdateInput = {
   attachments?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumMessageStatusFieldUpdateOperationsInput | $Enums.MessageStatus
+  isSystem?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sentById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sentAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -399,6 +415,7 @@ export type MessageCreateManyInput = {
   attachments?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   externalId?: string | null
   status?: $Enums.MessageStatus
+  isSystem?: boolean
   sentById?: string | null
   sentAt?: Date | string
   deliveredAt?: Date | string | null
@@ -413,6 +430,7 @@ export type MessageUpdateManyMutationInput = {
   attachments?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumMessageStatusFieldUpdateOperationsInput | $Enums.MessageStatus
+  isSystem?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sentAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   readAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -428,6 +446,7 @@ export type MessageUncheckedUpdateManyInput = {
   attachments?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumMessageStatusFieldUpdateOperationsInput | $Enums.MessageStatus
+  isSystem?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sentById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sentAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -454,6 +473,7 @@ export type MessageCountOrderByAggregateInput = {
   attachments?: Prisma.SortOrder
   externalId?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  isSystem?: Prisma.SortOrder
   sentById?: Prisma.SortOrder
   sentAt?: Prisma.SortOrder
   deliveredAt?: Prisma.SortOrder
@@ -469,6 +489,7 @@ export type MessageMaxOrderByAggregateInput = {
   content?: Prisma.SortOrder
   externalId?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  isSystem?: Prisma.SortOrder
   sentById?: Prisma.SortOrder
   sentAt?: Prisma.SortOrder
   deliveredAt?: Prisma.SortOrder
@@ -484,6 +505,7 @@ export type MessageMinOrderByAggregateInput = {
   content?: Prisma.SortOrder
   externalId?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  isSystem?: Prisma.SortOrder
   sentById?: Prisma.SortOrder
   sentAt?: Prisma.SortOrder
   deliveredAt?: Prisma.SortOrder
@@ -632,6 +654,7 @@ export type MessageCreateWithoutWorkspaceInput = {
   attachments?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   externalId?: string | null
   status?: $Enums.MessageStatus
+  isSystem?: boolean
   sentAt?: Date | string
   deliveredAt?: Date | string | null
   readAt?: Date | string | null
@@ -648,6 +671,7 @@ export type MessageUncheckedCreateWithoutWorkspaceInput = {
   attachments?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   externalId?: string | null
   status?: $Enums.MessageStatus
+  isSystem?: boolean
   sentById?: string | null
   sentAt?: Date | string
   deliveredAt?: Date | string | null
@@ -693,6 +717,7 @@ export type MessageScalarWhereInput = {
   attachments?: Prisma.JsonFilter<"Message">
   externalId?: Prisma.StringNullableFilter<"Message"> | string | null
   status?: Prisma.EnumMessageStatusFilter<"Message"> | $Enums.MessageStatus
+  isSystem?: Prisma.BoolFilter<"Message"> | boolean
   sentById?: Prisma.StringNullableFilter<"Message"> | string | null
   sentAt?: Prisma.DateTimeFilter<"Message"> | Date | string
   deliveredAt?: Prisma.DateTimeNullableFilter<"Message"> | Date | string | null
@@ -707,6 +732,7 @@ export type MessageCreateWithoutSentByInput = {
   attachments?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   externalId?: string | null
   status?: $Enums.MessageStatus
+  isSystem?: boolean
   sentAt?: Date | string
   deliveredAt?: Date | string | null
   readAt?: Date | string | null
@@ -724,6 +750,7 @@ export type MessageUncheckedCreateWithoutSentByInput = {
   attachments?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   externalId?: string | null
   status?: $Enums.MessageStatus
+  isSystem?: boolean
   sentAt?: Date | string
   deliveredAt?: Date | string | null
   readAt?: Date | string | null
@@ -763,6 +790,7 @@ export type MessageCreateWithoutConversationInput = {
   attachments?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   externalId?: string | null
   status?: $Enums.MessageStatus
+  isSystem?: boolean
   sentAt?: Date | string
   deliveredAt?: Date | string | null
   readAt?: Date | string | null
@@ -779,6 +807,7 @@ export type MessageUncheckedCreateWithoutConversationInput = {
   attachments?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   externalId?: string | null
   status?: $Enums.MessageStatus
+  isSystem?: boolean
   sentById?: string | null
   sentAt?: Date | string
   deliveredAt?: Date | string | null
@@ -820,6 +849,7 @@ export type MessageCreateManyWorkspaceInput = {
   attachments?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   externalId?: string | null
   status?: $Enums.MessageStatus
+  isSystem?: boolean
   sentById?: string | null
   sentAt?: Date | string
   deliveredAt?: Date | string | null
@@ -834,6 +864,7 @@ export type MessageUpdateWithoutWorkspaceInput = {
   attachments?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumMessageStatusFieldUpdateOperationsInput | $Enums.MessageStatus
+  isSystem?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sentAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   readAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -850,6 +881,7 @@ export type MessageUncheckedUpdateWithoutWorkspaceInput = {
   attachments?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumMessageStatusFieldUpdateOperationsInput | $Enums.MessageStatus
+  isSystem?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sentById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sentAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -865,6 +897,7 @@ export type MessageUncheckedUpdateManyWithoutWorkspaceInput = {
   attachments?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumMessageStatusFieldUpdateOperationsInput | $Enums.MessageStatus
+  isSystem?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sentById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sentAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -881,6 +914,7 @@ export type MessageCreateManySentByInput = {
   attachments?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   externalId?: string | null
   status?: $Enums.MessageStatus
+  isSystem?: boolean
   sentAt?: Date | string
   deliveredAt?: Date | string | null
   readAt?: Date | string | null
@@ -894,6 +928,7 @@ export type MessageUpdateWithoutSentByInput = {
   attachments?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumMessageStatusFieldUpdateOperationsInput | $Enums.MessageStatus
+  isSystem?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sentAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   readAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -911,6 +946,7 @@ export type MessageUncheckedUpdateWithoutSentByInput = {
   attachments?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumMessageStatusFieldUpdateOperationsInput | $Enums.MessageStatus
+  isSystem?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sentAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   readAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -926,6 +962,7 @@ export type MessageUncheckedUpdateManyWithoutSentByInput = {
   attachments?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumMessageStatusFieldUpdateOperationsInput | $Enums.MessageStatus
+  isSystem?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sentAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   readAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -940,6 +977,7 @@ export type MessageCreateManyConversationInput = {
   attachments?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   externalId?: string | null
   status?: $Enums.MessageStatus
+  isSystem?: boolean
   sentById?: string | null
   sentAt?: Date | string
   deliveredAt?: Date | string | null
@@ -954,6 +992,7 @@ export type MessageUpdateWithoutConversationInput = {
   attachments?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumMessageStatusFieldUpdateOperationsInput | $Enums.MessageStatus
+  isSystem?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sentAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   readAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -970,6 +1009,7 @@ export type MessageUncheckedUpdateWithoutConversationInput = {
   attachments?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumMessageStatusFieldUpdateOperationsInput | $Enums.MessageStatus
+  isSystem?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sentById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sentAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -985,6 +1025,7 @@ export type MessageUncheckedUpdateManyWithoutConversationInput = {
   attachments?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumMessageStatusFieldUpdateOperationsInput | $Enums.MessageStatus
+  isSystem?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sentById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sentAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1003,6 +1044,7 @@ export type MessageSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   attachments?: boolean
   externalId?: boolean
   status?: boolean
+  isSystem?: boolean
   sentById?: boolean
   sentAt?: boolean
   deliveredAt?: boolean
@@ -1022,6 +1064,7 @@ export type MessageSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   attachments?: boolean
   externalId?: boolean
   status?: boolean
+  isSystem?: boolean
   sentById?: boolean
   sentAt?: boolean
   deliveredAt?: boolean
@@ -1041,6 +1084,7 @@ export type MessageSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   attachments?: boolean
   externalId?: boolean
   status?: boolean
+  isSystem?: boolean
   sentById?: boolean
   sentAt?: boolean
   deliveredAt?: boolean
@@ -1060,6 +1104,7 @@ export type MessageSelectScalar = {
   attachments?: boolean
   externalId?: boolean
   status?: boolean
+  isSystem?: boolean
   sentById?: boolean
   sentAt?: boolean
   deliveredAt?: boolean
@@ -1067,7 +1112,7 @@ export type MessageSelectScalar = {
   createdAt?: boolean
 }
 
-export type MessageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "conversationId" | "workspaceId" | "direction" | "content" | "attachments" | "externalId" | "status" | "sentById" | "sentAt" | "deliveredAt" | "readAt" | "createdAt", ExtArgs["result"]["message"]>
+export type MessageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "conversationId" | "workspaceId" | "direction" | "content" | "attachments" | "externalId" | "status" | "isSystem" | "sentById" | "sentAt" | "deliveredAt" | "readAt" | "createdAt", ExtArgs["result"]["message"]>
 export type MessageInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   conversation?: boolean | Prisma.ConversationDefaultArgs<ExtArgs>
   sentBy?: boolean | Prisma.Message$sentByArgs<ExtArgs>
@@ -1100,6 +1145,7 @@ export type $MessagePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     attachments: runtime.JsonValue
     externalId: string | null
     status: $Enums.MessageStatus
+    isSystem: boolean
     sentById: string | null
     sentAt: Date
     deliveredAt: Date | null
@@ -1539,6 +1585,7 @@ export interface MessageFieldRefs {
   readonly attachments: Prisma.FieldRef<"Message", 'Json'>
   readonly externalId: Prisma.FieldRef<"Message", 'String'>
   readonly status: Prisma.FieldRef<"Message", 'MessageStatus'>
+  readonly isSystem: Prisma.FieldRef<"Message", 'Boolean'>
   readonly sentById: Prisma.FieldRef<"Message", 'String'>
   readonly sentAt: Prisma.FieldRef<"Message", 'DateTime'>
   readonly deliveredAt: Prisma.FieldRef<"Message", 'DateTime'>

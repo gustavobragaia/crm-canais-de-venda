@@ -134,6 +134,7 @@ model Message {
   attachments    Json             @default("[]")
   externalId     String?
   status         MessageStatus    @default(SENT)
+  isSystem       Boolean          @default(false)
   sentById       String?
   sentAt         DateTime         @default(now())
   deliveredAt    DateTime?

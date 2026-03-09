@@ -49,9 +49,8 @@ export function LeadDetails({ conversationId }: LeadDetailsProps) {
   }, [conversationId])
 
   useEffect(() => {
-    if (!isAdmin) return
     Promise.all([
-      fetch('/api/users').then((r) => r.json()),
+      isAdmin ? fetch('/api/users').then((r) => r.json()) : Promise.resolve({ users: [] }),
       fetch('/api/pipeline/stages').then((r) => r.json()),
     ]).then(([u, s]) => {
       setUsers(u.users ?? [])
@@ -161,7 +160,7 @@ export function LeadDetails({ conversationId }: LeadDetailsProps) {
         )}
 
         {/* Pipeline Stage */}
-        {isAdmin && stages.length > 0 && (
+        {stages.length > 0 && (
           <div>
             <div className="flex items-center gap-2 mb-2">
               <ChevronDown size={14} className="text-gray-400" />

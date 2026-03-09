@@ -176,6 +176,7 @@ export const MessageScalarFieldEnum = {
   attachments: 'attachments',
   externalId: 'externalId',
   status: 'status',
+  isSystem: 'isSystem',
   sentById: 'sentById',
   sentAt: 'sentAt',
   deliveredAt: 'deliveredAt',

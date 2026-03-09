@@ -11,6 +11,7 @@ interface Message {
   direction: 'INBOUND' | 'OUTBOUND'
   content: string
   createdAt: string
+  isSystem: boolean
   sentBy: { id: string; name: string } | null
 }
 
@@ -91,6 +92,15 @@ export function MessageThread({ conversationId, contactName }: MessageThreadProp
           </div>
         ) : (
           messages.map((msg) => {
+            if (msg.isSystem) {
+              return (
+                <div key={msg.id} className="flex justify-center my-1">
+                  <span className="text-xs text-gray-400 italic bg-gray-100 px-3 py-1 rounded-full">
+                    {msg.content}
+                  </span>
+                </div>
+              )
+            }
             const isOutbound = msg.direction === 'OUTBOUND'
             return (
               <div key={msg.id} className={`flex ${isOutbound ? 'justify-end' : 'justify-start'}`}>

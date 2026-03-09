@@ -38,9 +38,30 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     },
   })
 
+  // System message for assignment
+  const systemContent = assignedUser
+    ? `${assignedUser.name} assumiu a conversa`
+    : 'Conversa desatribuída'
+
+  const systemMessage = await db.message.create({
+    data: {
+      conversationId: id,
+      workspaceId: session.user.workspaceId,
+      direction: 'INBOUND',
+      content: systemContent,
+      isSystem: true,
+      status: 'DELIVERED',
+    },
+  })
+
   await pusherServer.trigger(`workspace-${session.user.workspaceId}`, 'conversation-assigned', {
     conversationId: id,
     assignedTo: assignedUser,
+  })
+
+  await pusherServer.trigger(`workspace-${session.user.workspaceId}`, 'new-message', {
+    conversationId: id,
+    message: systemMessage,
   })
 
   return NextResponse.json(updated)
