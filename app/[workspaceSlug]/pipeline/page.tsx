@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { GripVertical, Plus } from 'lucide-react'
+import { LeadDrawer } from '@/components/LeadDrawer'
 
 interface Stage {
   id: string
@@ -31,6 +32,7 @@ export default function PipelinePage() {
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [loading, setLoading] = useState(true)
   const [draggedId, setDraggedId] = useState<string | null>(null)
+  const [selectedId, setSelectedId] = useState<string | null>(null)
 
   useEffect(() => {
     Promise.all([
@@ -113,10 +115,15 @@ export default function PipelinePage() {
                       key={conv.id}
                       draggable
                       onDragStart={() => setDraggedId(conv.id)}
-                      className="bg-white border border-gray-200 rounded-xl p-3 cursor-grab active:cursor-grabbing hover:shadow-sm transition-shadow"
+                      onClick={() => setSelectedId(conv.id)}
+                      className="bg-white border border-gray-200 rounded-xl p-3 cursor-pointer hover:shadow-sm transition-shadow"
                     >
                       <div className="flex items-start gap-2 mb-2">
-                        <GripVertical size={14} className="text-gray-300 mt-0.5 flex-shrink-0" />
+                        <GripVertical
+                          size={14}
+                          className="text-gray-300 mt-0.5 flex-shrink-0 cursor-grab active:cursor-grabbing"
+                          onClick={(e) => e.stopPropagation()}
+                        />
                         <div className="flex-1 min-w-0">
                           <p className="font-medium text-gray-900 text-sm truncate">
                             {conv.contactName}
@@ -152,6 +159,8 @@ export default function PipelinePage() {
           })}
         </div>
       </div>
+
+      <LeadDrawer conversationId={selectedId} onClose={() => setSelectedId(null)} />
     </div>
   )
 }

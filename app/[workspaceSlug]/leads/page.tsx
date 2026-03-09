@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { MessageCircle, Instagram, Facebook } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
+import { LeadDrawer } from '@/components/LeadDrawer'
 
 const CHANNEL_ICONS = {
   WHATSAPP: { icon: MessageCircle, color: '#25D366' },
@@ -35,6 +36,7 @@ const STATUS_LABELS: Record<string, string> = {
 export default function LeadsPage() {
   const [leads, setLeads] = useState<Conversation[]>([])
   const [loading, setLoading] = useState(true)
+  const [selectedId, setSelectedId] = useState<string | null>(null)
 
   useEffect(() => {
     fetch('/api/conversations')
@@ -80,7 +82,11 @@ export default function LeadsPage() {
                 const Icon = channelInfo?.icon ?? MessageCircle
 
                 return (
-                  <tr key={lead.id} className="hover:bg-gray-50 transition-colors">
+                  <tr
+                    key={lead.id}
+                    onClick={() => setSelectedId(lead.id)}
+                    className="hover:bg-gray-50 transition-colors cursor-pointer"
+                  >
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-2">
                         <p className="font-medium text-gray-900 text-sm">{lead.contactName}</p>
@@ -132,6 +138,8 @@ export default function LeadsPage() {
           )}
         </div>
       </div>
+
+      <LeadDrawer conversationId={selectedId} onClose={() => setSelectedId(null)} />
     </div>
   )
 }
