@@ -135,6 +135,43 @@ export default function SettingsPage() {
     }
   }, [stopUazapiPoll, refreshChannels])
 
+  const handleUazapiReconnect = useCallback(async (channelId: string) => {
+    setConnectingStatus((s) => ({ ...s, [`RECONNECT_${channelId}`]: 'loading' }))
+    try {
+      const res = await fetch('/api/uazapi/reconnect', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ channelId }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        alert(data.error ?? 'Erro ao reconectar.')
+        setConnectingStatus((s) => ({ ...s, [`RECONNECT_${channelId}`]: 'idle' }))
+        return
+      }
+      setUazapiQR({ base64: data.qr.base64, instanceName: data.instanceName, channelId: data.channelId })
+      setConnectingStatus((s) => ({ ...s, [`RECONNECT_${channelId}`]: 'idle' }))
+
+      // Poll every 3s until connected (reuse same polling logic)
+      uazapiPollRef.current = setInterval(async () => {
+        try {
+          const pollRes = await fetch(`/api/uazapi/connect?instanceName=${encodeURIComponent(data.instanceName)}`)
+          const pollData = await pollRes.json()
+          if (pollData.state === 'connected') {
+            stopUazapiPoll()
+            setUazapiQR(null)
+            refreshChannels()
+          } else if (pollData.qr?.base64) {
+            setUazapiQR((prev) => prev ? { ...prev, base64: pollData.qr.base64 } : prev)
+          }
+        } catch { /* ignore poll errors */ }
+      }, 3000)
+    } catch (e) {
+      console.error(e)
+      setConnectingStatus((s) => ({ ...s, [`RECONNECT_${channelId}`]: 'idle' }))
+    }
+  }, [stopUazapiPoll, refreshChannels])
+
   // Cleanup poll on unmount
   useEffect(() => () => stopUazapiPoll(), [stopUazapiPoll])
 
@@ -539,12 +576,23 @@ export default function SettingsPage() {
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
                         <p className="font-medium text-gray-900 text-sm">{ch.name}</p>
-                        <span className={`text-xs px-2 py-0.5 rounded-full font-medium flex items-center gap-1 ${ch.isActive ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                        <span className={`text-xs px-2 py-0.5 rounded-full font-medium flex items-center gap-1 ${ch.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
                           {ch.isActive ? <><CheckCircle2 size={11} /> Conectado</> : 'Desconectado'}
                         </span>
                       </div>
                       <p className="text-xs text-gray-500">{ch.phoneNumber ?? ch.instanceName}</p>
                     </div>
+                    {!ch.isActive && (
+                      <button
+                        onClick={() => handleUazapiReconnect(ch.id)}
+                        disabled={connectingStatus[`RECONNECT_${ch.id}`] === 'loading'}
+                        className="flex items-center gap-1.5 text-xs px-3 py-1.5 bg-[#25D366] hover:bg-[#20c05c] disabled:opacity-60 text-white rounded-lg transition-colors font-medium flex-shrink-0"
+                      >
+                        {connectingStatus[`RECONNECT_${ch.id}`] === 'loading'
+                          ? <><Loader2 size={12} className="animate-spin" /> Conectando...</>
+                          : <><MessageCircle size={12} /> Reconectar</>}
+                      </button>
+                    )}
                   </div>
                 ))}
                 <button
