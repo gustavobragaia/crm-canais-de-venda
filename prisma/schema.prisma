@@ -73,6 +73,7 @@ model Channel {
   pageName          String?
   businessAccountId String?
   instanceName      String?
+  instanceToken     String?
   isActive          Boolean         @default(true)
   lastSyncAt        DateTime?
   webhookVerifiedAt DateTime?
@@ -260,7 +261,7 @@ enum ChannelType {
 
 enum ChannelProvider {
   META
-  EVOLUTION
+  UAZAPI
 }
 
 enum ConversationStatus {

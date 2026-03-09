@@ -82,79 +82,61 @@ export default function SettingsPage() {
   }>>([])
   const [picker, setPicker] = useState<{ channelType: 'INSTAGRAM' | 'FACEBOOK'; userToken: string; options: Array<{ id: string; name: string }> } | null>(null)
   const [connectingStatus, setConnectingStatus] = useState<Record<string, 'idle' | 'loading' | 'done'>>({})
-  const [evolutionQR, setEvolutionQR] = useState<{ base64: string; code: string; instanceName: string; channelId: string } | null>(null)
-  const evolutionPollRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const [uazapiQR, setUazapiQR] = useState<{ base64: string; instanceName: string; channelId: string } | null>(null)
+  const uazapiPollRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const refreshChannels = useCallback(() => {
     fetch('/api/channels').then((r) => r.json()).then((d) => setChannels(d.channels ?? []))
   }, [])
 
-  const stopEvolutionPoll = useCallback(() => {
-    if (evolutionPollRef.current) {
-      clearInterval(evolutionPollRef.current)
-      evolutionPollRef.current = null
+  const stopUazapiPoll = useCallback(() => {
+    if (uazapiPollRef.current) {
+      clearInterval(uazapiPollRef.current)
+      uazapiPollRef.current = null
     }
   }, [])
 
-  const handleEvolutionConnect = useCallback(async () => {
-    setConnectingStatus((s) => ({ ...s, EVOLUTION_WA: 'loading' }))
+  const handleUazapiConnect = useCallback(async () => {
+    setConnectingStatus((s) => ({ ...s, UAZAPI_WA: 'loading' }))
     try {
-      const res = await fetch('/api/evolution/connect', {
+      const res = await fetch('/api/uazapi/connect', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ channelName: 'WhatsApp (Evolution)' }),
+        body: JSON.stringify({ channelName: 'WhatsApp' }),
       })
       const data = await res.json()
       if (!res.ok) {
         alert(data.error ?? 'Erro ao criar instância.')
-        setConnectingStatus((s) => ({ ...s, EVOLUTION_WA: 'idle' }))
+        setConnectingStatus((s) => ({ ...s, UAZAPI_WA: 'idle' }))
         return
       }
-      setEvolutionQR({ base64: data.qr.base64, code: data.qr.code, instanceName: data.instanceName, channelId: data.channelId })
-      setConnectingStatus((s) => ({ ...s, EVOLUTION_WA: 'idle' }))
+      setUazapiQR({ base64: data.qr.base64, instanceName: data.instanceName, channelId: data.channelId })
+      setConnectingStatus((s) => ({ ...s, UAZAPI_WA: 'idle' }))
 
       // Poll every 3s until connected
-      evolutionPollRef.current = setInterval(async () => {
+      uazapiPollRef.current = setInterval(async () => {
         try {
-          const pollRes = await fetch(`/api/evolution/connect?instanceName=${encodeURIComponent(data.instanceName)}`)
+          const pollRes = await fetch(`/api/uazapi/connect?instanceName=${encodeURIComponent(data.instanceName)}`)
           const pollData = await pollRes.json()
-          if (pollData.state === 'open') {
-            stopEvolutionPoll()
-            setEvolutionQR(null)
-            setConnectingStatus((s) => ({ ...s, EVOLUTION_WA: 'done' }))
+          if (pollData.state === 'connected') {
+            stopUazapiPoll()
+            setUazapiQR(null)
+            setConnectingStatus((s) => ({ ...s, UAZAPI_WA: 'done' }))
             refreshChannels()
-            setTimeout(() => setConnectingStatus((s) => ({ ...s, EVOLUTION_WA: 'idle' })), 3000)
+            setTimeout(() => setConnectingStatus((s) => ({ ...s, UAZAPI_WA: 'idle' })), 3000)
           } else if (pollData.qr?.base64) {
-            setEvolutionQR((prev) => prev ? { ...prev, base64: pollData.qr.base64, code: pollData.qr.code } : prev)
+            setUazapiQR((prev) => prev ? { ...prev, base64: pollData.qr.base64 } : prev)
           }
         } catch { /* ignore poll errors */ }
       }, 3000)
     } catch (e) {
       console.error(e)
-      setConnectingStatus((s) => ({ ...s, EVOLUTION_WA: 'idle' }))
+      setConnectingStatus((s) => ({ ...s, UAZAPI_WA: 'idle' }))
     }
-  }, [stopEvolutionPoll, refreshChannels])
+  }, [stopUazapiPoll, refreshChannels])
 
   // Cleanup poll on unmount
-  useEffect(() => () => stopEvolutionPoll(), [stopEvolutionPoll])
-
-  // Subscribe to Pusher for real-time QR updates while modal is open
-  useEffect(() => {
-    const workspaceId = session?.user?.workspaceId
-    if (!evolutionQR || !workspaceId) return
-    const pusher = getPusherClient()
-    const channel = pusher.subscribe(`workspace-${workspaceId}`)
-    channel.bind('evolution-qr-updated', (data: { channelId: string; qr: { base64: string; code: string } }) => {
-      if (data.channelId !== evolutionQR.channelId) return
-      if (data.qr?.base64) {
-        setEvolutionQR((prev) => prev ? { ...prev, base64: data.qr.base64, code: data.qr.code } : prev)
-      }
-    })
-    return () => {
-      channel.unbind('evolution-qr-updated')
-      pusher.unsubscribe(`workspace-${workspaceId}`)
-    }
-  }, [evolutionQR?.channelId, session?.user?.workspaceId])
+  useEffect(() => () => stopUazapiPoll(), [stopUazapiPoll])
 
   const handleEmbeddedSignup = useCallback(async (channelType: 'INSTAGRAM' | 'FACEBOOK') => {
     const appId = process.env.NEXT_PUBLIC_META_APP_ID
@@ -491,13 +473,13 @@ export default function SettingsPage() {
               <p className="text-sm text-gray-500 mb-6">Gerencie os canais de comunicação do seu workspace.</p>
 
               {/* Evolution QR Code modal */}
-              {evolutionQR && (
+              {uazapiQR && (
                 <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
                   <div className="bg-white rounded-xl shadow-xl p-6 w-full max-w-sm text-center">
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="font-semibold text-gray-900">Escanear QR Code</h3>
                       <button
-                        onClick={() => { stopEvolutionPoll(); setEvolutionQR(null) }}
+                        onClick={() => { stopUazapiPoll(); setUazapiQR(null) }}
                         className="text-gray-400 hover:text-gray-600"
                       >
                         <X size={18} />
@@ -506,8 +488,8 @@ export default function SettingsPage() {
                     <p className="text-sm text-gray-500 mb-4">
                       Abra o WhatsApp no seu celular, vá em <strong>Dispositivos Conectados</strong> e escaneie o código abaixo.
                     </p>
-                    {evolutionQR.base64 ? (
-                      <img src={evolutionQR.base64} alt="QR Code WhatsApp" className="mx-auto w-52 h-52 rounded-lg" />
+                    {uazapiQR.base64 ? (
+                      <img src={uazapiQR.base64} alt="QR Code WhatsApp" className="mx-auto w-52 h-52 rounded-lg" />
                     ) : (
                       <div className="w-52 h-52 mx-auto flex items-center justify-center bg-gray-100 rounded-lg">
                         <Loader2 size={24} className="animate-spin text-gray-400" />
@@ -546,10 +528,10 @@ export default function SettingsPage() {
                 </div>
               )}
 
-              {/* WhatsApp via Evolution */}
+              {/* WhatsApp via UazAPI */}
               <div className="mb-6">
                 <h3 className="text-sm font-medium text-gray-700 mb-3">WhatsApp</h3>
-                {channels.filter((c) => c.provider === 'EVOLUTION').map((ch) => (
+                {channels.filter((c) => c.provider === 'UAZAPI').map((ch) => (
                   <div key={ch.id} className="bg-white border border-gray-200 rounded-xl p-4 flex items-center gap-4 mb-2">
                     <div className="w-10 h-10 rounded-lg bg-[#25D366] flex items-center justify-center text-white flex-shrink-0">
                       <MessageCircle size={20} />
@@ -566,13 +548,13 @@ export default function SettingsPage() {
                   </div>
                 ))}
                 <button
-                  onClick={handleEvolutionConnect}
-                  disabled={connectingStatus['EVOLUTION_WA'] === 'loading'}
+                  onClick={handleUazapiConnect}
+                  disabled={connectingStatus['UAZAPI_WA'] === 'loading'}
                   className="flex items-center gap-2 text-sm px-4 py-2 bg-[#25D366] hover:bg-[#20c05c] disabled:opacity-60 text-white rounded-lg transition-colors font-medium"
                 >
-                  {connectingStatus['EVOLUTION_WA'] === 'loading' ? (
+                  {connectingStatus['UAZAPI_WA'] === 'loading' ? (
                     <><Loader2 size={14} className="animate-spin" /> Criando instância...</>
-                  ) : connectingStatus['EVOLUTION_WA'] === 'done' ? (
+                  ) : connectingStatus['UAZAPI_WA'] === 'done' ? (
                     <><CheckCircle2 size={14} /> Conectado!</>
                   ) : (
                     <><MessageCircle size={14} /> Conectar WhatsApp (QR)</>

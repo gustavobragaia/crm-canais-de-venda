@@ -4,7 +4,7 @@ import { db } from '@/lib/db'
 import { pusherServer } from '@/lib/pusher'
 import { sendInstagramMessage } from '@/lib/integrations/instagram'
 import { sendFacebookMessage } from '@/lib/integrations/facebook'
-import { sendEvolutionMessage } from '@/lib/integrations/evolution'
+import { sendUazapiMessage } from '@/lib/integrations/uazapi'
 import { decrypt } from '@/lib/crypto'
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -80,11 +80,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   // Send via appropriate channel API
   try {
     if (channel.type === 'WHATSAPP') {
-      if (channel.instanceName) {
-        // Strip @suffix — Evolution expects plain E.164 number
+      if (channel.provider === 'UAZAPI' && channel.instanceToken) {
         const to = conversation.contactPhone
           ?? conversation.externalId.replace('@s.whatsapp.net', '').replace('@g.us', '')
-        externalId = await sendEvolutionMessage(channel.instanceName, to, content)
+        externalId = await sendUazapiMessage(channel.instanceToken, to, content)
       }
     } else if (channel.type === 'INSTAGRAM') {
       const accessToken = channel.accessToken ? decrypt(channel.accessToken) : ''

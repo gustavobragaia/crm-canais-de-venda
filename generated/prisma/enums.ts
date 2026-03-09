@@ -28,7 +28,7 @@ export type ChannelType = (typeof ChannelType)[keyof typeof ChannelType]
 
 export const ChannelProvider = {
   META: 'META',
-  EVOLUTION: 'EVOLUTION'
+  UAZAPI: 'UAZAPI'
 } as const
 
 export type ChannelProvider = (typeof ChannelProvider)[keyof typeof ChannelProvider]

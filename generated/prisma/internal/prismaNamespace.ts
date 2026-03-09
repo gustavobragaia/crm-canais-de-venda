@@ -1243,6 +1243,7 @@ export const ChannelScalarFieldEnum = {
   pageName: 'pageName',
   businessAccountId: 'businessAccountId',
   instanceName: 'instanceName',
+  instanceToken: 'instanceToken',
   isActive: 'isActive',
   lastSyncAt: 'lastSyncAt',
   webhookVerifiedAt: 'webhookVerifiedAt',
