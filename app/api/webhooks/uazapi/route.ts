@@ -5,7 +5,9 @@ import { pusherServer } from '@/lib/pusher'
 
 export async function POST(req: NextRequest) {
   try {
-    const payload = await req.json() as UazapiWebhookPayload
+    const body = await req.text()
+    console.log('[UAZAPI WEBHOOK] raw body:', body.slice(0, 500))
+    const payload = JSON.parse(body) as UazapiWebhookPayload
     console.log('[UAZAPI WEBHOOK] event:', payload.event, '| instance:', payload.instance)
 
     if (payload.event === 'message') {
