@@ -45,8 +45,20 @@ async function handleMessage(payload: UazapiWebhookMessagePayload) {
 
   const chatid = msg.chatid
   const isGroup = chatid.endsWith('@g.us')
-  const contactPhone = isGroup ? undefined : chatid.replace('@s.whatsapp.net', '').replace('@lid', '')
-  const contactName = msg.senderName ?? contactPhone ?? chatid.split('@')[0]
+  const chat = payload.chat ?? {}
+
+  // Phone: prefer formatted from chat object, fallback to chatid
+  const contactPhone = isGroup ? undefined
+    : chat.phone
+      ? chat.phone.replace(/\D/g, '')
+      : chatid.replace('@s.whatsapp.net', '').replace('@lid', '')
+
+  // Name: saved contact name > WA display name > senderName
+  const contactName = chat.wa_contactName || chat.wa_name || chat.name || msg.senderName || contactPhone || chatid.split('@')[0]
+
+  // Profile photo from chat object
+  const contactPhotoUrl = chat.imagePreview || chat.image || undefined
+
   const textContent = msg.text || msg.content || '[Media]'
 
   // Deduplication
@@ -69,9 +81,10 @@ async function handleMessage(payload: UazapiWebhookMessagePayload) {
       externalId: chatid,
       contactName,
       contactPhone,
+      contactPhotoUrl,
       status: 'UNASSIGNED',
     },
-    update: { contactName },
+    update: { contactName, contactPhotoUrl },
   })
 
   const savedMessage = await db.message.create({

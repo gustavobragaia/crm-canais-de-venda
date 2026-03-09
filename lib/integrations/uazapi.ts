@@ -29,6 +29,16 @@ export interface UazapiWebhookMessagePayload {
     messageTimestamp: number
     isGroup: boolean
   }
+  chat?: {
+    imagePreview?: string
+    image?: string
+    name?: string
+    wa_contactName?: string
+    wa_name?: string
+    phone?: string
+    wa_chatid?: string
+    wa_isGroup?: boolean
+  }
 }
 
 export interface UazapiWebhookConnectionPayload {
