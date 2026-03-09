@@ -3,14 +3,19 @@ import { type UazapiWebhookPayload, type UazapiWebhookMessagePayload, type Uazap
 import { db } from '@/lib/db'
 import { pusherServer } from '@/lib/pusher'
 
+export async function GET() {
+  return NextResponse.json({ status: 'OK' })
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.text()
-    console.log('[UAZAPI WEBHOOK] raw body:', body.slice(0, 500))
+    console.log('[UAZAPI WEBHOOK] raw body:', body.slice(0, 2000))
     const payload = JSON.parse(body) as UazapiWebhookPayload
+    console.log('[UAZAPI WEBHOOK] parsed:', JSON.stringify(payload))
     console.log('[UAZAPI WEBHOOK] event:', payload.event, '| instance:', payload.instance)
 
-    if (payload.event === 'message') {
+    if (payload.event === 'message' || payload.event === 'messages') {
       await handleMessage(payload as UazapiWebhookMessagePayload)
     } else if (payload.event === 'connection') {
       await handleConnection(payload as UazapiWebhookConnectionPayload)
@@ -26,27 +31,44 @@ export async function POST(req: NextRequest) {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function handleMessage(payload: UazapiWebhookMessagePayload) {
   const { instance: instanceId, data: msg } = payload
 
   // Skip outgoing messages
   if (msg.fromMe) return
 
+  console.log('[UAZAPI WEBHOOK] handleMessage data:', JSON.stringify(msg))
+
   const channel = await db.channel.findFirst({
     where: { instanceName: instanceId, provider: 'UAZAPI', type: 'WHATSAPP' },
   })
-  if (!channel) return
+  if (!channel) {
+    console.log('[UAZAPI WEBHOOK] no channel found for instance:', instanceId)
+    return
+  }
 
-  const chatid = msg.chatid
+  // Accept field name variations between UazAPI versions
+  const rawMsg = msg as Record<string, unknown>
+  const chatid = (rawMsg.chatid ?? rawMsg.from ?? rawMsg.chatId ?? '') as string
+  const messageId = (rawMsg.messageid ?? rawMsg.id ?? rawMsg.messageId ?? '') as string
+  const textContent = ((rawMsg.text ?? rawMsg.message ?? rawMsg.body ?? '[Media]') as string) || '[Media]'
+  const senderName = (rawMsg.senderName ?? rawMsg.pushName ?? rawMsg.name ?? undefined) as string | undefined
+
+  if (!chatid) {
+    console.log('[UAZAPI WEBHOOK] chatid missing, dropping message')
+    return
+  }
+
   const isGroup = chatid.endsWith('@g.us')
   const contactPhone = isGroup ? undefined : chatid.replace('@s.whatsapp.net', '').replace('@lid', '')
-  const contactName = msg.senderName ?? contactPhone ?? chatid.split('@')[0]
-
-  const textContent = msg.text || '[Media]'
+  const contactName = senderName ?? contactPhone ?? chatid.split('@')[0]
 
   // Deduplication
-  const existing = await db.message.findFirst({ where: { externalId: msg.messageid } })
-  if (existing) return
+  if (messageId) {
+    const existing = await db.message.findFirst({ where: { externalId: messageId } })
+    if (existing) return
+  }
 
   const conversation = await db.conversation.upsert({
     where: {
@@ -73,7 +95,7 @@ async function handleMessage(payload: UazapiWebhookMessagePayload) {
       workspaceId: channel.workspaceId,
       direction: 'INBOUND',
       content: textContent,
-      externalId: msg.messageid,
+      externalId: messageId || undefined,
       status: 'DELIVERED',
     },
   })
