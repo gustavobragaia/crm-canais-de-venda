@@ -10,63 +10,48 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.text()
-    console.log('[UAZAPI WEBHOOK] raw body:', body.slice(0, 2000))
     const payload = JSON.parse(body) as UazapiWebhookPayload
-    console.log('[UAZAPI WEBHOOK] parsed:', JSON.stringify(payload))
-    console.log('[UAZAPI WEBHOOK] event:', payload.event, '| instance:', payload.instance)
+    console.log('[UAZAPI WEBHOOK] EventType:', payload.EventType, '| token:', payload.token?.slice(0, 8))
 
-    if (payload.event === 'message' || payload.event === 'messages') {
+    if (payload.EventType === 'messages') {
       await handleMessage(payload as UazapiWebhookMessagePayload)
-    } else if (payload.event === 'connection') {
+    } else if (payload.EventType === 'connection') {
       await handleConnection(payload as UazapiWebhookConnectionPayload)
     } else {
-      console.log('[UAZAPI WEBHOOK] unhandled event dropped:', payload.event)
+      console.log('[UAZAPI WEBHOOK] unhandled EventType:', payload.EventType)
     }
 
     return NextResponse.json({ status: 'EVENT_RECEIVED' })
   } catch (error) {
     console.error('[UAZAPI WEBHOOK] error:', error)
-    // Always return 200 — UazAPI will retry on non-200
     return NextResponse.json({ status: 'ERROR' })
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function handleMessage(payload: UazapiWebhookMessagePayload) {
-  const { instance: instanceId, data: msg } = payload
+  const msg = payload.message
 
   // Skip outgoing messages
   if (msg.fromMe) return
 
-  console.log('[UAZAPI WEBHOOK] handleMessage data:', JSON.stringify(msg))
-
+  // Look up channel by instanceToken (most reliable identifier)
   const channel = await db.channel.findFirst({
-    where: { instanceName: instanceId, provider: 'UAZAPI', type: 'WHATSAPP' },
+    where: { instanceToken: payload.token, provider: 'UAZAPI', type: 'WHATSAPP' },
   })
   if (!channel) {
-    console.log('[UAZAPI WEBHOOK] no channel found for instance:', instanceId)
+    console.log('[UAZAPI WEBHOOK] no channel found for token:', payload.token?.slice(0, 8))
     return
   }
 
-  // Accept field name variations between UazAPI versions
-  const rawMsg = msg as Record<string, unknown>
-  const chatid = (rawMsg.chatid ?? rawMsg.from ?? rawMsg.chatId ?? '') as string
-  const messageId = (rawMsg.messageid ?? rawMsg.id ?? rawMsg.messageId ?? '') as string
-  const textContent = ((rawMsg.text ?? rawMsg.message ?? rawMsg.body ?? '[Media]') as string) || '[Media]'
-  const senderName = (rawMsg.senderName ?? rawMsg.pushName ?? rawMsg.name ?? undefined) as string | undefined
-
-  if (!chatid) {
-    console.log('[UAZAPI WEBHOOK] chatid missing, dropping message')
-    return
-  }
-
+  const chatid = msg.chatid
   const isGroup = chatid.endsWith('@g.us')
   const contactPhone = isGroup ? undefined : chatid.replace('@s.whatsapp.net', '').replace('@lid', '')
-  const contactName = senderName ?? contactPhone ?? chatid.split('@')[0]
+  const contactName = msg.senderName ?? contactPhone ?? chatid.split('@')[0]
+  const textContent = msg.text || msg.content || '[Media]'
 
   // Deduplication
-  if (messageId) {
-    const existing = await db.message.findFirst({ where: { externalId: messageId } })
+  if (msg.messageid) {
+    const existing = await db.message.findFirst({ where: { externalId: msg.messageid } })
     if (existing) return
   }
 
@@ -95,7 +80,7 @@ async function handleMessage(payload: UazapiWebhookMessagePayload) {
       workspaceId: channel.workspaceId,
       direction: 'INBOUND',
       content: textContent,
-      externalId: messageId || undefined,
+      externalId: msg.messageid || undefined,
       status: 'DELIVERED',
     },
   })
@@ -114,22 +99,23 @@ async function handleMessage(payload: UazapiWebhookMessagePayload) {
     'new-message',
     { conversationId: conversation.id, message: savedMessage }
   )
+
+  console.log('[UAZAPI WEBHOOK] message saved:', savedMessage.id, '| conversation:', conversation.id)
 }
 
 async function handleConnection(payload: UazapiWebhookConnectionPayload) {
-  const { instance: instanceId, data } = payload
-
   const channel = await db.channel.findFirst({
-    where: { instanceName: instanceId, provider: 'UAZAPI' },
+    where: { instanceToken: payload.token, provider: 'UAZAPI' },
   })
   if (!channel) return
 
-  if (data.status === 'connected') {
+  const status = payload.data?.status
+  if (status === 'connected') {
     await db.channel.update({
       where: { id: channel.id },
       data: { isActive: true, webhookVerifiedAt: new Date() },
     })
-  } else if (data.status === 'disconnected') {
+  } else if (status === 'disconnected') {
     await db.channel.update({
       where: { id: channel.id },
       data: { isActive: false },

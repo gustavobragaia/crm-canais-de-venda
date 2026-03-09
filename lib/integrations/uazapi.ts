@@ -13,15 +13,18 @@ export interface UazapiInstance {
 }
 
 export interface UazapiWebhookMessagePayload {
-  event: 'message'
-  instance: string
-  data: {
+  EventType: 'messages'
+  instanceName: string  // display name (e.g. "cHzfhm")
+  token: string         // instance token — use this to look up the channel
+  owner: string
+  message: {
     messageid: string
     chatid: string
     sender: string
     senderName?: string
     fromMe: boolean
     text: string
+    content?: string
     messageType: string
     messageTimestamp: number
     isGroup: boolean
@@ -29,9 +32,10 @@ export interface UazapiWebhookMessagePayload {
 }
 
 export interface UazapiWebhookConnectionPayload {
-  event: 'connection'
-  instance: string
-  data: {
+  EventType: 'connection'
+  instanceName: string
+  token: string
+  data?: {
     status: 'connected' | 'connecting' | 'disconnected'
     instance?: UazapiInstance
   }
@@ -40,7 +44,7 @@ export interface UazapiWebhookConnectionPayload {
 export type UazapiWebhookPayload =
   | UazapiWebhookMessagePayload
   | UazapiWebhookConnectionPayload
-  | { event: string; instance: string; data: unknown }
+  | { EventType: string; instanceName: string; token: string; [key: string]: unknown }
 
 // ---- Internal fetch helpers ----
 
