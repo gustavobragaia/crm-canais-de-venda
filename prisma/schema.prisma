@@ -12,7 +12,7 @@ model Workspace {
   name                     String
   slug                     String             @unique
   logoUrl                  String?
-  primaryColor             String             @default("#3B82F6")
+  primaryColor             String             @default("#2b7fff")
   secondaryColor           String             @default("#10B981")
   subscriptionStatus       SubscriptionStatus @default(TRIAL)
   kirvanoSubscriptionId    String?

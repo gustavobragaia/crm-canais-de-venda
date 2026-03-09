@@ -51,6 +51,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           workspaceId: workspace.id,
           workspaceSlug: workspace.slug,
           workspaceName: workspace.name,
+          workspaceLogo: workspace.logoUrl ?? null,
           role: user.role,
         }
       },
@@ -63,6 +64,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.workspaceId = (user as any).workspaceId
         token.workspaceSlug = (user as any).workspaceSlug
         token.workspaceName = (user as any).workspaceName
+        token.workspaceLogo = (user as any).workspaceLogo
         token.role = (user as any).role
       }
       return token
@@ -72,6 +74,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       session.user.workspaceId = token.workspaceId as string
       session.user.workspaceSlug = token.workspaceSlug as string
       session.user.workspaceName = token.workspaceName as string
+      session.user.workspaceLogo = (token.workspaceLogo as string | null) ?? null
       session.user.role = token.role as string
       return session
     },
@@ -91,6 +94,7 @@ declare module 'next-auth' {
     workspaceId: string
     workspaceSlug: string
     workspaceName: string
+    workspaceLogo: string | null
     role: string
   }
   interface Session {
@@ -102,6 +106,7 @@ declare module 'next-auth' {
       workspaceId: string
       workspaceSlug: string
       workspaceName: string
+      workspaceLogo: string | null
       role: string
     }
   }

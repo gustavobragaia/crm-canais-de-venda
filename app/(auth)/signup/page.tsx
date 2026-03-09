@@ -4,7 +4,8 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
 import Link from 'next/link'
-import { MessageCircle, Loader2 } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
+import { ClosioIcon } from '@/components/ClosioLogo'
 
 export default function SignupPage() {
   const router = useRouter()
@@ -95,8 +96,8 @@ export default function SignupPage() {
       <div className="w-full max-w-lg">
         {/* Logo */}
         <div className="flex flex-col items-center mb-8">
-          <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center mb-4">
-            <MessageCircle size={24} className="text-white" />
+          <div className="mb-4">
+            <ClosioIcon size={48} />
           </div>
           <h1 className="text-2xl font-bold text-gray-900">Criar seu workspace</h1>
           <p className="text-gray-500 mt-1">14 dias grátis, sem cartão de crédito</p>
@@ -113,7 +114,7 @@ export default function SignupPage() {
               placeholder="Escritório Silva"
               value={form.workspaceName}
               onChange={(e) => handleWorkspaceNameChange(e.target.value)}
-              className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2b7fff] focus:border-transparent"
             />
           </div>
 
@@ -123,7 +124,7 @@ export default function SignupPage() {
             </label>
             <div className="flex items-center gap-1">
               <span className="text-sm text-gray-500 bg-gray-50 border border-gray-300 rounded-l-lg px-3 py-2.5 border-r-0">
-                omnicrm.com/
+                closio.com.br/
               </span>
               <input
                 type="text"
@@ -131,7 +132,7 @@ export default function SignupPage() {
                 pattern="[a-z0-9-]+"
                 value={form.workspaceSlug}
                 onChange={(e) => setForm((f) => ({ ...f, workspaceSlug: e.target.value }))}
-                className="flex-1 px-3 py-2.5 border border-gray-300 rounded-r-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="flex-1 px-3 py-2.5 border border-gray-300 rounded-r-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2b7fff] focus:border-transparent"
               />
             </div>
           </div>
@@ -146,7 +147,7 @@ export default function SignupPage() {
               placeholder="João Silva"
               value={form.adminName}
               onChange={(e) => setForm((f) => ({ ...f, adminName: e.target.value }))}
-              className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2b7fff] focus:border-transparent"
             />
           </div>
 
@@ -158,7 +159,7 @@ export default function SignupPage() {
               placeholder="joao@escritoriosilva.com"
               value={form.adminEmail}
               onChange={(e) => setForm((f) => ({ ...f, adminEmail: e.target.value }))}
-              className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2b7fff] focus:border-transparent"
             />
           </div>
 
@@ -171,7 +172,7 @@ export default function SignupPage() {
                 placeholder="••••••••"
                 value={form.adminPassword}
                 onChange={(e) => setForm((f) => ({ ...f, adminPassword: e.target.value }))}
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2b7fff] focus:border-transparent"
               />
             </div>
             <div>
@@ -184,7 +185,7 @@ export default function SignupPage() {
                 placeholder="••••••••"
                 value={form.confirmPassword}
                 onChange={(e) => setForm((f) => ({ ...f, confirmPassword: e.target.value }))}
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2b7fff] focus:border-transparent"
               />
             </div>
           </div>
@@ -198,7 +199,7 @@ export default function SignupPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300 text-white font-medium py-2.5 rounded-lg transition-colors"
+            className="w-full flex items-center justify-center gap-2 bg-[#2b7fff] hover:opacity-90 disabled:opacity-50 text-white font-medium py-2.5 rounded-lg transition-colors"
           >
             {loading && <Loader2 size={16} className="animate-spin" />}
             Criar workspace grátis
@@ -206,7 +207,7 @@ export default function SignupPage() {
 
           <p className="text-center text-sm text-gray-500">
             Já tem conta?{' '}
-            <Link href="/login" className="text-blue-600 hover:underline font-medium">
+            <Link href="/login" className="text-[#2b7fff] hover:underline font-medium">
               Entrar
             </Link>
           </p>

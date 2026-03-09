@@ -10,9 +10,9 @@ import {
   Settings,
   LogOut,
   Layers,
-  MessageCircle,
   BookOpen,
 } from 'lucide-react'
+import { ClosioIcon } from '@/components/ClosioLogo'
 
 interface NavItem {
   label: string
@@ -41,11 +41,17 @@ export function Sidebar() {
       {/* Logo */}
       <div className="h-16 flex items-center px-6 border-b border-gray-200">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-[var(--primary)] rounded-lg flex items-center justify-center">
-            <MessageCircle size={18} className="text-white" />
-          </div>
+          {session?.user.workspaceLogo ? (
+            <img
+              src={session.user.workspaceLogo}
+              alt="Logo"
+              className="h-8 w-auto max-w-[32px] object-contain"
+            />
+          ) : (
+            <ClosioIcon size={32} color="var(--primary)" />
+          )}
           <span className="font-semibold text-gray-900">
-            {session?.user.workspaceName ?? 'OmniCRM'}
+            {session?.user.workspaceName ?? 'Closio CRM'}
           </span>
         </div>
       </div>
