@@ -171,12 +171,6 @@ export default function FunilPage() {
                               {getInitials(conv.contactName)}
                             </div>
                           )}
-                          {conv.aiEnabled && (
-                            <div className="relative w-5 h-5" style={{ marginTop: '-10px', marginLeft: '18px' }}>
-                              <div className="absolute inset-0 rounded-full animate-pulse bg-violet-400 opacity-40" />
-                              <img src="/ai-avatar.svg" alt="IA" className="w-5 h-5 rounded-full object-cover relative z-10" />
-                            </div>
-                          )}
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between gap-1">
