@@ -433,7 +433,6 @@ export default function SettingsPage() {
             { key: 'team', label: 'Equipe', icon: Users },
             { key: 'billing', label: 'Billing', icon: CreditCard },
             { key: 'channels', label: 'Canais', icon: MessageCircle },
-            { key: 'ai', label: 'Agente de IA', icon: Bot },
           ].map(({ key, label, icon: Icon }) => (
             <button
               key={key}
@@ -448,6 +447,11 @@ export default function SettingsPage() {
               {label}
             </button>
           ))}
+          <div className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm opacity-40 cursor-not-allowed select-none">
+            <Bot size={16} />
+            <span>Agente de IA</span>
+            <span className="ml-auto text-[10px] bg-violet-100 text-violet-600 rounded px-1.5 py-0.5 font-medium">EM BREVE</span>
+          </div>
         </div>
 
         <div className="flex-1 overflow-y-auto p-6">

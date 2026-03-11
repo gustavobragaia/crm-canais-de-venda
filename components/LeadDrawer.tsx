@@ -159,6 +159,7 @@ export function LeadDrawer({ conversationId, onClose }: LeadDrawerProps) {
     setConversation((c) => (c ? { ...c, tags } : c))
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async function toggleAi() {
     if (!conversationId || aiToggling) return
     setAiToggling(true)
@@ -323,7 +324,7 @@ export function LeadDrawer({ conversationId, onClose }: LeadDrawerProps) {
             <div className="rounded-xl border border-violet-200 bg-violet-50/50 p-4 space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Bot size={14} className={aiEnabled ? 'text-violet-600' : 'text-gray-400'} />
+                  <Bot size={14} className="text-gray-400" />
                   <span className="text-xs font-medium text-gray-700">Agente de IA</span>
                   {conversation.aiMessageCount > 0 && (
                     <span className="text-[10px] bg-violet-100 text-violet-600 rounded px-1.5 py-0.5">
@@ -332,10 +333,10 @@ export function LeadDrawer({ conversationId, onClose }: LeadDrawerProps) {
                   )}
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className={`text-xs ${aiEnabled ? 'text-violet-600 font-medium' : 'text-gray-400'}`}>
-                    {aiEnabled ? 'Ativa' : 'Inativa'}
+                  <span className="text-xs text-gray-400">
+                    Inativa
                   </span>
-                  <Toggle enabled={aiEnabled} onToggle={toggleAi} disabled={aiToggling} />
+                  <Toggle enabled={false} onToggle={() => {}} disabled={true} />
                 </div>
               </div>
 

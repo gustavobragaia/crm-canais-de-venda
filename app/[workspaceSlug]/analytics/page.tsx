@@ -286,7 +286,8 @@ export default function AnalyticsPage() {
         </div>
 
         {/* ─── AI Metrics ─── */}
-        <div>
+        <div className="relative">
+          <div className="opacity-40 pointer-events-none select-none">
           <div className="flex items-center gap-2 mb-3">
             <Bot size={16} className="text-violet-500" />
             <h2 className="font-semibold text-gray-900">Métricas de IA</h2>
@@ -356,6 +357,12 @@ export default function AnalyticsPage() {
               </div>
             </div>
           )}
+          </div>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="bg-violet-100 text-violet-700 font-semibold text-sm px-4 py-2 rounded-full border border-violet-300">
+              EM BREVE
+            </span>
+          </div>
         </div>
 
         {/* ─── Heatmap ─── */}
