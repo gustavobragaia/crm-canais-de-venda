@@ -147,7 +147,10 @@ export async function processAiResponse(
       where: { workspaceId },
     })
 
-    if (!agentConfig || !agentConfig.isActive) return
+    if (!agentConfig || !agentConfig.isActive) {
+      console.log('[AI Agent] Skip: agentConfig missing or inactive', { workspaceId })
+      return
+    }
 
     // Load conversation with messages (single fetch used for both business hours check and main flow)
     const conversation = await db.conversation.findUnique({
@@ -161,13 +164,20 @@ export async function processAiResponse(
       },
     })
 
-    if (!conversation) return
-    if (!conversation.aiEnabled) return
+    if (!conversation) {
+      console.log('[AI Agent] Skip: conversation not found', { conversationId })
+      return
+    }
+    if (!conversation.aiEnabled) {
+      console.log('[AI Agent] Skip: aiEnabled=false', { conversationId })
+      return
+    }
 
     // Check business hours
     if (agentConfig.businessHoursStart !== null && agentConfig.businessHoursEnd !== null) {
       const hour = new Date().getHours()
       if (hour < agentConfig.businessHoursStart || hour >= agentConfig.businessHoursEnd) {
+        console.log('[AI Agent] Skip: outside business hours', { conversationId, hour, start: agentConfig.businessHoursStart, end: agentConfig.businessHoursEnd })
         if (agentConfig.offHoursMessage && conversation.channel.provider === 'UAZAPI' && conversation.channel.instanceToken) {
           const phone = conversation.contactPhone ?? conversation.externalId.replace('@s.whatsapp.net', '')
           await sendUazapiMessage(conversation.channel.instanceToken, phone, agentConfig.offHoursMessage)
@@ -177,10 +187,16 @@ export async function processAiResponse(
     }
 
     // Check max AI messages
-    if (conversation.aiMessageCount >= agentConfig.maxAiMessages) return
+    if (conversation.aiMessageCount >= agentConfig.maxAiMessages) {
+      console.log('[AI Agent] Skip: maxAiMessages reached', { conversationId, count: conversation.aiMessageCount, max: agentConfig.maxAiMessages })
+      return
+    }
 
     // Check if already assigned to a human
-    if (conversation.assignedToId) return
+    if (conversation.assignedToId) {
+      console.log('[AI Agent] Skip: conversation assigned to human', { conversationId, assignedToId: conversation.assignedToId })
+      return
+    }
 
     // Load workspace agents for auto-assign
     const agents = await db.user.findMany({
@@ -241,19 +257,21 @@ export async function processAiResponse(
       await sendUazapiMessage(conversation.channel.instanceToken, phone, result.response)
     }
 
-    // Parallelize: save AI message, update conversation counts, and broadcast
+    // Save AI message first to get full object for Pusher broadcast
+    const savedAiMessage = await db.message.create({
+      data: {
+        conversationId,
+        workspaceId,
+        direction: 'OUTBOUND',
+        content: result.response,
+        aiGenerated: true,
+        senderName: agentConfig.name,
+        status: 'SENT',
+      },
+    })
+
+    // Parallelize: update conversation counts and broadcast
     await Promise.all([
-      db.message.create({
-        data: {
-          conversationId,
-          workspaceId,
-          direction: 'OUTBOUND',
-          content: result.response,
-          aiGenerated: true,
-          senderName: agentConfig.name,
-          status: 'SENT',
-        },
-      }),
       db.conversation.update({
         where: { id: conversationId },
         data: {
@@ -264,8 +282,7 @@ export async function processAiResponse(
       }),
       pusherServer.trigger(`workspace-${workspaceId}`, 'new-message', {
         conversationId,
-        message: result.response,
-        aiGenerated: true,
+        message: savedAiMessage,
       }),
     ])
 
