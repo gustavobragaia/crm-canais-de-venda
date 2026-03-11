@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { MessageSquare, CheckCircle, AlertCircle, TrendingUp, Users, XCircle } from 'lucide-react'
+import { MessageSquare, CheckCircle, AlertCircle, TrendingUp, Users, Bot, Clock, Sparkles, UserCheck, ArrowRight } from 'lucide-react'
 import { differenceInDays } from 'date-fns'
 
 interface Overview {
@@ -19,6 +19,34 @@ interface Overview {
   maxConversationsPerMonth: number
   subscriptionStatus: string
   trialEndsAt: string | null
+}
+
+interface AiMetrics {
+  aiConversations: number
+  aiMessages: number
+  hoursSaved: number
+  aiQualified: number
+  aiTransferred: number
+  qualificationRate: number
+}
+
+interface HeatmapCell {
+  day: number
+  hour: number
+  count: number
+}
+
+interface AgentStat {
+  userId: string
+  name: string
+  role: string
+  conversations: number
+  resolved: number
+  resolutionRate: number
+  messagesSent: number
+  avgFirstResponseMin: number | null
+  aiAssistedConversations: number
+  activeConversations: number
 }
 
 function StatCard({
@@ -60,22 +88,45 @@ const CHANNEL_COLORS: Record<string, string> = {
   FACEBOOK: 'bg-blue-600',
 }
 
+const DAY_LABELS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
+
+function getHeatColor(count: number, max: number): string {
+  if (max === 0 || count === 0) return 'bg-gray-100'
+  const ratio = count / max
+  if (ratio < 0.15) return 'bg-blue-100'
+  if (ratio < 0.3) return 'bg-blue-200'
+  if (ratio < 0.5) return 'bg-blue-300'
+  if (ratio < 0.7) return 'bg-blue-400'
+  if (ratio < 0.85) return 'bg-blue-500'
+  return 'bg-blue-600'
+}
+
 export default function AnalyticsPage() {
   const [overview, setOverview] = useState<Overview | null>(null)
+  const [aiMetrics, setAiMetrics] = useState<AiMetrics | null>(null)
+  const [heatmap, setHeatmap] = useState<HeatmapCell[]>([])
+  const [agentStats, setAgentStats] = useState<AgentStat[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch('/api/analytics/overview')
-      .then((r) => r.json())
-      .then((data) => setOverview(data))
-      .finally(() => setLoading(false))
+    Promise.all([
+      fetch('/api/analytics/overview').then(r => r.ok ? r.json() : null).catch(() => null),
+      fetch('/api/analytics/ai-metrics').then(r => r.ok ? r.json() : null).catch(() => null),
+      fetch('/api/analytics/heatmap').then(r => r.ok ? r.json() : []).catch(() => []),
+      fetch('/api/analytics/agent-stats').then(r => r.ok ? r.json() : []).catch(() => []),
+    ]).then(([ov, ai, hm, as_]) => {
+      setOverview(ov)
+      setAiMetrics(ai)
+      setHeatmap(Array.isArray(hm) ? hm : [])
+      setAgentStats(Array.isArray(as_) ? as_ : [])
+    }).finally(() => setLoading(false))
   }, [])
 
   if (loading) {
     return (
       <div className="p-6">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {Array.from({ length: 6 }).map((_, i) => (
+          {Array.from({ length: 8 }).map((_, i) => (
             <div key={i} className="bg-white border border-gray-200 rounded-xl p-5 animate-pulse">
               <div className="h-4 bg-gray-200 rounded w-3/4 mb-3" />
               <div className="h-8 bg-gray-200 rounded w-1/2" />
@@ -92,6 +143,15 @@ export default function AnalyticsPage() {
 
   const trafficEntries = Object.entries(overview?.trafficByChannel ?? {})
   const trafficTotal = trafficEntries.reduce((sum, [, v]) => sum + v, 0)
+
+  // Build heatmap lookup
+  const heatmapMap: Record<string, number> = {}
+  let heatmapMax = 0
+  for (const cell of heatmap) {
+    const key = `${cell.day}-${cell.hour}`
+    heatmapMap[key] = cell.count
+    if (cell.count > heatmapMax) heatmapMax = cell.count
+  }
 
   return (
     <div className="h-screen overflow-y-auto">
@@ -225,30 +285,203 @@ export default function AnalyticsPage() {
           </div>
         </div>
 
-        {/* Agent stats */}
-        {(overview?.agentStats?.length ?? 0) > 0 && (
+        {/* ─── AI Metrics ─── */}
+        <div>
+          <div className="flex items-center gap-2 mb-3">
+            <Bot size={16} className="text-violet-500" />
+            <h2 className="font-semibold text-gray-900">Métricas de IA</h2>
+            <span className="text-xs text-gray-400">(este mês)</span>
+          </div>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="bg-violet-50 border border-violet-100 rounded-xl p-5">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-sm text-violet-600">Conversas pela IA</span>
+                <div className="w-9 h-9 rounded-lg bg-violet-100 flex items-center justify-center">
+                  <Bot size={18} className="text-violet-600" />
+                </div>
+              </div>
+              <p className="text-2xl font-bold text-violet-900">{aiMetrics?.aiConversations ?? 0}</p>
+              <p className="text-xs text-violet-400 mt-1">{aiMetrics?.aiMessages ?? 0} msgs geradas</p>
+            </div>
+
+            <div className="bg-violet-50 border border-violet-100 rounded-xl p-5">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-sm text-violet-600">Horas economizadas</span>
+                <div className="w-9 h-9 rounded-lg bg-violet-100 flex items-center justify-center">
+                  <Clock size={18} className="text-violet-600" />
+                </div>
+              </div>
+              <p className="text-2xl font-bold text-violet-900">~{aiMetrics?.hoursSaved ?? 0}h</p>
+              <p className="text-xs text-violet-400 mt-1">estimado (3 min/msg)</p>
+            </div>
+
+            <div className="bg-violet-50 border border-violet-100 rounded-xl p-5">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-sm text-violet-600">Leads qualificados</span>
+                <div className="w-9 h-9 rounded-lg bg-violet-100 flex items-center justify-center">
+                  <Sparkles size={18} className="text-violet-600" />
+                </div>
+              </div>
+              <p className="text-2xl font-bold text-violet-900">{aiMetrics?.aiQualified ?? 0}</p>
+              <p className="text-xs text-violet-400 mt-1">tag QUALIFICADO</p>
+            </div>
+
+            <div className="bg-violet-50 border border-violet-100 rounded-xl p-5">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-sm text-violet-600">Transferidos</span>
+                <div className="w-9 h-9 rounded-lg bg-violet-100 flex items-center justify-center">
+                  <ArrowRight size={18} className="text-violet-600" />
+                </div>
+              </div>
+              <p className="text-2xl font-bold text-violet-900">{aiMetrics?.aiTransferred ?? 0}</p>
+              <p className="text-xs text-violet-400 mt-1">para humano</p>
+            </div>
+          </div>
+
+          {/* Qualification rate bar */}
+          {(aiMetrics?.aiConversations ?? 0) > 0 && (
+            <div className="mt-3 bg-white border border-violet-100 rounded-xl p-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm text-gray-700 font-medium">Taxa de qualificação pela IA</span>
+                <span className="text-sm font-semibold text-violet-700">{aiMetrics?.qualificationRate ?? 0}%</span>
+              </div>
+              <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-violet-500 rounded-full transition-all"
+                  style={{ width: `${aiMetrics?.qualificationRate ?? 0}%` }}
+                />
+              </div>
+              <div className="flex justify-between mt-1.5 text-xs text-gray-400">
+                <span>{aiMetrics?.aiQualified ?? 0} qualificados de {aiMetrics?.aiConversations ?? 0} atendidos pela IA</span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* ─── Heatmap ─── */}
+        <div className="bg-white border border-gray-200 rounded-xl p-5">
+          <div className="flex items-center gap-2 mb-4">
+            <h2 className="font-semibold text-gray-900">Heatmap de Atendimento</h2>
+            <span className="text-xs text-gray-400">(últimos 30 dias — mensagens recebidas)</span>
+          </div>
+
+          <div className="overflow-x-auto">
+            <div className="min-w-[640px]">
+              {/* Hour labels */}
+              <div className="flex ml-10 mb-1">
+                {Array.from({ length: 24 }, (_, h) => (
+                  <div key={h} className="flex-1 text-center">
+                    {[0, 6, 12, 18].includes(h) ? (
+                      <span className="text-[10px] text-gray-400">{h}h</span>
+                    ) : null}
+                  </div>
+                ))}
+              </div>
+
+              {/* Grid */}
+              {DAY_LABELS.map((day, dayIdx) => (
+                <div key={dayIdx} className="flex items-center gap-1 mb-1">
+                  <span className="text-[10px] text-gray-400 w-9 text-right pr-1 shrink-0">{day}</span>
+                  {Array.from({ length: 24 }, (_, hour) => {
+                    const count = heatmapMap[`${dayIdx}-${hour}`] ?? 0
+                    return (
+                      <div
+                        key={hour}
+                        title={`${day} ${hour}h: ${count} msgs`}
+                        className={`flex-1 h-5 rounded-sm ${getHeatColor(count, heatmapMax)}`}
+                      />
+                    )
+                  })}
+                </div>
+              ))}
+
+              {/* Legend */}
+              <div className="flex items-center gap-2 mt-3 justify-end">
+                <span className="text-[10px] text-gray-400">Menos</span>
+                {['bg-gray-100', 'bg-blue-100', 'bg-blue-200', 'bg-blue-300', 'bg-blue-400', 'bg-blue-500', 'bg-blue-600'].map(c => (
+                  <div key={c} className={`w-4 h-4 rounded-sm ${c}`} />
+                ))}
+                <span className="text-[10px] text-gray-400">Mais</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ─── Agent Stats Table ─── */}
+        {agentStats.length > 0 && (
           <div className="bg-white border border-gray-200 rounded-xl p-5">
             <div className="flex items-center gap-2 mb-4">
               <Users size={16} className="text-gray-400" />
-              <h3 className="font-medium text-gray-900">Por agente</h3>
+              <h2 className="font-semibold text-gray-900">Métricas por Agente</h2>
+              <span className="text-xs text-gray-400">(este mês)</span>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="text-xs text-gray-500 uppercase tracking-wide border-b border-gray-100">
-                    <th className="text-left py-2 pr-4">Agente</th>
-                    <th className="text-left py-2 pr-4">Função</th>
-                    <th className="text-right py-2">Conversas atribuídas</th>
+                    <th className="text-left py-2 pr-4 font-medium">Agente</th>
+                    <th className="text-left py-2 pr-4 font-medium">Função</th>
+                    <th className="text-right py-2 pr-4 font-medium">Conversas</th>
+                    <th className="text-right py-2 pr-4 font-medium">Resolvidas</th>
+                    <th className="text-right py-2 pr-4 font-medium">Taxa</th>
+                    <th className="text-right py-2 pr-4 font-medium">Msgs enviadas</th>
+                    <th className="text-right py-2 pr-4 font-medium">1ª Resposta</th>
+                    <th className="text-right py-2 pr-4 font-medium">IA Assistida</th>
+                    <th className="text-right py-2 font-medium">Ativas</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
-                  {overview?.agentStats.map((agent) => (
+                  {agentStats.map(agent => (
                     <tr key={agent.userId} className="hover:bg-gray-50">
-                      <td className="py-2.5 pr-4 font-medium text-gray-900">{agent.name}</td>
-                      <td className="py-2.5 pr-4 text-gray-500">
-                        {agent.role === 'ADMIN' ? 'Admin' : 'Agente'}
+                      <td className="py-3 pr-4">
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
+                            <span className="text-xs font-semibold text-gray-600">
+                              {agent.name.charAt(0).toUpperCase()}
+                            </span>
+                          </div>
+                          <span className="font-medium text-gray-900 truncate max-w-[120px]">{agent.name}</span>
+                        </div>
                       </td>
-                      <td className="py-2.5 text-right font-semibold text-gray-900">{agent.conversations}</td>
+                      <td className="py-3 pr-4">
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                          agent.role === 'ADMIN'
+                            ? 'bg-purple-50 text-purple-700'
+                            : 'bg-blue-50 text-blue-700'
+                        }`}>
+                          {agent.role === 'ADMIN' ? 'Admin' : 'Agente'}
+                        </span>
+                      </td>
+                      <td className="py-3 pr-4 text-right font-semibold text-gray-900">{agent.conversations}</td>
+                      <td className="py-3 pr-4 text-right text-gray-700">{agent.resolved}</td>
+                      <td className="py-3 pr-4 text-right">
+                        <span className={`font-medium ${agent.resolutionRate >= 70 ? 'text-green-600' : agent.resolutionRate >= 40 ? 'text-amber-600' : 'text-gray-500'}`}>
+                          {agent.resolutionRate}%
+                        </span>
+                      </td>
+                      <td className="py-3 pr-4 text-right text-gray-700">{agent.messagesSent}</td>
+                      <td className="py-3 pr-4 text-right text-gray-500">
+                        {agent.avgFirstResponseMin !== null
+                          ? agent.avgFirstResponseMin >= 60
+                            ? `${Math.round(agent.avgFirstResponseMin / 60)}h`
+                            : `${agent.avgFirstResponseMin}min`
+                          : '—'}
+                      </td>
+                      <td className="py-3 pr-4 text-right">
+                        {agent.aiAssistedConversations > 0 ? (
+                          <span className="inline-flex items-center gap-1 text-violet-600">
+                            <UserCheck size={13} />
+                            {agent.aiAssistedConversations}
+                          </span>
+                        ) : (
+                          <span className="text-gray-400">0</span>
+                        )}
+                      </td>
+                      <td className="py-3 text-right">
+                        <span className={`font-semibold ${agent.activeConversations > 0 ? 'text-blue-600' : 'text-gray-400'}`}>
+                          {agent.activeConversations}
+                        </span>
+                      </td>
                     </tr>
                   ))}
                 </tbody>

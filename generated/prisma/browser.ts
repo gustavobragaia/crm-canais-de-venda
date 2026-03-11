@@ -33,6 +33,11 @@ export type User = Prisma.UserModel
  */
 export type Channel = Prisma.ChannelModel
 /**
+ * Model AgentConfig
+ * 
+ */
+export type AgentConfig = Prisma.AgentConfigModel
+/**
  * Model Conversation
  * 
  */
@@ -67,3 +72,23 @@ export type WebhookLog = Prisma.WebhookLogModel
  * 
  */
 export type Plan = Prisma.PlanModel
+/**
+ * Model MessageTemplate
+ * 
+ */
+export type MessageTemplate = Prisma.MessageTemplateModel
+/**
+ * Model ConversationActivity
+ * 
+ */
+export type ConversationActivity = Prisma.ConversationActivityModel
+/**
+ * Model ScheduledMessage
+ * 
+ */
+export type ScheduledMessage = Prisma.ScheduledMessageModel
+/**
+ * Model Automation
+ * 
+ */
+export type Automation = Prisma.AutomationModel

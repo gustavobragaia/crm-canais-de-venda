@@ -34,6 +34,7 @@ export type UserMinAggregateOutputType = {
   avatarUrl: string | null
   isActive: boolean | null
   lastActiveAt: Date | null
+  agentRole: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -48,6 +49,7 @@ export type UserMaxAggregateOutputType = {
   avatarUrl: string | null
   isActive: boolean | null
   lastActiveAt: Date | null
+  agentRole: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -62,6 +64,7 @@ export type UserCountAggregateOutputType = {
   avatarUrl: number
   isActive: number
   lastActiveAt: number
+  agentRole: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -78,6 +81,7 @@ export type UserMinAggregateInputType = {
   avatarUrl?: true
   isActive?: true
   lastActiveAt?: true
+  agentRole?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -92,6 +96,7 @@ export type UserMaxAggregateInputType = {
   avatarUrl?: true
   isActive?: true
   lastActiveAt?: true
+  agentRole?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -106,6 +111,7 @@ export type UserCountAggregateInputType = {
   avatarUrl?: true
   isActive?: true
   lastActiveAt?: true
+  agentRole?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -193,6 +199,7 @@ export type UserGroupByOutputType = {
   avatarUrl: string | null
   isActive: boolean
   lastActiveAt: Date | null
+  agentRole: string | null
   createdAt: Date
   updatedAt: Date
   _count: UserCountAggregateOutputType | null
@@ -228,10 +235,12 @@ export type UserWhereInput = {
   avatarUrl?: Prisma.StringNullableFilter<"User"> | string | null
   isActive?: Prisma.BoolFilter<"User"> | boolean
   lastActiveAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  agentRole?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   assignedByConversations?: Prisma.ConversationListRelationFilter
   assignedConversations?: Prisma.ConversationListRelationFilter
+  conversationActivities?: Prisma.ConversationActivityListRelationFilter
   sentMessages?: Prisma.MessageListRelationFilter
   workspace?: Prisma.XOR<Prisma.WorkspaceScalarRelationFilter, Prisma.WorkspaceWhereInput>
 }
@@ -246,10 +255,12 @@ export type UserOrderByWithRelationInput = {
   avatarUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   lastActiveAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  agentRole?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   assignedByConversations?: Prisma.ConversationOrderByRelationAggregateInput
   assignedConversations?: Prisma.ConversationOrderByRelationAggregateInput
+  conversationActivities?: Prisma.ConversationActivityOrderByRelationAggregateInput
   sentMessages?: Prisma.MessageOrderByRelationAggregateInput
   workspace?: Prisma.WorkspaceOrderByWithRelationInput
 }
@@ -268,10 +279,12 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   avatarUrl?: Prisma.StringNullableFilter<"User"> | string | null
   isActive?: Prisma.BoolFilter<"User"> | boolean
   lastActiveAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  agentRole?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   assignedByConversations?: Prisma.ConversationListRelationFilter
   assignedConversations?: Prisma.ConversationListRelationFilter
+  conversationActivities?: Prisma.ConversationActivityListRelationFilter
   sentMessages?: Prisma.MessageListRelationFilter
   workspace?: Prisma.XOR<Prisma.WorkspaceScalarRelationFilter, Prisma.WorkspaceWhereInput>
 }, "id" | "workspaceId_email">
@@ -286,6 +299,7 @@ export type UserOrderByWithAggregationInput = {
   avatarUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   lastActiveAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  agentRole?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
@@ -306,6 +320,7 @@ export type UserScalarWhereWithAggregatesInput = {
   avatarUrl?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   isActive?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   lastActiveAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  agentRole?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
 }
@@ -319,10 +334,12 @@ export type UserCreateInput = {
   avatarUrl?: string | null
   isActive?: boolean
   lastActiveAt?: Date | string | null
+  agentRole?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   assignedByConversations?: Prisma.ConversationCreateNestedManyWithoutAssignedByInput
   assignedConversations?: Prisma.ConversationCreateNestedManyWithoutAssignedToInput
+  conversationActivities?: Prisma.ConversationActivityCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageCreateNestedManyWithoutSentByInput
   workspace: Prisma.WorkspaceCreateNestedOneWithoutUsersInput
 }
@@ -337,10 +354,12 @@ export type UserUncheckedCreateInput = {
   avatarUrl?: string | null
   isActive?: boolean
   lastActiveAt?: Date | string | null
+  agentRole?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   assignedByConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutAssignedByInput
   assignedConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutAssignedToInput
+  conversationActivities?: Prisma.ConversationActivityUncheckedCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutSentByInput
 }
 
@@ -353,10 +372,12 @@ export type UserUpdateInput = {
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  agentRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignedByConversations?: Prisma.ConversationUpdateManyWithoutAssignedByNestedInput
   assignedConversations?: Prisma.ConversationUpdateManyWithoutAssignedToNestedInput
+  conversationActivities?: Prisma.ConversationActivityUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUpdateManyWithoutSentByNestedInput
   workspace?: Prisma.WorkspaceUpdateOneRequiredWithoutUsersNestedInput
 }
@@ -371,10 +392,12 @@ export type UserUncheckedUpdateInput = {
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  agentRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignedByConversations?: Prisma.ConversationUncheckedUpdateManyWithoutAssignedByNestedInput
   assignedConversations?: Prisma.ConversationUncheckedUpdateManyWithoutAssignedToNestedInput
+  conversationActivities?: Prisma.ConversationActivityUncheckedUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutSentByNestedInput
 }
 
@@ -388,6 +411,7 @@ export type UserCreateManyInput = {
   avatarUrl?: string | null
   isActive?: boolean
   lastActiveAt?: Date | string | null
+  agentRole?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -401,6 +425,7 @@ export type UserUpdateManyMutationInput = {
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  agentRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -415,6 +440,7 @@ export type UserUncheckedUpdateManyInput = {
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  agentRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -444,6 +470,7 @@ export type UserCountOrderByAggregateInput = {
   avatarUrl?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   lastActiveAt?: Prisma.SortOrder
+  agentRole?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -458,6 +485,7 @@ export type UserMaxOrderByAggregateInput = {
   avatarUrl?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   lastActiveAt?: Prisma.SortOrder
+  agentRole?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -472,6 +500,7 @@ export type UserMinOrderByAggregateInput = {
   avatarUrl?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   lastActiveAt?: Prisma.SortOrder
+  agentRole?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -579,6 +608,22 @@ export type UserUpdateOneWithoutSentMessagesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSentMessagesInput, Prisma.UserUpdateWithoutSentMessagesInput>, Prisma.UserUncheckedUpdateWithoutSentMessagesInput>
 }
 
+export type UserCreateNestedOneWithoutConversationActivitiesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutConversationActivitiesInput, Prisma.UserUncheckedCreateWithoutConversationActivitiesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutConversationActivitiesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutConversationActivitiesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutConversationActivitiesInput, Prisma.UserUncheckedCreateWithoutConversationActivitiesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutConversationActivitiesInput
+  upsert?: Prisma.UserUpsertWithoutConversationActivitiesInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutConversationActivitiesInput, Prisma.UserUpdateWithoutConversationActivitiesInput>, Prisma.UserUncheckedUpdateWithoutConversationActivitiesInput>
+}
+
 export type UserCreateWithoutWorkspaceInput = {
   id?: string
   email: string
@@ -588,10 +633,12 @@ export type UserCreateWithoutWorkspaceInput = {
   avatarUrl?: string | null
   isActive?: boolean
   lastActiveAt?: Date | string | null
+  agentRole?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   assignedByConversations?: Prisma.ConversationCreateNestedManyWithoutAssignedByInput
   assignedConversations?: Prisma.ConversationCreateNestedManyWithoutAssignedToInput
+  conversationActivities?: Prisma.ConversationActivityCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageCreateNestedManyWithoutSentByInput
 }
 
@@ -604,10 +651,12 @@ export type UserUncheckedCreateWithoutWorkspaceInput = {
   avatarUrl?: string | null
   isActive?: boolean
   lastActiveAt?: Date | string | null
+  agentRole?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   assignedByConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutAssignedByInput
   assignedConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutAssignedToInput
+  conversationActivities?: Prisma.ConversationActivityUncheckedCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutSentByInput
 }
 
@@ -650,6 +699,7 @@ export type UserScalarWhereInput = {
   avatarUrl?: Prisma.StringNullableFilter<"User"> | string | null
   isActive?: Prisma.BoolFilter<"User"> | boolean
   lastActiveAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  agentRole?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
 }
@@ -663,9 +713,11 @@ export type UserCreateWithoutAssignedByConversationsInput = {
   avatarUrl?: string | null
   isActive?: boolean
   lastActiveAt?: Date | string | null
+  agentRole?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   assignedConversations?: Prisma.ConversationCreateNestedManyWithoutAssignedToInput
+  conversationActivities?: Prisma.ConversationActivityCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageCreateNestedManyWithoutSentByInput
   workspace: Prisma.WorkspaceCreateNestedOneWithoutUsersInput
 }
@@ -680,9 +732,11 @@ export type UserUncheckedCreateWithoutAssignedByConversationsInput = {
   avatarUrl?: string | null
   isActive?: boolean
   lastActiveAt?: Date | string | null
+  agentRole?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   assignedConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutAssignedToInput
+  conversationActivities?: Prisma.ConversationActivityUncheckedCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutSentByInput
 }
 
@@ -700,9 +754,11 @@ export type UserCreateWithoutAssignedConversationsInput = {
   avatarUrl?: string | null
   isActive?: boolean
   lastActiveAt?: Date | string | null
+  agentRole?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   assignedByConversations?: Prisma.ConversationCreateNestedManyWithoutAssignedByInput
+  conversationActivities?: Prisma.ConversationActivityCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageCreateNestedManyWithoutSentByInput
   workspace: Prisma.WorkspaceCreateNestedOneWithoutUsersInput
 }
@@ -717,9 +773,11 @@ export type UserUncheckedCreateWithoutAssignedConversationsInput = {
   avatarUrl?: string | null
   isActive?: boolean
   lastActiveAt?: Date | string | null
+  agentRole?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   assignedByConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutAssignedByInput
+  conversationActivities?: Prisma.ConversationActivityUncheckedCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutSentByInput
 }
 
@@ -748,9 +806,11 @@ export type UserUpdateWithoutAssignedByConversationsInput = {
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  agentRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignedConversations?: Prisma.ConversationUpdateManyWithoutAssignedToNestedInput
+  conversationActivities?: Prisma.ConversationActivityUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUpdateManyWithoutSentByNestedInput
   workspace?: Prisma.WorkspaceUpdateOneRequiredWithoutUsersNestedInput
 }
@@ -765,9 +825,11 @@ export type UserUncheckedUpdateWithoutAssignedByConversationsInput = {
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  agentRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignedConversations?: Prisma.ConversationUncheckedUpdateManyWithoutAssignedToNestedInput
+  conversationActivities?: Prisma.ConversationActivityUncheckedUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutSentByNestedInput
 }
 
@@ -791,9 +853,11 @@ export type UserUpdateWithoutAssignedConversationsInput = {
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  agentRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignedByConversations?: Prisma.ConversationUpdateManyWithoutAssignedByNestedInput
+  conversationActivities?: Prisma.ConversationActivityUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUpdateManyWithoutSentByNestedInput
   workspace?: Prisma.WorkspaceUpdateOneRequiredWithoutUsersNestedInput
 }
@@ -808,9 +872,11 @@ export type UserUncheckedUpdateWithoutAssignedConversationsInput = {
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  agentRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignedByConversations?: Prisma.ConversationUncheckedUpdateManyWithoutAssignedByNestedInput
+  conversationActivities?: Prisma.ConversationActivityUncheckedUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutSentByNestedInput
 }
 
@@ -823,10 +889,12 @@ export type UserCreateWithoutSentMessagesInput = {
   avatarUrl?: string | null
   isActive?: boolean
   lastActiveAt?: Date | string | null
+  agentRole?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   assignedByConversations?: Prisma.ConversationCreateNestedManyWithoutAssignedByInput
   assignedConversations?: Prisma.ConversationCreateNestedManyWithoutAssignedToInput
+  conversationActivities?: Prisma.ConversationActivityCreateNestedManyWithoutUserInput
   workspace: Prisma.WorkspaceCreateNestedOneWithoutUsersInput
 }
 
@@ -840,10 +908,12 @@ export type UserUncheckedCreateWithoutSentMessagesInput = {
   avatarUrl?: string | null
   isActive?: boolean
   lastActiveAt?: Date | string | null
+  agentRole?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   assignedByConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutAssignedByInput
   assignedConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutAssignedToInput
+  conversationActivities?: Prisma.ConversationActivityUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSentMessagesInput = {
@@ -871,10 +941,12 @@ export type UserUpdateWithoutSentMessagesInput = {
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  agentRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignedByConversations?: Prisma.ConversationUpdateManyWithoutAssignedByNestedInput
   assignedConversations?: Prisma.ConversationUpdateManyWithoutAssignedToNestedInput
+  conversationActivities?: Prisma.ConversationActivityUpdateManyWithoutUserNestedInput
   workspace?: Prisma.WorkspaceUpdateOneRequiredWithoutUsersNestedInput
 }
 
@@ -888,10 +960,100 @@ export type UserUncheckedUpdateWithoutSentMessagesInput = {
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  agentRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignedByConversations?: Prisma.ConversationUncheckedUpdateManyWithoutAssignedByNestedInput
   assignedConversations?: Prisma.ConversationUncheckedUpdateManyWithoutAssignedToNestedInput
+  conversationActivities?: Prisma.ConversationActivityUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutConversationActivitiesInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  name: string
+  role?: $Enums.UserRole
+  avatarUrl?: string | null
+  isActive?: boolean
+  lastActiveAt?: Date | string | null
+  agentRole?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  assignedByConversations?: Prisma.ConversationCreateNestedManyWithoutAssignedByInput
+  assignedConversations?: Prisma.ConversationCreateNestedManyWithoutAssignedToInput
+  sentMessages?: Prisma.MessageCreateNestedManyWithoutSentByInput
+  workspace: Prisma.WorkspaceCreateNestedOneWithoutUsersInput
+}
+
+export type UserUncheckedCreateWithoutConversationActivitiesInput = {
+  id?: string
+  workspaceId: string
+  email: string
+  passwordHash: string
+  name: string
+  role?: $Enums.UserRole
+  avatarUrl?: string | null
+  isActive?: boolean
+  lastActiveAt?: Date | string | null
+  agentRole?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  assignedByConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutAssignedByInput
+  assignedConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutAssignedToInput
+  sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutSentByInput
+}
+
+export type UserCreateOrConnectWithoutConversationActivitiesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutConversationActivitiesInput, Prisma.UserUncheckedCreateWithoutConversationActivitiesInput>
+}
+
+export type UserUpsertWithoutConversationActivitiesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutConversationActivitiesInput, Prisma.UserUncheckedUpdateWithoutConversationActivitiesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutConversationActivitiesInput, Prisma.UserUncheckedCreateWithoutConversationActivitiesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutConversationActivitiesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutConversationActivitiesInput, Prisma.UserUncheckedUpdateWithoutConversationActivitiesInput>
+}
+
+export type UserUpdateWithoutConversationActivitiesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  agentRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assignedByConversations?: Prisma.ConversationUpdateManyWithoutAssignedByNestedInput
+  assignedConversations?: Prisma.ConversationUpdateManyWithoutAssignedToNestedInput
+  sentMessages?: Prisma.MessageUpdateManyWithoutSentByNestedInput
+  workspace?: Prisma.WorkspaceUpdateOneRequiredWithoutUsersNestedInput
+}
+
+export type UserUncheckedUpdateWithoutConversationActivitiesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  workspaceId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  agentRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assignedByConversations?: Prisma.ConversationUncheckedUpdateManyWithoutAssignedByNestedInput
+  assignedConversations?: Prisma.ConversationUncheckedUpdateManyWithoutAssignedToNestedInput
+  sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutSentByNestedInput
 }
 
 export type UserCreateManyWorkspaceInput = {
@@ -903,6 +1065,7 @@ export type UserCreateManyWorkspaceInput = {
   avatarUrl?: string | null
   isActive?: boolean
   lastActiveAt?: Date | string | null
+  agentRole?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -916,10 +1079,12 @@ export type UserUpdateWithoutWorkspaceInput = {
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  agentRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignedByConversations?: Prisma.ConversationUpdateManyWithoutAssignedByNestedInput
   assignedConversations?: Prisma.ConversationUpdateManyWithoutAssignedToNestedInput
+  conversationActivities?: Prisma.ConversationActivityUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUpdateManyWithoutSentByNestedInput
 }
 
@@ -932,10 +1097,12 @@ export type UserUncheckedUpdateWithoutWorkspaceInput = {
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  agentRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignedByConversations?: Prisma.ConversationUncheckedUpdateManyWithoutAssignedByNestedInput
   assignedConversations?: Prisma.ConversationUncheckedUpdateManyWithoutAssignedToNestedInput
+  conversationActivities?: Prisma.ConversationActivityUncheckedUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutSentByNestedInput
 }
 
@@ -948,6 +1115,7 @@ export type UserUncheckedUpdateManyWithoutWorkspaceInput = {
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  agentRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -960,12 +1128,14 @@ export type UserUncheckedUpdateManyWithoutWorkspaceInput = {
 export type UserCountOutputType = {
   assignedByConversations: number
   assignedConversations: number
+  conversationActivities: number
   sentMessages: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   assignedByConversations?: boolean | UserCountOutputTypeCountAssignedByConversationsArgs
   assignedConversations?: boolean | UserCountOutputTypeCountAssignedConversationsArgs
+  conversationActivities?: boolean | UserCountOutputTypeCountConversationActivitiesArgs
   sentMessages?: boolean | UserCountOutputTypeCountSentMessagesArgs
 }
 
@@ -996,6 +1166,13 @@ export type UserCountOutputTypeCountAssignedConversationsArgs<ExtArgs extends ru
 /**
  * UserCountOutputType without action
  */
+export type UserCountOutputTypeCountConversationActivitiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ConversationActivityWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
 export type UserCountOutputTypeCountSentMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.MessageWhereInput
 }
@@ -1011,10 +1188,12 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   avatarUrl?: boolean
   isActive?: boolean
   lastActiveAt?: boolean
+  agentRole?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   assignedByConversations?: boolean | Prisma.User$assignedByConversationsArgs<ExtArgs>
   assignedConversations?: boolean | Prisma.User$assignedConversationsArgs<ExtArgs>
+  conversationActivities?: boolean | Prisma.User$conversationActivitiesArgs<ExtArgs>
   sentMessages?: boolean | Prisma.User$sentMessagesArgs<ExtArgs>
   workspace?: boolean | Prisma.WorkspaceDefaultArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -1030,6 +1209,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   avatarUrl?: boolean
   isActive?: boolean
   lastActiveAt?: boolean
+  agentRole?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   workspace?: boolean | Prisma.WorkspaceDefaultArgs<ExtArgs>
@@ -1045,6 +1225,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   avatarUrl?: boolean
   isActive?: boolean
   lastActiveAt?: boolean
+  agentRole?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   workspace?: boolean | Prisma.WorkspaceDefaultArgs<ExtArgs>
@@ -1060,14 +1241,16 @@ export type UserSelectScalar = {
   avatarUrl?: boolean
   isActive?: boolean
   lastActiveAt?: boolean
+  agentRole?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "workspaceId" | "email" | "passwordHash" | "name" | "role" | "avatarUrl" | "isActive" | "lastActiveAt" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "workspaceId" | "email" | "passwordHash" | "name" | "role" | "avatarUrl" | "isActive" | "lastActiveAt" | "agentRole" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   assignedByConversations?: boolean | Prisma.User$assignedByConversationsArgs<ExtArgs>
   assignedConversations?: boolean | Prisma.User$assignedConversationsArgs<ExtArgs>
+  conversationActivities?: boolean | Prisma.User$conversationActivitiesArgs<ExtArgs>
   sentMessages?: boolean | Prisma.User$sentMessagesArgs<ExtArgs>
   workspace?: boolean | Prisma.WorkspaceDefaultArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -1084,6 +1267,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   objects: {
     assignedByConversations: Prisma.$ConversationPayload<ExtArgs>[]
     assignedConversations: Prisma.$ConversationPayload<ExtArgs>[]
+    conversationActivities: Prisma.$ConversationActivityPayload<ExtArgs>[]
     sentMessages: Prisma.$MessagePayload<ExtArgs>[]
     workspace: Prisma.$WorkspacePayload<ExtArgs>
   }
@@ -1097,6 +1281,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     avatarUrl: string | null
     isActive: boolean
     lastActiveAt: Date | null
+    agentRole: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["user"]>
@@ -1495,6 +1680,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   readonly [Symbol.toStringTag]: "PrismaPromise"
   assignedByConversations<T extends Prisma.User$assignedByConversationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$assignedByConversationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConversationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   assignedConversations<T extends Prisma.User$assignedConversationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$assignedConversationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConversationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  conversationActivities<T extends Prisma.User$conversationActivitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$conversationActivitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConversationActivityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   sentMessages<T extends Prisma.User$sentMessagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sentMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   workspace<T extends Prisma.WorkspaceDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WorkspaceDefaultArgs<ExtArgs>>): Prisma.Prisma__WorkspaceClient<runtime.Types.Result.GetResult<Prisma.$WorkspacePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
@@ -1535,6 +1721,7 @@ export interface UserFieldRefs {
   readonly avatarUrl: Prisma.FieldRef<"User", 'String'>
   readonly isActive: Prisma.FieldRef<"User", 'Boolean'>
   readonly lastActiveAt: Prisma.FieldRef<"User", 'DateTime'>
+  readonly agentRole: Prisma.FieldRef<"User", 'String'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
 }
@@ -1978,6 +2165,30 @@ export type User$assignedConversationsArgs<ExtArgs extends runtime.Types.Extensi
   take?: number
   skip?: number
   distinct?: Prisma.ConversationScalarFieldEnum | Prisma.ConversationScalarFieldEnum[]
+}
+
+/**
+ * User.conversationActivities
+ */
+export type User$conversationActivitiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ConversationActivity
+   */
+  select?: Prisma.ConversationActivitySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ConversationActivity
+   */
+  omit?: Prisma.ConversationActivityOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ConversationActivityInclude<ExtArgs> | null
+  where?: Prisma.ConversationActivityWhereInput
+  orderBy?: Prisma.ConversationActivityOrderByWithRelationInput | Prisma.ConversationActivityOrderByWithRelationInput[]
+  cursor?: Prisma.ConversationActivityWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ConversationActivityScalarFieldEnum | Prisma.ConversationActivityScalarFieldEnum[]
 }
 
 /**

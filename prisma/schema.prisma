@@ -23,12 +23,17 @@ model Workspace {
   conversationsThisMonth   Int                @default(0)
   createdAt                DateTime           @default(now())
   updatedAt                DateTime           @updatedAt
+  agentConfig              AgentConfig?
   analyticsDaily           AnalyticsDaily[]
+  automations              Automation[]
   channels                 Channel[]
   conversations            Conversation[]
+  conversationActivities   ConversationActivity[]
   leads                    Lead[]
+  messageTemplates         MessageTemplate[]
   messages                 Message[]
   pipelineStages           PipelineStage[]
+  scheduledMessages        ScheduledMessage[]
   users                    User[]
   webhookLogs              WebhookLog[]
 
@@ -46,12 +51,14 @@ model User {
   avatarUrl               String?
   isActive                Boolean        @default(true)
   lastActiveAt            DateTime?
+  agentRole               String?
   createdAt               DateTime       @default(now())
   updatedAt               DateTime       @updatedAt
-  assignedByConversations Conversation[] @relation("AssignedByConversations")
-  assignedConversations   Conversation[] @relation("AssignedConversations")
+  assignedByConversations Conversation[]         @relation("AssignedByConversations")
+  assignedConversations   Conversation[]         @relation("AssignedConversations")
+  conversationActivities  ConversationActivity[]
   sentMessages            Message[]
-  workspace               Workspace      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  workspace               Workspace              @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
   @@unique([workspaceId, email])
   @@index([workspaceId])
@@ -88,6 +95,29 @@ model Channel {
   @@map("channels")
 }
 
+model AgentConfig {
+  id                  String    @id @default(cuid())
+  workspaceId         String    @unique
+  name                String    @default("Assistente")
+  objective           String    @default("")
+  tone                String    @default("humanizado")
+  knowledgeAreas      String    @default("")
+  isActive            Boolean   @default(false)
+  businessHoursStart  Int?
+  businessHoursEnd    Int?
+  maxAiMessages       Int       @default(20)
+  offHoursMessage     String    @default("Olá! No momento estamos fora do horário de atendimento. Retornaremos em breve.")
+  gender              String    @default("neutro")
+  personality         String    @default("")
+  autoAssign          Boolean   @default(false)
+  handoffInstructions String    @default("")
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  workspace           Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@map("agent_configs")
+}
+
 model Conversation {
   id                 String             @id @default(uuid())
   workspaceId        String
@@ -107,14 +137,18 @@ model Conversation {
   unreadCount        Int                @default(0)
   tags               String[]           @default([])
   internalNotes      String?
+  aiEnabled          Boolean            @default(true)
+  aiMessageCount     Int                @default(0)
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
   assignedBy         User?              @relation("AssignedByConversations", fields: [assignedById], references: [id])
   assignedTo         User?              @relation("AssignedConversations", fields: [assignedToId], references: [id])
   channel            Channel            @relation(fields: [channelId], references: [id], onDelete: Cascade)
   workspace          Workspace          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  activities         ConversationActivity[]
   lead               Lead?
   messages           Message[]
+  scheduledMessages  ScheduledMessage[]
 
   @@unique([workspaceId, channelId, externalId])
   @@index([workspaceId])
@@ -135,6 +169,8 @@ model Message {
   externalId     String?
   status         MessageStatus    @default(SENT)
   isSystem       Boolean          @default(false)
+  senderName     String?
+  aiGenerated    Boolean          @default(false)
   sentById       String?
   sentAt         DateTime         @default(now())
   deliveredAt    DateTime?
@@ -247,6 +283,67 @@ model Plan {
 
   @@index([isActive, position])
   @@map("plans")
+}
+
+model MessageTemplate {
+  id          String    @id @default(cuid())
+  workspaceId String
+  title       String
+  content     String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
+  @@map("message_templates")
+}
+
+model ConversationActivity {
+  id             String       @id @default(cuid())
+  conversationId String
+  workspaceId    String
+  type           String
+  description    String
+  userId         String?
+  createdAt      DateTime     @default(now())
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  user           User?        @relation(fields: [userId], references: [id])
+  workspace      Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId, createdAt(sort: Desc)])
+  @@map("conversation_activities")
+}
+
+model ScheduledMessage {
+  id             String       @id @default(cuid())
+  conversationId String
+  workspaceId    String
+  content        String
+  scheduledAt    DateTime
+  status         String       @default("PENDING")
+  sentAt         DateTime?
+  createdAt      DateTime     @default(now())
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  workspace      Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, status, scheduledAt])
+  @@map("scheduled_messages")
+}
+
+model Automation {
+  id          String    @id @default(cuid())
+  workspaceId String
+  name        String
+  isActive    Boolean   @default(true)
+  trigger     String
+  conditions  Json      @default("{}")
+  actions     Json      @default("[]")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, isActive])
+  @@map("automations")
 }
 
 enum UserRole {

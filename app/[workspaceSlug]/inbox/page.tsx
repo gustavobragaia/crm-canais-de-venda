@@ -27,6 +27,7 @@ interface Conversation {
   status: string
   channel: { type: 'WHATSAPP' | 'INSTAGRAM' | 'FACEBOOK' }
   assignedTo: { name: string } | null
+  aiEnabled: boolean
 }
 
 export default function InboxPage() {

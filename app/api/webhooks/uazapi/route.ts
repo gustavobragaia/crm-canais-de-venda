@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { type UazapiWebhookPayload, type UazapiWebhookMessagePayload, type UazapiWebhookConnectionPayload } from '@/lib/integrations/uazapi'
 import { db } from '@/lib/db'
 import { pusherServer } from '@/lib/pusher'
+import { processAiResponse } from '@/lib/ai/agent'
 
 export async function GET() {
   return NextResponse.json({ status: 'OK' })
@@ -95,6 +96,7 @@ async function handleMessage(payload: UazapiWebhookMessagePayload) {
       content: textContent,
       externalId: msg.messageid || undefined,
       status: 'DELIVERED',
+      senderName: msg.senderName ?? null,
     },
   })
 
@@ -114,6 +116,11 @@ async function handleMessage(payload: UazapiWebhookMessagePayload) {
   )
 
   console.log('[UAZAPI WEBHOOK] message saved:', savedMessage.id, '| conversation:', conversation.id)
+
+  // Trigger AI agent asynchronously (non-blocking)
+  processAiResponse(conversation.id, channel.workspaceId, textContent).catch(err =>
+    console.error('[UAZAPI WEBHOOK] AI agent error:', err)
+  )
 }
 
 async function handleConnection(payload: UazapiWebhookConnectionPayload) {

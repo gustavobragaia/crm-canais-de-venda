@@ -304,12 +304,17 @@ export type WorkspaceWhereInput = {
   conversationsThisMonth?: Prisma.IntFilter<"Workspace"> | number
   createdAt?: Prisma.DateTimeFilter<"Workspace"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Workspace"> | Date | string
+  agentConfig?: Prisma.XOR<Prisma.AgentConfigNullableScalarRelationFilter, Prisma.AgentConfigWhereInput> | null
   analyticsDaily?: Prisma.AnalyticsDailyListRelationFilter
+  automations?: Prisma.AutomationListRelationFilter
   channels?: Prisma.ChannelListRelationFilter
   conversations?: Prisma.ConversationListRelationFilter
+  conversationActivities?: Prisma.ConversationActivityListRelationFilter
   leads?: Prisma.LeadListRelationFilter
+  messageTemplates?: Prisma.MessageTemplateListRelationFilter
   messages?: Prisma.MessageListRelationFilter
   pipelineStages?: Prisma.PipelineStageListRelationFilter
+  scheduledMessages?: Prisma.ScheduledMessageListRelationFilter
   users?: Prisma.UserListRelationFilter
   webhookLogs?: Prisma.WebhookLogListRelationFilter
 }
@@ -330,12 +335,17 @@ export type WorkspaceOrderByWithRelationInput = {
   conversationsThisMonth?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  agentConfig?: Prisma.AgentConfigOrderByWithRelationInput
   analyticsDaily?: Prisma.AnalyticsDailyOrderByRelationAggregateInput
+  automations?: Prisma.AutomationOrderByRelationAggregateInput
   channels?: Prisma.ChannelOrderByRelationAggregateInput
   conversations?: Prisma.ConversationOrderByRelationAggregateInput
+  conversationActivities?: Prisma.ConversationActivityOrderByRelationAggregateInput
   leads?: Prisma.LeadOrderByRelationAggregateInput
+  messageTemplates?: Prisma.MessageTemplateOrderByRelationAggregateInput
   messages?: Prisma.MessageOrderByRelationAggregateInput
   pipelineStages?: Prisma.PipelineStageOrderByRelationAggregateInput
+  scheduledMessages?: Prisma.ScheduledMessageOrderByRelationAggregateInput
   users?: Prisma.UserOrderByRelationAggregateInput
   webhookLogs?: Prisma.WebhookLogOrderByRelationAggregateInput
 }
@@ -359,12 +369,17 @@ export type WorkspaceWhereUniqueInput = Prisma.AtLeast<{
   conversationsThisMonth?: Prisma.IntFilter<"Workspace"> | number
   createdAt?: Prisma.DateTimeFilter<"Workspace"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Workspace"> | Date | string
+  agentConfig?: Prisma.XOR<Prisma.AgentConfigNullableScalarRelationFilter, Prisma.AgentConfigWhereInput> | null
   analyticsDaily?: Prisma.AnalyticsDailyListRelationFilter
+  automations?: Prisma.AutomationListRelationFilter
   channels?: Prisma.ChannelListRelationFilter
   conversations?: Prisma.ConversationListRelationFilter
+  conversationActivities?: Prisma.ConversationActivityListRelationFilter
   leads?: Prisma.LeadListRelationFilter
+  messageTemplates?: Prisma.MessageTemplateListRelationFilter
   messages?: Prisma.MessageListRelationFilter
   pipelineStages?: Prisma.PipelineStageListRelationFilter
+  scheduledMessages?: Prisma.ScheduledMessageListRelationFilter
   users?: Prisma.UserListRelationFilter
   webhookLogs?: Prisma.WebhookLogListRelationFilter
 }, "id" | "slug">
@@ -429,12 +444,17 @@ export type WorkspaceCreateInput = {
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  agentConfig?: Prisma.AgentConfigCreateNestedOneWithoutWorkspaceInput
   analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
+  automations?: Prisma.AutomationCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutWorkspaceInput
+  conversationActivities?: Prisma.ConversationActivityCreateNestedManyWithoutWorkspaceInput
   leads?: Prisma.LeadCreateNestedManyWithoutWorkspaceInput
+  messageTemplates?: Prisma.MessageTemplateCreateNestedManyWithoutWorkspaceInput
   messages?: Prisma.MessageCreateNestedManyWithoutWorkspaceInput
   pipelineStages?: Prisma.PipelineStageCreateNestedManyWithoutWorkspaceInput
+  scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutWorkspaceInput
   users?: Prisma.UserCreateNestedManyWithoutWorkspaceInput
   webhookLogs?: Prisma.WebhookLogCreateNestedManyWithoutWorkspaceInput
 }
@@ -455,12 +475,17 @@ export type WorkspaceUncheckedCreateInput = {
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  agentConfig?: Prisma.AgentConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
+  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutWorkspaceInput
+  conversationActivities?: Prisma.ConversationActivityUncheckedCreateNestedManyWithoutWorkspaceInput
   leads?: Prisma.LeadUncheckedCreateNestedManyWithoutWorkspaceInput
+  messageTemplates?: Prisma.MessageTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutWorkspaceInput
   pipelineStages?: Prisma.PipelineStageUncheckedCreateNestedManyWithoutWorkspaceInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutWorkspaceInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutWorkspaceInput
   webhookLogs?: Prisma.WebhookLogUncheckedCreateNestedManyWithoutWorkspaceInput
 }
@@ -481,12 +506,17 @@ export type WorkspaceUpdateInput = {
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  agentConfig?: Prisma.AgentConfigUpdateOneWithoutWorkspaceNestedInput
   analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
+  automations?: Prisma.AutomationUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutWorkspaceNestedInput
+  conversationActivities?: Prisma.ConversationActivityUpdateManyWithoutWorkspaceNestedInput
   leads?: Prisma.LeadUpdateManyWithoutWorkspaceNestedInput
+  messageTemplates?: Prisma.MessageTemplateUpdateManyWithoutWorkspaceNestedInput
   messages?: Prisma.MessageUpdateManyWithoutWorkspaceNestedInput
   pipelineStages?: Prisma.PipelineStageUpdateManyWithoutWorkspaceNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutWorkspaceNestedInput
   users?: Prisma.UserUpdateManyWithoutWorkspaceNestedInput
   webhookLogs?: Prisma.WebhookLogUpdateManyWithoutWorkspaceNestedInput
 }
@@ -507,12 +537,17 @@ export type WorkspaceUncheckedUpdateInput = {
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  agentConfig?: Prisma.AgentConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
+  automations?: Prisma.AutomationUncheckedUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutWorkspaceNestedInput
+  conversationActivities?: Prisma.ConversationActivityUncheckedUpdateManyWithoutWorkspaceNestedInput
   leads?: Prisma.LeadUncheckedUpdateManyWithoutWorkspaceNestedInput
+  messageTemplates?: Prisma.MessageTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutWorkspaceNestedInput
   pipelineStages?: Prisma.PipelineStageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutWorkspaceNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutWorkspaceNestedInput
   webhookLogs?: Prisma.WebhookLogUncheckedUpdateManyWithoutWorkspaceNestedInput
 }
@@ -703,6 +738,20 @@ export type WorkspaceUpdateOneRequiredWithoutChannelsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.WorkspaceUpdateToOneWithWhereWithoutChannelsInput, Prisma.WorkspaceUpdateWithoutChannelsInput>, Prisma.WorkspaceUncheckedUpdateWithoutChannelsInput>
 }
 
+export type WorkspaceCreateNestedOneWithoutAgentConfigInput = {
+  create?: Prisma.XOR<Prisma.WorkspaceCreateWithoutAgentConfigInput, Prisma.WorkspaceUncheckedCreateWithoutAgentConfigInput>
+  connectOrCreate?: Prisma.WorkspaceCreateOrConnectWithoutAgentConfigInput
+  connect?: Prisma.WorkspaceWhereUniqueInput
+}
+
+export type WorkspaceUpdateOneRequiredWithoutAgentConfigNestedInput = {
+  create?: Prisma.XOR<Prisma.WorkspaceCreateWithoutAgentConfigInput, Prisma.WorkspaceUncheckedCreateWithoutAgentConfigInput>
+  connectOrCreate?: Prisma.WorkspaceCreateOrConnectWithoutAgentConfigInput
+  upsert?: Prisma.WorkspaceUpsertWithoutAgentConfigInput
+  connect?: Prisma.WorkspaceWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.WorkspaceUpdateToOneWithWhereWithoutAgentConfigInput, Prisma.WorkspaceUpdateWithoutAgentConfigInput>, Prisma.WorkspaceUncheckedUpdateWithoutAgentConfigInput>
+}
+
 export type WorkspaceCreateNestedOneWithoutConversationsInput = {
   create?: Prisma.XOR<Prisma.WorkspaceCreateWithoutConversationsInput, Prisma.WorkspaceUncheckedCreateWithoutConversationsInput>
   connectOrCreate?: Prisma.WorkspaceCreateOrConnectWithoutConversationsInput
@@ -789,6 +838,62 @@ export type WorkspaceUpdateOneWithoutWebhookLogsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.WorkspaceUpdateToOneWithWhereWithoutWebhookLogsInput, Prisma.WorkspaceUpdateWithoutWebhookLogsInput>, Prisma.WorkspaceUncheckedUpdateWithoutWebhookLogsInput>
 }
 
+export type WorkspaceCreateNestedOneWithoutMessageTemplatesInput = {
+  create?: Prisma.XOR<Prisma.WorkspaceCreateWithoutMessageTemplatesInput, Prisma.WorkspaceUncheckedCreateWithoutMessageTemplatesInput>
+  connectOrCreate?: Prisma.WorkspaceCreateOrConnectWithoutMessageTemplatesInput
+  connect?: Prisma.WorkspaceWhereUniqueInput
+}
+
+export type WorkspaceUpdateOneRequiredWithoutMessageTemplatesNestedInput = {
+  create?: Prisma.XOR<Prisma.WorkspaceCreateWithoutMessageTemplatesInput, Prisma.WorkspaceUncheckedCreateWithoutMessageTemplatesInput>
+  connectOrCreate?: Prisma.WorkspaceCreateOrConnectWithoutMessageTemplatesInput
+  upsert?: Prisma.WorkspaceUpsertWithoutMessageTemplatesInput
+  connect?: Prisma.WorkspaceWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.WorkspaceUpdateToOneWithWhereWithoutMessageTemplatesInput, Prisma.WorkspaceUpdateWithoutMessageTemplatesInput>, Prisma.WorkspaceUncheckedUpdateWithoutMessageTemplatesInput>
+}
+
+export type WorkspaceCreateNestedOneWithoutConversationActivitiesInput = {
+  create?: Prisma.XOR<Prisma.WorkspaceCreateWithoutConversationActivitiesInput, Prisma.WorkspaceUncheckedCreateWithoutConversationActivitiesInput>
+  connectOrCreate?: Prisma.WorkspaceCreateOrConnectWithoutConversationActivitiesInput
+  connect?: Prisma.WorkspaceWhereUniqueInput
+}
+
+export type WorkspaceUpdateOneRequiredWithoutConversationActivitiesNestedInput = {
+  create?: Prisma.XOR<Prisma.WorkspaceCreateWithoutConversationActivitiesInput, Prisma.WorkspaceUncheckedCreateWithoutConversationActivitiesInput>
+  connectOrCreate?: Prisma.WorkspaceCreateOrConnectWithoutConversationActivitiesInput
+  upsert?: Prisma.WorkspaceUpsertWithoutConversationActivitiesInput
+  connect?: Prisma.WorkspaceWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.WorkspaceUpdateToOneWithWhereWithoutConversationActivitiesInput, Prisma.WorkspaceUpdateWithoutConversationActivitiesInput>, Prisma.WorkspaceUncheckedUpdateWithoutConversationActivitiesInput>
+}
+
+export type WorkspaceCreateNestedOneWithoutScheduledMessagesInput = {
+  create?: Prisma.XOR<Prisma.WorkspaceCreateWithoutScheduledMessagesInput, Prisma.WorkspaceUncheckedCreateWithoutScheduledMessagesInput>
+  connectOrCreate?: Prisma.WorkspaceCreateOrConnectWithoutScheduledMessagesInput
+  connect?: Prisma.WorkspaceWhereUniqueInput
+}
+
+export type WorkspaceUpdateOneRequiredWithoutScheduledMessagesNestedInput = {
+  create?: Prisma.XOR<Prisma.WorkspaceCreateWithoutScheduledMessagesInput, Prisma.WorkspaceUncheckedCreateWithoutScheduledMessagesInput>
+  connectOrCreate?: Prisma.WorkspaceCreateOrConnectWithoutScheduledMessagesInput
+  upsert?: Prisma.WorkspaceUpsertWithoutScheduledMessagesInput
+  connect?: Prisma.WorkspaceWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.WorkspaceUpdateToOneWithWhereWithoutScheduledMessagesInput, Prisma.WorkspaceUpdateWithoutScheduledMessagesInput>, Prisma.WorkspaceUncheckedUpdateWithoutScheduledMessagesInput>
+}
+
+export type WorkspaceCreateNestedOneWithoutAutomationsInput = {
+  create?: Prisma.XOR<Prisma.WorkspaceCreateWithoutAutomationsInput, Prisma.WorkspaceUncheckedCreateWithoutAutomationsInput>
+  connectOrCreate?: Prisma.WorkspaceCreateOrConnectWithoutAutomationsInput
+  connect?: Prisma.WorkspaceWhereUniqueInput
+}
+
+export type WorkspaceUpdateOneRequiredWithoutAutomationsNestedInput = {
+  create?: Prisma.XOR<Prisma.WorkspaceCreateWithoutAutomationsInput, Prisma.WorkspaceUncheckedCreateWithoutAutomationsInput>
+  connectOrCreate?: Prisma.WorkspaceCreateOrConnectWithoutAutomationsInput
+  upsert?: Prisma.WorkspaceUpsertWithoutAutomationsInput
+  connect?: Prisma.WorkspaceWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.WorkspaceUpdateToOneWithWhereWithoutAutomationsInput, Prisma.WorkspaceUpdateWithoutAutomationsInput>, Prisma.WorkspaceUncheckedUpdateWithoutAutomationsInput>
+}
+
 export type WorkspaceCreateWithoutUsersInput = {
   id?: string
   name: string
@@ -805,12 +910,17 @@ export type WorkspaceCreateWithoutUsersInput = {
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  agentConfig?: Prisma.AgentConfigCreateNestedOneWithoutWorkspaceInput
   analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
+  automations?: Prisma.AutomationCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutWorkspaceInput
+  conversationActivities?: Prisma.ConversationActivityCreateNestedManyWithoutWorkspaceInput
   leads?: Prisma.LeadCreateNestedManyWithoutWorkspaceInput
+  messageTemplates?: Prisma.MessageTemplateCreateNestedManyWithoutWorkspaceInput
   messages?: Prisma.MessageCreateNestedManyWithoutWorkspaceInput
   pipelineStages?: Prisma.PipelineStageCreateNestedManyWithoutWorkspaceInput
+  scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutWorkspaceInput
   webhookLogs?: Prisma.WebhookLogCreateNestedManyWithoutWorkspaceInput
 }
 
@@ -830,12 +940,17 @@ export type WorkspaceUncheckedCreateWithoutUsersInput = {
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  agentConfig?: Prisma.AgentConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
+  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutWorkspaceInput
+  conversationActivities?: Prisma.ConversationActivityUncheckedCreateNestedManyWithoutWorkspaceInput
   leads?: Prisma.LeadUncheckedCreateNestedManyWithoutWorkspaceInput
+  messageTemplates?: Prisma.MessageTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutWorkspaceInput
   pipelineStages?: Prisma.PipelineStageUncheckedCreateNestedManyWithoutWorkspaceInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutWorkspaceInput
   webhookLogs?: Prisma.WebhookLogUncheckedCreateNestedManyWithoutWorkspaceInput
 }
 
@@ -871,12 +986,17 @@ export type WorkspaceUpdateWithoutUsersInput = {
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  agentConfig?: Prisma.AgentConfigUpdateOneWithoutWorkspaceNestedInput
   analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
+  automations?: Prisma.AutomationUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutWorkspaceNestedInput
+  conversationActivities?: Prisma.ConversationActivityUpdateManyWithoutWorkspaceNestedInput
   leads?: Prisma.LeadUpdateManyWithoutWorkspaceNestedInput
+  messageTemplates?: Prisma.MessageTemplateUpdateManyWithoutWorkspaceNestedInput
   messages?: Prisma.MessageUpdateManyWithoutWorkspaceNestedInput
   pipelineStages?: Prisma.PipelineStageUpdateManyWithoutWorkspaceNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutWorkspaceNestedInput
   webhookLogs?: Prisma.WebhookLogUpdateManyWithoutWorkspaceNestedInput
 }
 
@@ -896,12 +1016,17 @@ export type WorkspaceUncheckedUpdateWithoutUsersInput = {
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  agentConfig?: Prisma.AgentConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
+  automations?: Prisma.AutomationUncheckedUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutWorkspaceNestedInput
+  conversationActivities?: Prisma.ConversationActivityUncheckedUpdateManyWithoutWorkspaceNestedInput
   leads?: Prisma.LeadUncheckedUpdateManyWithoutWorkspaceNestedInput
+  messageTemplates?: Prisma.MessageTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutWorkspaceNestedInput
   pipelineStages?: Prisma.PipelineStageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutWorkspaceNestedInput
   webhookLogs?: Prisma.WebhookLogUncheckedUpdateManyWithoutWorkspaceNestedInput
 }
 
@@ -921,11 +1046,16 @@ export type WorkspaceCreateWithoutChannelsInput = {
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  agentConfig?: Prisma.AgentConfigCreateNestedOneWithoutWorkspaceInput
   analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
+  automations?: Prisma.AutomationCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutWorkspaceInput
+  conversationActivities?: Prisma.ConversationActivityCreateNestedManyWithoutWorkspaceInput
   leads?: Prisma.LeadCreateNestedManyWithoutWorkspaceInput
+  messageTemplates?: Prisma.MessageTemplateCreateNestedManyWithoutWorkspaceInput
   messages?: Prisma.MessageCreateNestedManyWithoutWorkspaceInput
   pipelineStages?: Prisma.PipelineStageCreateNestedManyWithoutWorkspaceInput
+  scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutWorkspaceInput
   users?: Prisma.UserCreateNestedManyWithoutWorkspaceInput
   webhookLogs?: Prisma.WebhookLogCreateNestedManyWithoutWorkspaceInput
 }
@@ -946,11 +1076,16 @@ export type WorkspaceUncheckedCreateWithoutChannelsInput = {
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  agentConfig?: Prisma.AgentConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
+  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutWorkspaceInput
+  conversationActivities?: Prisma.ConversationActivityUncheckedCreateNestedManyWithoutWorkspaceInput
   leads?: Prisma.LeadUncheckedCreateNestedManyWithoutWorkspaceInput
+  messageTemplates?: Prisma.MessageTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutWorkspaceInput
   pipelineStages?: Prisma.PipelineStageUncheckedCreateNestedManyWithoutWorkspaceInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutWorkspaceInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutWorkspaceInput
   webhookLogs?: Prisma.WebhookLogUncheckedCreateNestedManyWithoutWorkspaceInput
 }
@@ -987,11 +1122,16 @@ export type WorkspaceUpdateWithoutChannelsInput = {
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  agentConfig?: Prisma.AgentConfigUpdateOneWithoutWorkspaceNestedInput
   analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
+  automations?: Prisma.AutomationUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutWorkspaceNestedInput
+  conversationActivities?: Prisma.ConversationActivityUpdateManyWithoutWorkspaceNestedInput
   leads?: Prisma.LeadUpdateManyWithoutWorkspaceNestedInput
+  messageTemplates?: Prisma.MessageTemplateUpdateManyWithoutWorkspaceNestedInput
   messages?: Prisma.MessageUpdateManyWithoutWorkspaceNestedInput
   pipelineStages?: Prisma.PipelineStageUpdateManyWithoutWorkspaceNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutWorkspaceNestedInput
   users?: Prisma.UserUpdateManyWithoutWorkspaceNestedInput
   webhookLogs?: Prisma.WebhookLogUpdateManyWithoutWorkspaceNestedInput
 }
@@ -1012,11 +1152,152 @@ export type WorkspaceUncheckedUpdateWithoutChannelsInput = {
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  agentConfig?: Prisma.AgentConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
+  automations?: Prisma.AutomationUncheckedUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutWorkspaceNestedInput
+  conversationActivities?: Prisma.ConversationActivityUncheckedUpdateManyWithoutWorkspaceNestedInput
   leads?: Prisma.LeadUncheckedUpdateManyWithoutWorkspaceNestedInput
+  messageTemplates?: Prisma.MessageTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutWorkspaceNestedInput
   pipelineStages?: Prisma.PipelineStageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  users?: Prisma.UserUncheckedUpdateManyWithoutWorkspaceNestedInput
+  webhookLogs?: Prisma.WebhookLogUncheckedUpdateManyWithoutWorkspaceNestedInput
+}
+
+export type WorkspaceCreateWithoutAgentConfigInput = {
+  id?: string
+  name: string
+  slug: string
+  logoUrl?: string | null
+  primaryColor?: string
+  secondaryColor?: string
+  subscriptionStatus?: $Enums.SubscriptionStatus
+  kirvanoSubscriptionId?: string | null
+  currentPeriodEnd?: Date | string | null
+  trialEndsAt?: Date | string | null
+  maxUsers?: number
+  maxConversationsPerMonth?: number
+  conversationsThisMonth?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
+  automations?: Prisma.AutomationCreateNestedManyWithoutWorkspaceInput
+  channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutWorkspaceInput
+  conversationActivities?: Prisma.ConversationActivityCreateNestedManyWithoutWorkspaceInput
+  leads?: Prisma.LeadCreateNestedManyWithoutWorkspaceInput
+  messageTemplates?: Prisma.MessageTemplateCreateNestedManyWithoutWorkspaceInput
+  messages?: Prisma.MessageCreateNestedManyWithoutWorkspaceInput
+  pipelineStages?: Prisma.PipelineStageCreateNestedManyWithoutWorkspaceInput
+  scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutWorkspaceInput
+  users?: Prisma.UserCreateNestedManyWithoutWorkspaceInput
+  webhookLogs?: Prisma.WebhookLogCreateNestedManyWithoutWorkspaceInput
+}
+
+export type WorkspaceUncheckedCreateWithoutAgentConfigInput = {
+  id?: string
+  name: string
+  slug: string
+  logoUrl?: string | null
+  primaryColor?: string
+  secondaryColor?: string
+  subscriptionStatus?: $Enums.SubscriptionStatus
+  kirvanoSubscriptionId?: string | null
+  currentPeriodEnd?: Date | string | null
+  trialEndsAt?: Date | string | null
+  maxUsers?: number
+  maxConversationsPerMonth?: number
+  conversationsThisMonth?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
+  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutWorkspaceInput
+  channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutWorkspaceInput
+  conversationActivities?: Prisma.ConversationActivityUncheckedCreateNestedManyWithoutWorkspaceInput
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutWorkspaceInput
+  messageTemplates?: Prisma.MessageTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutWorkspaceInput
+  pipelineStages?: Prisma.PipelineStageUncheckedCreateNestedManyWithoutWorkspaceInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutWorkspaceInput
+  users?: Prisma.UserUncheckedCreateNestedManyWithoutWorkspaceInput
+  webhookLogs?: Prisma.WebhookLogUncheckedCreateNestedManyWithoutWorkspaceInput
+}
+
+export type WorkspaceCreateOrConnectWithoutAgentConfigInput = {
+  where: Prisma.WorkspaceWhereUniqueInput
+  create: Prisma.XOR<Prisma.WorkspaceCreateWithoutAgentConfigInput, Prisma.WorkspaceUncheckedCreateWithoutAgentConfigInput>
+}
+
+export type WorkspaceUpsertWithoutAgentConfigInput = {
+  update: Prisma.XOR<Prisma.WorkspaceUpdateWithoutAgentConfigInput, Prisma.WorkspaceUncheckedUpdateWithoutAgentConfigInput>
+  create: Prisma.XOR<Prisma.WorkspaceCreateWithoutAgentConfigInput, Prisma.WorkspaceUncheckedCreateWithoutAgentConfigInput>
+  where?: Prisma.WorkspaceWhereInput
+}
+
+export type WorkspaceUpdateToOneWithWhereWithoutAgentConfigInput = {
+  where?: Prisma.WorkspaceWhereInput
+  data: Prisma.XOR<Prisma.WorkspaceUpdateWithoutAgentConfigInput, Prisma.WorkspaceUncheckedUpdateWithoutAgentConfigInput>
+}
+
+export type WorkspaceUpdateWithoutAgentConfigInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
+  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
+  subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
+  kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
+  maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
+  automations?: Prisma.AutomationUpdateManyWithoutWorkspaceNestedInput
+  channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutWorkspaceNestedInput
+  conversationActivities?: Prisma.ConversationActivityUpdateManyWithoutWorkspaceNestedInput
+  leads?: Prisma.LeadUpdateManyWithoutWorkspaceNestedInput
+  messageTemplates?: Prisma.MessageTemplateUpdateManyWithoutWorkspaceNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutWorkspaceNestedInput
+  pipelineStages?: Prisma.PipelineStageUpdateManyWithoutWorkspaceNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutWorkspaceNestedInput
+  users?: Prisma.UserUpdateManyWithoutWorkspaceNestedInput
+  webhookLogs?: Prisma.WebhookLogUpdateManyWithoutWorkspaceNestedInput
+}
+
+export type WorkspaceUncheckedUpdateWithoutAgentConfigInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
+  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
+  subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
+  kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
+  maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
+  automations?: Prisma.AutomationUncheckedUpdateManyWithoutWorkspaceNestedInput
+  channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutWorkspaceNestedInput
+  conversationActivities?: Prisma.ConversationActivityUncheckedUpdateManyWithoutWorkspaceNestedInput
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutWorkspaceNestedInput
+  messageTemplates?: Prisma.MessageTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  pipelineStages?: Prisma.PipelineStageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutWorkspaceNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutWorkspaceNestedInput
   webhookLogs?: Prisma.WebhookLogUncheckedUpdateManyWithoutWorkspaceNestedInput
 }
@@ -1037,11 +1318,16 @@ export type WorkspaceCreateWithoutConversationsInput = {
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  agentConfig?: Prisma.AgentConfigCreateNestedOneWithoutWorkspaceInput
   analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
+  automations?: Prisma.AutomationCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
+  conversationActivities?: Prisma.ConversationActivityCreateNestedManyWithoutWorkspaceInput
   leads?: Prisma.LeadCreateNestedManyWithoutWorkspaceInput
+  messageTemplates?: Prisma.MessageTemplateCreateNestedManyWithoutWorkspaceInput
   messages?: Prisma.MessageCreateNestedManyWithoutWorkspaceInput
   pipelineStages?: Prisma.PipelineStageCreateNestedManyWithoutWorkspaceInput
+  scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutWorkspaceInput
   users?: Prisma.UserCreateNestedManyWithoutWorkspaceInput
   webhookLogs?: Prisma.WebhookLogCreateNestedManyWithoutWorkspaceInput
 }
@@ -1062,11 +1348,16 @@ export type WorkspaceUncheckedCreateWithoutConversationsInput = {
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  agentConfig?: Prisma.AgentConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
+  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
+  conversationActivities?: Prisma.ConversationActivityUncheckedCreateNestedManyWithoutWorkspaceInput
   leads?: Prisma.LeadUncheckedCreateNestedManyWithoutWorkspaceInput
+  messageTemplates?: Prisma.MessageTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutWorkspaceInput
   pipelineStages?: Prisma.PipelineStageUncheckedCreateNestedManyWithoutWorkspaceInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutWorkspaceInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutWorkspaceInput
   webhookLogs?: Prisma.WebhookLogUncheckedCreateNestedManyWithoutWorkspaceInput
 }
@@ -1103,11 +1394,16 @@ export type WorkspaceUpdateWithoutConversationsInput = {
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  agentConfig?: Prisma.AgentConfigUpdateOneWithoutWorkspaceNestedInput
   analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
+  automations?: Prisma.AutomationUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
+  conversationActivities?: Prisma.ConversationActivityUpdateManyWithoutWorkspaceNestedInput
   leads?: Prisma.LeadUpdateManyWithoutWorkspaceNestedInput
+  messageTemplates?: Prisma.MessageTemplateUpdateManyWithoutWorkspaceNestedInput
   messages?: Prisma.MessageUpdateManyWithoutWorkspaceNestedInput
   pipelineStages?: Prisma.PipelineStageUpdateManyWithoutWorkspaceNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutWorkspaceNestedInput
   users?: Prisma.UserUpdateManyWithoutWorkspaceNestedInput
   webhookLogs?: Prisma.WebhookLogUpdateManyWithoutWorkspaceNestedInput
 }
@@ -1128,11 +1424,16 @@ export type WorkspaceUncheckedUpdateWithoutConversationsInput = {
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  agentConfig?: Prisma.AgentConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
+  automations?: Prisma.AutomationUncheckedUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
+  conversationActivities?: Prisma.ConversationActivityUncheckedUpdateManyWithoutWorkspaceNestedInput
   leads?: Prisma.LeadUncheckedUpdateManyWithoutWorkspaceNestedInput
+  messageTemplates?: Prisma.MessageTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutWorkspaceNestedInput
   pipelineStages?: Prisma.PipelineStageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutWorkspaceNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutWorkspaceNestedInput
   webhookLogs?: Prisma.WebhookLogUncheckedUpdateManyWithoutWorkspaceNestedInput
 }
@@ -1153,11 +1454,16 @@ export type WorkspaceCreateWithoutMessagesInput = {
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  agentConfig?: Prisma.AgentConfigCreateNestedOneWithoutWorkspaceInput
   analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
+  automations?: Prisma.AutomationCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutWorkspaceInput
+  conversationActivities?: Prisma.ConversationActivityCreateNestedManyWithoutWorkspaceInput
   leads?: Prisma.LeadCreateNestedManyWithoutWorkspaceInput
+  messageTemplates?: Prisma.MessageTemplateCreateNestedManyWithoutWorkspaceInput
   pipelineStages?: Prisma.PipelineStageCreateNestedManyWithoutWorkspaceInput
+  scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutWorkspaceInput
   users?: Prisma.UserCreateNestedManyWithoutWorkspaceInput
   webhookLogs?: Prisma.WebhookLogCreateNestedManyWithoutWorkspaceInput
 }
@@ -1178,11 +1484,16 @@ export type WorkspaceUncheckedCreateWithoutMessagesInput = {
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  agentConfig?: Prisma.AgentConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
+  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutWorkspaceInput
+  conversationActivities?: Prisma.ConversationActivityUncheckedCreateNestedManyWithoutWorkspaceInput
   leads?: Prisma.LeadUncheckedCreateNestedManyWithoutWorkspaceInput
+  messageTemplates?: Prisma.MessageTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
   pipelineStages?: Prisma.PipelineStageUncheckedCreateNestedManyWithoutWorkspaceInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutWorkspaceInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutWorkspaceInput
   webhookLogs?: Prisma.WebhookLogUncheckedCreateNestedManyWithoutWorkspaceInput
 }
@@ -1219,11 +1530,16 @@ export type WorkspaceUpdateWithoutMessagesInput = {
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  agentConfig?: Prisma.AgentConfigUpdateOneWithoutWorkspaceNestedInput
   analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
+  automations?: Prisma.AutomationUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutWorkspaceNestedInput
+  conversationActivities?: Prisma.ConversationActivityUpdateManyWithoutWorkspaceNestedInput
   leads?: Prisma.LeadUpdateManyWithoutWorkspaceNestedInput
+  messageTemplates?: Prisma.MessageTemplateUpdateManyWithoutWorkspaceNestedInput
   pipelineStages?: Prisma.PipelineStageUpdateManyWithoutWorkspaceNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutWorkspaceNestedInput
   users?: Prisma.UserUpdateManyWithoutWorkspaceNestedInput
   webhookLogs?: Prisma.WebhookLogUpdateManyWithoutWorkspaceNestedInput
 }
@@ -1244,11 +1560,16 @@ export type WorkspaceUncheckedUpdateWithoutMessagesInput = {
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  agentConfig?: Prisma.AgentConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
+  automations?: Prisma.AutomationUncheckedUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutWorkspaceNestedInput
+  conversationActivities?: Prisma.ConversationActivityUncheckedUpdateManyWithoutWorkspaceNestedInput
   leads?: Prisma.LeadUncheckedUpdateManyWithoutWorkspaceNestedInput
+  messageTemplates?: Prisma.MessageTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
   pipelineStages?: Prisma.PipelineStageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutWorkspaceNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutWorkspaceNestedInput
   webhookLogs?: Prisma.WebhookLogUncheckedUpdateManyWithoutWorkspaceNestedInput
 }
@@ -1269,11 +1590,16 @@ export type WorkspaceCreateWithoutPipelineStagesInput = {
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  agentConfig?: Prisma.AgentConfigCreateNestedOneWithoutWorkspaceInput
   analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
+  automations?: Prisma.AutomationCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutWorkspaceInput
+  conversationActivities?: Prisma.ConversationActivityCreateNestedManyWithoutWorkspaceInput
   leads?: Prisma.LeadCreateNestedManyWithoutWorkspaceInput
+  messageTemplates?: Prisma.MessageTemplateCreateNestedManyWithoutWorkspaceInput
   messages?: Prisma.MessageCreateNestedManyWithoutWorkspaceInput
+  scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutWorkspaceInput
   users?: Prisma.UserCreateNestedManyWithoutWorkspaceInput
   webhookLogs?: Prisma.WebhookLogCreateNestedManyWithoutWorkspaceInput
 }
@@ -1294,11 +1620,16 @@ export type WorkspaceUncheckedCreateWithoutPipelineStagesInput = {
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  agentConfig?: Prisma.AgentConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
+  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutWorkspaceInput
+  conversationActivities?: Prisma.ConversationActivityUncheckedCreateNestedManyWithoutWorkspaceInput
   leads?: Prisma.LeadUncheckedCreateNestedManyWithoutWorkspaceInput
+  messageTemplates?: Prisma.MessageTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutWorkspaceInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutWorkspaceInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutWorkspaceInput
   webhookLogs?: Prisma.WebhookLogUncheckedCreateNestedManyWithoutWorkspaceInput
 }
@@ -1335,11 +1666,16 @@ export type WorkspaceUpdateWithoutPipelineStagesInput = {
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  agentConfig?: Prisma.AgentConfigUpdateOneWithoutWorkspaceNestedInput
   analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
+  automations?: Prisma.AutomationUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutWorkspaceNestedInput
+  conversationActivities?: Prisma.ConversationActivityUpdateManyWithoutWorkspaceNestedInput
   leads?: Prisma.LeadUpdateManyWithoutWorkspaceNestedInput
+  messageTemplates?: Prisma.MessageTemplateUpdateManyWithoutWorkspaceNestedInput
   messages?: Prisma.MessageUpdateManyWithoutWorkspaceNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutWorkspaceNestedInput
   users?: Prisma.UserUpdateManyWithoutWorkspaceNestedInput
   webhookLogs?: Prisma.WebhookLogUpdateManyWithoutWorkspaceNestedInput
 }
@@ -1360,11 +1696,16 @@ export type WorkspaceUncheckedUpdateWithoutPipelineStagesInput = {
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  agentConfig?: Prisma.AgentConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
+  automations?: Prisma.AutomationUncheckedUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutWorkspaceNestedInput
+  conversationActivities?: Prisma.ConversationActivityUncheckedUpdateManyWithoutWorkspaceNestedInput
   leads?: Prisma.LeadUncheckedUpdateManyWithoutWorkspaceNestedInput
+  messageTemplates?: Prisma.MessageTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutWorkspaceNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutWorkspaceNestedInput
   webhookLogs?: Prisma.WebhookLogUncheckedUpdateManyWithoutWorkspaceNestedInput
 }
@@ -1385,11 +1726,16 @@ export type WorkspaceCreateWithoutLeadsInput = {
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  agentConfig?: Prisma.AgentConfigCreateNestedOneWithoutWorkspaceInput
   analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
+  automations?: Prisma.AutomationCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutWorkspaceInput
+  conversationActivities?: Prisma.ConversationActivityCreateNestedManyWithoutWorkspaceInput
+  messageTemplates?: Prisma.MessageTemplateCreateNestedManyWithoutWorkspaceInput
   messages?: Prisma.MessageCreateNestedManyWithoutWorkspaceInput
   pipelineStages?: Prisma.PipelineStageCreateNestedManyWithoutWorkspaceInput
+  scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutWorkspaceInput
   users?: Prisma.UserCreateNestedManyWithoutWorkspaceInput
   webhookLogs?: Prisma.WebhookLogCreateNestedManyWithoutWorkspaceInput
 }
@@ -1410,11 +1756,16 @@ export type WorkspaceUncheckedCreateWithoutLeadsInput = {
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  agentConfig?: Prisma.AgentConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
+  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutWorkspaceInput
+  conversationActivities?: Prisma.ConversationActivityUncheckedCreateNestedManyWithoutWorkspaceInput
+  messageTemplates?: Prisma.MessageTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutWorkspaceInput
   pipelineStages?: Prisma.PipelineStageUncheckedCreateNestedManyWithoutWorkspaceInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutWorkspaceInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutWorkspaceInput
   webhookLogs?: Prisma.WebhookLogUncheckedCreateNestedManyWithoutWorkspaceInput
 }
@@ -1451,11 +1802,16 @@ export type WorkspaceUpdateWithoutLeadsInput = {
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  agentConfig?: Prisma.AgentConfigUpdateOneWithoutWorkspaceNestedInput
   analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
+  automations?: Prisma.AutomationUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutWorkspaceNestedInput
+  conversationActivities?: Prisma.ConversationActivityUpdateManyWithoutWorkspaceNestedInput
+  messageTemplates?: Prisma.MessageTemplateUpdateManyWithoutWorkspaceNestedInput
   messages?: Prisma.MessageUpdateManyWithoutWorkspaceNestedInput
   pipelineStages?: Prisma.PipelineStageUpdateManyWithoutWorkspaceNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutWorkspaceNestedInput
   users?: Prisma.UserUpdateManyWithoutWorkspaceNestedInput
   webhookLogs?: Prisma.WebhookLogUpdateManyWithoutWorkspaceNestedInput
 }
@@ -1476,11 +1832,16 @@ export type WorkspaceUncheckedUpdateWithoutLeadsInput = {
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  agentConfig?: Prisma.AgentConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
+  automations?: Prisma.AutomationUncheckedUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutWorkspaceNestedInput
+  conversationActivities?: Prisma.ConversationActivityUncheckedUpdateManyWithoutWorkspaceNestedInput
+  messageTemplates?: Prisma.MessageTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutWorkspaceNestedInput
   pipelineStages?: Prisma.PipelineStageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutWorkspaceNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutWorkspaceNestedInput
   webhookLogs?: Prisma.WebhookLogUncheckedUpdateManyWithoutWorkspaceNestedInput
 }
@@ -1501,11 +1862,16 @@ export type WorkspaceCreateWithoutAnalyticsDailyInput = {
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  agentConfig?: Prisma.AgentConfigCreateNestedOneWithoutWorkspaceInput
+  automations?: Prisma.AutomationCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutWorkspaceInput
+  conversationActivities?: Prisma.ConversationActivityCreateNestedManyWithoutWorkspaceInput
   leads?: Prisma.LeadCreateNestedManyWithoutWorkspaceInput
+  messageTemplates?: Prisma.MessageTemplateCreateNestedManyWithoutWorkspaceInput
   messages?: Prisma.MessageCreateNestedManyWithoutWorkspaceInput
   pipelineStages?: Prisma.PipelineStageCreateNestedManyWithoutWorkspaceInput
+  scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutWorkspaceInput
   users?: Prisma.UserCreateNestedManyWithoutWorkspaceInput
   webhookLogs?: Prisma.WebhookLogCreateNestedManyWithoutWorkspaceInput
 }
@@ -1526,11 +1892,16 @@ export type WorkspaceUncheckedCreateWithoutAnalyticsDailyInput = {
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  agentConfig?: Prisma.AgentConfigUncheckedCreateNestedOneWithoutWorkspaceInput
+  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutWorkspaceInput
+  conversationActivities?: Prisma.ConversationActivityUncheckedCreateNestedManyWithoutWorkspaceInput
   leads?: Prisma.LeadUncheckedCreateNestedManyWithoutWorkspaceInput
+  messageTemplates?: Prisma.MessageTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutWorkspaceInput
   pipelineStages?: Prisma.PipelineStageUncheckedCreateNestedManyWithoutWorkspaceInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutWorkspaceInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutWorkspaceInput
   webhookLogs?: Prisma.WebhookLogUncheckedCreateNestedManyWithoutWorkspaceInput
 }
@@ -1567,11 +1938,16 @@ export type WorkspaceUpdateWithoutAnalyticsDailyInput = {
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  agentConfig?: Prisma.AgentConfigUpdateOneWithoutWorkspaceNestedInput
+  automations?: Prisma.AutomationUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutWorkspaceNestedInput
+  conversationActivities?: Prisma.ConversationActivityUpdateManyWithoutWorkspaceNestedInput
   leads?: Prisma.LeadUpdateManyWithoutWorkspaceNestedInput
+  messageTemplates?: Prisma.MessageTemplateUpdateManyWithoutWorkspaceNestedInput
   messages?: Prisma.MessageUpdateManyWithoutWorkspaceNestedInput
   pipelineStages?: Prisma.PipelineStageUpdateManyWithoutWorkspaceNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutWorkspaceNestedInput
   users?: Prisma.UserUpdateManyWithoutWorkspaceNestedInput
   webhookLogs?: Prisma.WebhookLogUpdateManyWithoutWorkspaceNestedInput
 }
@@ -1592,11 +1968,16 @@ export type WorkspaceUncheckedUpdateWithoutAnalyticsDailyInput = {
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  agentConfig?: Prisma.AgentConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
+  automations?: Prisma.AutomationUncheckedUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutWorkspaceNestedInput
+  conversationActivities?: Prisma.ConversationActivityUncheckedUpdateManyWithoutWorkspaceNestedInput
   leads?: Prisma.LeadUncheckedUpdateManyWithoutWorkspaceNestedInput
+  messageTemplates?: Prisma.MessageTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutWorkspaceNestedInput
   pipelineStages?: Prisma.PipelineStageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutWorkspaceNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutWorkspaceNestedInput
   webhookLogs?: Prisma.WebhookLogUncheckedUpdateManyWithoutWorkspaceNestedInput
 }
@@ -1617,12 +1998,17 @@ export type WorkspaceCreateWithoutWebhookLogsInput = {
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  agentConfig?: Prisma.AgentConfigCreateNestedOneWithoutWorkspaceInput
   analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
+  automations?: Prisma.AutomationCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutWorkspaceInput
+  conversationActivities?: Prisma.ConversationActivityCreateNestedManyWithoutWorkspaceInput
   leads?: Prisma.LeadCreateNestedManyWithoutWorkspaceInput
+  messageTemplates?: Prisma.MessageTemplateCreateNestedManyWithoutWorkspaceInput
   messages?: Prisma.MessageCreateNestedManyWithoutWorkspaceInput
   pipelineStages?: Prisma.PipelineStageCreateNestedManyWithoutWorkspaceInput
+  scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutWorkspaceInput
   users?: Prisma.UserCreateNestedManyWithoutWorkspaceInput
 }
 
@@ -1642,12 +2028,17 @@ export type WorkspaceUncheckedCreateWithoutWebhookLogsInput = {
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  agentConfig?: Prisma.AgentConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
+  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutWorkspaceInput
+  conversationActivities?: Prisma.ConversationActivityUncheckedCreateNestedManyWithoutWorkspaceInput
   leads?: Prisma.LeadUncheckedCreateNestedManyWithoutWorkspaceInput
+  messageTemplates?: Prisma.MessageTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutWorkspaceInput
   pipelineStages?: Prisma.PipelineStageUncheckedCreateNestedManyWithoutWorkspaceInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutWorkspaceInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutWorkspaceInput
 }
 
@@ -1683,12 +2074,17 @@ export type WorkspaceUpdateWithoutWebhookLogsInput = {
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  agentConfig?: Prisma.AgentConfigUpdateOneWithoutWorkspaceNestedInput
   analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
+  automations?: Prisma.AutomationUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutWorkspaceNestedInput
+  conversationActivities?: Prisma.ConversationActivityUpdateManyWithoutWorkspaceNestedInput
   leads?: Prisma.LeadUpdateManyWithoutWorkspaceNestedInput
+  messageTemplates?: Prisma.MessageTemplateUpdateManyWithoutWorkspaceNestedInput
   messages?: Prisma.MessageUpdateManyWithoutWorkspaceNestedInput
   pipelineStages?: Prisma.PipelineStageUpdateManyWithoutWorkspaceNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutWorkspaceNestedInput
   users?: Prisma.UserUpdateManyWithoutWorkspaceNestedInput
 }
 
@@ -1708,13 +2104,562 @@ export type WorkspaceUncheckedUpdateWithoutWebhookLogsInput = {
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  agentConfig?: Prisma.AgentConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
+  automations?: Prisma.AutomationUncheckedUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutWorkspaceNestedInput
+  conversationActivities?: Prisma.ConversationActivityUncheckedUpdateManyWithoutWorkspaceNestedInput
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutWorkspaceNestedInput
+  messageTemplates?: Prisma.MessageTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  pipelineStages?: Prisma.PipelineStageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  users?: Prisma.UserUncheckedUpdateManyWithoutWorkspaceNestedInput
+}
+
+export type WorkspaceCreateWithoutMessageTemplatesInput = {
+  id?: string
+  name: string
+  slug: string
+  logoUrl?: string | null
+  primaryColor?: string
+  secondaryColor?: string
+  subscriptionStatus?: $Enums.SubscriptionStatus
+  kirvanoSubscriptionId?: string | null
+  currentPeriodEnd?: Date | string | null
+  trialEndsAt?: Date | string | null
+  maxUsers?: number
+  maxConversationsPerMonth?: number
+  conversationsThisMonth?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  agentConfig?: Prisma.AgentConfigCreateNestedOneWithoutWorkspaceInput
+  analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
+  automations?: Prisma.AutomationCreateNestedManyWithoutWorkspaceInput
+  channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutWorkspaceInput
+  conversationActivities?: Prisma.ConversationActivityCreateNestedManyWithoutWorkspaceInput
+  leads?: Prisma.LeadCreateNestedManyWithoutWorkspaceInput
+  messages?: Prisma.MessageCreateNestedManyWithoutWorkspaceInput
+  pipelineStages?: Prisma.PipelineStageCreateNestedManyWithoutWorkspaceInput
+  scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutWorkspaceInput
+  users?: Prisma.UserCreateNestedManyWithoutWorkspaceInput
+  webhookLogs?: Prisma.WebhookLogCreateNestedManyWithoutWorkspaceInput
+}
+
+export type WorkspaceUncheckedCreateWithoutMessageTemplatesInput = {
+  id?: string
+  name: string
+  slug: string
+  logoUrl?: string | null
+  primaryColor?: string
+  secondaryColor?: string
+  subscriptionStatus?: $Enums.SubscriptionStatus
+  kirvanoSubscriptionId?: string | null
+  currentPeriodEnd?: Date | string | null
+  trialEndsAt?: Date | string | null
+  maxUsers?: number
+  maxConversationsPerMonth?: number
+  conversationsThisMonth?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  agentConfig?: Prisma.AgentConfigUncheckedCreateNestedOneWithoutWorkspaceInput
+  analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
+  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutWorkspaceInput
+  channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutWorkspaceInput
+  conversationActivities?: Prisma.ConversationActivityUncheckedCreateNestedManyWithoutWorkspaceInput
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutWorkspaceInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutWorkspaceInput
+  pipelineStages?: Prisma.PipelineStageUncheckedCreateNestedManyWithoutWorkspaceInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutWorkspaceInput
+  users?: Prisma.UserUncheckedCreateNestedManyWithoutWorkspaceInput
+  webhookLogs?: Prisma.WebhookLogUncheckedCreateNestedManyWithoutWorkspaceInput
+}
+
+export type WorkspaceCreateOrConnectWithoutMessageTemplatesInput = {
+  where: Prisma.WorkspaceWhereUniqueInput
+  create: Prisma.XOR<Prisma.WorkspaceCreateWithoutMessageTemplatesInput, Prisma.WorkspaceUncheckedCreateWithoutMessageTemplatesInput>
+}
+
+export type WorkspaceUpsertWithoutMessageTemplatesInput = {
+  update: Prisma.XOR<Prisma.WorkspaceUpdateWithoutMessageTemplatesInput, Prisma.WorkspaceUncheckedUpdateWithoutMessageTemplatesInput>
+  create: Prisma.XOR<Prisma.WorkspaceCreateWithoutMessageTemplatesInput, Prisma.WorkspaceUncheckedCreateWithoutMessageTemplatesInput>
+  where?: Prisma.WorkspaceWhereInput
+}
+
+export type WorkspaceUpdateToOneWithWhereWithoutMessageTemplatesInput = {
+  where?: Prisma.WorkspaceWhereInput
+  data: Prisma.XOR<Prisma.WorkspaceUpdateWithoutMessageTemplatesInput, Prisma.WorkspaceUncheckedUpdateWithoutMessageTemplatesInput>
+}
+
+export type WorkspaceUpdateWithoutMessageTemplatesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
+  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
+  subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
+  kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
+  maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  agentConfig?: Prisma.AgentConfigUpdateOneWithoutWorkspaceNestedInput
+  analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
+  automations?: Prisma.AutomationUpdateManyWithoutWorkspaceNestedInput
+  channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutWorkspaceNestedInput
+  conversationActivities?: Prisma.ConversationActivityUpdateManyWithoutWorkspaceNestedInput
+  leads?: Prisma.LeadUpdateManyWithoutWorkspaceNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutWorkspaceNestedInput
+  pipelineStages?: Prisma.PipelineStageUpdateManyWithoutWorkspaceNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutWorkspaceNestedInput
+  users?: Prisma.UserUpdateManyWithoutWorkspaceNestedInput
+  webhookLogs?: Prisma.WebhookLogUpdateManyWithoutWorkspaceNestedInput
+}
+
+export type WorkspaceUncheckedUpdateWithoutMessageTemplatesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
+  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
+  subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
+  kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
+  maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  agentConfig?: Prisma.AgentConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
+  analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
+  automations?: Prisma.AutomationUncheckedUpdateManyWithoutWorkspaceNestedInput
+  channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutWorkspaceNestedInput
+  conversationActivities?: Prisma.ConversationActivityUncheckedUpdateManyWithoutWorkspaceNestedInput
   leads?: Prisma.LeadUncheckedUpdateManyWithoutWorkspaceNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutWorkspaceNestedInput
   pipelineStages?: Prisma.PipelineStageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutWorkspaceNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutWorkspaceNestedInput
+  webhookLogs?: Prisma.WebhookLogUncheckedUpdateManyWithoutWorkspaceNestedInput
+}
+
+export type WorkspaceCreateWithoutConversationActivitiesInput = {
+  id?: string
+  name: string
+  slug: string
+  logoUrl?: string | null
+  primaryColor?: string
+  secondaryColor?: string
+  subscriptionStatus?: $Enums.SubscriptionStatus
+  kirvanoSubscriptionId?: string | null
+  currentPeriodEnd?: Date | string | null
+  trialEndsAt?: Date | string | null
+  maxUsers?: number
+  maxConversationsPerMonth?: number
+  conversationsThisMonth?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  agentConfig?: Prisma.AgentConfigCreateNestedOneWithoutWorkspaceInput
+  analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
+  automations?: Prisma.AutomationCreateNestedManyWithoutWorkspaceInput
+  channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutWorkspaceInput
+  leads?: Prisma.LeadCreateNestedManyWithoutWorkspaceInput
+  messageTemplates?: Prisma.MessageTemplateCreateNestedManyWithoutWorkspaceInput
+  messages?: Prisma.MessageCreateNestedManyWithoutWorkspaceInput
+  pipelineStages?: Prisma.PipelineStageCreateNestedManyWithoutWorkspaceInput
+  scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutWorkspaceInput
+  users?: Prisma.UserCreateNestedManyWithoutWorkspaceInput
+  webhookLogs?: Prisma.WebhookLogCreateNestedManyWithoutWorkspaceInput
+}
+
+export type WorkspaceUncheckedCreateWithoutConversationActivitiesInput = {
+  id?: string
+  name: string
+  slug: string
+  logoUrl?: string | null
+  primaryColor?: string
+  secondaryColor?: string
+  subscriptionStatus?: $Enums.SubscriptionStatus
+  kirvanoSubscriptionId?: string | null
+  currentPeriodEnd?: Date | string | null
+  trialEndsAt?: Date | string | null
+  maxUsers?: number
+  maxConversationsPerMonth?: number
+  conversationsThisMonth?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  agentConfig?: Prisma.AgentConfigUncheckedCreateNestedOneWithoutWorkspaceInput
+  analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
+  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutWorkspaceInput
+  channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutWorkspaceInput
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutWorkspaceInput
+  messageTemplates?: Prisma.MessageTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutWorkspaceInput
+  pipelineStages?: Prisma.PipelineStageUncheckedCreateNestedManyWithoutWorkspaceInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutWorkspaceInput
+  users?: Prisma.UserUncheckedCreateNestedManyWithoutWorkspaceInput
+  webhookLogs?: Prisma.WebhookLogUncheckedCreateNestedManyWithoutWorkspaceInput
+}
+
+export type WorkspaceCreateOrConnectWithoutConversationActivitiesInput = {
+  where: Prisma.WorkspaceWhereUniqueInput
+  create: Prisma.XOR<Prisma.WorkspaceCreateWithoutConversationActivitiesInput, Prisma.WorkspaceUncheckedCreateWithoutConversationActivitiesInput>
+}
+
+export type WorkspaceUpsertWithoutConversationActivitiesInput = {
+  update: Prisma.XOR<Prisma.WorkspaceUpdateWithoutConversationActivitiesInput, Prisma.WorkspaceUncheckedUpdateWithoutConversationActivitiesInput>
+  create: Prisma.XOR<Prisma.WorkspaceCreateWithoutConversationActivitiesInput, Prisma.WorkspaceUncheckedCreateWithoutConversationActivitiesInput>
+  where?: Prisma.WorkspaceWhereInput
+}
+
+export type WorkspaceUpdateToOneWithWhereWithoutConversationActivitiesInput = {
+  where?: Prisma.WorkspaceWhereInput
+  data: Prisma.XOR<Prisma.WorkspaceUpdateWithoutConversationActivitiesInput, Prisma.WorkspaceUncheckedUpdateWithoutConversationActivitiesInput>
+}
+
+export type WorkspaceUpdateWithoutConversationActivitiesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
+  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
+  subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
+  kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
+  maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  agentConfig?: Prisma.AgentConfigUpdateOneWithoutWorkspaceNestedInput
+  analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
+  automations?: Prisma.AutomationUpdateManyWithoutWorkspaceNestedInput
+  channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutWorkspaceNestedInput
+  leads?: Prisma.LeadUpdateManyWithoutWorkspaceNestedInput
+  messageTemplates?: Prisma.MessageTemplateUpdateManyWithoutWorkspaceNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutWorkspaceNestedInput
+  pipelineStages?: Prisma.PipelineStageUpdateManyWithoutWorkspaceNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutWorkspaceNestedInput
+  users?: Prisma.UserUpdateManyWithoutWorkspaceNestedInput
+  webhookLogs?: Prisma.WebhookLogUpdateManyWithoutWorkspaceNestedInput
+}
+
+export type WorkspaceUncheckedUpdateWithoutConversationActivitiesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
+  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
+  subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
+  kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
+  maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  agentConfig?: Prisma.AgentConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
+  analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
+  automations?: Prisma.AutomationUncheckedUpdateManyWithoutWorkspaceNestedInput
+  channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutWorkspaceNestedInput
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutWorkspaceNestedInput
+  messageTemplates?: Prisma.MessageTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  pipelineStages?: Prisma.PipelineStageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  users?: Prisma.UserUncheckedUpdateManyWithoutWorkspaceNestedInput
+  webhookLogs?: Prisma.WebhookLogUncheckedUpdateManyWithoutWorkspaceNestedInput
+}
+
+export type WorkspaceCreateWithoutScheduledMessagesInput = {
+  id?: string
+  name: string
+  slug: string
+  logoUrl?: string | null
+  primaryColor?: string
+  secondaryColor?: string
+  subscriptionStatus?: $Enums.SubscriptionStatus
+  kirvanoSubscriptionId?: string | null
+  currentPeriodEnd?: Date | string | null
+  trialEndsAt?: Date | string | null
+  maxUsers?: number
+  maxConversationsPerMonth?: number
+  conversationsThisMonth?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  agentConfig?: Prisma.AgentConfigCreateNestedOneWithoutWorkspaceInput
+  analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
+  automations?: Prisma.AutomationCreateNestedManyWithoutWorkspaceInput
+  channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutWorkspaceInput
+  conversationActivities?: Prisma.ConversationActivityCreateNestedManyWithoutWorkspaceInput
+  leads?: Prisma.LeadCreateNestedManyWithoutWorkspaceInput
+  messageTemplates?: Prisma.MessageTemplateCreateNestedManyWithoutWorkspaceInput
+  messages?: Prisma.MessageCreateNestedManyWithoutWorkspaceInput
+  pipelineStages?: Prisma.PipelineStageCreateNestedManyWithoutWorkspaceInput
+  users?: Prisma.UserCreateNestedManyWithoutWorkspaceInput
+  webhookLogs?: Prisma.WebhookLogCreateNestedManyWithoutWorkspaceInput
+}
+
+export type WorkspaceUncheckedCreateWithoutScheduledMessagesInput = {
+  id?: string
+  name: string
+  slug: string
+  logoUrl?: string | null
+  primaryColor?: string
+  secondaryColor?: string
+  subscriptionStatus?: $Enums.SubscriptionStatus
+  kirvanoSubscriptionId?: string | null
+  currentPeriodEnd?: Date | string | null
+  trialEndsAt?: Date | string | null
+  maxUsers?: number
+  maxConversationsPerMonth?: number
+  conversationsThisMonth?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  agentConfig?: Prisma.AgentConfigUncheckedCreateNestedOneWithoutWorkspaceInput
+  analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
+  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutWorkspaceInput
+  channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutWorkspaceInput
+  conversationActivities?: Prisma.ConversationActivityUncheckedCreateNestedManyWithoutWorkspaceInput
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutWorkspaceInput
+  messageTemplates?: Prisma.MessageTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutWorkspaceInput
+  pipelineStages?: Prisma.PipelineStageUncheckedCreateNestedManyWithoutWorkspaceInput
+  users?: Prisma.UserUncheckedCreateNestedManyWithoutWorkspaceInput
+  webhookLogs?: Prisma.WebhookLogUncheckedCreateNestedManyWithoutWorkspaceInput
+}
+
+export type WorkspaceCreateOrConnectWithoutScheduledMessagesInput = {
+  where: Prisma.WorkspaceWhereUniqueInput
+  create: Prisma.XOR<Prisma.WorkspaceCreateWithoutScheduledMessagesInput, Prisma.WorkspaceUncheckedCreateWithoutScheduledMessagesInput>
+}
+
+export type WorkspaceUpsertWithoutScheduledMessagesInput = {
+  update: Prisma.XOR<Prisma.WorkspaceUpdateWithoutScheduledMessagesInput, Prisma.WorkspaceUncheckedUpdateWithoutScheduledMessagesInput>
+  create: Prisma.XOR<Prisma.WorkspaceCreateWithoutScheduledMessagesInput, Prisma.WorkspaceUncheckedCreateWithoutScheduledMessagesInput>
+  where?: Prisma.WorkspaceWhereInput
+}
+
+export type WorkspaceUpdateToOneWithWhereWithoutScheduledMessagesInput = {
+  where?: Prisma.WorkspaceWhereInput
+  data: Prisma.XOR<Prisma.WorkspaceUpdateWithoutScheduledMessagesInput, Prisma.WorkspaceUncheckedUpdateWithoutScheduledMessagesInput>
+}
+
+export type WorkspaceUpdateWithoutScheduledMessagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
+  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
+  subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
+  kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
+  maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  agentConfig?: Prisma.AgentConfigUpdateOneWithoutWorkspaceNestedInput
+  analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
+  automations?: Prisma.AutomationUpdateManyWithoutWorkspaceNestedInput
+  channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutWorkspaceNestedInput
+  conversationActivities?: Prisma.ConversationActivityUpdateManyWithoutWorkspaceNestedInput
+  leads?: Prisma.LeadUpdateManyWithoutWorkspaceNestedInput
+  messageTemplates?: Prisma.MessageTemplateUpdateManyWithoutWorkspaceNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutWorkspaceNestedInput
+  pipelineStages?: Prisma.PipelineStageUpdateManyWithoutWorkspaceNestedInput
+  users?: Prisma.UserUpdateManyWithoutWorkspaceNestedInput
+  webhookLogs?: Prisma.WebhookLogUpdateManyWithoutWorkspaceNestedInput
+}
+
+export type WorkspaceUncheckedUpdateWithoutScheduledMessagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
+  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
+  subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
+  kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
+  maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  agentConfig?: Prisma.AgentConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
+  analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
+  automations?: Prisma.AutomationUncheckedUpdateManyWithoutWorkspaceNestedInput
+  channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutWorkspaceNestedInput
+  conversationActivities?: Prisma.ConversationActivityUncheckedUpdateManyWithoutWorkspaceNestedInput
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutWorkspaceNestedInput
+  messageTemplates?: Prisma.MessageTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  pipelineStages?: Prisma.PipelineStageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  users?: Prisma.UserUncheckedUpdateManyWithoutWorkspaceNestedInput
+  webhookLogs?: Prisma.WebhookLogUncheckedUpdateManyWithoutWorkspaceNestedInput
+}
+
+export type WorkspaceCreateWithoutAutomationsInput = {
+  id?: string
+  name: string
+  slug: string
+  logoUrl?: string | null
+  primaryColor?: string
+  secondaryColor?: string
+  subscriptionStatus?: $Enums.SubscriptionStatus
+  kirvanoSubscriptionId?: string | null
+  currentPeriodEnd?: Date | string | null
+  trialEndsAt?: Date | string | null
+  maxUsers?: number
+  maxConversationsPerMonth?: number
+  conversationsThisMonth?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  agentConfig?: Prisma.AgentConfigCreateNestedOneWithoutWorkspaceInput
+  analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
+  channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutWorkspaceInput
+  conversationActivities?: Prisma.ConversationActivityCreateNestedManyWithoutWorkspaceInput
+  leads?: Prisma.LeadCreateNestedManyWithoutWorkspaceInput
+  messageTemplates?: Prisma.MessageTemplateCreateNestedManyWithoutWorkspaceInput
+  messages?: Prisma.MessageCreateNestedManyWithoutWorkspaceInput
+  pipelineStages?: Prisma.PipelineStageCreateNestedManyWithoutWorkspaceInput
+  scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutWorkspaceInput
+  users?: Prisma.UserCreateNestedManyWithoutWorkspaceInput
+  webhookLogs?: Prisma.WebhookLogCreateNestedManyWithoutWorkspaceInput
+}
+
+export type WorkspaceUncheckedCreateWithoutAutomationsInput = {
+  id?: string
+  name: string
+  slug: string
+  logoUrl?: string | null
+  primaryColor?: string
+  secondaryColor?: string
+  subscriptionStatus?: $Enums.SubscriptionStatus
+  kirvanoSubscriptionId?: string | null
+  currentPeriodEnd?: Date | string | null
+  trialEndsAt?: Date | string | null
+  maxUsers?: number
+  maxConversationsPerMonth?: number
+  conversationsThisMonth?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  agentConfig?: Prisma.AgentConfigUncheckedCreateNestedOneWithoutWorkspaceInput
+  analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
+  channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutWorkspaceInput
+  conversationActivities?: Prisma.ConversationActivityUncheckedCreateNestedManyWithoutWorkspaceInput
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutWorkspaceInput
+  messageTemplates?: Prisma.MessageTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutWorkspaceInput
+  pipelineStages?: Prisma.PipelineStageUncheckedCreateNestedManyWithoutWorkspaceInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutWorkspaceInput
+  users?: Prisma.UserUncheckedCreateNestedManyWithoutWorkspaceInput
+  webhookLogs?: Prisma.WebhookLogUncheckedCreateNestedManyWithoutWorkspaceInput
+}
+
+export type WorkspaceCreateOrConnectWithoutAutomationsInput = {
+  where: Prisma.WorkspaceWhereUniqueInput
+  create: Prisma.XOR<Prisma.WorkspaceCreateWithoutAutomationsInput, Prisma.WorkspaceUncheckedCreateWithoutAutomationsInput>
+}
+
+export type WorkspaceUpsertWithoutAutomationsInput = {
+  update: Prisma.XOR<Prisma.WorkspaceUpdateWithoutAutomationsInput, Prisma.WorkspaceUncheckedUpdateWithoutAutomationsInput>
+  create: Prisma.XOR<Prisma.WorkspaceCreateWithoutAutomationsInput, Prisma.WorkspaceUncheckedCreateWithoutAutomationsInput>
+  where?: Prisma.WorkspaceWhereInput
+}
+
+export type WorkspaceUpdateToOneWithWhereWithoutAutomationsInput = {
+  where?: Prisma.WorkspaceWhereInput
+  data: Prisma.XOR<Prisma.WorkspaceUpdateWithoutAutomationsInput, Prisma.WorkspaceUncheckedUpdateWithoutAutomationsInput>
+}
+
+export type WorkspaceUpdateWithoutAutomationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
+  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
+  subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
+  kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
+  maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  agentConfig?: Prisma.AgentConfigUpdateOneWithoutWorkspaceNestedInput
+  analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
+  channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutWorkspaceNestedInput
+  conversationActivities?: Prisma.ConversationActivityUpdateManyWithoutWorkspaceNestedInput
+  leads?: Prisma.LeadUpdateManyWithoutWorkspaceNestedInput
+  messageTemplates?: Prisma.MessageTemplateUpdateManyWithoutWorkspaceNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutWorkspaceNestedInput
+  pipelineStages?: Prisma.PipelineStageUpdateManyWithoutWorkspaceNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutWorkspaceNestedInput
+  users?: Prisma.UserUpdateManyWithoutWorkspaceNestedInput
+  webhookLogs?: Prisma.WebhookLogUpdateManyWithoutWorkspaceNestedInput
+}
+
+export type WorkspaceUncheckedUpdateWithoutAutomationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
+  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
+  subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
+  kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
+  maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  agentConfig?: Prisma.AgentConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
+  analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
+  channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutWorkspaceNestedInput
+  conversationActivities?: Prisma.ConversationActivityUncheckedUpdateManyWithoutWorkspaceNestedInput
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutWorkspaceNestedInput
+  messageTemplates?: Prisma.MessageTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  pipelineStages?: Prisma.PipelineStageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  users?: Prisma.UserUncheckedUpdateManyWithoutWorkspaceNestedInput
+  webhookLogs?: Prisma.WebhookLogUncheckedUpdateManyWithoutWorkspaceNestedInput
 }
 
 
@@ -1724,22 +2669,30 @@ export type WorkspaceUncheckedUpdateWithoutWebhookLogsInput = {
 
 export type WorkspaceCountOutputType = {
   analyticsDaily: number
+  automations: number
   channels: number
   conversations: number
+  conversationActivities: number
   leads: number
+  messageTemplates: number
   messages: number
   pipelineStages: number
+  scheduledMessages: number
   users: number
   webhookLogs: number
 }
 
 export type WorkspaceCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   analyticsDaily?: boolean | WorkspaceCountOutputTypeCountAnalyticsDailyArgs
+  automations?: boolean | WorkspaceCountOutputTypeCountAutomationsArgs
   channels?: boolean | WorkspaceCountOutputTypeCountChannelsArgs
   conversations?: boolean | WorkspaceCountOutputTypeCountConversationsArgs
+  conversationActivities?: boolean | WorkspaceCountOutputTypeCountConversationActivitiesArgs
   leads?: boolean | WorkspaceCountOutputTypeCountLeadsArgs
+  messageTemplates?: boolean | WorkspaceCountOutputTypeCountMessageTemplatesArgs
   messages?: boolean | WorkspaceCountOutputTypeCountMessagesArgs
   pipelineStages?: boolean | WorkspaceCountOutputTypeCountPipelineStagesArgs
+  scheduledMessages?: boolean | WorkspaceCountOutputTypeCountScheduledMessagesArgs
   users?: boolean | WorkspaceCountOutputTypeCountUsersArgs
   webhookLogs?: boolean | WorkspaceCountOutputTypeCountWebhookLogsArgs
 }
@@ -1764,6 +2717,13 @@ export type WorkspaceCountOutputTypeCountAnalyticsDailyArgs<ExtArgs extends runt
 /**
  * WorkspaceCountOutputType without action
  */
+export type WorkspaceCountOutputTypeCountAutomationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AutomationWhereInput
+}
+
+/**
+ * WorkspaceCountOutputType without action
+ */
 export type WorkspaceCountOutputTypeCountChannelsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.ChannelWhereInput
 }
@@ -1778,8 +2738,22 @@ export type WorkspaceCountOutputTypeCountConversationsArgs<ExtArgs extends runti
 /**
  * WorkspaceCountOutputType without action
  */
+export type WorkspaceCountOutputTypeCountConversationActivitiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ConversationActivityWhereInput
+}
+
+/**
+ * WorkspaceCountOutputType without action
+ */
 export type WorkspaceCountOutputTypeCountLeadsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.LeadWhereInput
+}
+
+/**
+ * WorkspaceCountOutputType without action
+ */
+export type WorkspaceCountOutputTypeCountMessageTemplatesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MessageTemplateWhereInput
 }
 
 /**
@@ -1794,6 +2768,13 @@ export type WorkspaceCountOutputTypeCountMessagesArgs<ExtArgs extends runtime.Ty
  */
 export type WorkspaceCountOutputTypeCountPipelineStagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.PipelineStageWhereInput
+}
+
+/**
+ * WorkspaceCountOutputType without action
+ */
+export type WorkspaceCountOutputTypeCountScheduledMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ScheduledMessageWhereInput
 }
 
 /**
@@ -1827,12 +2808,17 @@ export type WorkspaceSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   conversationsThisMonth?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  agentConfig?: boolean | Prisma.Workspace$agentConfigArgs<ExtArgs>
   analyticsDaily?: boolean | Prisma.Workspace$analyticsDailyArgs<ExtArgs>
+  automations?: boolean | Prisma.Workspace$automationsArgs<ExtArgs>
   channels?: boolean | Prisma.Workspace$channelsArgs<ExtArgs>
   conversations?: boolean | Prisma.Workspace$conversationsArgs<ExtArgs>
+  conversationActivities?: boolean | Prisma.Workspace$conversationActivitiesArgs<ExtArgs>
   leads?: boolean | Prisma.Workspace$leadsArgs<ExtArgs>
+  messageTemplates?: boolean | Prisma.Workspace$messageTemplatesArgs<ExtArgs>
   messages?: boolean | Prisma.Workspace$messagesArgs<ExtArgs>
   pipelineStages?: boolean | Prisma.Workspace$pipelineStagesArgs<ExtArgs>
+  scheduledMessages?: boolean | Prisma.Workspace$scheduledMessagesArgs<ExtArgs>
   users?: boolean | Prisma.Workspace$usersArgs<ExtArgs>
   webhookLogs?: boolean | Prisma.Workspace$webhookLogsArgs<ExtArgs>
   _count?: boolean | Prisma.WorkspaceCountOutputTypeDefaultArgs<ExtArgs>
@@ -1894,12 +2880,17 @@ export type WorkspaceSelectScalar = {
 
 export type WorkspaceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "logoUrl" | "primaryColor" | "secondaryColor" | "subscriptionStatus" | "kirvanoSubscriptionId" | "currentPeriodEnd" | "trialEndsAt" | "maxUsers" | "maxConversationsPerMonth" | "conversationsThisMonth" | "createdAt" | "updatedAt", ExtArgs["result"]["workspace"]>
 export type WorkspaceInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  agentConfig?: boolean | Prisma.Workspace$agentConfigArgs<ExtArgs>
   analyticsDaily?: boolean | Prisma.Workspace$analyticsDailyArgs<ExtArgs>
+  automations?: boolean | Prisma.Workspace$automationsArgs<ExtArgs>
   channels?: boolean | Prisma.Workspace$channelsArgs<ExtArgs>
   conversations?: boolean | Prisma.Workspace$conversationsArgs<ExtArgs>
+  conversationActivities?: boolean | Prisma.Workspace$conversationActivitiesArgs<ExtArgs>
   leads?: boolean | Prisma.Workspace$leadsArgs<ExtArgs>
+  messageTemplates?: boolean | Prisma.Workspace$messageTemplatesArgs<ExtArgs>
   messages?: boolean | Prisma.Workspace$messagesArgs<ExtArgs>
   pipelineStages?: boolean | Prisma.Workspace$pipelineStagesArgs<ExtArgs>
+  scheduledMessages?: boolean | Prisma.Workspace$scheduledMessagesArgs<ExtArgs>
   users?: boolean | Prisma.Workspace$usersArgs<ExtArgs>
   webhookLogs?: boolean | Prisma.Workspace$webhookLogsArgs<ExtArgs>
   _count?: boolean | Prisma.WorkspaceCountOutputTypeDefaultArgs<ExtArgs>
@@ -1910,12 +2901,17 @@ export type WorkspaceIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
 export type $WorkspacePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Workspace"
   objects: {
+    agentConfig: Prisma.$AgentConfigPayload<ExtArgs> | null
     analyticsDaily: Prisma.$AnalyticsDailyPayload<ExtArgs>[]
+    automations: Prisma.$AutomationPayload<ExtArgs>[]
     channels: Prisma.$ChannelPayload<ExtArgs>[]
     conversations: Prisma.$ConversationPayload<ExtArgs>[]
+    conversationActivities: Prisma.$ConversationActivityPayload<ExtArgs>[]
     leads: Prisma.$LeadPayload<ExtArgs>[]
+    messageTemplates: Prisma.$MessageTemplatePayload<ExtArgs>[]
     messages: Prisma.$MessagePayload<ExtArgs>[]
     pipelineStages: Prisma.$PipelineStagePayload<ExtArgs>[]
+    scheduledMessages: Prisma.$ScheduledMessagePayload<ExtArgs>[]
     users: Prisma.$UserPayload<ExtArgs>[]
     webhookLogs: Prisma.$WebhookLogPayload<ExtArgs>[]
   }
@@ -2329,12 +3325,17 @@ readonly fields: WorkspaceFieldRefs;
  */
 export interface Prisma__WorkspaceClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  agentConfig<T extends Prisma.Workspace$agentConfigArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Workspace$agentConfigArgs<ExtArgs>>): Prisma.Prisma__AgentConfigClient<runtime.Types.Result.GetResult<Prisma.$AgentConfigPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   analyticsDaily<T extends Prisma.Workspace$analyticsDailyArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Workspace$analyticsDailyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AnalyticsDailyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  automations<T extends Prisma.Workspace$automationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Workspace$automationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AutomationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   channels<T extends Prisma.Workspace$channelsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Workspace$channelsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   conversations<T extends Prisma.Workspace$conversationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Workspace$conversationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConversationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  conversationActivities<T extends Prisma.Workspace$conversationActivitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Workspace$conversationActivitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConversationActivityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   leads<T extends Prisma.Workspace$leadsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Workspace$leadsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LeadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  messageTemplates<T extends Prisma.Workspace$messageTemplatesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Workspace$messageTemplatesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessageTemplatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   messages<T extends Prisma.Workspace$messagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Workspace$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   pipelineStages<T extends Prisma.Workspace$pipelineStagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Workspace$pipelineStagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PipelineStagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  scheduledMessages<T extends Prisma.Workspace$scheduledMessagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Workspace$scheduledMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ScheduledMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   users<T extends Prisma.Workspace$usersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Workspace$usersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   webhookLogs<T extends Prisma.Workspace$webhookLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Workspace$webhookLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WebhookLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -2769,6 +3770,25 @@ export type WorkspaceDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Int
 }
 
 /**
+ * Workspace.agentConfig
+ */
+export type Workspace$agentConfigArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AgentConfig
+   */
+  select?: Prisma.AgentConfigSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AgentConfig
+   */
+  omit?: Prisma.AgentConfigOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AgentConfigInclude<ExtArgs> | null
+  where?: Prisma.AgentConfigWhereInput
+}
+
+/**
  * Workspace.analyticsDaily
  */
 export type Workspace$analyticsDailyArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2790,6 +3810,30 @@ export type Workspace$analyticsDailyArgs<ExtArgs extends runtime.Types.Extension
   take?: number
   skip?: number
   distinct?: Prisma.AnalyticsDailyScalarFieldEnum | Prisma.AnalyticsDailyScalarFieldEnum[]
+}
+
+/**
+ * Workspace.automations
+ */
+export type Workspace$automationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Automation
+   */
+  select?: Prisma.AutomationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Automation
+   */
+  omit?: Prisma.AutomationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AutomationInclude<ExtArgs> | null
+  where?: Prisma.AutomationWhereInput
+  orderBy?: Prisma.AutomationOrderByWithRelationInput | Prisma.AutomationOrderByWithRelationInput[]
+  cursor?: Prisma.AutomationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AutomationScalarFieldEnum | Prisma.AutomationScalarFieldEnum[]
 }
 
 /**
@@ -2841,6 +3885,30 @@ export type Workspace$conversationsArgs<ExtArgs extends runtime.Types.Extensions
 }
 
 /**
+ * Workspace.conversationActivities
+ */
+export type Workspace$conversationActivitiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ConversationActivity
+   */
+  select?: Prisma.ConversationActivitySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ConversationActivity
+   */
+  omit?: Prisma.ConversationActivityOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ConversationActivityInclude<ExtArgs> | null
+  where?: Prisma.ConversationActivityWhereInput
+  orderBy?: Prisma.ConversationActivityOrderByWithRelationInput | Prisma.ConversationActivityOrderByWithRelationInput[]
+  cursor?: Prisma.ConversationActivityWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ConversationActivityScalarFieldEnum | Prisma.ConversationActivityScalarFieldEnum[]
+}
+
+/**
  * Workspace.leads
  */
 export type Workspace$leadsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2862,6 +3930,30 @@ export type Workspace$leadsArgs<ExtArgs extends runtime.Types.Extensions.Interna
   take?: number
   skip?: number
   distinct?: Prisma.LeadScalarFieldEnum | Prisma.LeadScalarFieldEnum[]
+}
+
+/**
+ * Workspace.messageTemplates
+ */
+export type Workspace$messageTemplatesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MessageTemplate
+   */
+  select?: Prisma.MessageTemplateSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MessageTemplate
+   */
+  omit?: Prisma.MessageTemplateOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MessageTemplateInclude<ExtArgs> | null
+  where?: Prisma.MessageTemplateWhereInput
+  orderBy?: Prisma.MessageTemplateOrderByWithRelationInput | Prisma.MessageTemplateOrderByWithRelationInput[]
+  cursor?: Prisma.MessageTemplateWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MessageTemplateScalarFieldEnum | Prisma.MessageTemplateScalarFieldEnum[]
 }
 
 /**
@@ -2910,6 +4002,30 @@ export type Workspace$pipelineStagesArgs<ExtArgs extends runtime.Types.Extension
   take?: number
   skip?: number
   distinct?: Prisma.PipelineStageScalarFieldEnum | Prisma.PipelineStageScalarFieldEnum[]
+}
+
+/**
+ * Workspace.scheduledMessages
+ */
+export type Workspace$scheduledMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ScheduledMessage
+   */
+  select?: Prisma.ScheduledMessageSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ScheduledMessage
+   */
+  omit?: Prisma.ScheduledMessageOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ScheduledMessageInclude<ExtArgs> | null
+  where?: Prisma.ScheduledMessageWhereInput
+  orderBy?: Prisma.ScheduledMessageOrderByWithRelationInput | Prisma.ScheduledMessageOrderByWithRelationInput[]
+  cursor?: Prisma.ScheduledMessageWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ScheduledMessageScalarFieldEnum | Prisma.ScheduledMessageScalarFieldEnum[]
 }
 
 /**

@@ -6,6 +6,7 @@ import {
   connectUazapiInstance,
   setUazapiWebhook,
   getUazapiStatus,
+  deleteUazapiInstance,
 } from '@/lib/integrations/uazapi'
 
 export async function POST(req: NextRequest) {
@@ -20,6 +21,18 @@ export async function POST(req: NextRequest) {
     const channelName = rawName || 'WhatsApp'
 
     const workspaceId = session.user.workspaceId
+
+    // TODO: remover limite quando suporte multi-instância for implementado
+    const existingCount = await db.channel.count({
+      where: { workspaceId, provider: 'UAZAPI' },
+    })
+    if (existingCount > 0) {
+      return NextResponse.json(
+        { error: 'Já existe um canal WhatsApp neste workspace. Remova-o antes de criar um novo.' },
+        { status: 409 }
+      )
+    }
+
     const instanceName = `${workspaceId}-wa-${Date.now()}`
     const webhookUrl = `${process.env.NEXTAUTH_URL?.replace(/\/$/, '')}/api/webhooks/uazapi`
 
@@ -101,5 +114,46 @@ export async function GET(req: NextRequest) {
   } catch (error) {
     console.error('[UAZAPI CONNECT GET]', error)
     return NextResponse.json({ state: 'disconnected', channelId: channel.id })
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  const session = await auth()
+  if (!session?.user?.workspaceId || session.user.role !== 'ADMIN') {
+    return NextResponse.json({ error: 'Não autorizado.' }, { status: 401 })
+  }
+
+  try {
+    const body = await req.json().catch(() => ({}))
+    const { channelId } = body
+
+    if (!channelId || typeof channelId !== 'string') {
+      return NextResponse.json({ error: 'channelId é obrigatório.' }, { status: 400 })
+    }
+
+    const channel = await db.channel.findFirst({
+      where: { id: channelId, workspaceId: session.user.workspaceId, provider: 'UAZAPI' },
+    })
+
+    if (!channel) {
+      return NextResponse.json({ error: 'Canal não encontrado.' }, { status: 404 })
+    }
+
+    // Best-effort: tenta deletar na UazAPI, mas não falha se der erro
+    if (channel.instanceToken) {
+      try {
+        await deleteUazapiInstance(channel.instanceToken)
+        console.log('[UAZAPI DELETE] instance deleted on UazAPI:', channel.instanceName)
+      } catch (err) {
+        console.warn('[UAZAPI DELETE] failed to delete on UazAPI (non-fatal):', err)
+      }
+    }
+
+    await db.channel.delete({ where: { id: channel.id } })
+
+    return NextResponse.json({ ok: true })
+  } catch (error) {
+    console.error('[UAZAPI DELETE]', error)
+    return NextResponse.json({ error: 'Erro ao deletar instância.' }, { status: 500 })
   }
 }

@@ -11,6 +11,7 @@ import {
   LogOut,
   Layers,
   BookOpen,
+  GitBranch,
 } from 'lucide-react'
 import { ClosioIcon } from '@/components/ClosioLogo'
 
@@ -29,8 +30,8 @@ export function Sidebar() {
 
   const navItems: NavItem[] = [
     { label: 'Caixa de Entrada', href: `/${slug}/inbox`, icon: Inbox },
-    { label: 'Leads', href: `/${slug}/leads`, icon: Users },
-    { label: 'Pipeline', href: `/${slug}/pipeline`, icon: Layers },
+    { label: 'Funil', href: `/${slug}/funil`, icon: GitBranch },
+    { label: 'Atendimento', href: `/${slug}/pipeline`, icon: Layers },
     { label: 'Analytics', href: `/${slug}/analytics`, icon: BarChart2, adminOnly: true },
     { label: 'Configurações', href: `/${slug}/settings`, icon: Settings, adminOnly: true },
     { label: 'Como usar', href: `/${slug}/como-usar`, icon: BookOpen },

@@ -162,3 +162,12 @@ export async function disconnectUazapiInstance(
     instanceToken,
   })
 }
+
+export async function deleteUazapiInstance(
+  instanceToken: string
+): Promise<void> {
+  await uazapiFetch<unknown>('/instance', {
+    method: 'DELETE',
+    instanceToken,
+  })
+}

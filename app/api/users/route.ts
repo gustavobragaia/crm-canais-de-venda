@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
 
   const users = await db.user.findMany({
     where: { workspaceId: session.user.workspaceId, isActive: true },
-    select: { id: true, name: true, email: true, role: true, avatarUrl: true, lastActiveAt: true },
+    select: { id: true, name: true, email: true, role: true, avatarUrl: true, agentRole: true, isActive: true, lastActiveAt: true },
     orderBy: { name: 'asc' },
   })
 

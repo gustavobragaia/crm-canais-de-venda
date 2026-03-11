@@ -54,13 +54,18 @@ export const ModelName = {
   Workspace: 'Workspace',
   User: 'User',
   Channel: 'Channel',
+  AgentConfig: 'AgentConfig',
   Conversation: 'Conversation',
   Message: 'Message',
   PipelineStage: 'PipelineStage',
   Lead: 'Lead',
   AnalyticsDaily: 'AnalyticsDaily',
   WebhookLog: 'WebhookLog',
-  Plan: 'Plan'
+  Plan: 'Plan',
+  MessageTemplate: 'MessageTemplate',
+  ConversationActivity: 'ConversationActivity',
+  ScheduledMessage: 'ScheduledMessage',
+  Automation: 'Automation'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -110,6 +115,7 @@ export const UserScalarFieldEnum = {
   avatarUrl: 'avatarUrl',
   isActive: 'isActive',
   lastActiveAt: 'lastActiveAt',
+  agentRole: 'agentRole',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -141,6 +147,29 @@ export const ChannelScalarFieldEnum = {
 export type ChannelScalarFieldEnum = (typeof ChannelScalarFieldEnum)[keyof typeof ChannelScalarFieldEnum]
 
 
+export const AgentConfigScalarFieldEnum = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  name: 'name',
+  objective: 'objective',
+  tone: 'tone',
+  knowledgeAreas: 'knowledgeAreas',
+  isActive: 'isActive',
+  businessHoursStart: 'businessHoursStart',
+  businessHoursEnd: 'businessHoursEnd',
+  maxAiMessages: 'maxAiMessages',
+  offHoursMessage: 'offHoursMessage',
+  gender: 'gender',
+  personality: 'personality',
+  autoAssign: 'autoAssign',
+  handoffInstructions: 'handoffInstructions',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AgentConfigScalarFieldEnum = (typeof AgentConfigScalarFieldEnum)[keyof typeof AgentConfigScalarFieldEnum]
+
+
 export const ConversationScalarFieldEnum = {
   id: 'id',
   workspaceId: 'workspaceId',
@@ -160,6 +189,8 @@ export const ConversationScalarFieldEnum = {
   unreadCount: 'unreadCount',
   tags: 'tags',
   internalNotes: 'internalNotes',
+  aiEnabled: 'aiEnabled',
+  aiMessageCount: 'aiMessageCount',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -177,6 +208,8 @@ export const MessageScalarFieldEnum = {
   externalId: 'externalId',
   status: 'status',
   isSystem: 'isSystem',
+  senderName: 'senderName',
+  aiGenerated: 'aiGenerated',
   sentById: 'sentById',
   sentAt: 'sentAt',
   deliveredAt: 'deliveredAt',
@@ -275,6 +308,60 @@ export const PlanScalarFieldEnum = {
 } as const
 
 export type PlanScalarFieldEnum = (typeof PlanScalarFieldEnum)[keyof typeof PlanScalarFieldEnum]
+
+
+export const MessageTemplateScalarFieldEnum = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  title: 'title',
+  content: 'content',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MessageTemplateScalarFieldEnum = (typeof MessageTemplateScalarFieldEnum)[keyof typeof MessageTemplateScalarFieldEnum]
+
+
+export const ConversationActivityScalarFieldEnum = {
+  id: 'id',
+  conversationId: 'conversationId',
+  workspaceId: 'workspaceId',
+  type: 'type',
+  description: 'description',
+  userId: 'userId',
+  createdAt: 'createdAt'
+} as const
+
+export type ConversationActivityScalarFieldEnum = (typeof ConversationActivityScalarFieldEnum)[keyof typeof ConversationActivityScalarFieldEnum]
+
+
+export const ScheduledMessageScalarFieldEnum = {
+  id: 'id',
+  conversationId: 'conversationId',
+  workspaceId: 'workspaceId',
+  content: 'content',
+  scheduledAt: 'scheduledAt',
+  status: 'status',
+  sentAt: 'sentAt',
+  createdAt: 'createdAt'
+} as const
+
+export type ScheduledMessageScalarFieldEnum = (typeof ScheduledMessageScalarFieldEnum)[keyof typeof ScheduledMessageScalarFieldEnum]
+
+
+export const AutomationScalarFieldEnum = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  name: 'name',
+  isActive: 'isActive',
+  trigger: 'trigger',
+  conditions: 'conditions',
+  actions: 'actions',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AutomationScalarFieldEnum = (typeof AutomationScalarFieldEnum)[keyof typeof AutomationScalarFieldEnum]
 
 
 export const SortOrder = {
