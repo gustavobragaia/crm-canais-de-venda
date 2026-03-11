@@ -4,12 +4,11 @@ import { useState, useEffect } from 'react'
 import { LeadDrawer } from '@/components/LeadDrawer'
 
 const FUNNEL_STAGES = [
-  { name: 'Não Atribuído', color: '#6B7280', auto: true },
-  { name: 'Aguardando', color: '#F59E0B', auto: true },
-  { name: 'Em Atendimento', color: '#3B82F6', auto: true },
+  { name: 'Não Atribuído',   color: '#6B7280', auto: true  },
+  { name: 'Aguardando',      color: '#F59E0B', auto: true  },
+  { name: 'Em Atendimento',  color: '#3B82F6', auto: true  },
   { name: 'Reunião Marcada', color: '#8B5CF6', auto: false },
-  { name: 'Contrato Fechado', color: '#10B981', auto: false },
-  { name: 'Desqualificado', color: '#EF4444', auto: false },
+  { name: 'Contrato Fechado',color: '#10B981', auto: false },
 ]
 
 interface Conversation {

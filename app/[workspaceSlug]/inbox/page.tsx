@@ -59,12 +59,12 @@ export default function InboxPage() {
   // Real-time updates via Pusher
   usePusherChannel(`workspace-${workspaceId}`, {
     'new-message': (data: unknown) => {
-      const { conversationId } = data as { conversationId: string }
-      // Refresh conversations to update preview and unread count
       fetchConversations()
+      window.dispatchEvent(new CustomEvent('new-message', { detail: data }))
     },
-    'message-sent': () => {
+    'message-sent': (data: unknown) => {
       fetchConversations()
+      window.dispatchEvent(new CustomEvent('message-sent', { detail: data }))
     },
     'conversation-assigned': () => {
       fetchConversations()

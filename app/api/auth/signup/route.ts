@@ -55,11 +55,11 @@ export async function POST(req: NextRequest) {
       // Create default pipeline stages
       await tx.pipelineStage.createMany({
         data: [
-          { workspaceId: workspace.id, name: 'Novo Lead', position: 0, isDefault: true },
-          { workspaceId: workspace.id, name: 'Em Atendimento', position: 1 },
-          { workspaceId: workspace.id, name: 'Proposta Enviada', position: 2 },
-          { workspaceId: workspace.id, name: 'Cliente Fechado', position: 3, isFinal: true },
-          { workspaceId: workspace.id, name: 'Perdido', position: 4, isFinal: true },
+          { workspaceId: workspace.id, name: 'Não Atribuído',   color: '#6B7280', position: 0, isDefault: true,  isFinal: false },
+          { workspaceId: workspace.id, name: 'Aguardando',      color: '#F59E0B', position: 1, isDefault: false, isFinal: false },
+          { workspaceId: workspace.id, name: 'Em Atendimento',  color: '#3B82F6', position: 2, isDefault: false, isFinal: false },
+          { workspaceId: workspace.id, name: 'Reunião Marcada', color: '#8B5CF6', position: 3, isDefault: false, isFinal: false },
+          { workspaceId: workspace.id, name: 'Contrato Fechado',color: '#10B981', position: 4, isDefault: false, isFinal: true  },
         ],
       })
 
