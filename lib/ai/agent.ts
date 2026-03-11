@@ -251,10 +251,16 @@ export async function processAiResponse(
 
     if (!result.response) return
 
-    // Send the response
+    // Send the response (isolated — delivery failure doesn't abort DB save or Pusher)
+    let messageSent = false
     if (conversation.channel.provider === 'UAZAPI' && conversation.channel.instanceToken) {
       const phone = conversation.contactPhone ?? conversation.externalId.replace('@s.whatsapp.net', '')
-      await sendUazapiMessage(conversation.channel.instanceToken, phone, result.response)
+      try {
+        await sendUazapiMessage(conversation.channel.instanceToken, phone, result.response)
+        messageSent = true
+      } catch (err) {
+        console.error('[AI Agent] Failed to send via UazAPI:', err)
+      }
     }
 
     // Save AI message first to get full object for Pusher broadcast
@@ -266,7 +272,7 @@ export async function processAiResponse(
         content: result.response,
         aiGenerated: true,
         senderName: agentConfig.name,
-        status: 'SENT',
+        status: messageSent ? 'SENT' : 'FAILED',
       },
     })
 

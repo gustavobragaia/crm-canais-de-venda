@@ -75,7 +75,7 @@ async function uazapiFetch<T>(path: string, options?: RequestInit & { adminAuth?
 
   const res = await fetch(url, {
     ...fetchOptions,
-    signal: AbortSignal.timeout(15000),
+    signal: AbortSignal.timeout(30000),
     headers,
   })
 
