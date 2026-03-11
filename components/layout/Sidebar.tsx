@@ -10,7 +10,6 @@ import {
   Settings,
   LogOut,
   Layers,
-  BookOpen,
   GitBranch,
 } from 'lucide-react'
 import { ClosioIcon } from '@/components/ClosioLogo'
@@ -34,7 +33,6 @@ export function Sidebar() {
     { label: 'Atendimento', href: `/${slug}/pipeline`, icon: Layers },
     { label: 'Analytics', href: `/${slug}/analytics`, icon: BarChart2, adminOnly: true },
     { label: 'Configurações', href: `/${slug}/settings`, icon: Settings, adminOnly: true },
-    { label: 'Como usar', href: `/${slug}/como-usar`, icon: BookOpen },
   ]
 
   return (
