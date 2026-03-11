@@ -34,7 +34,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       assignedToId: userId || null,
       assignedById: session.user.id,
       assignedAt: userId ? new Date() : null,
-      status: userId ? 'ASSIGNED' : 'UNASSIGNED',
+      status: userId ? 'IN_PROGRESS' : 'UNASSIGNED',
+      pipelineStage: userId ? 'Em Atendimento' : 'Não Atribuído',
     },
   })
 
