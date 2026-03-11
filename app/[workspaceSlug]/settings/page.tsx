@@ -21,6 +21,7 @@ import {
   Play,
   Send,
   Trash2,
+  RefreshCw,
 } from 'lucide-react'
 
 const PLANS = [
@@ -256,6 +257,23 @@ export default function SettingsPage() {
       setConnectingStatus((s) => ({ ...s, [`DELETE_${channelId}`]: 'idle' }))
     }
   }, [refreshChannels])
+
+  const handleFixWebhook = useCallback(async (channelId: string) => {
+    setConnectingStatus((s) => ({ ...s, [`FIX_${channelId}`]: 'loading' }))
+    try {
+      const res = await fetch('/api/uazapi/fix-webhook', { method: 'POST' })
+      const data = await res.json()
+      if (!res.ok) {
+        alert(data.error ?? 'Erro ao corrigir webhook.')
+        return
+      }
+      alert(`Webhook registrado com sucesso:\n${data.webhookUrl}`)
+    } catch (e) {
+      console.error(e)
+    } finally {
+      setConnectingStatus((s) => ({ ...s, [`FIX_${channelId}`]: 'idle' }))
+    }
+  }, [])
 
   useEffect(() => () => stopUazapiPoll(), [stopUazapiPoll])
 
@@ -650,6 +668,16 @@ export default function SettingsPage() {
                             : <><MessageCircle size={12} /> Reconectar</>}
                         </button>
                       )}
+                      <button
+                        onClick={() => handleFixWebhook(ch.id)}
+                        disabled={connectingStatus[`FIX_${ch.id}`] === 'loading'}
+                        className="flex items-center gap-1.5 text-xs px-3 py-1.5 bg-blue-50 hover:bg-blue-100 disabled:opacity-60 text-blue-600 rounded-lg transition-colors font-medium"
+                        title="Corrigir Webhook"
+                      >
+                        {connectingStatus[`FIX_${ch.id}`] === 'loading'
+                          ? <Loader2 size={12} className="animate-spin" />
+                          : <><RefreshCw size={12} /> Webhook</>}
+                      </button>
                       <button
                         onClick={() => handleUazapiDelete(ch.id)}
                         disabled={connectingStatus[`DELETE_${ch.id}`] === 'loading'}

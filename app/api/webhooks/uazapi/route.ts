@@ -12,6 +12,7 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.text()
     const payload = JSON.parse(body) as UazapiWebhookPayload
+    console.log('[UAZAPI WEBHOOK] raw payload:', JSON.stringify(payload).slice(0, 800))
     console.log('[UAZAPI WEBHOOK] EventType:', payload.EventType, '| token:', payload.token?.slice(0, 8))
 
     if (payload.EventType === 'messages') {

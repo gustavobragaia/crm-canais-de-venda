@@ -35,6 +35,10 @@ export async function POST(req: NextRequest) {
 
     const instanceName = `${workspaceId}-wa-${Date.now()}`
     const webhookUrl = `${process.env.NEXTAUTH_URL?.replace(/\/$/, '')}/api/webhooks/uazapi`
+    console.log('[UAZAPI CONNECT] webhook URL:', webhookUrl)
+    if (webhookUrl.includes('localhost')) {
+      console.warn('[UAZAPI CONNECT] ATENÇÃO: webhook URL é localhost e não será acessível pela internet. Use /api/uazapi/fix-webhook após deployar em produção.')
+    }
 
     // Step 1: Create instance (requires admintoken)
     const { id: instanceId, token: instanceToken } = await createUazapiInstance(instanceName)
