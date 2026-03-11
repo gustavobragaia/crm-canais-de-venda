@@ -1,4 +1,5 @@
 import OpenAI from 'openai'
+import type { ChannelType } from '../../generated/prisma/enums'
 import { db } from '@/lib/db'
 import { sendUazapiMessage } from '@/lib/integrations/uazapi'
 import { pusherServer } from '@/lib/pusher'
@@ -110,46 +111,26 @@ Preencha "collectedData" com os dados que já foram coletados na conversa (mesmo
 async function handleLeadQualification(
   conversationId: string,
   workspaceId: string,
-  collectedData: AiAgentResult['collectedData']
+  collectedData: AiAgentResult['collectedData'],
+  sourceChannel: ChannelType
 ) {
   try {
-    // Check if lead exists
-    const existing = await db.lead.findUnique({ where: { conversationId } })
-    const conversation = await db.conversation.findUnique({
-      where: { id: conversationId },
-      include: { channel: true },
-    })
-    if (!conversation) return
-
     const qualificationNotes = Object.entries(collectedData)
       .filter(([, v]) => v)
       .map(([k, v]) => `${k}: ${v}`)
       .join('\n')
 
-    if (existing) {
-      await db.lead.update({
+    await Promise.all([
+      db.lead.upsert({
         where: { conversationId },
-        data: { qualificationNotes },
-      })
-    } else {
-      await db.lead.create({
-        data: {
-          conversationId,
-          workspaceId,
-          sourceChannel: conversation.channel.type,
-          qualificationNotes,
-        },
-      })
-    }
-
-    // Update conversation to waiting for agent
-    await db.conversation.update({
-      where: { id: conversationId },
-      data: {
-        status: 'WAITING_CLIENT',
-        pipelineStage: 'Aguardando',
-      },
-    })
+        update: { qualificationNotes },
+        create: { conversationId, workspaceId, sourceChannel, qualificationNotes },
+      }),
+      db.conversation.update({
+        where: { id: conversationId },
+        data: { status: 'WAITING_CLIENT', pipelineStage: 'Aguardando' },
+      }),
+    ])
   } catch (err) {
     console.error('[AI Agent] handleLeadQualification error:', err)
   }
@@ -168,26 +149,7 @@ export async function processAiResponse(
 
     if (!agentConfig || !agentConfig.isActive) return
 
-    // Check business hours
-    if (agentConfig.businessHoursStart !== null && agentConfig.businessHoursEnd !== null) {
-      const hour = new Date().getHours()
-      if (hour < agentConfig.businessHoursStart || hour >= agentConfig.businessHoursEnd) {
-        // Send off-hours message if configured
-        if (agentConfig.offHoursMessage) {
-          const conversation = await db.conversation.findUnique({
-            where: { id: conversationId },
-            include: { channel: true },
-          })
-          if (conversation?.channel?.provider === 'UAZAPI' && conversation.channel.instanceToken) {
-            const phone = conversation.contactPhone ?? conversation.externalId.replace('@s.whatsapp.net', '')
-            await sendUazapiMessage(conversation.channel.instanceToken, phone, agentConfig.offHoursMessage)
-          }
-        }
-        return
-      }
-    }
-
-    // Load conversation with messages
+    // Load conversation with messages (single fetch used for both business hours check and main flow)
     const conversation = await db.conversation.findUnique({
       where: { id: conversationId },
       include: {
@@ -201,6 +163,18 @@ export async function processAiResponse(
 
     if (!conversation) return
     if (!conversation.aiEnabled) return
+
+    // Check business hours
+    if (agentConfig.businessHoursStart !== null && agentConfig.businessHoursEnd !== null) {
+      const hour = new Date().getHours()
+      if (hour < agentConfig.businessHoursStart || hour >= agentConfig.businessHoursEnd) {
+        if (agentConfig.offHoursMessage && conversation.channel.provider === 'UAZAPI' && conversation.channel.instanceToken) {
+          const phone = conversation.contactPhone ?? conversation.externalId.replace('@s.whatsapp.net', '')
+          await sendUazapiMessage(conversation.channel.instanceToken, phone, agentConfig.offHoursMessage)
+        }
+        return
+      }
+    }
 
     // Check max AI messages
     if (conversation.aiMessageCount >= agentConfig.maxAiMessages) return
@@ -237,7 +211,7 @@ export async function processAiResponse(
     // Call OpenAI
     const aiResponse = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
-      max_tokens: 1024,
+      max_tokens: 400,
       messages: [
         { role: 'system', content: systemPrompt },
         ...history,
@@ -267,39 +241,37 @@ export async function processAiResponse(
       await sendUazapiMessage(conversation.channel.instanceToken, phone, result.response)
     }
 
-    // Save AI message to DB
-    await db.message.create({
-      data: {
+    // Parallelize: save AI message, update conversation counts, and broadcast
+    await Promise.all([
+      db.message.create({
+        data: {
+          conversationId,
+          workspaceId,
+          direction: 'OUTBOUND',
+          content: result.response,
+          aiGenerated: true,
+          senderName: agentConfig.name,
+          status: 'SENT',
+        },
+      }),
+      db.conversation.update({
+        where: { id: conversationId },
+        data: {
+          aiMessageCount: { increment: 1 },
+          lastMessagePreview: result.response.slice(0, 100),
+          lastMessageAt: new Date(),
+        },
+      }),
+      pusherServer.trigger(`workspace-${workspaceId}`, 'new-message', {
         conversationId,
-        workspaceId,
-        direction: 'OUTBOUND',
-        content: result.response,
+        message: result.response,
         aiGenerated: true,
-        senderName: agentConfig.name,
-        status: 'SENT',
-      },
-    })
-
-    // Update conversation AI message count and preview
-    await db.conversation.update({
-      where: { id: conversationId },
-      data: {
-        aiMessageCount: { increment: 1 },
-        lastMessagePreview: result.response.slice(0, 100),
-        lastMessageAt: new Date(),
-      },
-    })
-
-    // Pusher: broadcast new message
-    await pusherServer.trigger(`workspace-${workspaceId}`, 'new-message', {
-      conversationId,
-      message: result.response,
-      aiGenerated: true,
-    })
+      }),
+    ])
 
     // Handle qualification
     if (result.qualified) {
-      await handleLeadQualification(conversationId, workspaceId, result.collectedData)
+      await handleLeadQualification(conversationId, workspaceId, result.collectedData, conversation.channel.type)
 
       // Handle auto-assign
       if (result.assignToAgent && agentConfig.autoAssign) {
@@ -309,33 +281,31 @@ export async function processAiResponse(
         )
 
         if (matchedAgent) {
-          await db.conversation.update({
-            where: { id: conversationId },
-            data: {
-              assignedToId: matchedAgent.id,
-              assignedById: null,
-              assignedAt: new Date(),
-              status: 'IN_PROGRESS',
-              pipelineStage: 'Em Atendimento',
-            },
-          })
-
-          // Create activity for the assignment
-          await db.conversationActivity.create({
-            data: {
+          await Promise.all([
+            db.conversation.update({
+              where: { id: conversationId },
+              data: {
+                assignedToId: matchedAgent.id,
+                assignedById: null,
+                assignedAt: new Date(),
+                status: 'IN_PROGRESS',
+                pipelineStage: 'Em Atendimento',
+              },
+            }),
+            db.conversationActivity.create({
+              data: {
+                conversationId,
+                workspaceId,
+                type: 'assigned',
+                description: `Agente de IA encaminhou para ${matchedAgent.name}`,
+              },
+            }),
+            pusherServer.trigger(`workspace-${workspaceId}`, 'conversation-assigned', {
               conversationId,
-              workspaceId,
-              type: 'assigned',
-              description: `Agente de IA encaminhou para ${matchedAgent.name}`,
-            },
-          })
-
-          // Pusher: broadcast assignment
-          await pusherServer.trigger(`workspace-${workspaceId}`, 'conversation-assigned', {
-            conversationId,
-            assignedToId: matchedAgent.id,
-            assignedToName: matchedAgent.name,
-          })
+              assignedToId: matchedAgent.id,
+              assignedToName: matchedAgent.name,
+            }),
+          ])
         }
       }
     }
