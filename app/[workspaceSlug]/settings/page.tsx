@@ -31,26 +31,12 @@ import {
 
 const PLANS = [
   {
-    name: 'Starter',
-    price: 'R$ 197/mês',
-    firstMonthPrice: 'R$ 37 no 1º mês',
-    checkoutUrl: process.env.NEXT_PUBLIC_KIRVANO_STARTER_URL ?? 'https://pay.kirvano.com/4f4bf484-0113-4257-8199-52f7fa0f5925',
-    features: ['1 Admin + 3 Agentes', '1.000 conversas/mês', '3 canais'],
-  },
-  {
     name: 'Pro',
-    price: 'R$ 397/mês',
+    price: 'R$ 297/mês',
     firstMonthPrice: 'R$ 37 no 1º mês',
     checkoutUrl: process.env.NEXT_PUBLIC_KIRVANO_PRO_URL ?? 'https://pay.kirvano.com/9ff16802-c829-46e8-a7b1-efc922ff5166',
-    features: ['1 Admin + 9 Agentes', '5.000 conversas/mês', 'Canais ilimitados'],
+    features: ['Usuários ilimitados', 'Conversas ilimitadas', 'Canais ilimitados', 'Suporte prioritário'],
     recommended: true,
-  },
-  {
-    name: 'Enterprise',
-    price: 'R$ 697/mês',
-    firstMonthPrice: 'R$ 37 no 1º mês',
-    checkoutUrl: process.env.NEXT_PUBLIC_KIRVANO_ENTERPRISE_URL ?? 'https://pay.kirvano.com/28bdff0e-b8c0-4c72-ba34-ee8b9828fe0f',
-    features: ['Usuários ilimitados', 'Conversas ilimitadas', 'Suporte prioritário'],
   },
 ]
 

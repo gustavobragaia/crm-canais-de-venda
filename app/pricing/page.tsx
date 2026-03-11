@@ -3,46 +3,18 @@ import { MessageCircle, CheckCircle } from 'lucide-react'
 
 const PLANS = [
   {
-    name: 'Starter',
-    price: 'R$ 197',
-    period: '/mês',
-    description: 'Para pequenas equipes',
-    features: [
-      '1 Admin + 3 Agentes',
-      '1.000 conversas/mês',
-      '3 canais conectados',
-      'Caixa de entrada unificada',
-      'Pipeline básico',
-      'Suporte via email',
-    ],
-  },
-  {
     name: 'Pro',
-    price: 'R$ 397',
+    price: 'R$ 297',
     period: '/mês',
-    description: 'Para equipes em crescimento',
+    description: 'Tudo que você precisa para crescer',
     recommended: true,
-    features: [
-      '1 Admin + 9 Agentes',
-      '5.000 conversas/mês',
-      'Canais ilimitados',
-      'Analytics avançado',
-      'Pipeline personalizado',
-      'Suporte prioritário',
-    ],
-  },
-  {
-    name: 'Enterprise',
-    price: 'R$ 997',
-    period: '/mês',
-    description: 'Para grandes operações',
     features: [
       'Usuários ilimitados',
       'Conversas ilimitadas',
       'Canais ilimitados',
-      'API access',
-      'SLA garantido',
-      'Suporte dedicado',
+      'Analytics avançado',
+      'Pipeline personalizado',
+      'Suporte prioritário',
     ],
   },
 ]

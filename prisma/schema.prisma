@@ -136,7 +136,7 @@ model Conversation {
   unreadCount        Int                @default(0)
   tags               String[]           @default([])
   internalNotes      String?
-  aiEnabled          Boolean            @default(true)
+  aiEnabled          Boolean            @default(false)
   aiMessageCount     Int                @default(0)
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
