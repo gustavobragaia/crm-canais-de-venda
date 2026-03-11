@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useSession } from 'next-auth/react'
-import { Send, Loader2, Bot, CalendarClock, X, ChevronDown, ChevronUp } from 'lucide-react'
+import { Send, Loader2, Bot } from 'lucide-react'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 
@@ -15,12 +15,6 @@ interface Message {
   senderName?: string | null
   aiGenerated?: boolean
   sentBy: { id: string; name: string } | null
-}
-
-interface ScheduledMessage {
-  id: string
-  content: string
-  scheduledAt: string
 }
 
 interface MessageThreadProps {
@@ -36,22 +30,6 @@ export function MessageThread({ conversationId, contactName, isGroup }: MessageT
   const [sending, setSending] = useState(false)
   const [input, setInput] = useState('')
   const bottomRef = useRef<HTMLDivElement>(null)
-
-  // Scheduling
-  const [showScheduler, setShowScheduler] = useState(false)
-  const [scheduleDate, setScheduleDate] = useState('')
-  const [scheduling, setScheduling] = useState(false)
-  const [scheduledMessages, setScheduledMessages] = useState<ScheduledMessage[]>([])
-  const [showScheduledList, setShowScheduledList] = useState(false)
-
-  // Load scheduled messages when conversation changes
-  useEffect(() => {
-    if (!conversationId) return
-    fetch(`/api/scheduled-messages?conversationId=${conversationId}`)
-      .then(r => r.json())
-      .then(data => setScheduledMessages(Array.isArray(data) ? data : []))
-      .catch(() => {})
-  }, [conversationId])
 
   useEffect(() => {
     if (!conversationId) return
@@ -110,32 +88,6 @@ export function MessageThread({ conversationId, contactName, isGroup }: MessageT
     } finally {
       setSending(false)
     }
-  }
-
-  async function handleSchedule() {
-    if (!input.trim() || !conversationId || !scheduleDate) return
-    setScheduling(true)
-    try {
-      const res = await fetch('/api/scheduled-messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ conversationId, content: input.trim(), scheduledAt: scheduleDate }),
-      })
-      if (res.ok) {
-        const sm = await res.json()
-        setScheduledMessages(prev => [...prev, sm])
-        setInput('')
-        setShowScheduler(false)
-        setScheduleDate('')
-      }
-    } finally {
-      setScheduling(false)
-    }
-  }
-
-  async function cancelScheduled(id: string) {
-    await fetch(`/api/scheduled-messages/${id}`, { method: 'DELETE' })
-    setScheduledMessages(prev => prev.filter(m => m.id !== id))
   }
 
   if (!conversationId) {
@@ -222,79 +174,9 @@ export function MessageThread({ conversationId, contactName, isGroup }: MessageT
         <div ref={bottomRef} />
       </div>
 
-      {/* Scheduled messages badge */}
-      {scheduledMessages.length > 0 && (
-        <div className="px-6 py-2 bg-amber-50 border-t border-amber-100">
-          <button
-            onClick={() => setShowScheduledList(v => !v)}
-            className="flex items-center gap-2 text-xs text-amber-700 font-medium w-full"
-          >
-            <CalendarClock size={13} />
-            {scheduledMessages.length} mensagem(s) agendada(s)
-            {showScheduledList ? <ChevronUp size={12} className="ml-auto" /> : <ChevronDown size={12} className="ml-auto" />}
-          </button>
-
-          {showScheduledList && (
-            <div className="mt-2 space-y-1.5">
-              {scheduledMessages.map(sm => (
-                <div key={sm.id} className="flex items-start gap-2 bg-white border border-amber-200 rounded-lg px-3 py-2">
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs text-gray-600 truncate">{sm.content}</p>
-                    <p className="text-[10px] text-amber-600 mt-0.5">
-                      {format(new Date(sm.scheduledAt), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => cancelScheduled(sm.id)}
-                    className="text-gray-400 hover:text-red-500 transition-colors flex-shrink-0 mt-0.5"
-                  >
-                    <X size={13} />
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-
       {/* Input area */}
       <div className="px-6 py-4 bg-white border-t border-gray-200">
-        {/* Scheduler popover */}
-        {showScheduler && (
-          <div className="mb-3 p-3 bg-gray-50 border border-gray-200 rounded-xl">
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-xs font-semibold text-gray-700 flex items-center gap-1.5">
-                <CalendarClock size={13} />
-                Agendar mensagem
-              </p>
-              <button onClick={() => setShowScheduler(false)} className="text-gray-400 hover:text-gray-600">
-                <X size={14} />
-              </button>
-            </div>
-            <p className="text-xs text-gray-500 mb-2 truncate">
-              {input.trim() || <span className="italic">Digite uma mensagem primeiro</span>}
-            </p>
-            <div className="flex gap-2">
-              <input
-                type="datetime-local"
-                value={scheduleDate}
-                onChange={e => setScheduleDate(e.target.value)}
-                min={new Date().toISOString().slice(0, 16)}
-                className="flex-1 text-xs border border-gray-300 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-amber-400"
-              />
-              <button
-                onClick={handleSchedule}
-                disabled={!scheduleDate || !input.trim() || scheduling}
-                className="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 disabled:bg-amber-300 text-white text-xs font-medium rounded-lg transition-colors flex items-center gap-1"
-              >
-                {scheduling ? <Loader2 size={11} className="animate-spin" /> : null}
-                Agendar
-              </button>
-            </div>
-          </div>
-        )}
-
-        <form onSubmit={handleSend} className="flex gap-3 items-end relative">
+        <form onSubmit={handleSend} className="flex gap-3 items-end">
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -309,18 +191,6 @@ export function MessageThread({ conversationId, contactName, isGroup }: MessageT
             className="flex-1 px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none transition-all"
             style={{ minHeight: '42px', maxHeight: '120px' }}
           />
-          <button
-            type="button"
-            onClick={() => setShowScheduler(v => !v)}
-            title="Agendar mensagem"
-            className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors border ${
-              showScheduler
-                ? 'bg-amber-50 border-amber-300 text-amber-600'
-                : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
-            }`}
-          >
-            <CalendarClock size={16} />
-          </button>
           <button
             type="submit"
             disabled={sending || !input.trim()}

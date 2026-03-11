@@ -64,7 +64,6 @@ export const ModelName = {
   Plan: 'Plan',
   MessageTemplate: 'MessageTemplate',
   ConversationActivity: 'ConversationActivity',
-  ScheduledMessage: 'ScheduledMessage',
   Automation: 'Automation'
 } as const
 
@@ -333,20 +332,6 @@ export const ConversationActivityScalarFieldEnum = {
 } as const
 
 export type ConversationActivityScalarFieldEnum = (typeof ConversationActivityScalarFieldEnum)[keyof typeof ConversationActivityScalarFieldEnum]
-
-
-export const ScheduledMessageScalarFieldEnum = {
-  id: 'id',
-  conversationId: 'conversationId',
-  workspaceId: 'workspaceId',
-  content: 'content',
-  scheduledAt: 'scheduledAt',
-  status: 'status',
-  sentAt: 'sentAt',
-  createdAt: 'createdAt'
-} as const
-
-export type ScheduledMessageScalarFieldEnum = (typeof ScheduledMessageScalarFieldEnum)[keyof typeof ScheduledMessageScalarFieldEnum]
 
 
 export const AutomationScalarFieldEnum = {

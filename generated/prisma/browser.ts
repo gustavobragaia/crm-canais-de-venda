@@ -83,11 +83,6 @@ export type MessageTemplate = Prisma.MessageTemplateModel
  */
 export type ConversationActivity = Prisma.ConversationActivityModel
 /**
- * Model ScheduledMessage
- * 
- */
-export type ScheduledMessage = Prisma.ScheduledMessageModel
-/**
  * Model Automation
  * 
  */

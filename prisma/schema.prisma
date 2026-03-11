@@ -33,7 +33,6 @@ model Workspace {
   messageTemplates         MessageTemplate[]
   messages                 Message[]
   pipelineStages           PipelineStage[]
-  scheduledMessages        ScheduledMessage[]
   users                    User[]
   webhookLogs              WebhookLog[]
 
@@ -148,8 +147,6 @@ model Conversation {
   activities         ConversationActivity[]
   lead               Lead?
   messages           Message[]
-  scheduledMessages  ScheduledMessage[]
-
   @@unique([workspaceId, channelId, externalId])
   @@index([workspaceId])
   @@index([channelId])
@@ -314,21 +311,6 @@ model ConversationActivity {
   @@map("conversation_activities")
 }
 
-model ScheduledMessage {
-  id             String       @id @default(cuid())
-  conversationId String
-  workspaceId    String
-  content        String
-  scheduledAt    DateTime
-  status         String       @default("PENDING")
-  sentAt         DateTime?
-  createdAt      DateTime     @default(now())
-  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-  workspace      Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-
-  @@index([workspaceId, status, scheduledAt])
-  @@map("scheduled_messages")
-}
 
 model Automation {
   id          String    @id @default(cuid())
