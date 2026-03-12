@@ -23,6 +23,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       workspaceId: session.user.workspaceId,
       ...(session.user.role === 'AGENT' ? { assignedToId: session.user.id } : {}),
     },
+    include: { channel: { select: { provider: true } } },
   })
 
   if (!conversation) {
@@ -47,6 +48,16 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     where: { id },
     data: { unreadCount: 0 },
   })
+
+  // Fire-and-forget sync for UAZAPI channels (catches messages sent from phone)
+  if (conversation.channel?.provider === 'UAZAPI') {
+    const baseUrl = (process.env.NEXTAUTH_URL ?? '').replace(/\/$/, '')
+    fetch(`${baseUrl}/api/uazapi/sync`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', cookie: req.headers.get('cookie') ?? '' },
+      body: JSON.stringify({ conversationId: id }),
+    }).catch(() => {})
+  }
 
   return NextResponse.json({ messages, total, page, limit })
 }

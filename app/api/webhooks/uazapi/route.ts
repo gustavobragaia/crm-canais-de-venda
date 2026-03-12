@@ -21,6 +21,8 @@ export async function POST(req: NextRequest) {
       await processMessage(payload as UazapiWebhookHistoryPayload, { isHistory: true })
     } else if (payload.EventType === 'connection') {
       await handleConnection(payload as UazapiWebhookConnectionPayload)
+    } else if (payload.EventType === 'messages_update') {
+      await handleMessagesUpdate(payload)
     } else {
       console.log('[UAZAPI WEBHOOK] unhandled EventType:', payload.EventType)
     }
@@ -185,6 +187,40 @@ async function processMessage(
       )
     }
   }
+}
+
+async function handleMessagesUpdate(payload: UazapiWebhookPayload) {
+  const msg = (payload as { message?: { messageid?: string; status?: string } }).message
+  if (!msg?.messageid) return
+
+  const message = await db.message.findFirst({ where: { externalId: msg.messageid } })
+  if (!message) return
+
+  const statusMap: Record<string, string> = {
+    read: 'READ',
+    delivered: 'DELIVERED',
+    sent: 'SENT',
+    failed: 'FAILED',
+  }
+  const newStatus = statusMap[msg.status?.toLowerCase() ?? ''] ?? null
+  if (!newStatus || newStatus === message.status) return
+
+  await db.message.update({
+    where: { id: message.id },
+    data: {
+      status: newStatus as 'SENT' | 'DELIVERED' | 'READ' | 'FAILED',
+      ...(newStatus === 'READ' ? { readAt: new Date() } : {}),
+      ...(newStatus === 'DELIVERED' ? { deliveredAt: new Date() } : {}),
+    },
+  })
+
+  await pusherServer.trigger(
+    `workspace-${message.workspaceId}`,
+    'message-updated',
+    { messageId: message.id, status: newStatus }
+  )
+
+  console.log('[UAZAPI WEBHOOK] message status updated:', message.id, '→', newStatus)
 }
 
 async function handleConnection(payload: UazapiWebhookConnectionPayload) {

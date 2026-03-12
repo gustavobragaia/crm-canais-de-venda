@@ -223,3 +223,31 @@ export async function deleteUazapiInstance(
     instanceToken,
   })
 }
+
+export interface UazapiMessageFindResult {
+  id: string
+  messageid: string
+  chatid: string
+  fromMe: boolean
+  wasSentByApi: boolean
+  messageType: string
+  text: string
+  fileURL?: string
+  messageTimestamp: number
+  status: string
+  senderName?: string
+  isGroup: boolean
+  content?: unknown
+}
+
+export async function findUazapiMessages(
+  instanceToken: string,
+  chatid: string,
+  limit = 50
+): Promise<UazapiMessageFindResult[]> {
+  const data = await uazapiFetch<{ messages: UazapiMessageFindResult[] }>(
+    '/message/find',
+    { method: 'POST', instanceToken, body: JSON.stringify({ chatid, limit }) }
+  )
+  return data.messages ?? []
+}
