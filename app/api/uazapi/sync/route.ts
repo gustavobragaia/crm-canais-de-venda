@@ -7,7 +7,8 @@ function extractMediaType(messageType: string): string | null {
   switch (messageType) {
     case 'image': return 'image'
     case 'audio':
-    case 'ptt': return 'audio'
+    case 'ptt':
+    case 'myaudio': return 'audio'
     case 'document': return 'document'
     case 'video': return 'video'
     default: return null

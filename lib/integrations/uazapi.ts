@@ -24,6 +24,7 @@ export interface UazapiWebhookMessagePayload {
     senderName?: string
     fromMe: boolean
     wasSentByApi?: boolean
+    fileURL?: string
     text: string
     content?: string
     messageType: string
@@ -171,37 +172,20 @@ export async function sendUazapiMessage(
   return data.messageid ?? ''
 }
 
-export async function sendUazapiAudio(
-  instanceToken: string,
-  number: string,
-  url: string,
-  caption?: string
-): Promise<string> {
-  const data = await uazapiFetch<{ messageid?: string }>(
-    '/send/audio',
-    {
-      method: 'POST',
-      instanceToken,
-      body: JSON.stringify({ number, url, caption }),
-    }
-  )
-  return data.messageid ?? ''
-}
-
 export async function sendUazapiMedia(
   instanceToken: string,
   number: string,
-  type: 'image' | 'document' | 'video',
+  type: 'audio' | 'ptt' | 'image' | 'document' | 'video',
   url: string,
   caption?: string,
   filename?: string
 ): Promise<string> {
   const data = await uazapiFetch<{ messageid?: string }>(
-    `/send/${type}`,
+    '/send/media',
     {
       method: 'POST',
       instanceToken,
-      body: JSON.stringify({ number, url, caption, filename }),
+      body: JSON.stringify({ number, type, file: url, text: caption, docName: filename }),
     }
   )
   return data.messageid ?? ''

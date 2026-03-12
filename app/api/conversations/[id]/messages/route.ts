@@ -4,7 +4,7 @@ import { db } from '@/lib/db'
 import { pusherServer } from '@/lib/pusher'
 import { sendInstagramMessage } from '@/lib/integrations/instagram'
 import { sendFacebookMessage } from '@/lib/integrations/facebook'
-import { sendUazapiMessage, sendUazapiAudio, sendUazapiMedia } from '@/lib/integrations/uazapi'
+import { sendUazapiMessage, sendUazapiMedia } from '@/lib/integrations/uazapi'
 import { decrypt } from '@/lib/crypto'
 import { put } from '@vercel/blob'
 
@@ -130,11 +130,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       if (channel?.type === 'WHATSAPP' && channel.provider === 'UAZAPI' && channel.instanceToken) {
         const to = conversation.contactPhone
           ?? conversation.externalId.replace('@s.whatsapp.net', '').replace('@g.us', '')
-        if (mediaType === 'audio') {
-          externalId = await sendUazapiAudio(channel.instanceToken, to, mediaUrl, content || undefined)
-        } else {
-          externalId = await sendUazapiMedia(channel.instanceToken, to, mediaType as 'image' | 'video' | 'document', mediaUrl, content || undefined, mediaName)
-        }
+        externalId = await sendUazapiMedia(channel.instanceToken, to, mediaType as 'audio' | 'image' | 'video' | 'document', mediaUrl, content || undefined, mediaName)
       }
     } catch (err) {
       console.error('[SEND_MEDIA]', err)

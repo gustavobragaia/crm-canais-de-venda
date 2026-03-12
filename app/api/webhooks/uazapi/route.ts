@@ -40,6 +40,7 @@ function extractMediaType(messageType: string): string | null {
       return 'image'
     case 'audio':
     case 'ptt':
+    case 'myaudio':
       return 'audio'
     case 'document':
       return 'document'
@@ -90,7 +91,7 @@ async function processMessage(
 
   // Detect media
   const mediaType = extractMediaType(msg.messageType)
-  const mediaUrl = msg.media?.url ?? undefined
+  const mediaUrl = msg.fileURL ?? msg.media?.url ?? undefined
   const mediaMime = msg.media?.mimetype ?? undefined
   const mediaName = msg.media?.filename ?? undefined
 
