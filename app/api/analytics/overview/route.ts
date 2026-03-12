@@ -23,9 +23,6 @@ export async function GET(req: NextRequest) {
     workspaceData,
     allUsers,
     allChannels,
-    funnelWaiting,
-    funnelMeeting,
-    funnelContract,
   ] = await Promise.all([
     db.conversation.count({ where: { workspaceId, status: 'UNASSIGNED' } }),
     db.conversation.count({ where: { workspaceId, status: 'IN_PROGRESS' } }),
@@ -65,23 +62,41 @@ export async function GET(req: NextRequest) {
       where: { workspaceId },
       select: { id: true, type: true, name: true },
     }),
-    // Pipeline funnel stages
-    db.conversation.count({
-      where: { workspaceId, status: 'WAITING_CLIENT' },
-    }),
-    db.conversation.count({
-      where: { workspaceId, pipelineStage: { contains: 'reuni', mode: 'insensitive' } },
-    }),
-    db.conversation.count({
-      where: {
-        workspaceId,
-        OR: [
-          { pipelineStage: { contains: 'contrato', mode: 'insensitive' } },
-          { pipelineStage: { contains: 'fechado', mode: 'insensitive' } },
-        ],
-      },
-    }),
   ])
+
+  // Mutually exclusive funnel: priority contractClosed > meetingScheduled > inProgress > waiting > unassigned
+  const funnelRows = await db.$queryRaw<Array<{
+    contract_closed: number | bigint
+    meeting_scheduled: number | bigint
+    in_progress: number | bigint
+    waiting: number | bigint
+    unassigned_count: number | bigint
+  }>>`
+    SELECT
+      SUM(CASE WHEN
+        ("pipelineStage" ILIKE '%contrato%' OR "pipelineStage" ILIKE '%fechado%')
+        THEN 1 ELSE 0 END)::int AS contract_closed,
+      SUM(CASE WHEN
+        "pipelineStage" ILIKE '%reuni%'
+        AND NOT ("pipelineStage" ILIKE '%contrato%' OR "pipelineStage" ILIKE '%fechado%')
+        THEN 1 ELSE 0 END)::int AS meeting_scheduled,
+      SUM(CASE WHEN
+        status = 'IN_PROGRESS'
+        AND NOT ("pipelineStage" ILIKE '%reuni%' OR "pipelineStage" ILIKE '%contrato%' OR "pipelineStage" ILIKE '%fechado%')
+        THEN 1 ELSE 0 END)::int AS in_progress,
+      SUM(CASE WHEN
+        status = 'WAITING_CLIENT'
+        AND NOT ("pipelineStage" ILIKE '%reuni%' OR "pipelineStage" ILIKE '%contrato%' OR "pipelineStage" ILIKE '%fechado%')
+        THEN 1 ELSE 0 END)::int AS waiting,
+      SUM(CASE WHEN
+        status = 'UNASSIGNED'
+        AND NOT ("pipelineStage" ILIKE '%reuni%' OR "pipelineStage" ILIKE '%contrato%' OR "pipelineStage" ILIKE '%fechado%')
+        THEN 1 ELSE 0 END)::int AS unassigned_count
+    FROM conversations
+    WHERE "workspaceId" = ${workspaceId}
+      AND status NOT IN ('RESOLVED', 'ARCHIVED')
+  `
+  const funnelRow = funnelRows[0]
 
   // Map agent stats with user names
   const userMap = Object.fromEntries(allUsers.map((u) => [u.id, u]))
@@ -122,13 +137,13 @@ export async function GET(req: NextRequest) {
     maxConversationsPerMonth: workspaceData?.maxConversationsPerMonth ?? 0,
     subscriptionStatus: workspaceData?.subscriptionStatus,
     trialEndsAt: workspaceData?.trialEndsAt,
-    // Pipeline funnel
+    // Pipeline funnel (mutually exclusive)
     funnel: {
-      unassigned: totalUnassigned,
-      inProgress: totalInProgress,
-      waiting: funnelWaiting,
-      meetingScheduled: funnelMeeting,
-      contractClosed: funnelContract,
+      unassigned: Number(funnelRow?.unassigned_count ?? 0),
+      inProgress: Number(funnelRow?.in_progress ?? 0),
+      waiting: Number(funnelRow?.waiting ?? 0),
+      meetingScheduled: Number(funnelRow?.meeting_scheduled ?? 0),
+      contractClosed: Number(funnelRow?.contract_closed ?? 0),
     },
   })
 }

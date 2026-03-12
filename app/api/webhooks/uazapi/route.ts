@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { type UazapiWebhookPayload, type UazapiWebhookMessagePayload, type UazapiWebhookConnectionPayload } from '@/lib/integrations/uazapi'
+import { type UazapiWebhookPayload, type UazapiWebhookMessagePayload, type UazapiWebhookConnectionPayload, type UazapiWebhookHistoryPayload } from '@/lib/integrations/uazapi'
 import { db } from '@/lib/db'
 import { pusherServer } from '@/lib/pusher'
 import { processAiResponse } from '@/lib/ai/agent'
@@ -16,7 +16,9 @@ export async function POST(req: NextRequest) {
     console.log('[UAZAPI WEBHOOK] EventType:', payload.EventType, '| token:', payload.token?.slice(0, 8))
 
     if (payload.EventType === 'messages') {
-      await handleMessage(payload as UazapiWebhookMessagePayload)
+      await processMessage(payload as UazapiWebhookMessagePayload, { isHistory: false })
+    } else if (payload.EventType === 'history') {
+      await processMessage(payload as UazapiWebhookHistoryPayload, { isHistory: true })
     } else if (payload.EventType === 'connection') {
       await handleConnection(payload as UazapiWebhookConnectionPayload)
     } else {
@@ -46,11 +48,17 @@ function extractMediaType(messageType: string): string | null {
   }
 }
 
-async function handleMessage(payload: UazapiWebhookMessagePayload) {
+async function processMessage(
+  payload: UazapiWebhookMessagePayload | UazapiWebhookHistoryPayload,
+  { isHistory }: { isHistory: boolean }
+) {
   const msg = payload.message
 
-  // Skip outgoing messages
-  if (msg.fromMe) return
+  // Regular messages: skip fromMe (already saved when we sent via API)
+  // History: save both directions (fromMe=true → OUTBOUND, fromMe=false → INBOUND)
+  if (!isHistory && msg.fromMe) return
+
+  const direction = msg.fromMe ? 'OUTBOUND' : 'INBOUND'
 
   // Look up channel by instanceToken (most reliable identifier)
   const channel = await db.channel.findFirst({
@@ -122,10 +130,10 @@ async function handleMessage(payload: UazapiWebhookMessagePayload) {
     data: {
       conversationId: conversation.id,
       workspaceId: channel.workspaceId,
-      direction: 'INBOUND',
+      direction,
       content: textContent,
       externalId: msg.messageid || undefined,
-      status: 'DELIVERED',
+      status: direction === 'OUTBOUND' ? 'SENT' : 'DELIVERED',
       senderName: msg.senderName ?? null,
       sentAt,
       ...(mediaType ? { mediaType, mediaUrl, mediaMime, mediaName } : {}),
@@ -139,35 +147,43 @@ async function handleMessage(payload: UazapiWebhookMessagePayload) {
   await db.conversation.update({
     where: { id: conversation.id },
     data: {
-      lastMessageAt: new Date(),
+      lastMessageAt: sentAt,
       lastMessagePreview: previewText.slice(0, 100),
-      unreadCount: { increment: 1 },
+      ...(direction === 'INBOUND' ? { unreadCount: { increment: 1 } } : {}),
     },
   })
 
   await pusherServer.trigger(
     `workspace-${channel.workspaceId}`,
-    'new-message',
+    isHistory ? 'history-message' : 'new-message',
     { conversationId: conversation.id, message: savedMessage }
   )
 
-  console.log('[UAZAPI WEBHOOK] message saved:', savedMessage.id, '| conversation:', conversation.id, '| mediaType:', mediaType ?? 'none')
+  console.log(
+    `[UAZAPI WEBHOOK] ${isHistory ? 'history' : 'message'} saved:`,
+    savedMessage.id, '| conversation:', conversation.id,
+    '| direction:', direction,
+    '| mediaType:', mediaType ?? 'none'
+  )
 
-  // Trigger audio transcription asynchronously for audio messages
-  if (mediaType === 'audio' && msg.messageid && channel.instanceToken) {
-    const baseUrl = (process.env.NEXTAUTH_URL ?? '').replace(/\/$/, '')
-    fetch(`${baseUrl}/api/transcription`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ messageId: savedMessage.id, externalId: msg.messageid, instanceToken: channel.instanceToken }),
-    }).catch(err => console.error('[UAZAPI WEBHOOK] transcription trigger error:', err))
-  }
+  // Only for real-time inbound messages (not history):
+  if (!isHistory) {
+    // Trigger audio transcription asynchronously
+    if (mediaType === 'audio' && msg.messageid && channel.instanceToken) {
+      const baseUrl = (process.env.NEXTAUTH_URL ?? '').replace(/\/$/, '')
+      fetch(`${baseUrl}/api/transcription`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messageId: savedMessage.id, externalId: msg.messageid, instanceToken: channel.instanceToken }),
+      }).catch(err => console.error('[UAZAPI WEBHOOK] transcription trigger error:', err))
+    }
 
-  // Trigger AI agent asynchronously (non-blocking) — only for text messages
-  if (!mediaType || textContent) {
-    processAiResponse(conversation.id, channel.workspaceId, textContent).catch(err =>
-      console.error('[UAZAPI WEBHOOK] AI agent error:', err)
-    )
+    // Trigger AI agent asynchronously — only for text/mixed-media inbound messages
+    if (direction === 'INBOUND' && (!mediaType || textContent)) {
+      processAiResponse(conversation.id, channel.workspaceId, textContent).catch(err =>
+        console.error('[UAZAPI WEBHOOK] AI agent error:', err)
+      )
+    }
   }
 }
 

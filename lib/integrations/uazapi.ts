@@ -57,9 +57,19 @@ export interface UazapiWebhookConnectionPayload {
   }
 }
 
+export interface UazapiWebhookHistoryPayload {
+  EventType: 'history'
+  instanceName: string
+  token: string
+  owner: string
+  message: UazapiWebhookMessagePayload['message']
+  chat?: UazapiWebhookMessagePayload['chat']
+}
+
 export type UazapiWebhookPayload =
   | UazapiWebhookMessagePayload
   | UazapiWebhookConnectionPayload
+  | UazapiWebhookHistoryPayload
   | { EventType: string; instanceName: string; token: string; [key: string]: unknown }
 
 // ---- Internal fetch helpers ----
@@ -137,7 +147,7 @@ export async function setUazapiWebhook(
     instanceToken,
     body: JSON.stringify({
       url: webhookUrl,
-      events: ['messages', 'connection'],
+      events: ['messages', 'connection', 'history'],
       excludeMessages: ['wasSentByApi'],
       enabled: true,
     }),

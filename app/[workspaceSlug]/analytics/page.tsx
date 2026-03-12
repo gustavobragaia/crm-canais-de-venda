@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { MessageSquare, CheckCircle, AlertCircle, TrendingUp, Users, Bot, Clock, Sparkles, ArrowRight, MapPin, ChevronDown, ChevronRight } from 'lucide-react'
+import { MessageSquare, AlertCircle, TrendingUp, Users, Bot, Clock, Sparkles, ArrowRight, MapPin, ChevronDown, ChevronRight } from 'lucide-react'
 import { differenceInDays } from 'date-fns'
 
 interface Overview {
@@ -381,18 +381,12 @@ export default function AnalyticsPage() {
         )}
 
         {/* Main stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard
             label="Leads este mês"
             value={overview?.leadsThisMonth ?? 0}
             icon={TrendingUp}
             color="bg-purple-50 text-purple-600"
-          />
-          <StatCard
-            label="Clientes fechados"
-            value={overview?.closedLeads ?? 0}
-            icon={CheckCircle}
-            color="bg-green-50 text-green-600"
           />
           <StatCard
             label="Não atendidos"
@@ -409,15 +403,9 @@ export default function AnalyticsPage() {
             color="bg-blue-50 text-blue-600"
           />
           <StatCard
-            label="Resolvidas"
-            value={overview?.resolved ?? 0}
-            icon={CheckCircle}
-            color="bg-emerald-50 text-emerald-600"
-          />
-          <StatCard
             label="Total conversas"
-            value={`${overview?.conversationsThisMonth ?? 0}/${overview?.maxConversationsPerMonth ?? 0}`}
-            sub="este mês"
+            value={overview?.total ?? 0}
+            sub="no workspace"
             icon={MessageSquare}
             color="bg-gray-50 text-gray-600"
           />
