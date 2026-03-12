@@ -56,9 +56,10 @@ async function processMessage(
 ) {
   const msg = payload.message
 
-  // Regular messages: skip fromMe (already saved when we sent via API)
-  // History: save both directions (fromMe=true → OUTBOUND, fromMe=false → INBOUND)
-  if (!isHistory && msg.fromMe) return
+  // Skip only API-sent messages (already saved when we sent them).
+  // Phone messages (fromMe=true, wasSentByApi=false/undefined) are allowed through.
+  // wasSentByApi=true messages are also excluded at webhook level via excludeMessages config.
+  if (!isHistory && msg.fromMe && msg.wasSentByApi) return
 
   const direction = msg.fromMe ? 'OUTBOUND' : 'INBOUND'
 

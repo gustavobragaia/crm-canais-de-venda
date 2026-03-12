@@ -23,6 +23,7 @@ export interface UazapiWebhookMessagePayload {
     sender: string
     senderName?: string
     fromMe: boolean
+    wasSentByApi?: boolean
     text: string
     content?: string
     messageType: string
