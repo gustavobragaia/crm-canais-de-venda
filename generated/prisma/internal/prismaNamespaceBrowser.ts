@@ -56,6 +56,10 @@ export const ModelName = {
   Channel: 'Channel',
   AgentConfig: 'AgentConfig',
   Conversation: 'Conversation',
+  Tag: 'Tag',
+  ConversationTag: 'ConversationTag',
+  Note: 'Note',
+  StageHistory: 'StageHistory',
   Message: 'Message',
   PipelineStage: 'PipelineStage',
   Lead: 'Lead',
@@ -186,8 +190,6 @@ export const ConversationScalarFieldEnum = {
   lastMessageAt: 'lastMessageAt',
   lastMessagePreview: 'lastMessagePreview',
   unreadCount: 'unreadCount',
-  tags: 'tags',
-  internalNotes: 'internalNotes',
   aiEnabled: 'aiEnabled',
   aiMessageCount: 'aiMessageCount',
   createdAt: 'createdAt',
@@ -197,6 +199,52 @@ export const ConversationScalarFieldEnum = {
 export type ConversationScalarFieldEnum = (typeof ConversationScalarFieldEnum)[keyof typeof ConversationScalarFieldEnum]
 
 
+export const TagScalarFieldEnum = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  name: 'name',
+  color: 'color',
+  createdAt: 'createdAt'
+} as const
+
+export type TagScalarFieldEnum = (typeof TagScalarFieldEnum)[keyof typeof TagScalarFieldEnum]
+
+
+export const ConversationTagScalarFieldEnum = {
+  conversationId: 'conversationId',
+  tagId: 'tagId',
+  assignedAt: 'assignedAt'
+} as const
+
+export type ConversationTagScalarFieldEnum = (typeof ConversationTagScalarFieldEnum)[keyof typeof ConversationTagScalarFieldEnum]
+
+
+export const NoteScalarFieldEnum = {
+  id: 'id',
+  content: 'content',
+  conversationId: 'conversationId',
+  userId: 'userId',
+  workspaceId: 'workspaceId',
+  createdAt: 'createdAt'
+} as const
+
+export type NoteScalarFieldEnum = (typeof NoteScalarFieldEnum)[keyof typeof NoteScalarFieldEnum]
+
+
+export const StageHistoryScalarFieldEnum = {
+  id: 'id',
+  conversationId: 'conversationId',
+  workspaceId: 'workspaceId',
+  fromStage: 'fromStage',
+  toStage: 'toStage',
+  userId: 'userId',
+  userName: 'userName',
+  createdAt: 'createdAt'
+} as const
+
+export type StageHistoryScalarFieldEnum = (typeof StageHistoryScalarFieldEnum)[keyof typeof StageHistoryScalarFieldEnum]
+
+
 export const MessageScalarFieldEnum = {
   id: 'id',
   conversationId: 'conversationId',
@@ -204,6 +252,11 @@ export const MessageScalarFieldEnum = {
   direction: 'direction',
   content: 'content',
   attachments: 'attachments',
+  mediaType: 'mediaType',
+  mediaUrl: 'mediaUrl',
+  mediaMime: 'mediaMime',
+  mediaName: 'mediaName',
+  transcription: 'transcription',
   externalId: 'externalId',
   status: 'status',
   isSystem: 'isSystem',

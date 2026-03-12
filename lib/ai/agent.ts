@@ -178,7 +178,7 @@ export async function processAiResponse(
       const hour = new Date().getHours()
       if (hour < agentConfig.businessHoursStart || hour >= agentConfig.businessHoursEnd) {
         console.log('[AI Agent] Skip: outside business hours', { conversationId, hour, start: agentConfig.businessHoursStart, end: agentConfig.businessHoursEnd })
-        if (agentConfig.offHoursMessage && conversation.channel.provider === 'UAZAPI' && conversation.channel.instanceToken) {
+        if (agentConfig.offHoursMessage && conversation.channel?.provider === 'UAZAPI' && conversation.channel?.instanceToken) {
           const phone = conversation.contactPhone ?? conversation.externalId.replace('@s.whatsapp.net', '')
           await sendUazapiMessage(conversation.channel.instanceToken, phone, agentConfig.offHoursMessage)
         }
@@ -253,7 +253,7 @@ export async function processAiResponse(
 
     // Send the response (isolated — delivery failure doesn't abort DB save or Pusher)
     let messageSent = false
-    if (conversation.channel.provider === 'UAZAPI' && conversation.channel.instanceToken) {
+    if (conversation.channel?.provider === 'UAZAPI' && conversation.channel?.instanceToken) {
       const phone = conversation.contactPhone ?? conversation.externalId.replace('@s.whatsapp.net', '')
       try {
         await sendUazapiMessage(conversation.channel.instanceToken, phone, result.response)
@@ -294,7 +294,7 @@ export async function processAiResponse(
 
     // Handle qualification
     if (result.qualified) {
-      await handleLeadQualification(conversationId, workspaceId, result.collectedData, conversation.channel.type)
+      await handleLeadQualification(conversationId, workspaceId, result.collectedData, conversation.channel?.type ?? 'WHATSAPP')
 
       // Handle auto-assign
       if (result.assignToAgent && agentConfig.autoAssign) {

@@ -4,8 +4,9 @@ import { db } from '@/lib/db'
 import { pusherServer } from '@/lib/pusher'
 import { sendInstagramMessage } from '@/lib/integrations/instagram'
 import { sendFacebookMessage } from '@/lib/integrations/facebook'
-import { sendUazapiMessage } from '@/lib/integrations/uazapi'
+import { sendUazapiMessage, sendUazapiAudio, sendUazapiMedia } from '@/lib/integrations/uazapi'
 import { decrypt } from '@/lib/crypto'
+import { put } from '@vercel/blob'
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth()
@@ -50,15 +51,37 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   return NextResponse.json({ messages, total, page, limit })
 }
 
+function detectMediaType(mime: string): 'audio' | 'image' | 'video' | 'document' {
+  if (mime.startsWith('audio/')) return 'audio'
+  if (mime.startsWith('image/')) return 'image'
+  if (mime.startsWith('video/')) return 'video'
+  return 'document'
+}
+
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth()
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { id } = await params
-  const { content } = await req.json()
 
-  if (!content?.trim()) {
-    return NextResponse.json({ error: 'Mensagem não pode ser vazia.' }, { status: 400 })
+  // Parse request — supports both JSON (text) and multipart/form-data (media)
+  const contentType = req.headers.get('content-type') ?? ''
+  let content = ''
+  let file: File | null = null
+
+  if (contentType.includes('multipart/form-data')) {
+    const form = await req.formData()
+    content = (form.get('content') as string | null) ?? ''
+    file = form.get('file') as File | null
+    if (!file && !content.trim()) {
+      return NextResponse.json({ error: 'Arquivo ou mensagem é obrigatório.' }, { status: 400 })
+    }
+  } else {
+    const body = await req.json() as { content?: string }
+    content = body.content ?? ''
+    if (!content.trim()) {
+      return NextResponse.json({ error: 'Mensagem não pode ser vazia.' }, { status: 400 })
+    }
   }
 
   const conversation = await db.conversation.findFirst({
@@ -76,36 +99,70 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
   const channel = conversation.channel
   let externalId: string | undefined
+  let mediaUrl: string | undefined
+  let mediaType: string | undefined
+  let mediaMime: string | undefined
+  let mediaName: string | undefined
 
-  // Send via appropriate channel API
-  try {
-    if (channel.type === 'WHATSAPP') {
-      if (channel.provider === 'UAZAPI' && channel.instanceToken) {
+  // Handle file upload and sending
+  if (file) {
+    mediaMime = file.type
+    mediaName = file.name
+    mediaType = detectMediaType(file.type)
+
+    // Upload to Vercel Blob for a public URL
+    const blob = await put(`media/${Date.now()}-${file.name}`, file, { access: 'public' })
+    mediaUrl = blob.url
+
+    // Send via channel API
+    try {
+      if (channel?.type === 'WHATSAPP' && channel.provider === 'UAZAPI' && channel.instanceToken) {
         const to = conversation.contactPhone
           ?? conversation.externalId.replace('@s.whatsapp.net', '').replace('@g.us', '')
-        externalId = await sendUazapiMessage(channel.instanceToken, to, content)
+        if (mediaType === 'audio') {
+          externalId = await sendUazapiAudio(channel.instanceToken, to, mediaUrl, content || undefined)
+        } else {
+          externalId = await sendUazapiMedia(channel.instanceToken, to, mediaType as 'image' | 'video' | 'document', mediaUrl, content || undefined, mediaName)
+        }
       }
-    } else if (channel.type === 'INSTAGRAM') {
-      const accessToken = channel.accessToken ? decrypt(channel.accessToken) : ''
-      externalId = await sendInstagramMessage(conversation.externalId, content, accessToken)
-    } else if (channel.type === 'FACEBOOK') {
-      const accessToken = channel.accessToken ? decrypt(channel.accessToken) : ''
-      externalId = await sendFacebookMessage(conversation.externalId, content, accessToken)
+    } catch (err) {
+      console.error('[SEND_MEDIA]', err)
     }
-  } catch (err) {
-    console.error('[SEND_MESSAGE]', err)
-    // Continue saving even if API call fails (allows offline testing)
+  } else {
+    // Text-only send
+    try {
+      if (channel && channel.type === 'WHATSAPP') {
+        if (channel.provider === 'UAZAPI' && channel.instanceToken) {
+          const to = conversation.contactPhone
+            ?? conversation.externalId.replace('@s.whatsapp.net', '').replace('@g.us', '')
+          externalId = await sendUazapiMessage(channel.instanceToken, to, content)
+        }
+      } else if (channel && channel.type === 'INSTAGRAM') {
+        const accessToken = channel.accessToken ? decrypt(channel.accessToken) : ''
+        externalId = await sendInstagramMessage(conversation.externalId, content, accessToken)
+      } else if (channel && channel.type === 'FACEBOOK') {
+        const accessToken = channel.accessToken ? decrypt(channel.accessToken) : ''
+        externalId = await sendFacebookMessage(conversation.externalId, content, accessToken)
+      }
+    } catch (err) {
+      console.error('[SEND_MESSAGE]', err)
+    }
   }
+
+  const previewText = mediaType
+    ? (content || `[${mediaType === 'audio' ? 'Áudio' : mediaType === 'image' ? 'Imagem' : mediaType === 'video' ? 'Vídeo' : 'Arquivo'}]`)
+    : content
 
   const message = await db.message.create({
     data: {
       conversationId: id,
       workspaceId: session.user.workspaceId,
       direction: 'OUTBOUND',
-      content,
+      content: content || '',
       externalId,
       status: 'SENT',
       sentById: session.user.id,
+      ...(mediaType ? { mediaType, mediaUrl, mediaMime, mediaName } : {}),
     },
     include: {
       sentBy: { select: { id: true, name: true, avatarUrl: true } },
@@ -116,15 +173,15 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     where: { id },
     data: {
       lastMessageAt: new Date(),
-      lastMessagePreview: content.slice(0, 100),
+      lastMessagePreview: previewText.slice(0, 100),
       status: 'IN_PROGRESS',
     },
   })
 
-  await pusherServer.trigger(`workspace-${session.user.workspaceId}`, 'message-sent', {
+  pusherServer.trigger(`workspace-${session.user.workspaceId}`, 'message-sent', {
     conversationId: id,
     message,
-  })
+  }).catch(err => console.error('[SEND_MESSAGE] pusher error:', err))
 
   return NextResponse.json(message, { status: 201 })
 }

@@ -9,15 +9,24 @@ export async function GET() {
 
     const workspaceId = session.user.workspaceId
 
+    // Count only the FIRST inbound message per (conversation, day) in São Paulo timezone.
+    // This shows when contacts first initiate contact each day, not all message volume.
     const rows = await db.$queryRaw<Array<{ day: number | bigint; hour: number | bigint; count: number | bigint }>>`
       SELECT
-        EXTRACT(DOW FROM "createdAt" AT TIME ZONE 'America/Sao_Paulo')::int AS day,
-        EXTRACT(HOUR FROM "createdAt" AT TIME ZONE 'America/Sao_Paulo')::int AS hour,
+        EXTRACT(DOW FROM first_msg_time AT TIME ZONE 'America/Sao_Paulo')::int AS day,
+        EXTRACT(HOUR FROM first_msg_time AT TIME ZONE 'America/Sao_Paulo')::int AS hour,
         COUNT(*)::int AS count
-      FROM messages
-      WHERE "workspaceId" = ${workspaceId}
-        AND direction = 'INBOUND'
-        AND "createdAt" >= NOW() - INTERVAL '30 days'
+      FROM (
+        SELECT
+          "conversationId",
+          DATE(COALESCE("sentAt", "createdAt") AT TIME ZONE 'America/Sao_Paulo') AS msg_date,
+          MIN(COALESCE("sentAt", "createdAt")) AS first_msg_time
+        FROM messages
+        WHERE "workspaceId" = ${workspaceId}
+          AND direction = 'INBOUND'
+          AND COALESCE("sentAt", "createdAt") >= NOW() - INTERVAL '30 days'
+        GROUP BY "conversationId", msg_date
+      ) AS first_msgs
       GROUP BY day, hour
     `
 

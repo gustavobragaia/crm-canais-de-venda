@@ -67,6 +67,26 @@ export type AgentConfig = Prisma.AgentConfigModel
  */
 export type Conversation = Prisma.ConversationModel
 /**
+ * Model Tag
+ * 
+ */
+export type Tag = Prisma.TagModel
+/**
+ * Model ConversationTag
+ * 
+ */
+export type ConversationTag = Prisma.ConversationTagModel
+/**
+ * Model Note
+ * 
+ */
+export type Note = Prisma.NoteModel
+/**
+ * Model StageHistory
+ * 
+ */
+export type StageHistory = Prisma.StageHistoryModel
+/**
  * Model Message
  * 
  */

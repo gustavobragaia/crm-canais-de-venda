@@ -28,6 +28,12 @@ export interface UazapiWebhookMessagePayload {
     messageType: string
     messageTimestamp: number
     isGroup: boolean
+    media?: {
+      url?: string
+      mimetype?: string
+      filename?: string
+      caption?: string
+    }
   }
   chat?: {
     imagePreview?: string
@@ -149,6 +155,42 @@ export async function sendUazapiMessage(
       method: 'POST',
       instanceToken,
       body: JSON.stringify({ number, text }),
+    }
+  )
+  return data.messageid ?? ''
+}
+
+export async function sendUazapiAudio(
+  instanceToken: string,
+  number: string,
+  url: string,
+  caption?: string
+): Promise<string> {
+  const data = await uazapiFetch<{ messageid?: string }>(
+    '/send/audio',
+    {
+      method: 'POST',
+      instanceToken,
+      body: JSON.stringify({ number, url, caption }),
+    }
+  )
+  return data.messageid ?? ''
+}
+
+export async function sendUazapiMedia(
+  instanceToken: string,
+  number: string,
+  type: 'image' | 'document' | 'video',
+  url: string,
+  caption?: string,
+  filename?: string
+): Promise<string> {
+  const data = await uazapiFetch<{ messageid?: string }>(
+    `/send/${type}`,
+    {
+      method: 'POST',
+      instanceToken,
+      body: JSON.stringify({ number, url, caption, filename }),
     }
   )
   return data.messageid ?? ''

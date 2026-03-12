@@ -1,9 +1,18 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { X, User, Tag, FileText, MessageSquare, Phone, Mail, Check, Bot, Loader2, Sparkles, UserCheck, ArrowRight, Circle, Activity } from 'lucide-react'
+import { X, Tag, FileText, MessageSquare, Phone, Mail, Bot, Loader2, Sparkles, UserCheck, ArrowRight, Circle, Activity, GitBranch } from 'lucide-react'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
+import { TagSelector } from '@/components/ui/TagSelector'
+import { NotesList } from '@/components/ui/NotesList'
+import { StageHistoryTimeline } from '@/components/ui/StageHistoryTimeline'
+
+interface TagItem {
+  id: string
+  name: string
+  color: string
+}
 
 interface ConversationDetail {
   id: string
@@ -13,12 +22,11 @@ interface ConversationDetail {
   contactPhotoUrl: string | null
   status: string
   pipelineStage: string | null
-  tags: string[]
-  internalNotes: string | null
+  conversationTags: Array<{ tag: TagItem }>
   aiEnabled: boolean
   aiMessageCount: number
   assignedTo: { id: string; name: string } | null
-  channel: { type: string; name: string }
+  channel: { type: string; name: string } | null
 }
 
 interface Message {
@@ -55,9 +63,20 @@ const STATUS_COLORS: Record<string, string> = {
 }
 
 const CHANNEL_COLORS: Record<string, string> = {
-  WHATSAPP: 'bg-green-50 text-green-700',
+  WHATSAPP: 'bg-green-100 text-green-700',
   INSTAGRAM: 'bg-pink-50 text-pink-700',
   FACEBOOK: 'bg-blue-50 text-blue-700',
+}
+
+const AVATAR_COLORS = [
+  '#3B82F6', '#8B5CF6', '#10B981', '#F59E0B', '#EF4444',
+  '#EC4899', '#06B6D4', '#6366F1', '#84CC16', '#F97316',
+]
+function getAvatarColor(name: string) {
+  return AVATAR_COLORS[name.charCodeAt(0) % AVATAR_COLORS.length]
+}
+function getInitials(name: string) {
+  return name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase()
 }
 
 interface LeadDrawerProps {
@@ -88,19 +107,14 @@ export function LeadDrawer({ conversationId, onClose }: LeadDrawerProps) {
   const [conversation, setConversation] = useState<ConversationDetail | null>(null)
   const [messages, setMessages] = useState<Message[]>([])
   const [stages, setStages] = useState<Stage[]>([])
-  const [notes, setNotes] = useState('')
-  const [newTag, setNewTag] = useState('')
   const [loading, setLoading] = useState(false)
 
-  // AI state
   const [aiEnabled, setAiEnabled] = useState(true)
   const [aiToggling, setAiToggling] = useState(false)
   const [summary, setSummary] = useState<string | null>(null)
   const [summaryLoading, setSummaryLoading] = useState(false)
 
-  // Activity log
   const [activities, setActivities] = useState<Array<{ id: string; type: string; description: string; createdAt: string; user?: { name: string } | null }>>([])
-
 
   useEffect(() => {
     if (!conversationId) return
@@ -112,19 +126,30 @@ export function LeadDrawer({ conversationId, onClose }: LeadDrawerProps) {
     setActivities([])
 
     Promise.all([
-      fetch(`/api/conversations/${conversationId}`).then((r) => r.json()),
-      fetch(`/api/conversations/${conversationId}/messages`).then((r) => r.json()),
-      fetch('/api/pipeline/stages').then((r) => r.json()),
-      fetch(`/api/conversations/${conversationId}/activities`).then((r) => r.json()),
+      fetch(`/api/conversations/${conversationId}`).then(r => r.json()),
+      fetch(`/api/conversations/${conversationId}/messages`).then(r => r.json()),
+      fetch('/api/pipeline/stages').then(r => r.json()),
+      fetch(`/api/conversations/${conversationId}/activities`).then(r => r.json()),
     ]).then(([conv, msgs, stagesData, acts]) => {
       setConversation(conv)
-      setNotes(conv.internalNotes ?? '')
       setAiEnabled(conv.aiEnabled ?? true)
       setMessages((msgs.messages ?? []).slice(-10))
       setStages(stagesData.stages ?? [])
       setActivities(Array.isArray(acts) ? acts : [])
       setLoading(false)
     })
+  }, [conversationId])
+
+  useEffect(() => {
+    if (!conversationId) return
+    const handler = (e: Event) => {
+      const { conversationId: cid, conversation: updated } = (e as CustomEvent<{ conversationId: string; conversation: Partial<ConversationDetail> }>).detail
+      if (cid === conversationId && updated) {
+        setConversation(prev => prev ? { ...prev, ...updated } : prev)
+      }
+    }
+    window.addEventListener('conversation-updated', handler)
+    return () => window.removeEventListener('conversation-updated', handler)
   }, [conversationId])
 
   async function patchConversation(data: Record<string, unknown>) {
@@ -136,35 +161,15 @@ export function LeadDrawer({ conversationId, onClose }: LeadDrawerProps) {
     })
     if (res.ok) {
       const updated = await res.json()
-      setConversation((c) => (c ? { ...c, ...updated } : c))
+      setConversation(c => c ? { ...c, ...updated } : c)
     }
   }
 
-  async function saveNotes() {
-    await patchConversation({ internalNotes: notes })
-  }
-
-  async function addTag() {
-    if (!newTag.trim() || !conversation) return
-    const tags = [...conversation.tags, newTag.trim()]
-    await patchConversation({ tags })
-    setConversation((c) => (c ? { ...c, tags } : c))
-    setNewTag('')
-  }
-
-  async function removeTag(tag: string) {
-    if (!conversation) return
-    const tags = conversation.tags.filter((t) => t !== tag)
-    await patchConversation({ tags })
-    setConversation((c) => (c ? { ...c, tags } : c))
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async function toggleAi() {
     if (!conversationId || aiToggling) return
     setAiToggling(true)
     const newValue = !aiEnabled
-    setAiEnabled(newValue) // optimistic
+    setAiEnabled(newValue)
     try {
       await fetch(`/api/conversations/${conversationId}`, {
         method: 'PATCH',
@@ -172,7 +177,7 @@ export function LeadDrawer({ conversationId, onClose }: LeadDrawerProps) {
         body: JSON.stringify({ aiEnabled: newValue }),
       })
     } catch {
-      setAiEnabled(!newValue) // revert on error
+      setAiEnabled(!newValue)
     } finally {
       setAiToggling(false)
     }
@@ -195,36 +200,39 @@ export function LeadDrawer({ conversationId, onClose }: LeadDrawerProps) {
 
   if (!conversationId) return null
 
-  const initials = conversation?.contactName
-    ? conversation.contactName.split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase()
-    : '?'
+  const initials = conversation?.contactName ? getInitials(conversation.contactName) : '?'
+  const avatarBg = conversation?.contactName ? getAvatarColor(conversation.contactName) : '#3B82F6'
+  const initialTags = conversation?.conversationTags?.map(ct => ct.tag) ?? []
+  const isQualified = initialTags.some(t => t.name === 'QUALIFICADO')
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
-      {/* Overlay */}
       <div className="absolute inset-0 bg-black/30" onClick={onClose} />
 
-      {/* Panel */}
       <div
         className="relative w-[440px] h-full bg-white shadow-2xl flex flex-col overflow-y-auto"
         style={{ animation: 'slideInFromRight 0.2s ease-out' }}
       >
         {/* Header */}
-        <div className="flex items-center gap-4 px-5 py-4 border-b border-gray-200 bg-white sticky top-0 z-10">
+        <div className="flex items-center gap-4 px-5 py-4 border-b border-gray-100 bg-white sticky top-0 z-10">
           {conversation?.contactPhotoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
             <img src={conversation.contactPhotoUrl} alt={conversation.contactName}
               className="w-11 h-11 rounded-full object-cover flex-shrink-0" />
           ) : (
-            <div className="w-11 h-11 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-semibold text-sm flex-shrink-0">
+            <div
+              className="w-11 h-11 rounded-full flex items-center justify-center font-semibold text-sm text-white flex-shrink-0"
+              style={{ backgroundColor: avatarBg }}
+            >
               {initials}
             </div>
           )}
           <div className="flex-1 min-w-0">
-            <p className="font-semibold text-gray-900 truncate">
+            <p className="font-semibold text-gray-900 truncate text-sm">
               {loading ? '...' : (conversation?.contactName ?? '—')}
             </p>
-            {conversation && (
-              <span className={`text-xs px-2 py-0.5 rounded-full ${CHANNEL_COLORS[conversation.channel.type] ?? 'bg-gray-100 text-gray-600'}`}>
+            {conversation?.channel && (
+              <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${CHANNEL_COLORS[conversation.channel.type] ?? 'bg-gray-100 text-gray-600'}`}>
                 {conversation.channel.name}
               </span>
             )}
@@ -240,154 +248,131 @@ export function LeadDrawer({ conversationId, onClose }: LeadDrawerProps) {
             {Array.from({ length: 5 }).map((_, i) => <div key={i} className="h-10 bg-gray-100 rounded-lg" />)}
           </div>
         ) : conversation ? (
-          <div className="flex-1 p-5 space-y-6">
-            {/* Status */}
-            <div>
+          <div className="flex-1 divide-y divide-gray-100">
+
+            {/* Status + Contact */}
+            <div className="px-5 py-4 space-y-3">
               <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${STATUS_COLORS[conversation.status] ?? 'bg-gray-100 text-gray-600'}`}>
                 {STATUS_LABELS[conversation.status] ?? conversation.status}
               </span>
-            </div>
-
-            {/* Contact info */}
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <User size={13} className="text-gray-400" />
-                <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Contato</span>
-              </div>
-              <div className="space-y-1">
+              <div className="grid grid-cols-2 gap-2 mt-2">
                 {conversation.contactPhone && (
-                  <div className="flex items-center gap-2 text-sm text-gray-700">
-                    <Phone size={13} className="text-gray-400" />{conversation.contactPhone}
+                  <div className="flex items-center gap-1.5">
+                    <Phone size={12} className="text-gray-400 flex-shrink-0" />
+                    <span className="text-xs text-gray-700 truncate">{conversation.contactPhone}</span>
                   </div>
                 )}
                 {conversation.contactEmail && (
-                  <div className="flex items-center gap-2 text-sm text-gray-700">
-                    <Mail size={13} className="text-gray-400" />{conversation.contactEmail}
+                  <div className="flex items-center gap-1.5">
+                    <Mail size={12} className="text-gray-400 flex-shrink-0" />
+                    <span className="text-xs text-gray-700 truncate">{conversation.contactEmail}</span>
                   </div>
-                )}
-                {!conversation.contactPhone && !conversation.contactEmail && (
-                  <p className="text-sm text-gray-400">Sem informações de contato</p>
                 )}
               </div>
             </div>
 
             {/* Pipeline Stage */}
             {stages.length > 0 && (
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Etapa do pipeline</span>
-                </div>
-                <select value={conversation.pipelineStage ?? ''}
-                  onChange={(e) => patchConversation({ pipelineStage: e.target.value || null })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                  <option value="">Sem etapa</option>
-                  {stages.map((s) => <option key={s.id} value={s.name}>{s.name}</option>)}
+              <div className="px-5 py-4 space-y-3">
+                <label className="block text-xs font-medium text-gray-600">Etapa do pipeline</label>
+                <select
+                  value={conversation.pipelineStage ?? ''}
+                  onChange={e => {
+                    const v = e.target.value
+                    if (!v) return
+                    patchConversation({ pipelineStage: v })
+                  }}
+                  className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-300 bg-white"
+                >
+                  <option value="" disabled>Selecione uma etapa</option>
+                  {stages.map(s => <option key={s.id} value={s.name}>{s.name}</option>)}
                 </select>
+                <div>
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <GitBranch size={12} className="text-gray-400" />
+                    <span className="text-xs text-gray-500">Histórico</span>
+                  </div>
+                  <StageHistoryTimeline conversationId={conversationId} />
+                </div>
               </div>
             )}
 
             {/* Tags */}
-            <div>
+            <div className="px-5 py-4">
               <div className="flex items-center gap-2 mb-2">
                 <Tag size={13} className="text-gray-400" />
                 <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Tags</span>
               </div>
-              <div className="flex flex-wrap gap-1 mb-2">
-                {conversation.tags.map((tag) => (
-                  <span key={tag}
-                    className={`flex items-center gap-1 text-xs px-2 py-0.5 rounded-full ${
-                      tag === 'QUALIFICADO'
-                        ? 'bg-violet-100 text-violet-700'
-                        : tag === 'TRANSFERIDO_HUMANO'
-                        ? 'bg-orange-100 text-orange-700'
-                        : 'bg-blue-50 text-blue-700'
-                    }`}>
-                    {tag}
-                    <button onClick={() => removeTag(tag)} className="hover:opacity-70 ml-0.5">
-                      <X size={10} />
-                    </button>
-                  </span>
-                ))}
-                {conversation.tags.length === 0 && <span className="text-xs text-gray-400">Nenhuma tag</span>}
-              </div>
-              <div className="flex gap-1">
-                <input type="text" value={newTag} onChange={(e) => setNewTag(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && addTag()} placeholder="Nova tag..."
-                  className="flex-1 px-2 py-1.5 border border-gray-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                <button onClick={addTag} className="px-2 py-1.5 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg text-xs">
-                  <Check size={12} />
-                </button>
-              </div>
+              <TagSelector
+                conversationId={conversationId}
+                initialTags={initialTags}
+                onChange={tags => setConversation(c => c ? {
+                  ...c,
+                  conversationTags: tags.map(t => ({ tag: t }))
+                } : c)}
+              />
             </div>
 
-            {/* AI Agent section */}
-            <div className="rounded-xl border border-violet-200 bg-violet-50/50 p-4 space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Bot size={14} className="text-gray-400" />
-                  <span className="text-xs font-medium text-gray-700">Agente de IA</span>
-                  {conversation.aiMessageCount > 0 && (
-                    <span className="text-[10px] bg-violet-100 text-violet-600 rounded px-1.5 py-0.5">
-                      {conversation.aiMessageCount} msgs
-                    </span>
-                  )}
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-gray-400">
-                    Inativa
-                  </span>
-                  <Toggle enabled={false} onToggle={() => {}} disabled={true} />
-                </div>
-              </div>
-
-              {/* Qualificado badge */}
-              {conversation.tags.includes('QUALIFICADO') && (
-                <div className="flex items-center gap-1.5 text-xs text-violet-700 bg-violet-100 rounded-lg px-2.5 py-1.5">
-                  <Sparkles size={11} />
-                  Lead qualificado pela IA
-                </div>
-              )}
-
-              {/* Generate summary button */}
-              <button
-                onClick={generateSummary}
-                disabled={summaryLoading}
-                className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg border border-violet-200 bg-white hover:bg-violet-50 text-violet-700 text-xs font-medium transition-colors disabled:opacity-60"
-              >
-                {summaryLoading ? (
-                  <><Loader2 size={12} className="animate-spin" /> Gerando resumo...</>
-                ) : (
-                  <><Sparkles size={12} /> Gerar resumo da conversa</>
-                )}
-              </button>
-
-              {/* Summary result */}
-              {summary && (
-                <div className="bg-white border border-violet-200 rounded-lg p-3">
-                  <p className="text-xs font-medium text-violet-700 mb-2 flex items-center gap-1">
-                    <Bot size={11} /> Resumo da IA
-                  </p>
-                  <div className="text-xs text-gray-700 whitespace-pre-line leading-relaxed">
-                    {summary}
+            {/* AI Agent */}
+            <div className="px-5 py-4">
+              <div className="rounded-xl border border-violet-200 bg-violet-50/50 p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Bot size={14} className="text-violet-500" />
+                    <span className="text-xs font-medium text-gray-700">Agente de IA</span>
+                    {conversation.aiMessageCount > 0 && (
+                      <span className="text-[10px] bg-violet-100 text-violet-600 rounded px-1.5 py-0.5">
+                        {conversation.aiMessageCount} msgs
+                      </span>
+                    )}
                   </div>
+                  <Toggle enabled={aiEnabled} onToggle={toggleAi} disabled={aiToggling} />
                 </div>
-              )}
+
+                {isQualified && (
+                  <div className="flex items-center gap-1.5 text-xs text-violet-700 bg-violet-100 rounded-lg px-2.5 py-1.5">
+                    <Sparkles size={11} />
+                    Lead qualificado pela IA
+                  </div>
+                )}
+
+                <button
+                  onClick={generateSummary}
+                  disabled={summaryLoading}
+                  className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg border border-violet-200 bg-white hover:bg-violet-50 text-violet-700 text-xs font-medium transition-colors disabled:opacity-60"
+                >
+                  {summaryLoading ? (
+                    <><Loader2 size={12} className="animate-spin" /> Gerando resumo...</>
+                  ) : (
+                    <><Sparkles size={12} /> Gerar resumo da conversa</>
+                  )}
+                </button>
+
+                {summary && (
+                  <div className="bg-white border border-violet-200 rounded-lg p-3">
+                    <p className="text-xs font-medium text-violet-700 mb-2 flex items-center gap-1">
+                      <Bot size={11} /> Resumo da IA
+                    </p>
+                    <div className="text-xs text-gray-700 whitespace-pre-line leading-relaxed">
+                      {summary}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
-            {/* Internal Notes */}
-            <div>
-              <div className="flex items-center gap-2 mb-2">
+            {/* Notes */}
+            <div className="px-5 py-4">
+              <div className="flex items-center gap-2 mb-3">
                 <FileText size={13} className="text-gray-400" />
                 <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Notas internas</span>
               </div>
-              <textarea value={notes} onChange={(e) => setNotes(e.target.value)} onBlur={saveNotes}
-                placeholder="Adicionar notas privadas..." rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" />
+              <NotesList conversationId={conversationId} />
             </div>
 
             {/* Activity timeline */}
             {activities.length > 0 && (
-              <div>
+              <div className="px-5 py-4">
                 <div className="flex items-center gap-2 mb-3">
                   <Activity size={13} className="text-gray-400" />
                   <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Atividades</span>
@@ -427,13 +412,13 @@ export function LeadDrawer({ conversationId, onClose }: LeadDrawerProps) {
 
             {/* Recent messages */}
             {messages.length > 0 && (
-              <div>
+              <div className="px-5 py-4">
                 <div className="flex items-center gap-2 mb-3">
                   <MessageSquare size={13} className="text-gray-400" />
                   <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Últimas mensagens</span>
                 </div>
                 <div className="space-y-2">
-                  {messages.filter((m) => !m.isSystem).map((msg) => {
+                  {messages.filter(m => !m.isSystem).map((msg) => {
                     const isOutbound = msg.direction === 'OUTBOUND'
                     return (
                       <div key={msg.id} className={`flex ${isOutbound ? 'justify-end' : 'justify-start'}`}>
@@ -456,6 +441,7 @@ export function LeadDrawer({ conversationId, onClose }: LeadDrawerProps) {
                 </div>
               </div>
             )}
+
           </div>
         ) : null}
       </div>

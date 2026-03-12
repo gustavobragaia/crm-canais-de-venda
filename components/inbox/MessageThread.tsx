@@ -2,9 +2,11 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useSession } from 'next-auth/react'
-import { Send, Loader2, Bot } from 'lucide-react'
+import { Send, Loader2, Bot, Paperclip, X } from 'lucide-react'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
+import { AudioMessage } from './AudioMessage'
+import { MediaMessage } from './MediaMessage'
 
 interface Message {
   id: string
@@ -15,6 +17,11 @@ interface Message {
   senderName?: string | null
   aiGenerated?: boolean
   sentBy: { id: string; name: string } | null
+  mediaType?: string | null
+  mediaUrl?: string | null
+  mediaMime?: string | null
+  mediaName?: string | null
+  transcription?: string | null
 }
 
 interface MessageThreadProps {
@@ -29,6 +36,8 @@ export function MessageThread({ conversationId, contactName, isGroup }: MessageT
   const [loading, setLoading] = useState(false)
   const [sending, setSending] = useState(false)
   const [input, setInput] = useState('')
+  const [pendingFile, setPendingFile] = useState<File | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -46,7 +55,8 @@ export function MessageThread({ conversationId, contactName, isGroup }: MessageT
 
   useEffect(() => {
     if (!conversationId || !session) return
-    const handler = (e: Event) => {
+
+    const handleNewMessage = (e: Event) => {
       const { conversationId: cid, message } = (e as CustomEvent<{ conversationId: string; message: Message }>).detail
       if (cid === conversationId) {
         setMessages(prev => {
@@ -55,28 +65,56 @@ export function MessageThread({ conversationId, contactName, isGroup }: MessageT
         })
       }
     }
-    window.addEventListener('new-message', handler)
-    window.addEventListener('message-sent', handler)
+
+    const handleMessageUpdated = (e: Event) => {
+      const { messageId, transcription, mediaUrl } = (e as CustomEvent<{ messageId: string; transcription?: string; mediaUrl?: string }>).detail
+      setMessages(prev => prev.map(m => {
+        if (m.id !== messageId) return m
+        return {
+          ...m,
+          ...(transcription !== undefined ? { transcription } : {}),
+          ...(mediaUrl !== undefined ? { mediaUrl } : {}),
+        }
+      }))
+    }
+
+    window.addEventListener('new-message', handleNewMessage)
+    window.addEventListener('message-sent', handleNewMessage)
+    window.addEventListener('message-updated', handleMessageUpdated)
     return () => {
-      window.removeEventListener('new-message', handler)
-      window.removeEventListener('message-sent', handler)
+      window.removeEventListener('new-message', handleNewMessage)
+      window.removeEventListener('message-sent', handleNewMessage)
+      window.removeEventListener('message-updated', handleMessageUpdated)
     }
   }, [conversationId, session])
 
   async function handleSend(e: React.FormEvent) {
     e.preventDefault()
-    if (!input.trim() || !conversationId) return
+    if ((!input.trim() && !pendingFile) || !conversationId) return
 
     setSending(true)
     const content = input
+    const file = pendingFile
     setInput('')
+    setPendingFile(null)
 
     try {
-      const res = await fetch(`/api/conversations/${conversationId}/messages`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content }),
-      })
+      let res: Response
+      if (file) {
+        const form = new FormData()
+        form.append('file', file)
+        if (content.trim()) form.append('content', content)
+        res = await fetch(`/api/conversations/${conversationId}/messages`, {
+          method: 'POST',
+          body: form,
+        })
+      } else {
+        res = await fetch(`/api/conversations/${conversationId}/messages`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content }),
+        })
+      }
 
       if (res.ok) {
         const msg = await res.json()
@@ -132,6 +170,7 @@ export function MessageThread({ conversationId, contactName, isGroup }: MessageT
             }
             const isOutbound = msg.direction === 'OUTBOUND'
             const isAi = msg.aiGenerated
+            const mediaType = msg.mediaType as 'audio' | 'image' | 'video' | 'document' | null | undefined
 
             return (
               <div key={msg.id} className={`flex ${isOutbound ? 'justify-end' : 'justify-start'}`}>
@@ -151,7 +190,23 @@ export function MessageThread({ conversationId, contactName, isGroup }: MessageT
                         : 'bg-white text-gray-900 border border-gray-200 rounded-bl-sm'
                     }`}
                   >
-                    {msg.content}
+                    {mediaType === 'audio' ? (
+                      <AudioMessage
+                        messageId={msg.id}
+                        mediaUrl={msg.mediaUrl ?? null}
+                        transcription={msg.transcription ?? null}
+                      />
+                    ) : mediaType === 'image' || mediaType === 'video' || mediaType === 'document' ? (
+                      <MediaMessage
+                        mediaType={mediaType}
+                        mediaUrl={msg.mediaUrl ?? null}
+                        mediaName={msg.mediaName ?? null}
+                        mediaMime={msg.mediaMime ?? null}
+                        caption={msg.content || undefined}
+                      />
+                    ) : (
+                      msg.content
+                    )}
                   </div>
 
                   <div className="flex items-center gap-1.5 px-1">
@@ -176,7 +231,41 @@ export function MessageThread({ conversationId, contactName, isGroup }: MessageT
 
       {/* Input area */}
       <div className="px-6 py-4 bg-white border-t border-gray-200">
+        {/* File preview */}
+        {pendingFile && (
+          <div className="flex items-center gap-2 mb-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-700">
+            <Paperclip size={14} className="text-gray-400 flex-shrink-0" />
+            <span className="flex-1 truncate">{pendingFile.name}</span>
+            <button
+              type="button"
+              onClick={() => setPendingFile(null)}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              <X size={14} />
+            </button>
+          </div>
+        )}
         <form onSubmit={handleSend} className="flex gap-3 items-end">
+          {/* Hidden file input */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="audio/*,image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx"
+            className="hidden"
+            onChange={(e) => {
+              const f = e.target.files?.[0] ?? null
+              setPendingFile(f)
+              e.target.value = ''
+            }}
+          />
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-xl flex-shrink-0 transition-colors"
+            title="Anexar arquivo"
+          >
+            <Paperclip size={18} />
+          </button>
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -186,14 +275,14 @@ export function MessageThread({ conversationId, contactName, isGroup }: MessageT
                 void handleSend(e)
               }
             }}
-            placeholder="Digite sua mensagem..."
+            placeholder={pendingFile ? 'Legenda (opcional)...' : 'Digite sua mensagem...'}
             rows={1}
             className="flex-1 px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none transition-all"
             style={{ minHeight: '42px', maxHeight: '120px' }}
           />
           <button
             type="submit"
-            disabled={sending || !input.trim()}
+            disabled={sending || (!input.trim() && !pendingFile)}
             className="w-10 h-10 bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300 text-white rounded-xl flex items-center justify-center flex-shrink-0 transition-colors"
           >
             {sending ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}

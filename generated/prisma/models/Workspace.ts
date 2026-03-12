@@ -313,7 +313,10 @@ export type WorkspaceWhereInput = {
   leads?: Prisma.LeadListRelationFilter
   messageTemplates?: Prisma.MessageTemplateListRelationFilter
   messages?: Prisma.MessageListRelationFilter
+  notes?: Prisma.NoteListRelationFilter
   pipelineStages?: Prisma.PipelineStageListRelationFilter
+  stageHistory?: Prisma.StageHistoryListRelationFilter
+  tags?: Prisma.TagListRelationFilter
   users?: Prisma.UserListRelationFilter
   webhookLogs?: Prisma.WebhookLogListRelationFilter
 }
@@ -343,7 +346,10 @@ export type WorkspaceOrderByWithRelationInput = {
   leads?: Prisma.LeadOrderByRelationAggregateInput
   messageTemplates?: Prisma.MessageTemplateOrderByRelationAggregateInput
   messages?: Prisma.MessageOrderByRelationAggregateInput
+  notes?: Prisma.NoteOrderByRelationAggregateInput
   pipelineStages?: Prisma.PipelineStageOrderByRelationAggregateInput
+  stageHistory?: Prisma.StageHistoryOrderByRelationAggregateInput
+  tags?: Prisma.TagOrderByRelationAggregateInput
   users?: Prisma.UserOrderByRelationAggregateInput
   webhookLogs?: Prisma.WebhookLogOrderByRelationAggregateInput
 }
@@ -376,7 +382,10 @@ export type WorkspaceWhereUniqueInput = Prisma.AtLeast<{
   leads?: Prisma.LeadListRelationFilter
   messageTemplates?: Prisma.MessageTemplateListRelationFilter
   messages?: Prisma.MessageListRelationFilter
+  notes?: Prisma.NoteListRelationFilter
   pipelineStages?: Prisma.PipelineStageListRelationFilter
+  stageHistory?: Prisma.StageHistoryListRelationFilter
+  tags?: Prisma.TagListRelationFilter
   users?: Prisma.UserListRelationFilter
   webhookLogs?: Prisma.WebhookLogListRelationFilter
 }, "id" | "slug">
@@ -450,7 +459,10 @@ export type WorkspaceCreateInput = {
   leads?: Prisma.LeadCreateNestedManyWithoutWorkspaceInput
   messageTemplates?: Prisma.MessageTemplateCreateNestedManyWithoutWorkspaceInput
   messages?: Prisma.MessageCreateNestedManyWithoutWorkspaceInput
+  notes?: Prisma.NoteCreateNestedManyWithoutWorkspaceInput
   pipelineStages?: Prisma.PipelineStageCreateNestedManyWithoutWorkspaceInput
+  stageHistory?: Prisma.StageHistoryCreateNestedManyWithoutWorkspaceInput
+  tags?: Prisma.TagCreateNestedManyWithoutWorkspaceInput
   users?: Prisma.UserCreateNestedManyWithoutWorkspaceInput
   webhookLogs?: Prisma.WebhookLogCreateNestedManyWithoutWorkspaceInput
 }
@@ -480,7 +492,10 @@ export type WorkspaceUncheckedCreateInput = {
   leads?: Prisma.LeadUncheckedCreateNestedManyWithoutWorkspaceInput
   messageTemplates?: Prisma.MessageTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutWorkspaceInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutWorkspaceInput
   pipelineStages?: Prisma.PipelineStageUncheckedCreateNestedManyWithoutWorkspaceInput
+  stageHistory?: Prisma.StageHistoryUncheckedCreateNestedManyWithoutWorkspaceInput
+  tags?: Prisma.TagUncheckedCreateNestedManyWithoutWorkspaceInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutWorkspaceInput
   webhookLogs?: Prisma.WebhookLogUncheckedCreateNestedManyWithoutWorkspaceInput
 }
@@ -510,7 +525,10 @@ export type WorkspaceUpdateInput = {
   leads?: Prisma.LeadUpdateManyWithoutWorkspaceNestedInput
   messageTemplates?: Prisma.MessageTemplateUpdateManyWithoutWorkspaceNestedInput
   messages?: Prisma.MessageUpdateManyWithoutWorkspaceNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutWorkspaceNestedInput
   pipelineStages?: Prisma.PipelineStageUpdateManyWithoutWorkspaceNestedInput
+  stageHistory?: Prisma.StageHistoryUpdateManyWithoutWorkspaceNestedInput
+  tags?: Prisma.TagUpdateManyWithoutWorkspaceNestedInput
   users?: Prisma.UserUpdateManyWithoutWorkspaceNestedInput
   webhookLogs?: Prisma.WebhookLogUpdateManyWithoutWorkspaceNestedInput
 }
@@ -540,7 +558,10 @@ export type WorkspaceUncheckedUpdateInput = {
   leads?: Prisma.LeadUncheckedUpdateManyWithoutWorkspaceNestedInput
   messageTemplates?: Prisma.MessageTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutWorkspaceNestedInput
   pipelineStages?: Prisma.PipelineStageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  stageHistory?: Prisma.StageHistoryUncheckedUpdateManyWithoutWorkspaceNestedInput
+  tags?: Prisma.TagUncheckedUpdateManyWithoutWorkspaceNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutWorkspaceNestedInput
   webhookLogs?: Prisma.WebhookLogUncheckedUpdateManyWithoutWorkspaceNestedInput
 }
@@ -759,6 +780,48 @@ export type WorkspaceUpdateOneRequiredWithoutConversationsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.WorkspaceUpdateToOneWithWhereWithoutConversationsInput, Prisma.WorkspaceUpdateWithoutConversationsInput>, Prisma.WorkspaceUncheckedUpdateWithoutConversationsInput>
 }
 
+export type WorkspaceCreateNestedOneWithoutTagsInput = {
+  create?: Prisma.XOR<Prisma.WorkspaceCreateWithoutTagsInput, Prisma.WorkspaceUncheckedCreateWithoutTagsInput>
+  connectOrCreate?: Prisma.WorkspaceCreateOrConnectWithoutTagsInput
+  connect?: Prisma.WorkspaceWhereUniqueInput
+}
+
+export type WorkspaceUpdateOneRequiredWithoutTagsNestedInput = {
+  create?: Prisma.XOR<Prisma.WorkspaceCreateWithoutTagsInput, Prisma.WorkspaceUncheckedCreateWithoutTagsInput>
+  connectOrCreate?: Prisma.WorkspaceCreateOrConnectWithoutTagsInput
+  upsert?: Prisma.WorkspaceUpsertWithoutTagsInput
+  connect?: Prisma.WorkspaceWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.WorkspaceUpdateToOneWithWhereWithoutTagsInput, Prisma.WorkspaceUpdateWithoutTagsInput>, Prisma.WorkspaceUncheckedUpdateWithoutTagsInput>
+}
+
+export type WorkspaceCreateNestedOneWithoutNotesInput = {
+  create?: Prisma.XOR<Prisma.WorkspaceCreateWithoutNotesInput, Prisma.WorkspaceUncheckedCreateWithoutNotesInput>
+  connectOrCreate?: Prisma.WorkspaceCreateOrConnectWithoutNotesInput
+  connect?: Prisma.WorkspaceWhereUniqueInput
+}
+
+export type WorkspaceUpdateOneRequiredWithoutNotesNestedInput = {
+  create?: Prisma.XOR<Prisma.WorkspaceCreateWithoutNotesInput, Prisma.WorkspaceUncheckedCreateWithoutNotesInput>
+  connectOrCreate?: Prisma.WorkspaceCreateOrConnectWithoutNotesInput
+  upsert?: Prisma.WorkspaceUpsertWithoutNotesInput
+  connect?: Prisma.WorkspaceWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.WorkspaceUpdateToOneWithWhereWithoutNotesInput, Prisma.WorkspaceUpdateWithoutNotesInput>, Prisma.WorkspaceUncheckedUpdateWithoutNotesInput>
+}
+
+export type WorkspaceCreateNestedOneWithoutStageHistoryInput = {
+  create?: Prisma.XOR<Prisma.WorkspaceCreateWithoutStageHistoryInput, Prisma.WorkspaceUncheckedCreateWithoutStageHistoryInput>
+  connectOrCreate?: Prisma.WorkspaceCreateOrConnectWithoutStageHistoryInput
+  connect?: Prisma.WorkspaceWhereUniqueInput
+}
+
+export type WorkspaceUpdateOneRequiredWithoutStageHistoryNestedInput = {
+  create?: Prisma.XOR<Prisma.WorkspaceCreateWithoutStageHistoryInput, Prisma.WorkspaceUncheckedCreateWithoutStageHistoryInput>
+  connectOrCreate?: Prisma.WorkspaceCreateOrConnectWithoutStageHistoryInput
+  upsert?: Prisma.WorkspaceUpsertWithoutStageHistoryInput
+  connect?: Prisma.WorkspaceWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.WorkspaceUpdateToOneWithWhereWithoutStageHistoryInput, Prisma.WorkspaceUpdateWithoutStageHistoryInput>, Prisma.WorkspaceUncheckedUpdateWithoutStageHistoryInput>
+}
+
 export type WorkspaceCreateNestedOneWithoutMessagesInput = {
   create?: Prisma.XOR<Prisma.WorkspaceCreateWithoutMessagesInput, Prisma.WorkspaceUncheckedCreateWithoutMessagesInput>
   connectOrCreate?: Prisma.WorkspaceCreateOrConnectWithoutMessagesInput
@@ -898,7 +961,10 @@ export type WorkspaceCreateWithoutUsersInput = {
   leads?: Prisma.LeadCreateNestedManyWithoutWorkspaceInput
   messageTemplates?: Prisma.MessageTemplateCreateNestedManyWithoutWorkspaceInput
   messages?: Prisma.MessageCreateNestedManyWithoutWorkspaceInput
+  notes?: Prisma.NoteCreateNestedManyWithoutWorkspaceInput
   pipelineStages?: Prisma.PipelineStageCreateNestedManyWithoutWorkspaceInput
+  stageHistory?: Prisma.StageHistoryCreateNestedManyWithoutWorkspaceInput
+  tags?: Prisma.TagCreateNestedManyWithoutWorkspaceInput
   webhookLogs?: Prisma.WebhookLogCreateNestedManyWithoutWorkspaceInput
 }
 
@@ -927,7 +993,10 @@ export type WorkspaceUncheckedCreateWithoutUsersInput = {
   leads?: Prisma.LeadUncheckedCreateNestedManyWithoutWorkspaceInput
   messageTemplates?: Prisma.MessageTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutWorkspaceInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutWorkspaceInput
   pipelineStages?: Prisma.PipelineStageUncheckedCreateNestedManyWithoutWorkspaceInput
+  stageHistory?: Prisma.StageHistoryUncheckedCreateNestedManyWithoutWorkspaceInput
+  tags?: Prisma.TagUncheckedCreateNestedManyWithoutWorkspaceInput
   webhookLogs?: Prisma.WebhookLogUncheckedCreateNestedManyWithoutWorkspaceInput
 }
 
@@ -972,7 +1041,10 @@ export type WorkspaceUpdateWithoutUsersInput = {
   leads?: Prisma.LeadUpdateManyWithoutWorkspaceNestedInput
   messageTemplates?: Prisma.MessageTemplateUpdateManyWithoutWorkspaceNestedInput
   messages?: Prisma.MessageUpdateManyWithoutWorkspaceNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutWorkspaceNestedInput
   pipelineStages?: Prisma.PipelineStageUpdateManyWithoutWorkspaceNestedInput
+  stageHistory?: Prisma.StageHistoryUpdateManyWithoutWorkspaceNestedInput
+  tags?: Prisma.TagUpdateManyWithoutWorkspaceNestedInput
   webhookLogs?: Prisma.WebhookLogUpdateManyWithoutWorkspaceNestedInput
 }
 
@@ -1001,7 +1073,10 @@ export type WorkspaceUncheckedUpdateWithoutUsersInput = {
   leads?: Prisma.LeadUncheckedUpdateManyWithoutWorkspaceNestedInput
   messageTemplates?: Prisma.MessageTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutWorkspaceNestedInput
   pipelineStages?: Prisma.PipelineStageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  stageHistory?: Prisma.StageHistoryUncheckedUpdateManyWithoutWorkspaceNestedInput
+  tags?: Prisma.TagUncheckedUpdateManyWithoutWorkspaceNestedInput
   webhookLogs?: Prisma.WebhookLogUncheckedUpdateManyWithoutWorkspaceNestedInput
 }
 
@@ -1029,7 +1104,10 @@ export type WorkspaceCreateWithoutChannelsInput = {
   leads?: Prisma.LeadCreateNestedManyWithoutWorkspaceInput
   messageTemplates?: Prisma.MessageTemplateCreateNestedManyWithoutWorkspaceInput
   messages?: Prisma.MessageCreateNestedManyWithoutWorkspaceInput
+  notes?: Prisma.NoteCreateNestedManyWithoutWorkspaceInput
   pipelineStages?: Prisma.PipelineStageCreateNestedManyWithoutWorkspaceInput
+  stageHistory?: Prisma.StageHistoryCreateNestedManyWithoutWorkspaceInput
+  tags?: Prisma.TagCreateNestedManyWithoutWorkspaceInput
   users?: Prisma.UserCreateNestedManyWithoutWorkspaceInput
   webhookLogs?: Prisma.WebhookLogCreateNestedManyWithoutWorkspaceInput
 }
@@ -1058,7 +1136,10 @@ export type WorkspaceUncheckedCreateWithoutChannelsInput = {
   leads?: Prisma.LeadUncheckedCreateNestedManyWithoutWorkspaceInput
   messageTemplates?: Prisma.MessageTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutWorkspaceInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutWorkspaceInput
   pipelineStages?: Prisma.PipelineStageUncheckedCreateNestedManyWithoutWorkspaceInput
+  stageHistory?: Prisma.StageHistoryUncheckedCreateNestedManyWithoutWorkspaceInput
+  tags?: Prisma.TagUncheckedCreateNestedManyWithoutWorkspaceInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutWorkspaceInput
   webhookLogs?: Prisma.WebhookLogUncheckedCreateNestedManyWithoutWorkspaceInput
 }
@@ -1103,7 +1184,10 @@ export type WorkspaceUpdateWithoutChannelsInput = {
   leads?: Prisma.LeadUpdateManyWithoutWorkspaceNestedInput
   messageTemplates?: Prisma.MessageTemplateUpdateManyWithoutWorkspaceNestedInput
   messages?: Prisma.MessageUpdateManyWithoutWorkspaceNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutWorkspaceNestedInput
   pipelineStages?: Prisma.PipelineStageUpdateManyWithoutWorkspaceNestedInput
+  stageHistory?: Prisma.StageHistoryUpdateManyWithoutWorkspaceNestedInput
+  tags?: Prisma.TagUpdateManyWithoutWorkspaceNestedInput
   users?: Prisma.UserUpdateManyWithoutWorkspaceNestedInput
   webhookLogs?: Prisma.WebhookLogUpdateManyWithoutWorkspaceNestedInput
 }
@@ -1132,7 +1216,10 @@ export type WorkspaceUncheckedUpdateWithoutChannelsInput = {
   leads?: Prisma.LeadUncheckedUpdateManyWithoutWorkspaceNestedInput
   messageTemplates?: Prisma.MessageTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutWorkspaceNestedInput
   pipelineStages?: Prisma.PipelineStageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  stageHistory?: Prisma.StageHistoryUncheckedUpdateManyWithoutWorkspaceNestedInput
+  tags?: Prisma.TagUncheckedUpdateManyWithoutWorkspaceNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutWorkspaceNestedInput
   webhookLogs?: Prisma.WebhookLogUncheckedUpdateManyWithoutWorkspaceNestedInput
 }
@@ -1161,7 +1248,10 @@ export type WorkspaceCreateWithoutAgentConfigInput = {
   leads?: Prisma.LeadCreateNestedManyWithoutWorkspaceInput
   messageTemplates?: Prisma.MessageTemplateCreateNestedManyWithoutWorkspaceInput
   messages?: Prisma.MessageCreateNestedManyWithoutWorkspaceInput
+  notes?: Prisma.NoteCreateNestedManyWithoutWorkspaceInput
   pipelineStages?: Prisma.PipelineStageCreateNestedManyWithoutWorkspaceInput
+  stageHistory?: Prisma.StageHistoryCreateNestedManyWithoutWorkspaceInput
+  tags?: Prisma.TagCreateNestedManyWithoutWorkspaceInput
   users?: Prisma.UserCreateNestedManyWithoutWorkspaceInput
   webhookLogs?: Prisma.WebhookLogCreateNestedManyWithoutWorkspaceInput
 }
@@ -1190,7 +1280,10 @@ export type WorkspaceUncheckedCreateWithoutAgentConfigInput = {
   leads?: Prisma.LeadUncheckedCreateNestedManyWithoutWorkspaceInput
   messageTemplates?: Prisma.MessageTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutWorkspaceInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutWorkspaceInput
   pipelineStages?: Prisma.PipelineStageUncheckedCreateNestedManyWithoutWorkspaceInput
+  stageHistory?: Prisma.StageHistoryUncheckedCreateNestedManyWithoutWorkspaceInput
+  tags?: Prisma.TagUncheckedCreateNestedManyWithoutWorkspaceInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutWorkspaceInput
   webhookLogs?: Prisma.WebhookLogUncheckedCreateNestedManyWithoutWorkspaceInput
 }
@@ -1235,7 +1328,10 @@ export type WorkspaceUpdateWithoutAgentConfigInput = {
   leads?: Prisma.LeadUpdateManyWithoutWorkspaceNestedInput
   messageTemplates?: Prisma.MessageTemplateUpdateManyWithoutWorkspaceNestedInput
   messages?: Prisma.MessageUpdateManyWithoutWorkspaceNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutWorkspaceNestedInput
   pipelineStages?: Prisma.PipelineStageUpdateManyWithoutWorkspaceNestedInput
+  stageHistory?: Prisma.StageHistoryUpdateManyWithoutWorkspaceNestedInput
+  tags?: Prisma.TagUpdateManyWithoutWorkspaceNestedInput
   users?: Prisma.UserUpdateManyWithoutWorkspaceNestedInput
   webhookLogs?: Prisma.WebhookLogUpdateManyWithoutWorkspaceNestedInput
 }
@@ -1264,7 +1360,10 @@ export type WorkspaceUncheckedUpdateWithoutAgentConfigInput = {
   leads?: Prisma.LeadUncheckedUpdateManyWithoutWorkspaceNestedInput
   messageTemplates?: Prisma.MessageTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutWorkspaceNestedInput
   pipelineStages?: Prisma.PipelineStageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  stageHistory?: Prisma.StageHistoryUncheckedUpdateManyWithoutWorkspaceNestedInput
+  tags?: Prisma.TagUncheckedUpdateManyWithoutWorkspaceNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutWorkspaceNestedInput
   webhookLogs?: Prisma.WebhookLogUncheckedUpdateManyWithoutWorkspaceNestedInput
 }
@@ -1293,7 +1392,10 @@ export type WorkspaceCreateWithoutConversationsInput = {
   leads?: Prisma.LeadCreateNestedManyWithoutWorkspaceInput
   messageTemplates?: Prisma.MessageTemplateCreateNestedManyWithoutWorkspaceInput
   messages?: Prisma.MessageCreateNestedManyWithoutWorkspaceInput
+  notes?: Prisma.NoteCreateNestedManyWithoutWorkspaceInput
   pipelineStages?: Prisma.PipelineStageCreateNestedManyWithoutWorkspaceInput
+  stageHistory?: Prisma.StageHistoryCreateNestedManyWithoutWorkspaceInput
+  tags?: Prisma.TagCreateNestedManyWithoutWorkspaceInput
   users?: Prisma.UserCreateNestedManyWithoutWorkspaceInput
   webhookLogs?: Prisma.WebhookLogCreateNestedManyWithoutWorkspaceInput
 }
@@ -1322,7 +1424,10 @@ export type WorkspaceUncheckedCreateWithoutConversationsInput = {
   leads?: Prisma.LeadUncheckedCreateNestedManyWithoutWorkspaceInput
   messageTemplates?: Prisma.MessageTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutWorkspaceInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutWorkspaceInput
   pipelineStages?: Prisma.PipelineStageUncheckedCreateNestedManyWithoutWorkspaceInput
+  stageHistory?: Prisma.StageHistoryUncheckedCreateNestedManyWithoutWorkspaceInput
+  tags?: Prisma.TagUncheckedCreateNestedManyWithoutWorkspaceInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutWorkspaceInput
   webhookLogs?: Prisma.WebhookLogUncheckedCreateNestedManyWithoutWorkspaceInput
 }
@@ -1367,7 +1472,10 @@ export type WorkspaceUpdateWithoutConversationsInput = {
   leads?: Prisma.LeadUpdateManyWithoutWorkspaceNestedInput
   messageTemplates?: Prisma.MessageTemplateUpdateManyWithoutWorkspaceNestedInput
   messages?: Prisma.MessageUpdateManyWithoutWorkspaceNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutWorkspaceNestedInput
   pipelineStages?: Prisma.PipelineStageUpdateManyWithoutWorkspaceNestedInput
+  stageHistory?: Prisma.StageHistoryUpdateManyWithoutWorkspaceNestedInput
+  tags?: Prisma.TagUpdateManyWithoutWorkspaceNestedInput
   users?: Prisma.UserUpdateManyWithoutWorkspaceNestedInput
   webhookLogs?: Prisma.WebhookLogUpdateManyWithoutWorkspaceNestedInput
 }
@@ -1396,7 +1504,442 @@ export type WorkspaceUncheckedUpdateWithoutConversationsInput = {
   leads?: Prisma.LeadUncheckedUpdateManyWithoutWorkspaceNestedInput
   messageTemplates?: Prisma.MessageTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutWorkspaceNestedInput
   pipelineStages?: Prisma.PipelineStageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  stageHistory?: Prisma.StageHistoryUncheckedUpdateManyWithoutWorkspaceNestedInput
+  tags?: Prisma.TagUncheckedUpdateManyWithoutWorkspaceNestedInput
+  users?: Prisma.UserUncheckedUpdateManyWithoutWorkspaceNestedInput
+  webhookLogs?: Prisma.WebhookLogUncheckedUpdateManyWithoutWorkspaceNestedInput
+}
+
+export type WorkspaceCreateWithoutTagsInput = {
+  id?: string
+  name: string
+  slug: string
+  logoUrl?: string | null
+  primaryColor?: string
+  secondaryColor?: string
+  subscriptionStatus?: $Enums.SubscriptionStatus
+  kirvanoSubscriptionId?: string | null
+  currentPeriodEnd?: Date | string | null
+  trialEndsAt?: Date | string | null
+  maxUsers?: number
+  maxConversationsPerMonth?: number
+  conversationsThisMonth?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  agentConfig?: Prisma.AgentConfigCreateNestedOneWithoutWorkspaceInput
+  analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
+  automations?: Prisma.AutomationCreateNestedManyWithoutWorkspaceInput
+  channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutWorkspaceInput
+  conversationActivities?: Prisma.ConversationActivityCreateNestedManyWithoutWorkspaceInput
+  leads?: Prisma.LeadCreateNestedManyWithoutWorkspaceInput
+  messageTemplates?: Prisma.MessageTemplateCreateNestedManyWithoutWorkspaceInput
+  messages?: Prisma.MessageCreateNestedManyWithoutWorkspaceInput
+  notes?: Prisma.NoteCreateNestedManyWithoutWorkspaceInput
+  pipelineStages?: Prisma.PipelineStageCreateNestedManyWithoutWorkspaceInput
+  stageHistory?: Prisma.StageHistoryCreateNestedManyWithoutWorkspaceInput
+  users?: Prisma.UserCreateNestedManyWithoutWorkspaceInput
+  webhookLogs?: Prisma.WebhookLogCreateNestedManyWithoutWorkspaceInput
+}
+
+export type WorkspaceUncheckedCreateWithoutTagsInput = {
+  id?: string
+  name: string
+  slug: string
+  logoUrl?: string | null
+  primaryColor?: string
+  secondaryColor?: string
+  subscriptionStatus?: $Enums.SubscriptionStatus
+  kirvanoSubscriptionId?: string | null
+  currentPeriodEnd?: Date | string | null
+  trialEndsAt?: Date | string | null
+  maxUsers?: number
+  maxConversationsPerMonth?: number
+  conversationsThisMonth?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  agentConfig?: Prisma.AgentConfigUncheckedCreateNestedOneWithoutWorkspaceInput
+  analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
+  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutWorkspaceInput
+  channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutWorkspaceInput
+  conversationActivities?: Prisma.ConversationActivityUncheckedCreateNestedManyWithoutWorkspaceInput
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutWorkspaceInput
+  messageTemplates?: Prisma.MessageTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutWorkspaceInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutWorkspaceInput
+  pipelineStages?: Prisma.PipelineStageUncheckedCreateNestedManyWithoutWorkspaceInput
+  stageHistory?: Prisma.StageHistoryUncheckedCreateNestedManyWithoutWorkspaceInput
+  users?: Prisma.UserUncheckedCreateNestedManyWithoutWorkspaceInput
+  webhookLogs?: Prisma.WebhookLogUncheckedCreateNestedManyWithoutWorkspaceInput
+}
+
+export type WorkspaceCreateOrConnectWithoutTagsInput = {
+  where: Prisma.WorkspaceWhereUniqueInput
+  create: Prisma.XOR<Prisma.WorkspaceCreateWithoutTagsInput, Prisma.WorkspaceUncheckedCreateWithoutTagsInput>
+}
+
+export type WorkspaceUpsertWithoutTagsInput = {
+  update: Prisma.XOR<Prisma.WorkspaceUpdateWithoutTagsInput, Prisma.WorkspaceUncheckedUpdateWithoutTagsInput>
+  create: Prisma.XOR<Prisma.WorkspaceCreateWithoutTagsInput, Prisma.WorkspaceUncheckedCreateWithoutTagsInput>
+  where?: Prisma.WorkspaceWhereInput
+}
+
+export type WorkspaceUpdateToOneWithWhereWithoutTagsInput = {
+  where?: Prisma.WorkspaceWhereInput
+  data: Prisma.XOR<Prisma.WorkspaceUpdateWithoutTagsInput, Prisma.WorkspaceUncheckedUpdateWithoutTagsInput>
+}
+
+export type WorkspaceUpdateWithoutTagsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
+  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
+  subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
+  kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
+  maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  agentConfig?: Prisma.AgentConfigUpdateOneWithoutWorkspaceNestedInput
+  analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
+  automations?: Prisma.AutomationUpdateManyWithoutWorkspaceNestedInput
+  channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutWorkspaceNestedInput
+  conversationActivities?: Prisma.ConversationActivityUpdateManyWithoutWorkspaceNestedInput
+  leads?: Prisma.LeadUpdateManyWithoutWorkspaceNestedInput
+  messageTemplates?: Prisma.MessageTemplateUpdateManyWithoutWorkspaceNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutWorkspaceNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutWorkspaceNestedInput
+  pipelineStages?: Prisma.PipelineStageUpdateManyWithoutWorkspaceNestedInput
+  stageHistory?: Prisma.StageHistoryUpdateManyWithoutWorkspaceNestedInput
+  users?: Prisma.UserUpdateManyWithoutWorkspaceNestedInput
+  webhookLogs?: Prisma.WebhookLogUpdateManyWithoutWorkspaceNestedInput
+}
+
+export type WorkspaceUncheckedUpdateWithoutTagsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
+  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
+  subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
+  kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
+  maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  agentConfig?: Prisma.AgentConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
+  analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
+  automations?: Prisma.AutomationUncheckedUpdateManyWithoutWorkspaceNestedInput
+  channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutWorkspaceNestedInput
+  conversationActivities?: Prisma.ConversationActivityUncheckedUpdateManyWithoutWorkspaceNestedInput
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutWorkspaceNestedInput
+  messageTemplates?: Prisma.MessageTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutWorkspaceNestedInput
+  pipelineStages?: Prisma.PipelineStageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  stageHistory?: Prisma.StageHistoryUncheckedUpdateManyWithoutWorkspaceNestedInput
+  users?: Prisma.UserUncheckedUpdateManyWithoutWorkspaceNestedInput
+  webhookLogs?: Prisma.WebhookLogUncheckedUpdateManyWithoutWorkspaceNestedInput
+}
+
+export type WorkspaceCreateWithoutNotesInput = {
+  id?: string
+  name: string
+  slug: string
+  logoUrl?: string | null
+  primaryColor?: string
+  secondaryColor?: string
+  subscriptionStatus?: $Enums.SubscriptionStatus
+  kirvanoSubscriptionId?: string | null
+  currentPeriodEnd?: Date | string | null
+  trialEndsAt?: Date | string | null
+  maxUsers?: number
+  maxConversationsPerMonth?: number
+  conversationsThisMonth?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  agentConfig?: Prisma.AgentConfigCreateNestedOneWithoutWorkspaceInput
+  analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
+  automations?: Prisma.AutomationCreateNestedManyWithoutWorkspaceInput
+  channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutWorkspaceInput
+  conversationActivities?: Prisma.ConversationActivityCreateNestedManyWithoutWorkspaceInput
+  leads?: Prisma.LeadCreateNestedManyWithoutWorkspaceInput
+  messageTemplates?: Prisma.MessageTemplateCreateNestedManyWithoutWorkspaceInput
+  messages?: Prisma.MessageCreateNestedManyWithoutWorkspaceInput
+  pipelineStages?: Prisma.PipelineStageCreateNestedManyWithoutWorkspaceInput
+  stageHistory?: Prisma.StageHistoryCreateNestedManyWithoutWorkspaceInput
+  tags?: Prisma.TagCreateNestedManyWithoutWorkspaceInput
+  users?: Prisma.UserCreateNestedManyWithoutWorkspaceInput
+  webhookLogs?: Prisma.WebhookLogCreateNestedManyWithoutWorkspaceInput
+}
+
+export type WorkspaceUncheckedCreateWithoutNotesInput = {
+  id?: string
+  name: string
+  slug: string
+  logoUrl?: string | null
+  primaryColor?: string
+  secondaryColor?: string
+  subscriptionStatus?: $Enums.SubscriptionStatus
+  kirvanoSubscriptionId?: string | null
+  currentPeriodEnd?: Date | string | null
+  trialEndsAt?: Date | string | null
+  maxUsers?: number
+  maxConversationsPerMonth?: number
+  conversationsThisMonth?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  agentConfig?: Prisma.AgentConfigUncheckedCreateNestedOneWithoutWorkspaceInput
+  analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
+  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutWorkspaceInput
+  channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutWorkspaceInput
+  conversationActivities?: Prisma.ConversationActivityUncheckedCreateNestedManyWithoutWorkspaceInput
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutWorkspaceInput
+  messageTemplates?: Prisma.MessageTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutWorkspaceInput
+  pipelineStages?: Prisma.PipelineStageUncheckedCreateNestedManyWithoutWorkspaceInput
+  stageHistory?: Prisma.StageHistoryUncheckedCreateNestedManyWithoutWorkspaceInput
+  tags?: Prisma.TagUncheckedCreateNestedManyWithoutWorkspaceInput
+  users?: Prisma.UserUncheckedCreateNestedManyWithoutWorkspaceInput
+  webhookLogs?: Prisma.WebhookLogUncheckedCreateNestedManyWithoutWorkspaceInput
+}
+
+export type WorkspaceCreateOrConnectWithoutNotesInput = {
+  where: Prisma.WorkspaceWhereUniqueInput
+  create: Prisma.XOR<Prisma.WorkspaceCreateWithoutNotesInput, Prisma.WorkspaceUncheckedCreateWithoutNotesInput>
+}
+
+export type WorkspaceUpsertWithoutNotesInput = {
+  update: Prisma.XOR<Prisma.WorkspaceUpdateWithoutNotesInput, Prisma.WorkspaceUncheckedUpdateWithoutNotesInput>
+  create: Prisma.XOR<Prisma.WorkspaceCreateWithoutNotesInput, Prisma.WorkspaceUncheckedCreateWithoutNotesInput>
+  where?: Prisma.WorkspaceWhereInput
+}
+
+export type WorkspaceUpdateToOneWithWhereWithoutNotesInput = {
+  where?: Prisma.WorkspaceWhereInput
+  data: Prisma.XOR<Prisma.WorkspaceUpdateWithoutNotesInput, Prisma.WorkspaceUncheckedUpdateWithoutNotesInput>
+}
+
+export type WorkspaceUpdateWithoutNotesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
+  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
+  subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
+  kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
+  maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  agentConfig?: Prisma.AgentConfigUpdateOneWithoutWorkspaceNestedInput
+  analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
+  automations?: Prisma.AutomationUpdateManyWithoutWorkspaceNestedInput
+  channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutWorkspaceNestedInput
+  conversationActivities?: Prisma.ConversationActivityUpdateManyWithoutWorkspaceNestedInput
+  leads?: Prisma.LeadUpdateManyWithoutWorkspaceNestedInput
+  messageTemplates?: Prisma.MessageTemplateUpdateManyWithoutWorkspaceNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutWorkspaceNestedInput
+  pipelineStages?: Prisma.PipelineStageUpdateManyWithoutWorkspaceNestedInput
+  stageHistory?: Prisma.StageHistoryUpdateManyWithoutWorkspaceNestedInput
+  tags?: Prisma.TagUpdateManyWithoutWorkspaceNestedInput
+  users?: Prisma.UserUpdateManyWithoutWorkspaceNestedInput
+  webhookLogs?: Prisma.WebhookLogUpdateManyWithoutWorkspaceNestedInput
+}
+
+export type WorkspaceUncheckedUpdateWithoutNotesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
+  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
+  subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
+  kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
+  maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  agentConfig?: Prisma.AgentConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
+  analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
+  automations?: Prisma.AutomationUncheckedUpdateManyWithoutWorkspaceNestedInput
+  channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutWorkspaceNestedInput
+  conversationActivities?: Prisma.ConversationActivityUncheckedUpdateManyWithoutWorkspaceNestedInput
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutWorkspaceNestedInput
+  messageTemplates?: Prisma.MessageTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  pipelineStages?: Prisma.PipelineStageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  stageHistory?: Prisma.StageHistoryUncheckedUpdateManyWithoutWorkspaceNestedInput
+  tags?: Prisma.TagUncheckedUpdateManyWithoutWorkspaceNestedInput
+  users?: Prisma.UserUncheckedUpdateManyWithoutWorkspaceNestedInput
+  webhookLogs?: Prisma.WebhookLogUncheckedUpdateManyWithoutWorkspaceNestedInput
+}
+
+export type WorkspaceCreateWithoutStageHistoryInput = {
+  id?: string
+  name: string
+  slug: string
+  logoUrl?: string | null
+  primaryColor?: string
+  secondaryColor?: string
+  subscriptionStatus?: $Enums.SubscriptionStatus
+  kirvanoSubscriptionId?: string | null
+  currentPeriodEnd?: Date | string | null
+  trialEndsAt?: Date | string | null
+  maxUsers?: number
+  maxConversationsPerMonth?: number
+  conversationsThisMonth?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  agentConfig?: Prisma.AgentConfigCreateNestedOneWithoutWorkspaceInput
+  analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
+  automations?: Prisma.AutomationCreateNestedManyWithoutWorkspaceInput
+  channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutWorkspaceInput
+  conversationActivities?: Prisma.ConversationActivityCreateNestedManyWithoutWorkspaceInput
+  leads?: Prisma.LeadCreateNestedManyWithoutWorkspaceInput
+  messageTemplates?: Prisma.MessageTemplateCreateNestedManyWithoutWorkspaceInput
+  messages?: Prisma.MessageCreateNestedManyWithoutWorkspaceInput
+  notes?: Prisma.NoteCreateNestedManyWithoutWorkspaceInput
+  pipelineStages?: Prisma.PipelineStageCreateNestedManyWithoutWorkspaceInput
+  tags?: Prisma.TagCreateNestedManyWithoutWorkspaceInput
+  users?: Prisma.UserCreateNestedManyWithoutWorkspaceInput
+  webhookLogs?: Prisma.WebhookLogCreateNestedManyWithoutWorkspaceInput
+}
+
+export type WorkspaceUncheckedCreateWithoutStageHistoryInput = {
+  id?: string
+  name: string
+  slug: string
+  logoUrl?: string | null
+  primaryColor?: string
+  secondaryColor?: string
+  subscriptionStatus?: $Enums.SubscriptionStatus
+  kirvanoSubscriptionId?: string | null
+  currentPeriodEnd?: Date | string | null
+  trialEndsAt?: Date | string | null
+  maxUsers?: number
+  maxConversationsPerMonth?: number
+  conversationsThisMonth?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  agentConfig?: Prisma.AgentConfigUncheckedCreateNestedOneWithoutWorkspaceInput
+  analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
+  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutWorkspaceInput
+  channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutWorkspaceInput
+  conversationActivities?: Prisma.ConversationActivityUncheckedCreateNestedManyWithoutWorkspaceInput
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutWorkspaceInput
+  messageTemplates?: Prisma.MessageTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutWorkspaceInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutWorkspaceInput
+  pipelineStages?: Prisma.PipelineStageUncheckedCreateNestedManyWithoutWorkspaceInput
+  tags?: Prisma.TagUncheckedCreateNestedManyWithoutWorkspaceInput
+  users?: Prisma.UserUncheckedCreateNestedManyWithoutWorkspaceInput
+  webhookLogs?: Prisma.WebhookLogUncheckedCreateNestedManyWithoutWorkspaceInput
+}
+
+export type WorkspaceCreateOrConnectWithoutStageHistoryInput = {
+  where: Prisma.WorkspaceWhereUniqueInput
+  create: Prisma.XOR<Prisma.WorkspaceCreateWithoutStageHistoryInput, Prisma.WorkspaceUncheckedCreateWithoutStageHistoryInput>
+}
+
+export type WorkspaceUpsertWithoutStageHistoryInput = {
+  update: Prisma.XOR<Prisma.WorkspaceUpdateWithoutStageHistoryInput, Prisma.WorkspaceUncheckedUpdateWithoutStageHistoryInput>
+  create: Prisma.XOR<Prisma.WorkspaceCreateWithoutStageHistoryInput, Prisma.WorkspaceUncheckedCreateWithoutStageHistoryInput>
+  where?: Prisma.WorkspaceWhereInput
+}
+
+export type WorkspaceUpdateToOneWithWhereWithoutStageHistoryInput = {
+  where?: Prisma.WorkspaceWhereInput
+  data: Prisma.XOR<Prisma.WorkspaceUpdateWithoutStageHistoryInput, Prisma.WorkspaceUncheckedUpdateWithoutStageHistoryInput>
+}
+
+export type WorkspaceUpdateWithoutStageHistoryInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
+  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
+  subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
+  kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
+  maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  agentConfig?: Prisma.AgentConfigUpdateOneWithoutWorkspaceNestedInput
+  analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
+  automations?: Prisma.AutomationUpdateManyWithoutWorkspaceNestedInput
+  channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutWorkspaceNestedInput
+  conversationActivities?: Prisma.ConversationActivityUpdateManyWithoutWorkspaceNestedInput
+  leads?: Prisma.LeadUpdateManyWithoutWorkspaceNestedInput
+  messageTemplates?: Prisma.MessageTemplateUpdateManyWithoutWorkspaceNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutWorkspaceNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutWorkspaceNestedInput
+  pipelineStages?: Prisma.PipelineStageUpdateManyWithoutWorkspaceNestedInput
+  tags?: Prisma.TagUpdateManyWithoutWorkspaceNestedInput
+  users?: Prisma.UserUpdateManyWithoutWorkspaceNestedInput
+  webhookLogs?: Prisma.WebhookLogUpdateManyWithoutWorkspaceNestedInput
+}
+
+export type WorkspaceUncheckedUpdateWithoutStageHistoryInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
+  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
+  subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
+  kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
+  maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  agentConfig?: Prisma.AgentConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
+  analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
+  automations?: Prisma.AutomationUncheckedUpdateManyWithoutWorkspaceNestedInput
+  channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutWorkspaceNestedInput
+  conversationActivities?: Prisma.ConversationActivityUncheckedUpdateManyWithoutWorkspaceNestedInput
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutWorkspaceNestedInput
+  messageTemplates?: Prisma.MessageTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutWorkspaceNestedInput
+  pipelineStages?: Prisma.PipelineStageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  tags?: Prisma.TagUncheckedUpdateManyWithoutWorkspaceNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutWorkspaceNestedInput
   webhookLogs?: Prisma.WebhookLogUncheckedUpdateManyWithoutWorkspaceNestedInput
 }
@@ -1425,7 +1968,10 @@ export type WorkspaceCreateWithoutMessagesInput = {
   conversationActivities?: Prisma.ConversationActivityCreateNestedManyWithoutWorkspaceInput
   leads?: Prisma.LeadCreateNestedManyWithoutWorkspaceInput
   messageTemplates?: Prisma.MessageTemplateCreateNestedManyWithoutWorkspaceInput
+  notes?: Prisma.NoteCreateNestedManyWithoutWorkspaceInput
   pipelineStages?: Prisma.PipelineStageCreateNestedManyWithoutWorkspaceInput
+  stageHistory?: Prisma.StageHistoryCreateNestedManyWithoutWorkspaceInput
+  tags?: Prisma.TagCreateNestedManyWithoutWorkspaceInput
   users?: Prisma.UserCreateNestedManyWithoutWorkspaceInput
   webhookLogs?: Prisma.WebhookLogCreateNestedManyWithoutWorkspaceInput
 }
@@ -1454,7 +2000,10 @@ export type WorkspaceUncheckedCreateWithoutMessagesInput = {
   conversationActivities?: Prisma.ConversationActivityUncheckedCreateNestedManyWithoutWorkspaceInput
   leads?: Prisma.LeadUncheckedCreateNestedManyWithoutWorkspaceInput
   messageTemplates?: Prisma.MessageTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutWorkspaceInput
   pipelineStages?: Prisma.PipelineStageUncheckedCreateNestedManyWithoutWorkspaceInput
+  stageHistory?: Prisma.StageHistoryUncheckedCreateNestedManyWithoutWorkspaceInput
+  tags?: Prisma.TagUncheckedCreateNestedManyWithoutWorkspaceInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutWorkspaceInput
   webhookLogs?: Prisma.WebhookLogUncheckedCreateNestedManyWithoutWorkspaceInput
 }
@@ -1499,7 +2048,10 @@ export type WorkspaceUpdateWithoutMessagesInput = {
   conversationActivities?: Prisma.ConversationActivityUpdateManyWithoutWorkspaceNestedInput
   leads?: Prisma.LeadUpdateManyWithoutWorkspaceNestedInput
   messageTemplates?: Prisma.MessageTemplateUpdateManyWithoutWorkspaceNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutWorkspaceNestedInput
   pipelineStages?: Prisma.PipelineStageUpdateManyWithoutWorkspaceNestedInput
+  stageHistory?: Prisma.StageHistoryUpdateManyWithoutWorkspaceNestedInput
+  tags?: Prisma.TagUpdateManyWithoutWorkspaceNestedInput
   users?: Prisma.UserUpdateManyWithoutWorkspaceNestedInput
   webhookLogs?: Prisma.WebhookLogUpdateManyWithoutWorkspaceNestedInput
 }
@@ -1528,7 +2080,10 @@ export type WorkspaceUncheckedUpdateWithoutMessagesInput = {
   conversationActivities?: Prisma.ConversationActivityUncheckedUpdateManyWithoutWorkspaceNestedInput
   leads?: Prisma.LeadUncheckedUpdateManyWithoutWorkspaceNestedInput
   messageTemplates?: Prisma.MessageTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutWorkspaceNestedInput
   pipelineStages?: Prisma.PipelineStageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  stageHistory?: Prisma.StageHistoryUncheckedUpdateManyWithoutWorkspaceNestedInput
+  tags?: Prisma.TagUncheckedUpdateManyWithoutWorkspaceNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutWorkspaceNestedInput
   webhookLogs?: Prisma.WebhookLogUncheckedUpdateManyWithoutWorkspaceNestedInput
 }
@@ -1558,6 +2113,9 @@ export type WorkspaceCreateWithoutPipelineStagesInput = {
   leads?: Prisma.LeadCreateNestedManyWithoutWorkspaceInput
   messageTemplates?: Prisma.MessageTemplateCreateNestedManyWithoutWorkspaceInput
   messages?: Prisma.MessageCreateNestedManyWithoutWorkspaceInput
+  notes?: Prisma.NoteCreateNestedManyWithoutWorkspaceInput
+  stageHistory?: Prisma.StageHistoryCreateNestedManyWithoutWorkspaceInput
+  tags?: Prisma.TagCreateNestedManyWithoutWorkspaceInput
   users?: Prisma.UserCreateNestedManyWithoutWorkspaceInput
   webhookLogs?: Prisma.WebhookLogCreateNestedManyWithoutWorkspaceInput
 }
@@ -1587,6 +2145,9 @@ export type WorkspaceUncheckedCreateWithoutPipelineStagesInput = {
   leads?: Prisma.LeadUncheckedCreateNestedManyWithoutWorkspaceInput
   messageTemplates?: Prisma.MessageTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutWorkspaceInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutWorkspaceInput
+  stageHistory?: Prisma.StageHistoryUncheckedCreateNestedManyWithoutWorkspaceInput
+  tags?: Prisma.TagUncheckedCreateNestedManyWithoutWorkspaceInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutWorkspaceInput
   webhookLogs?: Prisma.WebhookLogUncheckedCreateNestedManyWithoutWorkspaceInput
 }
@@ -1632,6 +2193,9 @@ export type WorkspaceUpdateWithoutPipelineStagesInput = {
   leads?: Prisma.LeadUpdateManyWithoutWorkspaceNestedInput
   messageTemplates?: Prisma.MessageTemplateUpdateManyWithoutWorkspaceNestedInput
   messages?: Prisma.MessageUpdateManyWithoutWorkspaceNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutWorkspaceNestedInput
+  stageHistory?: Prisma.StageHistoryUpdateManyWithoutWorkspaceNestedInput
+  tags?: Prisma.TagUpdateManyWithoutWorkspaceNestedInput
   users?: Prisma.UserUpdateManyWithoutWorkspaceNestedInput
   webhookLogs?: Prisma.WebhookLogUpdateManyWithoutWorkspaceNestedInput
 }
@@ -1661,6 +2225,9 @@ export type WorkspaceUncheckedUpdateWithoutPipelineStagesInput = {
   leads?: Prisma.LeadUncheckedUpdateManyWithoutWorkspaceNestedInput
   messageTemplates?: Prisma.MessageTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutWorkspaceNestedInput
+  stageHistory?: Prisma.StageHistoryUncheckedUpdateManyWithoutWorkspaceNestedInput
+  tags?: Prisma.TagUncheckedUpdateManyWithoutWorkspaceNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutWorkspaceNestedInput
   webhookLogs?: Prisma.WebhookLogUncheckedUpdateManyWithoutWorkspaceNestedInput
 }
@@ -1689,7 +2256,10 @@ export type WorkspaceCreateWithoutLeadsInput = {
   conversationActivities?: Prisma.ConversationActivityCreateNestedManyWithoutWorkspaceInput
   messageTemplates?: Prisma.MessageTemplateCreateNestedManyWithoutWorkspaceInput
   messages?: Prisma.MessageCreateNestedManyWithoutWorkspaceInput
+  notes?: Prisma.NoteCreateNestedManyWithoutWorkspaceInput
   pipelineStages?: Prisma.PipelineStageCreateNestedManyWithoutWorkspaceInput
+  stageHistory?: Prisma.StageHistoryCreateNestedManyWithoutWorkspaceInput
+  tags?: Prisma.TagCreateNestedManyWithoutWorkspaceInput
   users?: Prisma.UserCreateNestedManyWithoutWorkspaceInput
   webhookLogs?: Prisma.WebhookLogCreateNestedManyWithoutWorkspaceInput
 }
@@ -1718,7 +2288,10 @@ export type WorkspaceUncheckedCreateWithoutLeadsInput = {
   conversationActivities?: Prisma.ConversationActivityUncheckedCreateNestedManyWithoutWorkspaceInput
   messageTemplates?: Prisma.MessageTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutWorkspaceInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutWorkspaceInput
   pipelineStages?: Prisma.PipelineStageUncheckedCreateNestedManyWithoutWorkspaceInput
+  stageHistory?: Prisma.StageHistoryUncheckedCreateNestedManyWithoutWorkspaceInput
+  tags?: Prisma.TagUncheckedCreateNestedManyWithoutWorkspaceInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutWorkspaceInput
   webhookLogs?: Prisma.WebhookLogUncheckedCreateNestedManyWithoutWorkspaceInput
 }
@@ -1763,7 +2336,10 @@ export type WorkspaceUpdateWithoutLeadsInput = {
   conversationActivities?: Prisma.ConversationActivityUpdateManyWithoutWorkspaceNestedInput
   messageTemplates?: Prisma.MessageTemplateUpdateManyWithoutWorkspaceNestedInput
   messages?: Prisma.MessageUpdateManyWithoutWorkspaceNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutWorkspaceNestedInput
   pipelineStages?: Prisma.PipelineStageUpdateManyWithoutWorkspaceNestedInput
+  stageHistory?: Prisma.StageHistoryUpdateManyWithoutWorkspaceNestedInput
+  tags?: Prisma.TagUpdateManyWithoutWorkspaceNestedInput
   users?: Prisma.UserUpdateManyWithoutWorkspaceNestedInput
   webhookLogs?: Prisma.WebhookLogUpdateManyWithoutWorkspaceNestedInput
 }
@@ -1792,7 +2368,10 @@ export type WorkspaceUncheckedUpdateWithoutLeadsInput = {
   conversationActivities?: Prisma.ConversationActivityUncheckedUpdateManyWithoutWorkspaceNestedInput
   messageTemplates?: Prisma.MessageTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutWorkspaceNestedInput
   pipelineStages?: Prisma.PipelineStageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  stageHistory?: Prisma.StageHistoryUncheckedUpdateManyWithoutWorkspaceNestedInput
+  tags?: Prisma.TagUncheckedUpdateManyWithoutWorkspaceNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutWorkspaceNestedInput
   webhookLogs?: Prisma.WebhookLogUncheckedUpdateManyWithoutWorkspaceNestedInput
 }
@@ -1821,7 +2400,10 @@ export type WorkspaceCreateWithoutAnalyticsDailyInput = {
   leads?: Prisma.LeadCreateNestedManyWithoutWorkspaceInput
   messageTemplates?: Prisma.MessageTemplateCreateNestedManyWithoutWorkspaceInput
   messages?: Prisma.MessageCreateNestedManyWithoutWorkspaceInput
+  notes?: Prisma.NoteCreateNestedManyWithoutWorkspaceInput
   pipelineStages?: Prisma.PipelineStageCreateNestedManyWithoutWorkspaceInput
+  stageHistory?: Prisma.StageHistoryCreateNestedManyWithoutWorkspaceInput
+  tags?: Prisma.TagCreateNestedManyWithoutWorkspaceInput
   users?: Prisma.UserCreateNestedManyWithoutWorkspaceInput
   webhookLogs?: Prisma.WebhookLogCreateNestedManyWithoutWorkspaceInput
 }
@@ -1850,7 +2432,10 @@ export type WorkspaceUncheckedCreateWithoutAnalyticsDailyInput = {
   leads?: Prisma.LeadUncheckedCreateNestedManyWithoutWorkspaceInput
   messageTemplates?: Prisma.MessageTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutWorkspaceInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutWorkspaceInput
   pipelineStages?: Prisma.PipelineStageUncheckedCreateNestedManyWithoutWorkspaceInput
+  stageHistory?: Prisma.StageHistoryUncheckedCreateNestedManyWithoutWorkspaceInput
+  tags?: Prisma.TagUncheckedCreateNestedManyWithoutWorkspaceInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutWorkspaceInput
   webhookLogs?: Prisma.WebhookLogUncheckedCreateNestedManyWithoutWorkspaceInput
 }
@@ -1895,7 +2480,10 @@ export type WorkspaceUpdateWithoutAnalyticsDailyInput = {
   leads?: Prisma.LeadUpdateManyWithoutWorkspaceNestedInput
   messageTemplates?: Prisma.MessageTemplateUpdateManyWithoutWorkspaceNestedInput
   messages?: Prisma.MessageUpdateManyWithoutWorkspaceNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutWorkspaceNestedInput
   pipelineStages?: Prisma.PipelineStageUpdateManyWithoutWorkspaceNestedInput
+  stageHistory?: Prisma.StageHistoryUpdateManyWithoutWorkspaceNestedInput
+  tags?: Prisma.TagUpdateManyWithoutWorkspaceNestedInput
   users?: Prisma.UserUpdateManyWithoutWorkspaceNestedInput
   webhookLogs?: Prisma.WebhookLogUpdateManyWithoutWorkspaceNestedInput
 }
@@ -1924,7 +2512,10 @@ export type WorkspaceUncheckedUpdateWithoutAnalyticsDailyInput = {
   leads?: Prisma.LeadUncheckedUpdateManyWithoutWorkspaceNestedInput
   messageTemplates?: Prisma.MessageTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutWorkspaceNestedInput
   pipelineStages?: Prisma.PipelineStageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  stageHistory?: Prisma.StageHistoryUncheckedUpdateManyWithoutWorkspaceNestedInput
+  tags?: Prisma.TagUncheckedUpdateManyWithoutWorkspaceNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutWorkspaceNestedInput
   webhookLogs?: Prisma.WebhookLogUncheckedUpdateManyWithoutWorkspaceNestedInput
 }
@@ -1954,7 +2545,10 @@ export type WorkspaceCreateWithoutWebhookLogsInput = {
   leads?: Prisma.LeadCreateNestedManyWithoutWorkspaceInput
   messageTemplates?: Prisma.MessageTemplateCreateNestedManyWithoutWorkspaceInput
   messages?: Prisma.MessageCreateNestedManyWithoutWorkspaceInput
+  notes?: Prisma.NoteCreateNestedManyWithoutWorkspaceInput
   pipelineStages?: Prisma.PipelineStageCreateNestedManyWithoutWorkspaceInput
+  stageHistory?: Prisma.StageHistoryCreateNestedManyWithoutWorkspaceInput
+  tags?: Prisma.TagCreateNestedManyWithoutWorkspaceInput
   users?: Prisma.UserCreateNestedManyWithoutWorkspaceInput
 }
 
@@ -1983,7 +2577,10 @@ export type WorkspaceUncheckedCreateWithoutWebhookLogsInput = {
   leads?: Prisma.LeadUncheckedCreateNestedManyWithoutWorkspaceInput
   messageTemplates?: Prisma.MessageTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutWorkspaceInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutWorkspaceInput
   pipelineStages?: Prisma.PipelineStageUncheckedCreateNestedManyWithoutWorkspaceInput
+  stageHistory?: Prisma.StageHistoryUncheckedCreateNestedManyWithoutWorkspaceInput
+  tags?: Prisma.TagUncheckedCreateNestedManyWithoutWorkspaceInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutWorkspaceInput
 }
 
@@ -2028,7 +2625,10 @@ export type WorkspaceUpdateWithoutWebhookLogsInput = {
   leads?: Prisma.LeadUpdateManyWithoutWorkspaceNestedInput
   messageTemplates?: Prisma.MessageTemplateUpdateManyWithoutWorkspaceNestedInput
   messages?: Prisma.MessageUpdateManyWithoutWorkspaceNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutWorkspaceNestedInput
   pipelineStages?: Prisma.PipelineStageUpdateManyWithoutWorkspaceNestedInput
+  stageHistory?: Prisma.StageHistoryUpdateManyWithoutWorkspaceNestedInput
+  tags?: Prisma.TagUpdateManyWithoutWorkspaceNestedInput
   users?: Prisma.UserUpdateManyWithoutWorkspaceNestedInput
 }
 
@@ -2057,7 +2657,10 @@ export type WorkspaceUncheckedUpdateWithoutWebhookLogsInput = {
   leads?: Prisma.LeadUncheckedUpdateManyWithoutWorkspaceNestedInput
   messageTemplates?: Prisma.MessageTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutWorkspaceNestedInput
   pipelineStages?: Prisma.PipelineStageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  stageHistory?: Prisma.StageHistoryUncheckedUpdateManyWithoutWorkspaceNestedInput
+  tags?: Prisma.TagUncheckedUpdateManyWithoutWorkspaceNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutWorkspaceNestedInput
 }
 
@@ -2085,7 +2688,10 @@ export type WorkspaceCreateWithoutMessageTemplatesInput = {
   conversationActivities?: Prisma.ConversationActivityCreateNestedManyWithoutWorkspaceInput
   leads?: Prisma.LeadCreateNestedManyWithoutWorkspaceInput
   messages?: Prisma.MessageCreateNestedManyWithoutWorkspaceInput
+  notes?: Prisma.NoteCreateNestedManyWithoutWorkspaceInput
   pipelineStages?: Prisma.PipelineStageCreateNestedManyWithoutWorkspaceInput
+  stageHistory?: Prisma.StageHistoryCreateNestedManyWithoutWorkspaceInput
+  tags?: Prisma.TagCreateNestedManyWithoutWorkspaceInput
   users?: Prisma.UserCreateNestedManyWithoutWorkspaceInput
   webhookLogs?: Prisma.WebhookLogCreateNestedManyWithoutWorkspaceInput
 }
@@ -2114,7 +2720,10 @@ export type WorkspaceUncheckedCreateWithoutMessageTemplatesInput = {
   conversationActivities?: Prisma.ConversationActivityUncheckedCreateNestedManyWithoutWorkspaceInput
   leads?: Prisma.LeadUncheckedCreateNestedManyWithoutWorkspaceInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutWorkspaceInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutWorkspaceInput
   pipelineStages?: Prisma.PipelineStageUncheckedCreateNestedManyWithoutWorkspaceInput
+  stageHistory?: Prisma.StageHistoryUncheckedCreateNestedManyWithoutWorkspaceInput
+  tags?: Prisma.TagUncheckedCreateNestedManyWithoutWorkspaceInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutWorkspaceInput
   webhookLogs?: Prisma.WebhookLogUncheckedCreateNestedManyWithoutWorkspaceInput
 }
@@ -2159,7 +2768,10 @@ export type WorkspaceUpdateWithoutMessageTemplatesInput = {
   conversationActivities?: Prisma.ConversationActivityUpdateManyWithoutWorkspaceNestedInput
   leads?: Prisma.LeadUpdateManyWithoutWorkspaceNestedInput
   messages?: Prisma.MessageUpdateManyWithoutWorkspaceNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutWorkspaceNestedInput
   pipelineStages?: Prisma.PipelineStageUpdateManyWithoutWorkspaceNestedInput
+  stageHistory?: Prisma.StageHistoryUpdateManyWithoutWorkspaceNestedInput
+  tags?: Prisma.TagUpdateManyWithoutWorkspaceNestedInput
   users?: Prisma.UserUpdateManyWithoutWorkspaceNestedInput
   webhookLogs?: Prisma.WebhookLogUpdateManyWithoutWorkspaceNestedInput
 }
@@ -2188,7 +2800,10 @@ export type WorkspaceUncheckedUpdateWithoutMessageTemplatesInput = {
   conversationActivities?: Prisma.ConversationActivityUncheckedUpdateManyWithoutWorkspaceNestedInput
   leads?: Prisma.LeadUncheckedUpdateManyWithoutWorkspaceNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutWorkspaceNestedInput
   pipelineStages?: Prisma.PipelineStageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  stageHistory?: Prisma.StageHistoryUncheckedUpdateManyWithoutWorkspaceNestedInput
+  tags?: Prisma.TagUncheckedUpdateManyWithoutWorkspaceNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutWorkspaceNestedInput
   webhookLogs?: Prisma.WebhookLogUncheckedUpdateManyWithoutWorkspaceNestedInput
 }
@@ -2217,7 +2832,10 @@ export type WorkspaceCreateWithoutConversationActivitiesInput = {
   leads?: Prisma.LeadCreateNestedManyWithoutWorkspaceInput
   messageTemplates?: Prisma.MessageTemplateCreateNestedManyWithoutWorkspaceInput
   messages?: Prisma.MessageCreateNestedManyWithoutWorkspaceInput
+  notes?: Prisma.NoteCreateNestedManyWithoutWorkspaceInput
   pipelineStages?: Prisma.PipelineStageCreateNestedManyWithoutWorkspaceInput
+  stageHistory?: Prisma.StageHistoryCreateNestedManyWithoutWorkspaceInput
+  tags?: Prisma.TagCreateNestedManyWithoutWorkspaceInput
   users?: Prisma.UserCreateNestedManyWithoutWorkspaceInput
   webhookLogs?: Prisma.WebhookLogCreateNestedManyWithoutWorkspaceInput
 }
@@ -2246,7 +2864,10 @@ export type WorkspaceUncheckedCreateWithoutConversationActivitiesInput = {
   leads?: Prisma.LeadUncheckedCreateNestedManyWithoutWorkspaceInput
   messageTemplates?: Prisma.MessageTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutWorkspaceInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutWorkspaceInput
   pipelineStages?: Prisma.PipelineStageUncheckedCreateNestedManyWithoutWorkspaceInput
+  stageHistory?: Prisma.StageHistoryUncheckedCreateNestedManyWithoutWorkspaceInput
+  tags?: Prisma.TagUncheckedCreateNestedManyWithoutWorkspaceInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutWorkspaceInput
   webhookLogs?: Prisma.WebhookLogUncheckedCreateNestedManyWithoutWorkspaceInput
 }
@@ -2291,7 +2912,10 @@ export type WorkspaceUpdateWithoutConversationActivitiesInput = {
   leads?: Prisma.LeadUpdateManyWithoutWorkspaceNestedInput
   messageTemplates?: Prisma.MessageTemplateUpdateManyWithoutWorkspaceNestedInput
   messages?: Prisma.MessageUpdateManyWithoutWorkspaceNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutWorkspaceNestedInput
   pipelineStages?: Prisma.PipelineStageUpdateManyWithoutWorkspaceNestedInput
+  stageHistory?: Prisma.StageHistoryUpdateManyWithoutWorkspaceNestedInput
+  tags?: Prisma.TagUpdateManyWithoutWorkspaceNestedInput
   users?: Prisma.UserUpdateManyWithoutWorkspaceNestedInput
   webhookLogs?: Prisma.WebhookLogUpdateManyWithoutWorkspaceNestedInput
 }
@@ -2320,7 +2944,10 @@ export type WorkspaceUncheckedUpdateWithoutConversationActivitiesInput = {
   leads?: Prisma.LeadUncheckedUpdateManyWithoutWorkspaceNestedInput
   messageTemplates?: Prisma.MessageTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutWorkspaceNestedInput
   pipelineStages?: Prisma.PipelineStageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  stageHistory?: Prisma.StageHistoryUncheckedUpdateManyWithoutWorkspaceNestedInput
+  tags?: Prisma.TagUncheckedUpdateManyWithoutWorkspaceNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutWorkspaceNestedInput
   webhookLogs?: Prisma.WebhookLogUncheckedUpdateManyWithoutWorkspaceNestedInput
 }
@@ -2349,7 +2976,10 @@ export type WorkspaceCreateWithoutAutomationsInput = {
   leads?: Prisma.LeadCreateNestedManyWithoutWorkspaceInput
   messageTemplates?: Prisma.MessageTemplateCreateNestedManyWithoutWorkspaceInput
   messages?: Prisma.MessageCreateNestedManyWithoutWorkspaceInput
+  notes?: Prisma.NoteCreateNestedManyWithoutWorkspaceInput
   pipelineStages?: Prisma.PipelineStageCreateNestedManyWithoutWorkspaceInput
+  stageHistory?: Prisma.StageHistoryCreateNestedManyWithoutWorkspaceInput
+  tags?: Prisma.TagCreateNestedManyWithoutWorkspaceInput
   users?: Prisma.UserCreateNestedManyWithoutWorkspaceInput
   webhookLogs?: Prisma.WebhookLogCreateNestedManyWithoutWorkspaceInput
 }
@@ -2378,7 +3008,10 @@ export type WorkspaceUncheckedCreateWithoutAutomationsInput = {
   leads?: Prisma.LeadUncheckedCreateNestedManyWithoutWorkspaceInput
   messageTemplates?: Prisma.MessageTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutWorkspaceInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutWorkspaceInput
   pipelineStages?: Prisma.PipelineStageUncheckedCreateNestedManyWithoutWorkspaceInput
+  stageHistory?: Prisma.StageHistoryUncheckedCreateNestedManyWithoutWorkspaceInput
+  tags?: Prisma.TagUncheckedCreateNestedManyWithoutWorkspaceInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutWorkspaceInput
   webhookLogs?: Prisma.WebhookLogUncheckedCreateNestedManyWithoutWorkspaceInput
 }
@@ -2423,7 +3056,10 @@ export type WorkspaceUpdateWithoutAutomationsInput = {
   leads?: Prisma.LeadUpdateManyWithoutWorkspaceNestedInput
   messageTemplates?: Prisma.MessageTemplateUpdateManyWithoutWorkspaceNestedInput
   messages?: Prisma.MessageUpdateManyWithoutWorkspaceNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutWorkspaceNestedInput
   pipelineStages?: Prisma.PipelineStageUpdateManyWithoutWorkspaceNestedInput
+  stageHistory?: Prisma.StageHistoryUpdateManyWithoutWorkspaceNestedInput
+  tags?: Prisma.TagUpdateManyWithoutWorkspaceNestedInput
   users?: Prisma.UserUpdateManyWithoutWorkspaceNestedInput
   webhookLogs?: Prisma.WebhookLogUpdateManyWithoutWorkspaceNestedInput
 }
@@ -2452,7 +3088,10 @@ export type WorkspaceUncheckedUpdateWithoutAutomationsInput = {
   leads?: Prisma.LeadUncheckedUpdateManyWithoutWorkspaceNestedInput
   messageTemplates?: Prisma.MessageTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutWorkspaceNestedInput
   pipelineStages?: Prisma.PipelineStageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  stageHistory?: Prisma.StageHistoryUncheckedUpdateManyWithoutWorkspaceNestedInput
+  tags?: Prisma.TagUncheckedUpdateManyWithoutWorkspaceNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutWorkspaceNestedInput
   webhookLogs?: Prisma.WebhookLogUncheckedUpdateManyWithoutWorkspaceNestedInput
 }
@@ -2471,7 +3110,10 @@ export type WorkspaceCountOutputType = {
   leads: number
   messageTemplates: number
   messages: number
+  notes: number
   pipelineStages: number
+  stageHistory: number
+  tags: number
   users: number
   webhookLogs: number
 }
@@ -2485,7 +3127,10 @@ export type WorkspaceCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensi
   leads?: boolean | WorkspaceCountOutputTypeCountLeadsArgs
   messageTemplates?: boolean | WorkspaceCountOutputTypeCountMessageTemplatesArgs
   messages?: boolean | WorkspaceCountOutputTypeCountMessagesArgs
+  notes?: boolean | WorkspaceCountOutputTypeCountNotesArgs
   pipelineStages?: boolean | WorkspaceCountOutputTypeCountPipelineStagesArgs
+  stageHistory?: boolean | WorkspaceCountOutputTypeCountStageHistoryArgs
+  tags?: boolean | WorkspaceCountOutputTypeCountTagsArgs
   users?: boolean | WorkspaceCountOutputTypeCountUsersArgs
   webhookLogs?: boolean | WorkspaceCountOutputTypeCountWebhookLogsArgs
 }
@@ -2559,8 +3204,29 @@ export type WorkspaceCountOutputTypeCountMessagesArgs<ExtArgs extends runtime.Ty
 /**
  * WorkspaceCountOutputType without action
  */
+export type WorkspaceCountOutputTypeCountNotesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NoteWhereInput
+}
+
+/**
+ * WorkspaceCountOutputType without action
+ */
 export type WorkspaceCountOutputTypeCountPipelineStagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.PipelineStageWhereInput
+}
+
+/**
+ * WorkspaceCountOutputType without action
+ */
+export type WorkspaceCountOutputTypeCountStageHistoryArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.StageHistoryWhereInput
+}
+
+/**
+ * WorkspaceCountOutputType without action
+ */
+export type WorkspaceCountOutputTypeCountTagsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TagWhereInput
 }
 
 /**
@@ -2603,7 +3269,10 @@ export type WorkspaceSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   leads?: boolean | Prisma.Workspace$leadsArgs<ExtArgs>
   messageTemplates?: boolean | Prisma.Workspace$messageTemplatesArgs<ExtArgs>
   messages?: boolean | Prisma.Workspace$messagesArgs<ExtArgs>
+  notes?: boolean | Prisma.Workspace$notesArgs<ExtArgs>
   pipelineStages?: boolean | Prisma.Workspace$pipelineStagesArgs<ExtArgs>
+  stageHistory?: boolean | Prisma.Workspace$stageHistoryArgs<ExtArgs>
+  tags?: boolean | Prisma.Workspace$tagsArgs<ExtArgs>
   users?: boolean | Prisma.Workspace$usersArgs<ExtArgs>
   webhookLogs?: boolean | Prisma.Workspace$webhookLogsArgs<ExtArgs>
   _count?: boolean | Prisma.WorkspaceCountOutputTypeDefaultArgs<ExtArgs>
@@ -2674,7 +3343,10 @@ export type WorkspaceInclude<ExtArgs extends runtime.Types.Extensions.InternalAr
   leads?: boolean | Prisma.Workspace$leadsArgs<ExtArgs>
   messageTemplates?: boolean | Prisma.Workspace$messageTemplatesArgs<ExtArgs>
   messages?: boolean | Prisma.Workspace$messagesArgs<ExtArgs>
+  notes?: boolean | Prisma.Workspace$notesArgs<ExtArgs>
   pipelineStages?: boolean | Prisma.Workspace$pipelineStagesArgs<ExtArgs>
+  stageHistory?: boolean | Prisma.Workspace$stageHistoryArgs<ExtArgs>
+  tags?: boolean | Prisma.Workspace$tagsArgs<ExtArgs>
   users?: boolean | Prisma.Workspace$usersArgs<ExtArgs>
   webhookLogs?: boolean | Prisma.Workspace$webhookLogsArgs<ExtArgs>
   _count?: boolean | Prisma.WorkspaceCountOutputTypeDefaultArgs<ExtArgs>
@@ -2694,7 +3366,10 @@ export type $WorkspacePayload<ExtArgs extends runtime.Types.Extensions.InternalA
     leads: Prisma.$LeadPayload<ExtArgs>[]
     messageTemplates: Prisma.$MessageTemplatePayload<ExtArgs>[]
     messages: Prisma.$MessagePayload<ExtArgs>[]
+    notes: Prisma.$NotePayload<ExtArgs>[]
     pipelineStages: Prisma.$PipelineStagePayload<ExtArgs>[]
+    stageHistory: Prisma.$StageHistoryPayload<ExtArgs>[]
+    tags: Prisma.$TagPayload<ExtArgs>[]
     users: Prisma.$UserPayload<ExtArgs>[]
     webhookLogs: Prisma.$WebhookLogPayload<ExtArgs>[]
   }
@@ -3117,7 +3792,10 @@ export interface Prisma__WorkspaceClient<T, Null = never, ExtArgs extends runtim
   leads<T extends Prisma.Workspace$leadsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Workspace$leadsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LeadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   messageTemplates<T extends Prisma.Workspace$messageTemplatesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Workspace$messageTemplatesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessageTemplatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   messages<T extends Prisma.Workspace$messagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Workspace$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  notes<T extends Prisma.Workspace$notesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Workspace$notesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   pipelineStages<T extends Prisma.Workspace$pipelineStagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Workspace$pipelineStagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PipelineStagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  stageHistory<T extends Prisma.Workspace$stageHistoryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Workspace$stageHistoryArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StageHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  tags<T extends Prisma.Workspace$tagsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Workspace$tagsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TagPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   users<T extends Prisma.Workspace$usersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Workspace$usersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   webhookLogs<T extends Prisma.Workspace$webhookLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Workspace$webhookLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WebhookLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -3763,6 +4441,30 @@ export type Workspace$messagesArgs<ExtArgs extends runtime.Types.Extensions.Inte
 }
 
 /**
+ * Workspace.notes
+ */
+export type Workspace$notesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Note
+   */
+  select?: Prisma.NoteSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Note
+   */
+  omit?: Prisma.NoteOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NoteInclude<ExtArgs> | null
+  where?: Prisma.NoteWhereInput
+  orderBy?: Prisma.NoteOrderByWithRelationInput | Prisma.NoteOrderByWithRelationInput[]
+  cursor?: Prisma.NoteWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NoteScalarFieldEnum | Prisma.NoteScalarFieldEnum[]
+}
+
+/**
  * Workspace.pipelineStages
  */
 export type Workspace$pipelineStagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3784,6 +4486,54 @@ export type Workspace$pipelineStagesArgs<ExtArgs extends runtime.Types.Extension
   take?: number
   skip?: number
   distinct?: Prisma.PipelineStageScalarFieldEnum | Prisma.PipelineStageScalarFieldEnum[]
+}
+
+/**
+ * Workspace.stageHistory
+ */
+export type Workspace$stageHistoryArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the StageHistory
+   */
+  select?: Prisma.StageHistorySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the StageHistory
+   */
+  omit?: Prisma.StageHistoryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.StageHistoryInclude<ExtArgs> | null
+  where?: Prisma.StageHistoryWhereInput
+  orderBy?: Prisma.StageHistoryOrderByWithRelationInput | Prisma.StageHistoryOrderByWithRelationInput[]
+  cursor?: Prisma.StageHistoryWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.StageHistoryScalarFieldEnum | Prisma.StageHistoryScalarFieldEnum[]
+}
+
+/**
+ * Workspace.tags
+ */
+export type Workspace$tagsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Tag
+   */
+  select?: Prisma.TagSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Tag
+   */
+  omit?: Prisma.TagOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TagInclude<ExtArgs> | null
+  where?: Prisma.TagWhereInput
+  orderBy?: Prisma.TagOrderByWithRelationInput | Prisma.TagOrderByWithRelationInput[]
+  cursor?: Prisma.TagWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TagScalarFieldEnum | Prisma.TagScalarFieldEnum[]
 }
 
 /**

@@ -56,7 +56,7 @@ export default function InboxPage() {
     fetchConversations()
   }, [fetchConversations])
 
-  // Real-time updates via Pusher
+  // Real-time updates via Pusher (workspace-level events)
   usePusherChannel(`workspace-${workspaceId}`, {
     'new-message': (data: unknown) => {
       fetchConversations()
@@ -68,6 +68,20 @@ export default function InboxPage() {
     },
     'conversation-assigned': () => {
       fetchConversations()
+    },
+    'conversation-updated': (data: unknown) => {
+      fetchConversations()
+      window.dispatchEvent(new CustomEvent('conversation-updated', { detail: data }))
+    },
+  })
+
+  // Real-time updates for the selected conversation (notes, transcriptions)
+  usePusherChannel(selectedId ? `conversation-${selectedId}` : '', {
+    'note-added': (data: unknown) => {
+      window.dispatchEvent(new CustomEvent('note-added', { detail: data }))
+    },
+    'message-updated': (data: unknown) => {
+      window.dispatchEvent(new CustomEvent('message-updated', { detail: data }))
     },
   })
 

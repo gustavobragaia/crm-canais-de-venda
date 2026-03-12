@@ -1,7 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useSession } from 'next-auth/react'
 import { LeadDrawer } from '@/components/LeadDrawer'
+import { usePusherChannel } from '@/hooks/usePusher'
 
 const FUNNEL_STAGES = [
   { name: 'Não Atribuído',   color: '#6B7280', auto: true  },
@@ -59,10 +61,32 @@ function getAvatarColor(name: string): string {
 }
 
 export default function FunilPage() {
+  const { data: session } = useSession()
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [loading, setLoading] = useState(true)
   const [draggedId, setDraggedId] = useState<string | null>(null)
   const [selectedId, setSelectedId] = useState<string | null>(null)
+
+  const workspaceId = session?.user.workspaceId
+
+  // Real-time updates via Pusher (workspace-level)
+  usePusherChannel(`workspace-${workspaceId}`, {
+    'conversation-updated': (data: unknown) => {
+      const { conversationId, conversation } = (data as { conversationId: string; conversation: Partial<Conversation> })
+      setConversations(cs => cs.map(c => c.id === conversationId ? { ...c, ...conversation } : c))
+      window.dispatchEvent(new CustomEvent('conversation-updated', { detail: data }))
+    },
+  })
+
+  // Real-time updates for the selected conversation
+  usePusherChannel(selectedId ? `conversation-${selectedId}` : '', {
+    'note-added': (data: unknown) => {
+      window.dispatchEvent(new CustomEvent('note-added', { detail: data }))
+    },
+    'message-updated': (data: unknown) => {
+      window.dispatchEvent(new CustomEvent('message-updated', { detail: data }))
+    },
+  })
 
   useEffect(() => {
     fetch('/api/conversations?limit=200')

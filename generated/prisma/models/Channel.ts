@@ -610,9 +610,9 @@ export type ChannelMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
 }
 
-export type ChannelScalarRelationFilter = {
-  is?: Prisma.ChannelWhereInput
-  isNot?: Prisma.ChannelWhereInput
+export type ChannelNullableScalarRelationFilter = {
+  is?: Prisma.ChannelWhereInput | null
+  isNot?: Prisma.ChannelWhereInput | null
 }
 
 export type ChannelCreateNestedManyWithoutWorkspaceInput = {
@@ -671,10 +671,12 @@ export type ChannelCreateNestedOneWithoutConversationsInput = {
   connect?: Prisma.ChannelWhereUniqueInput
 }
 
-export type ChannelUpdateOneRequiredWithoutConversationsNestedInput = {
+export type ChannelUpdateOneWithoutConversationsNestedInput = {
   create?: Prisma.XOR<Prisma.ChannelCreateWithoutConversationsInput, Prisma.ChannelUncheckedCreateWithoutConversationsInput>
   connectOrCreate?: Prisma.ChannelCreateOrConnectWithoutConversationsInput
   upsert?: Prisma.ChannelUpsertWithoutConversationsInput
+  disconnect?: Prisma.ChannelWhereInput | boolean
+  delete?: Prisma.ChannelWhereInput | boolean
   connect?: Prisma.ChannelWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.ChannelUpdateToOneWithWhereWithoutConversationsInput, Prisma.ChannelUpdateWithoutConversationsInput>, Prisma.ChannelUncheckedUpdateWithoutConversationsInput>
 }

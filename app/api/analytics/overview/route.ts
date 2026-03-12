@@ -23,6 +23,9 @@ export async function GET(req: NextRequest) {
     workspaceData,
     allUsers,
     allChannels,
+    funnelWaiting,
+    funnelMeeting,
+    funnelContract,
   ] = await Promise.all([
     db.conversation.count({ where: { workspaceId, status: 'UNASSIGNED' } }),
     db.conversation.count({ where: { workspaceId, status: 'IN_PROGRESS' } }),
@@ -62,6 +65,22 @@ export async function GET(req: NextRequest) {
       where: { workspaceId },
       select: { id: true, type: true, name: true },
     }),
+    // Pipeline funnel stages
+    db.conversation.count({
+      where: { workspaceId, status: 'WAITING_CLIENT' },
+    }),
+    db.conversation.count({
+      where: { workspaceId, pipelineStage: { contains: 'reuni', mode: 'insensitive' } },
+    }),
+    db.conversation.count({
+      where: {
+        workspaceId,
+        OR: [
+          { pipelineStage: { contains: 'contrato', mode: 'insensitive' } },
+          { pipelineStage: { contains: 'fechado', mode: 'insensitive' } },
+        ],
+      },
+    }),
   ])
 
   // Map agent stats with user names
@@ -76,7 +95,7 @@ export async function GET(req: NextRequest) {
   // Map channel stats with type
   const channelMap = Object.fromEntries(allChannels.map((c) => [c.id, c]))
   const trafficByChannel = channelGroups.reduce<Record<string, number>>((acc, g) => {
-    const type = channelMap[g.channelId]?.type ?? 'UNKNOWN'
+    const type = g.channelId ? (channelMap[g.channelId]?.type ?? 'UNKNOWN') : 'UNKNOWN'
     acc[type] = (acc[type] ?? 0) + g._count.id
     return acc
   }, {})
@@ -103,5 +122,13 @@ export async function GET(req: NextRequest) {
     maxConversationsPerMonth: workspaceData?.maxConversationsPerMonth ?? 0,
     subscriptionStatus: workspaceData?.subscriptionStatus,
     trialEndsAt: workspaceData?.trialEndsAt,
+    // Pipeline funnel
+    funnel: {
+      unassigned: totalUnassigned,
+      inProgress: totalInProgress,
+      waiting: funnelWaiting,
+      meetingScheduled: funnelMeeting,
+      contractClosed: funnelContract,
+    },
   })
 }

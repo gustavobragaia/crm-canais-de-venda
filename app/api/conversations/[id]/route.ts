@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { db } from '@/lib/db'
+import { pusherServer } from '@/lib/pusher'
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth()
@@ -18,6 +19,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       channel: true,
       assignedTo: { select: { id: true, name: true, avatarUrl: true } },
       lead: true,
+      conversationTags: { include: { tag: true } },
     },
   })
 
@@ -34,7 +36,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
   const { id } = await params
   const body = await req.json()
-  const { status, pipelineStage, tags, internalNotes, aiEnabled, assignedToId, assignedById } = body
+  const { status, pipelineStage, aiEnabled, assignedToId, assignedById } = body
 
   const conversation = await db.conversation.findFirst({
     where: { id, workspaceId: session.user.workspaceId },
@@ -47,8 +49,6 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   // Build update data with smart auto-sync
   const updateData: Record<string, unknown> = {}
 
-  if (tags) updateData.tags = tags
-  if (internalNotes !== undefined) updateData.internalNotes = internalNotes
   if (aiEnabled !== undefined) updateData.aiEnabled = aiEnabled
 
   // Handle assignedToId changes
@@ -86,10 +86,34 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   // Explicit pipelineStage always wins
   if (pipelineStage !== undefined) updateData.pipelineStage = pipelineStage
 
+  // Determine the final resolved stage (after all auto-sync logic)
+  const resolvedStage = (updateData.pipelineStage as string | undefined) ?? pipelineStage
+
+  // Track stage history if pipelineStage is actually changing
+  if (resolvedStage !== undefined && resolvedStage !== conversation.pipelineStage) {
+    await db.stageHistory.create({
+      data: {
+        conversationId: id,
+        workspaceId: session.user.workspaceId,
+        fromStage: conversation.pipelineStage,
+        toStage: resolvedStage,
+        userId: session.user.id,
+        userName: session.user.name,
+      },
+    })
+  }
+
   const updated = await db.conversation.update({
     where: { id },
     data: updateData,
   })
+
+  // Fire-and-forget — don't block response on Pusher latency
+  pusherServer.trigger(
+    `workspace-${session.user.workspaceId}`,
+    'conversation-updated',
+    { conversationId: id, conversation: updateData },
+  ).catch(err => console.error('[PATCH conversation] pusher error:', err))
 
   return NextResponse.json(updated)
 }

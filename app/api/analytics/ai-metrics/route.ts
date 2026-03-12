@@ -11,21 +11,28 @@ export async function GET() {
     const now = new Date()
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
 
-    const [aiConversations, aiMessages, allConvThisMonth] = await Promise.all([
+    const [aiConversations, aiMessages, aiQualified, aiTransferred] = await Promise.all([
       db.conversation.count({
         where: { workspaceId, aiMessageCount: { gt: 0 }, createdAt: { gte: startOfMonth } },
       }),
       db.message.count({
         where: { workspaceId, aiGenerated: true, createdAt: { gte: startOfMonth } },
       }),
-      db.conversation.findMany({
-        where: { workspaceId, createdAt: { gte: startOfMonth } },
-        select: { id: true, tags: true },
+      db.conversation.count({
+        where: {
+          workspaceId,
+          createdAt: { gte: startOfMonth },
+          conversationTags: { some: { tag: { name: 'QUALIFICADO' } } },
+        },
+      }),
+      db.conversation.count({
+        where: {
+          workspaceId,
+          createdAt: { gte: startOfMonth },
+          conversationTags: { some: { tag: { name: 'TRANSFERIDO_HUMANO' } } },
+        },
       }),
     ])
-
-    const aiQualified = allConvThisMonth.filter(c => c.tags.includes('QUALIFICADO')).length
-    const aiTransferred = allConvThisMonth.filter(c => c.tags.includes('TRANSFERIDO_HUMANO')).length
     const hoursSaved = Math.round((aiMessages * 3) / 60)
     const qualificationRate = aiConversations > 0 ? Math.round((aiQualified / aiConversations) * 100) : 0
 

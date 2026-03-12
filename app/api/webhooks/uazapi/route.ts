@@ -30,6 +30,22 @@ export async function POST(req: NextRequest) {
   }
 }
 
+function extractMediaType(messageType: string): string | null {
+  switch (messageType) {
+    case 'image':
+      return 'image'
+    case 'audio':
+    case 'ptt':
+      return 'audio'
+    case 'document':
+      return 'document'
+    case 'video':
+      return 'video'
+    default:
+      return null
+  }
+}
+
 async function handleMessage(payload: UazapiWebhookMessagePayload) {
   const msg = payload.message
 
@@ -61,13 +77,26 @@ async function handleMessage(payload: UazapiWebhookMessagePayload) {
   // Profile photo from chat object
   const contactPhotoUrl = chat.imagePreview || chat.image || undefined
 
-  const textContent = msg.text || msg.content || '[Media]'
+  // Detect media
+  const mediaType = extractMediaType(msg.messageType)
+  const mediaUrl = msg.media?.url ?? undefined
+  const mediaMime = msg.media?.mimetype ?? undefined
+  const mediaName = msg.media?.filename ?? undefined
+
+  // Content: use caption or text for media messages; empty string if pure media with no caption
+  const rawText = msg.text || msg.content || msg.media?.caption || ''
+  const textContent = rawText === '[Media]' && mediaType ? '' : rawText
 
   // Deduplication
   if (msg.messageid) {
     const existing = await db.message.findFirst({ where: { externalId: msg.messageid } })
     if (existing) return
   }
+
+  // sentAt from webhook timestamp (unix seconds → Date), fallback to now
+  const sentAt = msg.messageTimestamp
+    ? new Date(msg.messageTimestamp * 1000)
+    : new Date()
 
   const conversation = await db.conversation.upsert({
     where: {
@@ -98,14 +127,20 @@ async function handleMessage(payload: UazapiWebhookMessagePayload) {
       externalId: msg.messageid || undefined,
       status: 'DELIVERED',
       senderName: msg.senderName ?? null,
+      sentAt,
+      ...(mediaType ? { mediaType, mediaUrl, mediaMime, mediaName } : {}),
     },
   })
+
+  const previewText = mediaType && !textContent
+    ? `[${mediaType.charAt(0).toUpperCase() + mediaType.slice(1)}]`
+    : textContent
 
   await db.conversation.update({
     where: { id: conversation.id },
     data: {
       lastMessageAt: new Date(),
-      lastMessagePreview: textContent.slice(0, 100),
+      lastMessagePreview: previewText.slice(0, 100),
       unreadCount: { increment: 1 },
     },
   })
@@ -116,12 +151,24 @@ async function handleMessage(payload: UazapiWebhookMessagePayload) {
     { conversationId: conversation.id, message: savedMessage }
   )
 
-  console.log('[UAZAPI WEBHOOK] message saved:', savedMessage.id, '| conversation:', conversation.id)
+  console.log('[UAZAPI WEBHOOK] message saved:', savedMessage.id, '| conversation:', conversation.id, '| mediaType:', mediaType ?? 'none')
 
-  // Trigger AI agent asynchronously (non-blocking)
-  processAiResponse(conversation.id, channel.workspaceId, textContent).catch(err =>
-    console.error('[UAZAPI WEBHOOK] AI agent error:', err)
-  )
+  // Trigger audio transcription asynchronously for audio messages
+  if (mediaType === 'audio' && msg.messageid && channel.instanceToken) {
+    const baseUrl = (process.env.NEXTAUTH_URL ?? '').replace(/\/$/, '')
+    fetch(`${baseUrl}/api/transcription`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messageId: savedMessage.id, externalId: msg.messageid, instanceToken: channel.instanceToken }),
+    }).catch(err => console.error('[UAZAPI WEBHOOK] transcription trigger error:', err))
+  }
+
+  // Trigger AI agent asynchronously (non-blocking) — only for text messages
+  if (!mediaType || textContent) {
+    processAiResponse(conversation.id, channel.workspaceId, textContent).catch(err =>
+      console.error('[UAZAPI WEBHOOK] AI agent error:', err)
+    )
+  }
 }
 
 async function handleConnection(payload: UazapiWebhookConnectionPayload) {

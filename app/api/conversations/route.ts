@@ -37,6 +37,7 @@ export async function GET(req: NextRequest) {
       include: {
         channel: { select: { id: true, type: true, name: true } },
         assignedTo: { select: { id: true, name: true, avatarUrl: true } },
+        conversationTags: { include: { tag: { select: { id: true, name: true, color: true } } }, take: 3 },
       },
       orderBy: { lastMessageAt: 'desc' },
       skip: (page - 1) * limit,
