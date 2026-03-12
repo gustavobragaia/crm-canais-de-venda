@@ -35,20 +35,12 @@ export async function POST(req: NextRequest) {
 }
 
 function extractMediaType(messageType: string): string | null {
-  switch (messageType) {
-    case 'image':
-      return 'image'
-    case 'audio':
-    case 'ptt':
-    case 'myaudio':
-      return 'audio'
-    case 'document':
-      return 'document'
-    case 'video':
-      return 'video'
-    default:
-      return null
-  }
+  const t = messageType.toLowerCase()
+  if (t === 'image' || t.includes('image')) return 'image'
+  if (t === 'video' || t.includes('video')) return 'video'
+  if (t === 'document' || t.includes('document') || t.includes('pdf')) return 'document'
+  if (t === 'audio' || t === 'ptt' || t === 'myaudio' || t.includes('audio') || t.includes('ptt') || t.includes('voice')) return 'audio'
+  return null
 }
 
 async function processMessage(
@@ -92,6 +84,10 @@ async function processMessage(
   // Detect media
   const mediaType = extractMediaType(msg.messageType)
   const mediaUrl = msg.fileURL ?? msg.media?.url ?? undefined
+
+  console.log(
+    `[UAZAPI WEBHOOK] messageType="${msg.messageType}" → mediaType=${mediaType ?? 'text'} | fileURL=${!!msg.fileURL} | media.url=${!!msg.media?.url}`
+  )
   const mediaMime = msg.media?.mimetype ?? undefined
   const mediaName = msg.media?.filename ?? undefined
 

@@ -114,6 +114,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   let mediaType: string | undefined
   let mediaMime: string | undefined
   let mediaName: string | undefined
+  let sendError: string | undefined
 
   // Handle file upload and sending
   if (file) {
@@ -133,7 +134,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         externalId = await sendUazapiMedia(channel.instanceToken, to, mediaType as 'audio' | 'image' | 'video' | 'document', mediaUrl, content || undefined, mediaName)
       }
     } catch (err) {
-      console.error('[SEND_MEDIA]', err)
+      sendError = err instanceof Error ? err.message : String(err)
+      console.error('[SEND_MEDIA]', sendError)
     }
   } else {
     // Text-only send
@@ -190,5 +192,5 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     message,
   }).catch(err => console.error('[SEND_MESSAGE] pusher error:', err))
 
-  return NextResponse.json(message, { status: 201 })
+  return NextResponse.json({ ...message, sendError }, { status: 201 })
 }
