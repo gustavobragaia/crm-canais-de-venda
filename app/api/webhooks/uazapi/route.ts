@@ -92,7 +92,10 @@ async function processMessage(
   const mediaName = msg.media?.filename ?? undefined
 
   // Content: use caption or text for media messages; empty string if pure media with no caption
-  const rawText = msg.text || msg.content || msg.media?.caption || ''
+  const rawText = msg.text
+    || (typeof msg.content === 'string' ? msg.content : '')
+    || msg.media?.caption
+    || ''
   const textContent = rawText === '[Media]' && mediaType ? '' : rawText
 
   // Deduplication
@@ -101,9 +104,9 @@ async function processMessage(
     if (existing) return
   }
 
-  // sentAt from webhook timestamp (unix seconds → Date), fallback to now
+  // sentAt from webhook timestamp — handle both seconds and milliseconds
   const sentAt = msg.messageTimestamp
-    ? new Date(msg.messageTimestamp * 1000)
+    ? new Date(msg.messageTimestamp > 1e12 ? msg.messageTimestamp : msg.messageTimestamp * 1000)
     : new Date()
 
   const conversation = await db.conversation.upsert({
