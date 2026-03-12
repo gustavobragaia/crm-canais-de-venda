@@ -171,11 +171,12 @@ async function processMessage(
 
   // Only for real-time inbound messages (not history):
   if (!isHistory) {
-    // Trigger media download/transcription asynchronously for audio (always) and
-    // image/video/document when fileURL was not delivered in the webhook payload
+    // Trigger media download/transcription asynchronously for all media types.
+    // Always runs — even when fileURL is present in the webhook it may be an
+    // encrypted WhatsApp MMG URL (not browser-accessible). The download endpoint
+    // returns a public URL that overwrites whatever was saved above.
     if (msg.messageid && channel.instanceToken && (
-      mediaType === 'audio' ||
-      ((mediaType === 'image' || mediaType === 'video' || mediaType === 'document') && !mediaUrl)
+      mediaType === 'audio' || mediaType === 'image' || mediaType === 'video' || mediaType === 'document'
     )) {
       const baseUrl = (process.env.NEXTAUTH_URL ?? '').replace(/\/$/, '')
       fetch(`${baseUrl}/api/transcription`, {
