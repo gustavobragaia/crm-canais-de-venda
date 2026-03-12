@@ -171,14 +171,18 @@ async function processMessage(
 
   // Only for real-time inbound messages (not history):
   if (!isHistory) {
-    // Trigger audio transcription asynchronously
-    if (mediaType === 'audio' && msg.messageid && channel.instanceToken) {
+    // Trigger media download/transcription asynchronously for audio (always) and
+    // image/video/document when fileURL was not delivered in the webhook payload
+    if (msg.messageid && channel.instanceToken && (
+      mediaType === 'audio' ||
+      ((mediaType === 'image' || mediaType === 'video' || mediaType === 'document') && !mediaUrl)
+    )) {
       const baseUrl = (process.env.NEXTAUTH_URL ?? '').replace(/\/$/, '')
       fetch(`${baseUrl}/api/transcription`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messageId: savedMessage.id, externalId: msg.messageid, instanceToken: channel.instanceToken }),
-      }).catch(err => console.error('[UAZAPI WEBHOOK] transcription trigger error:', err))
+      }).catch(err => console.error('[UAZAPI WEBHOOK] media download trigger error:', err))
     }
 
     // Trigger AI agent asynchronously — only for text/mixed-media inbound messages
