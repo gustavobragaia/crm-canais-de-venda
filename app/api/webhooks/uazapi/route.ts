@@ -179,6 +179,9 @@ async function processMessage(
       mediaType === 'audio' || mediaType === 'image' || mediaType === 'video' || mediaType === 'document'
     )) {
       const baseUrl = (process.env.NEXTAUTH_URL ?? '').replace(/\/$/, '')
+      console.log(
+        `[UAZAPI WEBHOOK] triggering media download | messageId=${savedMessage.id} | externalId=${msg.messageid} | mediaType=${mediaType}`
+      )
       fetch(`${baseUrl}/api/transcription`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

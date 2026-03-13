@@ -48,6 +48,7 @@ export async function POST(req: NextRequest) {
       downloadBody.openai_apikey = process.env.OPENAI_API_KEY
     }
 
+    console.log('[TRANSCRIPTION] calling /message/download with body:', JSON.stringify(downloadBody))
     const response = await fetch(`${BASE_URL}/message/download`, {
       method: 'POST',
       headers: {
@@ -64,13 +65,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Download failed' }, { status: 502 })
     }
 
-    const data = await response.json() as { transcription?: string; fileURL?: string }
+    const rawText = await response.text()
+    console.log('[TRANSCRIPTION] /message/download raw response:', rawText.slice(0, 600))
+    const data = JSON.parse(rawText) as { transcription?: string; fileURL?: string }
     const transcription = data.transcription ?? null
 
     // Persist fileURL (always) and transcription (if available)
     const updateData: Record<string, string | null> = {}
     if (data.fileURL) updateData.mediaUrl = data.fileURL
     if (transcription) updateData.transcription = transcription
+
+    console.log('[TRANSCRIPTION] updateData:', JSON.stringify(updateData))
 
     if (Object.keys(updateData).length === 0) {
       console.log('[TRANSCRIPTION] no data to update for message:', messageId)
