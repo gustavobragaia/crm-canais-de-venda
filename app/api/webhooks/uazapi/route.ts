@@ -199,11 +199,12 @@ async function processMessage(
 }
 
 async function handleMessagesUpdate(payload: UazapiWebhookPayload) {
-  const msg = (payload as { message?: { messageid?: string; status?: string } }).message
-  if (!msg?.messageid) return
+  // Actual payload: payload.event.MessageIDs (array) + payload.event.Type (status string)
+  const event = (payload as {
+    event?: { MessageIDs?: string[]; Type?: string }
+  }).event
 
-  const message = await db.message.findFirst({ where: { externalId: msg.messageid } })
-  if (!message) return
+  if (!event?.MessageIDs?.length) return
 
   const statusMap: Record<string, string> = {
     read: 'READ',
@@ -211,25 +212,30 @@ async function handleMessagesUpdate(payload: UazapiWebhookPayload) {
     sent: 'SENT',
     failed: 'FAILED',
   }
-  const newStatus = statusMap[msg.status?.toLowerCase() ?? ''] ?? null
-  if (!newStatus || newStatus === message.status) return
+  const newStatus = statusMap[event.Type?.toLowerCase() ?? ''] ?? null
+  if (!newStatus) return
 
-  await db.message.update({
-    where: { id: message.id },
-    data: {
-      status: newStatus as 'SENT' | 'DELIVERED' | 'READ' | 'FAILED',
-      ...(newStatus === 'READ' ? { readAt: new Date() } : {}),
-      ...(newStatus === 'DELIVERED' ? { deliveredAt: new Date() } : {}),
-    },
-  })
+  for (const messageid of event.MessageIDs) {
+    const message = await db.message.findFirst({ where: { externalId: messageid } })
+    if (!message || newStatus === message.status) continue
 
-  await pusherServer.trigger(
-    `workspace-${message.workspaceId}`,
-    'message-updated',
-    { messageId: message.id, status: newStatus }
-  )
+    await db.message.update({
+      where: { id: message.id },
+      data: {
+        status: newStatus as 'SENT' | 'DELIVERED' | 'READ' | 'FAILED',
+        ...(newStatus === 'READ' ? { readAt: new Date() } : {}),
+        ...(newStatus === 'DELIVERED' ? { deliveredAt: new Date() } : {}),
+      },
+    })
 
-  console.log('[UAZAPI WEBHOOK] message status updated:', message.id, '→', newStatus)
+    await pusherServer.trigger(
+      `workspace-${message.workspaceId}`,
+      'message-updated',
+      { messageId: message.id, status: newStatus }
+    )
+
+    console.log('[UAZAPI WEBHOOK] message status updated:', message.id, '→', newStatus)
+  }
 }
 
 async function handleConnection(payload: UazapiWebhookConnectionPayload) {
