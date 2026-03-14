@@ -236,3 +236,18 @@ export async function findUazapiMessages(
   )
   return data.messages ?? []
 }
+
+export async function downloadUazapiMedia(
+  instanceToken: string,
+  messageId: string
+): Promise<{ fileURL?: string; mimetype?: string }> {
+  const data = await uazapiFetch<{ fileURL?: string; mimetype?: string }>(
+    '/message/download',
+    {
+      method: 'POST',
+      instanceToken,
+      body: JSON.stringify({ id: messageId, return_link: true }),
+    }
+  )
+  return data
+}

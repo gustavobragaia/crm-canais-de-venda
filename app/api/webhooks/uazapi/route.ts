@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { type UazapiWebhookPayload, type UazapiWebhookMessagePayload, type UazapiWebhookConnectionPayload, type UazapiWebhookHistoryPayload } from '@/lib/integrations/uazapi'
+import { type UazapiWebhookPayload, type UazapiWebhookMessagePayload, type UazapiWebhookConnectionPayload, type UazapiWebhookHistoryPayload, downloadUazapiMedia } from '@/lib/integrations/uazapi'
 import { db } from '@/lib/db'
 import { pusherServer } from '@/lib/pusher'
 import { processAiResponse } from '@/lib/ai/agent'
@@ -171,22 +171,35 @@ async function processMessage(
 
   // Only for real-time inbound messages (not history):
   if (!isHistory) {
-    // Trigger media download/transcription asynchronously for all media types.
-    // Always runs — even when fileURL is present in the webhook it may be an
-    // encrypted WhatsApp MMG URL (not browser-accessible). The download endpoint
-    // returns a public URL that overwrites whatever was saved above.
-    if (msg.messageid && channel.instanceToken && (
-      mediaType === 'audio' || mediaType === 'image' || mediaType === 'video' || mediaType === 'document'
-    )) {
+    // Audio: via /api/transcription (needs MP3 generation + optional OpenAI transcription)
+    if (mediaType === 'audio' && msg.messageid && channel.instanceToken) {
       const baseUrl = (process.env.NEXTAUTH_URL ?? '').replace(/\/$/, '')
-      console.log(
-        `[UAZAPI WEBHOOK] triggering media download | messageId=${savedMessage.id} | externalId=${msg.messageid} | mediaType=${mediaType}`
-      )
+      console.log(`[UAZAPI WEBHOOK] triggering audio transcription | messageId=${savedMessage.id}`)
       fetch(`${baseUrl}/api/transcription`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messageId: savedMessage.id, externalId: msg.messageid, instanceToken: channel.instanceToken }),
-      }).catch(err => console.error('[UAZAPI WEBHOOK] media download trigger error:', err))
+      })
+        .then(res => { if (!res.ok) res.text().then(b => console.error(`[UAZAPI WEBHOOK] transcription HTTP error: ${res.status} ${b.slice(0, 200)}`)) })
+        .catch(err => console.error('[UAZAPI WEBHOOK] transcription trigger error:', err))
+    }
+
+    // Image/video/document: download media URL inline (avoids unreliable internal HTTP call)
+    if ((mediaType === 'image' || mediaType === 'video' || mediaType === 'document') && msg.messageid && channel.instanceToken) {
+      console.log(`[UAZAPI WEBHOOK] downloading media inline | messageId=${savedMessage.id} | mediaType=${mediaType}`)
+      downloadUazapiMedia(channel.instanceToken, msg.messageid)
+        .then(async ({ fileURL }) => {
+          console.log(`[UAZAPI WEBHOOK] download result | messageId=${savedMessage.id} | fileURL=${!!fileURL} | url=${fileURL?.slice(0, 80)}`)
+          if (!fileURL) return
+          await db.message.update({ where: { id: savedMessage.id }, data: { mediaUrl: fileURL } })
+          await pusherServer.trigger(
+            `conversation-${savedMessage.conversationId}`,
+            'message-updated',
+            { messageId: savedMessage.id, mediaUrl: fileURL }
+          )
+          console.log(`[UAZAPI WEBHOOK] media URL saved | messageId=${savedMessage.id}`)
+        })
+        .catch(err => console.error('[UAZAPI WEBHOOK] inline media download error:', err))
     }
 
     // Trigger AI agent asynchronously — only for text/mixed-media inbound messages
