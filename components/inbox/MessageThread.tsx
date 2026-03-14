@@ -203,6 +203,7 @@ export function MessageThread({ conversationId, contactName, isGroup }: MessageT
                         mediaName={msg.mediaName ?? null}
                         mediaMime={msg.mediaMime ?? null}
                         caption={msg.content || undefined}
+                        messageId={msg.id}
                       />
                     ) : (
                       msg.content

@@ -9,9 +9,10 @@ interface MediaMessageProps {
   mediaName: string | null
   mediaMime: string | null
   caption?: string
+  messageId?: string
 }
 
-export function MediaMessage({ mediaType, mediaUrl, mediaName, mediaMime, caption }: MediaMessageProps) {
+export function MediaMessage({ mediaType, mediaUrl, mediaName, mediaMime, caption, messageId }: MediaMessageProps) {
   const [lightbox, setLightbox] = useState(false)
 
   if (mediaType === 'image') {
@@ -97,9 +98,9 @@ export function MediaMessage({ mediaType, mediaUrl, mediaName, mediaMime, captio
             <p className="text-[10px] opacity-50 uppercase">{mediaMime.split('/')[1] ?? mediaMime}</p>
           )}
         </div>
-        {mediaUrl && (
+        {messageId && (
           <a
-            href={mediaUrl}
+            href={`/api/messages/${messageId}/download`}
             target="_blank"
             rel="noopener noreferrer"
             onClick={e => e.stopPropagation()}
