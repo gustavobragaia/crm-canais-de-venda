@@ -20,13 +20,20 @@ type KirvanoEvent =
 
 interface KirvanoPayload {
   event: KirvanoEvent
-  sale?: { id: string; status: string }
-  subscription?: { id: string; next_billing_date?: string }
+  sale_id?: string          // root-level sale ID
+  status?: string
+  type?: string
+  plan?: {                  // billing plan info
+    name?: string
+    charge_number?: number
+    charge_frequency?: string
+    next_charge_date?: string
+  }
   customer?: { email: string; name: string }
-  product?: { name?: string; offer_name?: string }
+  products?: Array<{ name?: string; offer_name?: string }>
   utm?: {
     utm_content?: string   // workspaceId
-    utm_source?: string    // plan slug (e.g. "starter")
+    utm_source?: string    // plan slug (e.g. "growth")
     utm_medium?: string
     utm_campaign?: string
   }
@@ -63,11 +70,11 @@ export async function POST(req: NextRequest) {
 
   switch (payload.event) {
     case 'SALE_APPROVED': {
-      const nextBilling = payload.subscription?.next_billing_date
-        ? new Date(payload.subscription.next_billing_date)
+      const nextBilling = payload.plan?.next_charge_date
+        ? new Date(payload.plan.next_charge_date)
         : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
 
-      await activatePlan(workspaceId, planSlug, payload.subscription?.id, nextBilling)
+      await activatePlan(workspaceId, planSlug, payload.sale_id, nextBilling)
       console.info(`[Kirvano] Plan activated: ${planSlug} for workspace ${workspaceId}`)
       break
     }
