@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { pusherServer } from '@/lib/pusher'
+import { persistMedia } from '@/lib/media'
 
 const BASE_URL = process.env.UAZAPI_BASE_URL?.replace(/\/$/, '') ?? ''
 
@@ -70,9 +71,12 @@ export async function POST(req: NextRequest) {
     const data = JSON.parse(rawText) as { transcription?: string; fileURL?: string }
     const transcription = data.transcription ?? null
 
-    // Persist fileURL (always) and transcription (if available)
+    // Persist to Vercel Blob for permanent URL, then save
     const updateData: Record<string, string | null> = {}
-    if (data.fileURL) updateData.mediaUrl = data.fileURL
+    if (data.fileURL) {
+      const permanentUrl = await persistMedia(data.fileURL, messageId, 'audio/mpeg')
+      updateData.mediaUrl = permanentUrl ?? data.fileURL
+    }
     if (transcription) updateData.transcription = transcription
 
     console.log('[TRANSCRIPTION] updateData:', JSON.stringify(updateData))
@@ -92,7 +96,7 @@ export async function POST(req: NextRequest) {
     await pusherServer.trigger(
       `conversation-${updatedMessage.conversationId}`,
       'message-updated',
-      { messageId: updatedMessage.id, transcription, mediaUrl: data.fileURL }
+      { messageId: updatedMessage.id, transcription, mediaUrl: updateData.mediaUrl }
     )
 
     console.log('[TRANSCRIPTION] completed for message:', messageId, '| transcription chars:', transcription?.length ?? 0, '| fileURL:', !!data.fileURL)

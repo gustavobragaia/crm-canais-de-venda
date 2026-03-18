@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { downloadUazapiMedia } from '@/lib/integrations/uazapi'
+import { persistMedia } from '@/lib/media'
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth()
@@ -31,11 +32,14 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
     return NextResponse.json({ error: 'Cannot resolve media' }, { status: 400 })
   }
 
-  const { fileURL } = await downloadUazapiMedia(instanceToken, message.externalId)
+  const { fileURL, mimetype } = await downloadUazapiMedia(instanceToken, message.externalId)
   if (!fileURL) return NextResponse.json({ error: 'Media not available' }, { status: 404 })
 
-  // Cache for next time
-  await db.message.update({ where: { id }, data: { mediaUrl: fileURL } })
+  // Persist to Vercel Blob for permanent URL
+  const permanentUrl = await persistMedia(fileURL, id, mimetype)
+  const finalUrl = permanentUrl ?? fileURL
 
-  return NextResponse.redirect(fileURL)
+  await db.message.update({ where: { id }, data: { mediaUrl: finalUrl } })
+
+  return NextResponse.redirect(finalUrl)
 }

@@ -3,6 +3,7 @@ import { type UazapiWebhookPayload, type UazapiWebhookMessagePayload, type Uazap
 import { db } from '@/lib/db'
 import { pusherServer } from '@/lib/pusher'
 import { canCreateConversation, incrementConversationCount } from '@/lib/billing/conversationGate'
+import { persistMedia } from '@/lib/media'
 
 export async function GET() {
   return NextResponse.json({ status: 'OK' })
@@ -199,22 +200,25 @@ async function processMessage(
         .catch(err => console.error('[UAZAPI WEBHOOK] transcription trigger error:', err))
     }
 
-    // Image/video/document: download media URL inline (avoids unreliable internal HTTP call)
+    // Image/video/document: download from UazAPI and persist to Vercel Blob for permanent storage
     if ((mediaType === 'image' || mediaType === 'video' || mediaType === 'document') && msg.messageid && channel.instanceToken) {
-      console.log(`[UAZAPI WEBHOOK] downloading media inline | messageId=${savedMessage.id} | mediaType=${mediaType}`)
+      console.log(`[UAZAPI WEBHOOK] downloading media | messageId=${savedMessage.id} | mediaType=${mediaType}`)
       downloadUazapiMedia(channel.instanceToken, msg.messageid)
-        .then(async ({ fileURL }) => {
+        .then(async ({ fileURL, mimetype }) => {
           console.log(`[UAZAPI WEBHOOK] download result | messageId=${savedMessage.id} | fileURL=${!!fileURL} | url=${fileURL?.slice(0, 80)}`)
           if (!fileURL) return
-          await db.message.update({ where: { id: savedMessage.id }, data: { mediaUrl: fileURL } })
+          // Persist to Vercel Blob for permanent URL
+          const permanentUrl = await persistMedia(fileURL, savedMessage.id, mimetype ?? mediaMime)
+          const finalUrl = permanentUrl ?? fileURL
+          await db.message.update({ where: { id: savedMessage.id }, data: { mediaUrl: finalUrl } })
           await pusherServer.trigger(
             `conversation-${savedMessage.conversationId}`,
             'message-updated',
-            { messageId: savedMessage.id, mediaUrl: fileURL }
+            { messageId: savedMessage.id, mediaUrl: finalUrl }
           )
-          console.log(`[UAZAPI WEBHOOK] media URL saved | messageId=${savedMessage.id}`)
+          console.log(`[UAZAPI WEBHOOK] media persisted | messageId=${savedMessage.id} | blob=${!!permanentUrl}`)
         })
-        .catch(err => console.error('[UAZAPI WEBHOOK] inline media download error:', err))
+        .catch(err => console.error('[UAZAPI WEBHOOK] media download/persist error:', err))
     }
 
   }
