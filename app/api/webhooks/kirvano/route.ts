@@ -80,8 +80,8 @@ export async function POST(req: NextRequest) {
     }
 
     case 'SUBSCRIPTION_RENEWED': {
-      const nextBilling = payload.subscription?.next_billing_date
-        ? new Date(payload.subscription.next_billing_date)
+      const nextBilling = payload.plan?.next_charge_date
+        ? new Date(payload.plan.next_charge_date)
         : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
 
       await db.workspace.update({
