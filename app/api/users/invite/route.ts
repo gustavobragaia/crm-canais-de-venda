@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import { hash } from 'bcryptjs'
 import { db } from '@/lib/db'
 import { randomBytes } from 'crypto'
+import { sendEmail } from '@/lib/email/resend'
+import { userInviteEmail } from '@/lib/email/templates/user-invite'
+import { checkUserLimit } from '@/lib/billing/subscriptionService'
+import { getNextPlan } from '@/lib/billing/planService'
 
 function generateTempPassword(): string {
   return randomBytes(8).toString('hex')
@@ -18,6 +22,23 @@ export async function POST(req: NextRequest) {
     const workspace = await db.workspace.findUnique({ where: { slug: workspaceSlug } })
     if (!workspace) {
       return NextResponse.json({ error: 'Workspace não encontrado.' }, { status: 404 })
+    }
+
+    // Check user limit before adding any members
+    const { allowed, activeUsers, maxUsers, plan } = await checkUserLimit(workspace.id)
+    const remainingSlots = maxUsers - activeUsers
+    if (!allowed || members.length > remainingSlots) {
+      return NextResponse.json(
+        {
+          error: `Seu plano ${plan} permite até ${maxUsers} usuário(s). Você tem ${activeUsers} ativo(s). Faça upgrade para continuar.`,
+          code: 'USER_LIMIT_REACHED',
+          activeUsers,
+          maxUsers,
+          plan,
+          nextPlan: getNextPlan(plan),
+        },
+        { status: 403 },
+      )
     }
 
     const results = []
@@ -39,6 +60,21 @@ export async function POST(req: NextRequest) {
           },
         })
         results.push({ id: user.id, email: user.email, tempPassword })
+
+        // Send invite email (fire-and-forget)
+        const baseUrl = process.env.NEXTAUTH_URL?.replace(/\/$/, '') ?? ''
+        sendEmail({
+          to: member.email,
+          subject: 'Você foi convidado para a ClosioCRM',
+          html: userInviteEmail({
+            userName: member.name,
+            userEmail: member.email,
+            tempPassword,
+            workspaceName: workspace.name,
+            workspaceSlug: workspace.slug,
+            loginUrl: `${baseUrl}/login?workspace=${workspace.slug}`,
+          }),
+        }).catch(err => console.error('[INVITE] email error:', err))
       } catch {
         // Skip duplicates
       }

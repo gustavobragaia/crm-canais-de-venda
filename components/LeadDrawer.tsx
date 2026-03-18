@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { X, Tag, FileText, MessageSquare, Phone, Mail, Bot, Loader2, Sparkles, UserCheck, ArrowRight, Circle, Activity, GitBranch } from 'lucide-react'
+import { X, Tag, FileText, MessageSquare, Phone, Mail, UserCheck, ArrowRight, Circle, Activity, GitBranch } from 'lucide-react'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { TagSelector } from '@/components/ui/TagSelector'
@@ -23,8 +23,6 @@ interface ConversationDetail {
   status: string
   pipelineStage: string | null
   conversationTags: Array<{ tag: TagItem }>
-  aiEnabled: boolean
-  aiMessageCount: number
   assignedTo: { id: string; name: string } | null
   channel: { type: string; name: string } | null
 }
@@ -35,7 +33,6 @@ interface Message {
   content: string
   createdAt: string
   isSystem: boolean
-  aiGenerated?: boolean
 }
 
 interface Stage {
@@ -84,35 +81,11 @@ interface LeadDrawerProps {
   onClose: () => void
 }
 
-function Toggle({ enabled, onToggle, disabled }: { enabled: boolean; onToggle: () => void; disabled?: boolean }) {
-  return (
-    <button
-      type="button"
-      onClick={onToggle}
-      disabled={disabled}
-      className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-1 disabled:opacity-50 ${
-        enabled ? 'bg-violet-500' : 'bg-gray-300'
-      }`}
-    >
-      <span
-        className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform duration-200 ${
-          enabled ? 'translate-x-[18px]' : 'translate-x-[3px]'
-        }`}
-      />
-    </button>
-  )
-}
-
 export function LeadDrawer({ conversationId, onClose }: LeadDrawerProps) {
   const [conversation, setConversation] = useState<ConversationDetail | null>(null)
   const [messages, setMessages] = useState<Message[]>([])
   const [stages, setStages] = useState<Stage[]>([])
   const [loading, setLoading] = useState(false)
-
-  const [aiEnabled, setAiEnabled] = useState(true)
-  const [aiToggling, setAiToggling] = useState(false)
-  const [summary, setSummary] = useState<string | null>(null)
-  const [summaryLoading, setSummaryLoading] = useState(false)
 
   const [activities, setActivities] = useState<Array<{ id: string; type: string; description: string; createdAt: string; user?: { name: string } | null }>>([])
 
@@ -122,7 +95,6 @@ export function LeadDrawer({ conversationId, onClose }: LeadDrawerProps) {
     setLoading(true)
     setConversation(null)
     setMessages([])
-    setSummary(null)
     setActivities([])
 
     Promise.all([
@@ -132,7 +104,6 @@ export function LeadDrawer({ conversationId, onClose }: LeadDrawerProps) {
       fetch(`/api/conversations/${conversationId}/activities`).then(r => r.json()),
     ]).then(([conv, msgs, stagesData, acts]) => {
       setConversation(conv)
-      setAiEnabled(conv.aiEnabled ?? true)
       setMessages((msgs.messages ?? []).slice(-10))
       setStages(stagesData.stages ?? [])
       setActivities(Array.isArray(acts) ? acts : [])
@@ -165,45 +136,11 @@ export function LeadDrawer({ conversationId, onClose }: LeadDrawerProps) {
     }
   }
 
-  async function toggleAi() {
-    if (!conversationId || aiToggling) return
-    setAiToggling(true)
-    const newValue = !aiEnabled
-    setAiEnabled(newValue)
-    try {
-      await fetch(`/api/conversations/${conversationId}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ aiEnabled: newValue }),
-      })
-    } catch {
-      setAiEnabled(!newValue)
-    } finally {
-      setAiToggling(false)
-    }
-  }
-
-  async function generateSummary() {
-    if (!conversationId || summaryLoading) return
-    setSummaryLoading(true)
-    setSummary(null)
-    try {
-      const res = await fetch(`/api/ai/summary/${conversationId}`, { method: 'POST' })
-      const data = await res.json()
-      setSummary(data.summary ?? 'Não foi possível gerar o resumo.')
-    } catch {
-      setSummary('Erro ao gerar resumo. Tente novamente.')
-    } finally {
-      setSummaryLoading(false)
-    }
-  }
-
   if (!conversationId) return null
 
   const initials = conversation?.contactName ? getInitials(conversation.contactName) : '?'
   const avatarBg = conversation?.contactName ? getAvatarColor(conversation.contactName) : '#3B82F6'
   const initialTags = conversation?.conversationTags?.map(ct => ct.tag) ?? []
-  const isQualified = initialTags.some(t => t.name === 'QUALIFICADO')
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
@@ -282,7 +219,7 @@ export function LeadDrawer({ conversationId, onClose }: LeadDrawerProps) {
                     if (!v) return
                     patchConversation({ pipelineStage: v })
                   }}
-                  className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-300 bg-white"
+                  className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 bg-white"
                 >
                   <option value="" disabled>Selecione uma etapa</option>
                   {stages.map(s => <option key={s.id} value={s.name}>{s.name}</option>)}
@@ -313,54 +250,6 @@ export function LeadDrawer({ conversationId, onClose }: LeadDrawerProps) {
               />
             </div>
 
-            {/* AI Agent */}
-            <div className="px-5 py-4">
-              <div className="rounded-xl border border-violet-200 bg-violet-50/50 p-4 space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Bot size={14} className="text-violet-500" />
-                    <span className="text-xs font-medium text-gray-700">Agente de IA</span>
-                    {conversation.aiMessageCount > 0 && (
-                      <span className="text-[10px] bg-violet-100 text-violet-600 rounded px-1.5 py-0.5">
-                        {conversation.aiMessageCount} msgs
-                      </span>
-                    )}
-                  </div>
-                  <Toggle enabled={aiEnabled} onToggle={toggleAi} disabled={aiToggling} />
-                </div>
-
-                {isQualified && (
-                  <div className="flex items-center gap-1.5 text-xs text-violet-700 bg-violet-100 rounded-lg px-2.5 py-1.5">
-                    <Sparkles size={11} />
-                    Lead qualificado pela IA
-                  </div>
-                )}
-
-                <button
-                  onClick={generateSummary}
-                  disabled={summaryLoading}
-                  className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg border border-violet-200 bg-white hover:bg-violet-50 text-violet-700 text-xs font-medium transition-colors disabled:opacity-60"
-                >
-                  {summaryLoading ? (
-                    <><Loader2 size={12} className="animate-spin" /> Gerando resumo...</>
-                  ) : (
-                    <><Sparkles size={12} /> Gerar resumo da conversa</>
-                  )}
-                </button>
-
-                {summary && (
-                  <div className="bg-white border border-violet-200 rounded-lg p-3">
-                    <p className="text-xs font-medium text-violet-700 mb-2 flex items-center gap-1">
-                      <Bot size={11} /> Resumo da IA
-                    </p>
-                    <div className="text-xs text-gray-700 whitespace-pre-line leading-relaxed">
-                      {summary}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
             {/* Notes */}
             <div className="px-5 py-4">
               <div className="flex items-center gap-2 mb-3">
@@ -382,9 +271,6 @@ export function LeadDrawer({ conversationId, onClose }: LeadDrawerProps) {
                     const iconMap: Record<string, { icon: React.ReactNode; color: string }> = {
                       ASSIGNED: { icon: <UserCheck size={11} />, color: 'text-blue-500 bg-blue-50' },
                       UNASSIGNED: { icon: <UserCheck size={11} />, color: 'text-gray-400 bg-gray-100' },
-                      AI_ON: { icon: <Bot size={11} />, color: 'text-violet-500 bg-violet-50' },
-                      AI_OFF: { icon: <Bot size={11} />, color: 'text-gray-400 bg-gray-100' },
-                      AI_QUALIFIED: { icon: <Sparkles size={11} />, color: 'text-green-500 bg-green-50' },
                       TAG_ADDED: { icon: <Tag size={11} />, color: 'text-amber-500 bg-amber-50' },
                       TAG_REMOVED: { icon: <Tag size={11} />, color: 'text-gray-400 bg-gray-100' },
                       STAGE_CHANGED: { icon: <ArrowRight size={11} />, color: 'text-gray-500 bg-gray-100' },
@@ -423,15 +309,10 @@ export function LeadDrawer({ conversationId, onClose }: LeadDrawerProps) {
                     return (
                       <div key={msg.id} className={`flex ${isOutbound ? 'justify-end' : 'justify-start'}`}>
                         <div className={`max-w-[80%] px-3 py-1.5 rounded-xl text-xs ${
-                          isOutbound
-                            ? msg.aiGenerated
-                              ? 'bg-violet-50 text-violet-900 border border-dashed border-violet-300'
-                              : 'bg-blue-500 text-white'
-                            : 'bg-gray-100 text-gray-800'
+                          isOutbound ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-800'
                         }`}>
                           <p className="break-words">{msg.content}</p>
-                          <p className={`text-[10px] mt-0.5 ${isOutbound && !msg.aiGenerated ? 'text-blue-200' : 'text-gray-400'}`}>
-                            {msg.aiGenerated && <span className="mr-1">IA ·</span>}
+                          <p className={`text-[10px] mt-0.5 ${isOutbound ? 'text-blue-200' : 'text-gray-400'}`}>
                             {format(new Date(msg.createdAt), 'dd/MM HH:mm', { locale: ptBR })}
                           </p>
                         </div>

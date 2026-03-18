@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
+import { activatePlan, cancelPlan } from '@/lib/billing/subscriptionService'
 
 // Kirvano webhook event types
 type KirvanoEvent =
@@ -19,21 +20,13 @@ type KirvanoEvent =
 
 interface KirvanoPayload {
   event: KirvanoEvent
-  sale?: {
-    id: string
-    status: string
-  }
-  subscription?: {
-    id: string
-    next_billing_date?: string
-  }
-  customer?: {
-    email: string
-    name: string
-  }
+  sale?: { id: string; status: string }
+  subscription?: { id: string; next_billing_date?: string }
+  customer?: { email: string; name: string }
+  product?: { name?: string; offer_name?: string }
   utm?: {
-    utm_content?: string
-    utm_source?: string
+    utm_content?: string   // workspaceId
+    utm_source?: string    // plan slug (e.g. "starter")
     utm_medium?: string
     utm_campaign?: string
   }
@@ -55,9 +48,10 @@ export async function POST(req: NextRequest) {
 
   // Identify workspace via utm_content (workspaceId passed on checkout URL)
   const workspaceId = payload.utm?.utm_content
+  // Identify plan via utm_source (plan slug passed on checkout URL)
+  const planSlug = payload.utm?.utm_source ?? 'starter'
 
   if (!workspaceId) {
-    // Log and return OK to avoid Kirvano retries for events without workspace context
     console.warn('[Kirvano] Webhook received without utm_content (workspaceId):', payload.event)
     return NextResponse.json({ received: true })
   }
@@ -71,15 +65,25 @@ export async function POST(req: NextRequest) {
     case 'SALE_APPROVED': {
       const nextBilling = payload.subscription?.next_billing_date
         ? new Date(payload.subscription.next_billing_date)
-        : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // fallback: +30 days
+        : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+
+      await activatePlan(workspaceId, planSlug, payload.subscription?.id, nextBilling)
+      console.info(`[Kirvano] Plan activated: ${planSlug} for workspace ${workspaceId}`)
+      break
+    }
+
+    case 'SUBSCRIPTION_RENEWED': {
+      const nextBilling = payload.subscription?.next_billing_date
+        ? new Date(payload.subscription.next_billing_date)
+        : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
 
       await db.workspace.update({
         where: { id: workspaceId },
-        data: {
-          subscriptionStatus: 'ACTIVE',
-          kirvanoSubscriptionId: payload.subscription?.id ?? null,
-          currentPeriodEnd: nextBilling,
-        },
+        data: { subscriptionStatus: 'ACTIVE', currentPeriodEnd: nextBilling },
+      })
+      await db.subscription.updateMany({
+        where: { workspaceId, status: 'ACTIVE' },
+        data: { currentPeriodEnd: nextBilling },
       })
       break
     }
@@ -96,36 +100,18 @@ export async function POST(req: NextRequest) {
     case 'SALE_CHARGEBACK':
     case 'REFUND':
     case 'SUBSCRIPTION_CANCELED': {
-      await db.workspace.update({
-        where: { id: workspaceId },
-        data: { subscriptionStatus: 'CANCELED' },
-      })
+      await cancelPlan(workspaceId)
       break
     }
 
-    case 'SUBSCRIPTION_RENEWED': {
-      const nextBilling = payload.subscription?.next_billing_date
-        ? new Date(payload.subscription.next_billing_date)
-        : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-
-      await db.workspace.update({
-        where: { id: workspaceId },
-        data: {
-          subscriptionStatus: 'ACTIVE',
-          currentPeriodEnd: nextBilling,
-        },
-      })
-      break
-    }
-
-    // Informational events — log only, no status change
+    // Informational events — log only
     case 'BANK_SLIP_GENERATED':
     case 'BANK_SLIP_EXPIRED':
     case 'PIX_GENERATED':
     case 'PIX_EXPIRED':
     case 'PICPAY_GENERATED':
     case 'PICPAY_EXPIRED':
-      console.info(`[Kirvano] Informational event received: ${payload.event} for workspace ${workspaceId}`)
+      console.info(`[Kirvano] Informational event: ${payload.event} for workspace ${workspaceId}`)
       break
   }
 

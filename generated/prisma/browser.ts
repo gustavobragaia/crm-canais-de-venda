@@ -33,11 +33,6 @@ export type User = Prisma.UserModel
  */
 export type Channel = Prisma.ChannelModel
 /**
- * Model AgentConfig
- * 
- */
-export type AgentConfig = Prisma.AgentConfigModel
-/**
  * Model Conversation
  * 
  */
@@ -103,7 +98,7 @@ export type MessageTemplate = Prisma.MessageTemplateModel
  */
 export type ConversationActivity = Prisma.ConversationActivityModel
 /**
- * Model Automation
+ * Model Subscription
  * 
  */
-export type Automation = Prisma.AutomationModel
+export type Subscription = Prisma.SubscriptionModel

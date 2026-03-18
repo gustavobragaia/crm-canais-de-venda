@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useSession } from 'next-auth/react'
-import { Search, Filter } from 'lucide-react'
+import { Search, Filter, AlertTriangle } from 'lucide-react'
+import Link from 'next/link'
 import { ConversationList } from '@/components/inbox/ConversationList'
 import { MessageThread } from '@/components/inbox/MessageThread'
 import { LeadDetails } from '@/components/inbox/LeadDetails'
@@ -27,7 +28,12 @@ interface Conversation {
   status: string
   channel: { type: 'WHATSAPP' | 'INSTAGRAM' | 'FACEBOOK' }
   assignedTo: { name: string } | null
-  aiEnabled: boolean
+}
+
+interface BillingData {
+  subscriptionStatus: string
+  conversationsThisMonth: number
+  maxConversationsPerMonth: number
 }
 
 export default function InboxPage() {
@@ -38,8 +44,10 @@ export default function InboxPage() {
   const [filter, setFilter] = useState<FilterStatus>('all')
   const [search, setSearch] = useState('')
   const [assignedToMe, setAssignedToMe] = useState(false)
+  const [billing, setBilling] = useState<BillingData | null>(null)
 
   const workspaceId = session?.user.workspaceId
+  const workspaceSlug = session?.user.workspaceSlug ?? ''
 
   const fetchConversations = useCallback(async () => {
     const params = new URLSearchParams()
@@ -55,6 +63,14 @@ export default function InboxPage() {
   useEffect(() => {
     fetchConversations()
   }, [fetchConversations])
+
+  useEffect(() => {
+    if (!session) return
+    fetch('/api/billing')
+      .then(r => r.json())
+      .then((data: BillingData) => setBilling(data))
+      .catch(() => null)
+  }, [session])
 
   // Real-time updates via Pusher (workspace-level events)
   usePusherChannel(`workspace-${workspaceId}`, {
@@ -143,6 +159,25 @@ export default function InboxPage() {
             ))}
           </div>
         </div>
+
+        {billing?.subscriptionStatus === 'TRIAL' &&
+          billing.conversationsThisMonth >= billing.maxConversationsPerMonth && (
+          <div className="mx-2 my-2 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2.5 flex items-start gap-2">
+            <AlertTriangle size={14} className="text-amber-500 mt-0.5 flex-shrink-0" />
+            <div className="min-w-0">
+              <p className="text-xs font-semibold text-amber-800">Limite de conversas atingido</p>
+              <p className="text-xs text-amber-700 mt-0.5">
+                Novas conversas estão bloqueadas.{' '}
+                <Link
+                  href={`/${workspaceSlug}/settings?tab=billing`}
+                  className="underline font-medium hover:text-amber-900"
+                >
+                  Fazer upgrade →
+                </Link>
+              </p>
+            </div>
+          </div>
+        )}
 
         <ConversationList
           conversations={filteredConversations as Parameters<typeof ConversationList>[0]['conversations']}

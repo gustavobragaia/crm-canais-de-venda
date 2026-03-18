@@ -54,7 +54,6 @@ export const ModelName = {
   Workspace: 'Workspace',
   User: 'User',
   Channel: 'Channel',
-  AgentConfig: 'AgentConfig',
   Conversation: 'Conversation',
   Tag: 'Tag',
   ConversationTag: 'ConversationTag',
@@ -68,7 +67,7 @@ export const ModelName = {
   Plan: 'Plan',
   MessageTemplate: 'MessageTemplate',
   ConversationActivity: 'ConversationActivity',
-  Automation: 'Automation'
+  Subscription: 'Subscription'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -93,11 +92,11 @@ export const WorkspaceScalarFieldEnum = {
   slug: 'slug',
   logoUrl: 'logoUrl',
   primaryColor: 'primaryColor',
-  secondaryColor: 'secondaryColor',
   subscriptionStatus: 'subscriptionStatus',
   kirvanoSubscriptionId: 'kirvanoSubscriptionId',
   currentPeriodEnd: 'currentPeriodEnd',
   trialEndsAt: 'trialEndsAt',
+  plan: 'plan',
   maxUsers: 'maxUsers',
   maxConversationsPerMonth: 'maxConversationsPerMonth',
   conversationsThisMonth: 'conversationsThisMonth',
@@ -150,29 +149,6 @@ export const ChannelScalarFieldEnum = {
 export type ChannelScalarFieldEnum = (typeof ChannelScalarFieldEnum)[keyof typeof ChannelScalarFieldEnum]
 
 
-export const AgentConfigScalarFieldEnum = {
-  id: 'id',
-  workspaceId: 'workspaceId',
-  name: 'name',
-  objective: 'objective',
-  tone: 'tone',
-  knowledgeAreas: 'knowledgeAreas',
-  isActive: 'isActive',
-  businessHoursStart: 'businessHoursStart',
-  businessHoursEnd: 'businessHoursEnd',
-  maxAiMessages: 'maxAiMessages',
-  offHoursMessage: 'offHoursMessage',
-  gender: 'gender',
-  personality: 'personality',
-  autoAssign: 'autoAssign',
-  handoffInstructions: 'handoffInstructions',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type AgentConfigScalarFieldEnum = (typeof AgentConfigScalarFieldEnum)[keyof typeof AgentConfigScalarFieldEnum]
-
-
 export const ConversationScalarFieldEnum = {
   id: 'id',
   workspaceId: 'workspaceId',
@@ -190,8 +166,6 @@ export const ConversationScalarFieldEnum = {
   lastMessageAt: 'lastMessageAt',
   lastMessagePreview: 'lastMessagePreview',
   unreadCount: 'unreadCount',
-  aiEnabled: 'aiEnabled',
-  aiMessageCount: 'aiMessageCount',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -261,7 +235,6 @@ export const MessageScalarFieldEnum = {
   status: 'status',
   isSystem: 'isSystem',
   senderName: 'senderName',
-  aiGenerated: 'aiGenerated',
   sentById: 'sentById',
   sentAt: 'sentAt',
   deliveredAt: 'deliveredAt',
@@ -387,19 +360,22 @@ export const ConversationActivityScalarFieldEnum = {
 export type ConversationActivityScalarFieldEnum = (typeof ConversationActivityScalarFieldEnum)[keyof typeof ConversationActivityScalarFieldEnum]
 
 
-export const AutomationScalarFieldEnum = {
+export const SubscriptionScalarFieldEnum = {
   id: 'id',
   workspaceId: 'workspaceId',
-  name: 'name',
-  isActive: 'isActive',
-  trigger: 'trigger',
-  conditions: 'conditions',
-  actions: 'actions',
+  provider: 'provider',
+  providerSubscriptionId: 'providerSubscriptionId',
+  plan: 'plan',
+  status: 'status',
+  currentPeriodEnd: 'currentPeriodEnd',
+  pendingPlan: 'pendingPlan',
+  pendingUserLimit: 'pendingUserLimit',
+  effectiveDate: 'effectiveDate',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
-export type AutomationScalarFieldEnum = (typeof AutomationScalarFieldEnum)[keyof typeof AutomationScalarFieldEnum]
+export type SubscriptionScalarFieldEnum = (typeof SubscriptionScalarFieldEnum)[keyof typeof SubscriptionScalarFieldEnum]
 
 
 export const SortOrder = {

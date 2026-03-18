@@ -387,7 +387,6 @@ export const ModelName = {
   Workspace: 'Workspace',
   User: 'User',
   Channel: 'Channel',
-  AgentConfig: 'AgentConfig',
   Conversation: 'Conversation',
   Tag: 'Tag',
   ConversationTag: 'ConversationTag',
@@ -401,7 +400,7 @@ export const ModelName = {
   Plan: 'Plan',
   MessageTemplate: 'MessageTemplate',
   ConversationActivity: 'ConversationActivity',
-  Automation: 'Automation'
+  Subscription: 'Subscription'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -417,7 +416,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "workspace" | "user" | "channel" | "agentConfig" | "conversation" | "tag" | "conversationTag" | "note" | "stageHistory" | "message" | "pipelineStage" | "lead" | "analyticsDaily" | "webhookLog" | "plan" | "messageTemplate" | "conversationActivity" | "automation"
+    modelProps: "workspace" | "user" | "channel" | "conversation" | "tag" | "conversationTag" | "note" | "stageHistory" | "message" | "pipelineStage" | "lead" | "analyticsDaily" | "webhookLog" | "plan" | "messageTemplate" | "conversationActivity" | "subscription"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -640,80 +639,6 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.ChannelCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.ChannelCountAggregateOutputType> | number
-        }
-      }
-    }
-    AgentConfig: {
-      payload: Prisma.$AgentConfigPayload<ExtArgs>
-      fields: Prisma.AgentConfigFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.AgentConfigFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AgentConfigPayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.AgentConfigFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AgentConfigPayload>
-        }
-        findFirst: {
-          args: Prisma.AgentConfigFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AgentConfigPayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.AgentConfigFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AgentConfigPayload>
-        }
-        findMany: {
-          args: Prisma.AgentConfigFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AgentConfigPayload>[]
-        }
-        create: {
-          args: Prisma.AgentConfigCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AgentConfigPayload>
-        }
-        createMany: {
-          args: Prisma.AgentConfigCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.AgentConfigCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AgentConfigPayload>[]
-        }
-        delete: {
-          args: Prisma.AgentConfigDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AgentConfigPayload>
-        }
-        update: {
-          args: Prisma.AgentConfigUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AgentConfigPayload>
-        }
-        deleteMany: {
-          args: Prisma.AgentConfigDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.AgentConfigUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.AgentConfigUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AgentConfigPayload>[]
-        }
-        upsert: {
-          args: Prisma.AgentConfigUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AgentConfigPayload>
-        }
-        aggregate: {
-          args: Prisma.AgentConfigAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateAgentConfig>
-        }
-        groupBy: {
-          args: Prisma.AgentConfigGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AgentConfigGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.AgentConfigCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AgentConfigCountAggregateOutputType> | number
         }
       }
     }
@@ -1679,77 +1604,77 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    Automation: {
-      payload: Prisma.$AutomationPayload<ExtArgs>
-      fields: Prisma.AutomationFieldRefs
+    Subscription: {
+      payload: Prisma.$SubscriptionPayload<ExtArgs>
+      fields: Prisma.SubscriptionFieldRefs
       operations: {
         findUnique: {
-          args: Prisma.AutomationFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AutomationPayload> | null
+          args: Prisma.SubscriptionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload> | null
         }
         findUniqueOrThrow: {
-          args: Prisma.AutomationFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AutomationPayload>
+          args: Prisma.SubscriptionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>
         }
         findFirst: {
-          args: Prisma.AutomationFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AutomationPayload> | null
+          args: Prisma.SubscriptionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload> | null
         }
         findFirstOrThrow: {
-          args: Prisma.AutomationFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AutomationPayload>
+          args: Prisma.SubscriptionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>
         }
         findMany: {
-          args: Prisma.AutomationFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AutomationPayload>[]
+          args: Prisma.SubscriptionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>[]
         }
         create: {
-          args: Prisma.AutomationCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AutomationPayload>
+          args: Prisma.SubscriptionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>
         }
         createMany: {
-          args: Prisma.AutomationCreateManyArgs<ExtArgs>
+          args: Prisma.SubscriptionCreateManyArgs<ExtArgs>
           result: BatchPayload
         }
         createManyAndReturn: {
-          args: Prisma.AutomationCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AutomationPayload>[]
+          args: Prisma.SubscriptionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>[]
         }
         delete: {
-          args: Prisma.AutomationDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AutomationPayload>
+          args: Prisma.SubscriptionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>
         }
         update: {
-          args: Prisma.AutomationUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AutomationPayload>
+          args: Prisma.SubscriptionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>
         }
         deleteMany: {
-          args: Prisma.AutomationDeleteManyArgs<ExtArgs>
+          args: Prisma.SubscriptionDeleteManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateMany: {
-          args: Prisma.AutomationUpdateManyArgs<ExtArgs>
+          args: Prisma.SubscriptionUpdateManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateManyAndReturn: {
-          args: Prisma.AutomationUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AutomationPayload>[]
+          args: Prisma.SubscriptionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>[]
         }
         upsert: {
-          args: Prisma.AutomationUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AutomationPayload>
+          args: Prisma.SubscriptionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>
         }
         aggregate: {
-          args: Prisma.AutomationAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateAutomation>
+          args: Prisma.SubscriptionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSubscription>
         }
         groupBy: {
-          args: Prisma.AutomationGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AutomationGroupByOutputType>[]
+          args: Prisma.SubscriptionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SubscriptionGroupByOutputType>[]
         }
         count: {
-          args: Prisma.AutomationCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AutomationCountAggregateOutputType> | number
+          args: Prisma.SubscriptionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SubscriptionCountAggregateOutputType> | number
         }
       }
     }
@@ -1798,11 +1723,11 @@ export const WorkspaceScalarFieldEnum = {
   slug: 'slug',
   logoUrl: 'logoUrl',
   primaryColor: 'primaryColor',
-  secondaryColor: 'secondaryColor',
   subscriptionStatus: 'subscriptionStatus',
   kirvanoSubscriptionId: 'kirvanoSubscriptionId',
   currentPeriodEnd: 'currentPeriodEnd',
   trialEndsAt: 'trialEndsAt',
+  plan: 'plan',
   maxUsers: 'maxUsers',
   maxConversationsPerMonth: 'maxConversationsPerMonth',
   conversationsThisMonth: 'conversationsThisMonth',
@@ -1855,29 +1780,6 @@ export const ChannelScalarFieldEnum = {
 export type ChannelScalarFieldEnum = (typeof ChannelScalarFieldEnum)[keyof typeof ChannelScalarFieldEnum]
 
 
-export const AgentConfigScalarFieldEnum = {
-  id: 'id',
-  workspaceId: 'workspaceId',
-  name: 'name',
-  objective: 'objective',
-  tone: 'tone',
-  knowledgeAreas: 'knowledgeAreas',
-  isActive: 'isActive',
-  businessHoursStart: 'businessHoursStart',
-  businessHoursEnd: 'businessHoursEnd',
-  maxAiMessages: 'maxAiMessages',
-  offHoursMessage: 'offHoursMessage',
-  gender: 'gender',
-  personality: 'personality',
-  autoAssign: 'autoAssign',
-  handoffInstructions: 'handoffInstructions',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type AgentConfigScalarFieldEnum = (typeof AgentConfigScalarFieldEnum)[keyof typeof AgentConfigScalarFieldEnum]
-
-
 export const ConversationScalarFieldEnum = {
   id: 'id',
   workspaceId: 'workspaceId',
@@ -1895,8 +1797,6 @@ export const ConversationScalarFieldEnum = {
   lastMessageAt: 'lastMessageAt',
   lastMessagePreview: 'lastMessagePreview',
   unreadCount: 'unreadCount',
-  aiEnabled: 'aiEnabled',
-  aiMessageCount: 'aiMessageCount',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1966,7 +1866,6 @@ export const MessageScalarFieldEnum = {
   status: 'status',
   isSystem: 'isSystem',
   senderName: 'senderName',
-  aiGenerated: 'aiGenerated',
   sentById: 'sentById',
   sentAt: 'sentAt',
   deliveredAt: 'deliveredAt',
@@ -2092,19 +1991,22 @@ export const ConversationActivityScalarFieldEnum = {
 export type ConversationActivityScalarFieldEnum = (typeof ConversationActivityScalarFieldEnum)[keyof typeof ConversationActivityScalarFieldEnum]
 
 
-export const AutomationScalarFieldEnum = {
+export const SubscriptionScalarFieldEnum = {
   id: 'id',
   workspaceId: 'workspaceId',
-  name: 'name',
-  isActive: 'isActive',
-  trigger: 'trigger',
-  conditions: 'conditions',
-  actions: 'actions',
+  provider: 'provider',
+  providerSubscriptionId: 'providerSubscriptionId',
+  plan: 'plan',
+  status: 'status',
+  currentPeriodEnd: 'currentPeriodEnd',
+  pendingPlan: 'pendingPlan',
+  pendingUserLimit: 'pendingUserLimit',
+  effectiveDate: 'effectiveDate',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
-export type AutomationScalarFieldEnum = (typeof AutomationScalarFieldEnum)[keyof typeof AutomationScalarFieldEnum]
+export type SubscriptionScalarFieldEnum = (typeof SubscriptionScalarFieldEnum)[keyof typeof SubscriptionScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -2439,7 +2341,6 @@ export type GlobalOmitConfig = {
   workspace?: Prisma.WorkspaceOmit
   user?: Prisma.UserOmit
   channel?: Prisma.ChannelOmit
-  agentConfig?: Prisma.AgentConfigOmit
   conversation?: Prisma.ConversationOmit
   tag?: Prisma.TagOmit
   conversationTag?: Prisma.ConversationTagOmit
@@ -2453,7 +2354,7 @@ export type GlobalOmitConfig = {
   plan?: Prisma.PlanOmit
   messageTemplate?: Prisma.MessageTemplateOmit
   conversationActivity?: Prisma.ConversationActivityOmit
-  automation?: Prisma.AutomationOmit
+  subscription?: Prisma.SubscriptionOmit
 }
 
 /* Types for Logging */

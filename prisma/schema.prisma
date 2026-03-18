@@ -13,19 +13,18 @@ model Workspace {
   slug                     String             @unique
   logoUrl                  String?
   primaryColor             String             @default("#2b7fff")
-  secondaryColor           String             @default("#10B981")
   subscriptionStatus       SubscriptionStatus @default(TRIAL)
   kirvanoSubscriptionId    String?
   currentPeriodEnd         DateTime?
   trialEndsAt              DateTime?
-  maxUsers                 Int                @default(4)
-  maxConversationsPerMonth Int                @default(1000)
+  plan                     String             @default("trial")
+  maxUsers                 Int                @default(2)
+  maxConversationsPerMonth Int                @default(10)
   conversationsThisMonth   Int                @default(0)
   createdAt                DateTime           @default(now())
   updatedAt                DateTime           @updatedAt
-  agentConfig              AgentConfig?
   analyticsDaily           AnalyticsDaily[]
-  automations              Automation[]
+  subscriptions            Subscription[]
   channels                 Channel[]
   conversations            Conversation[]
   conversationActivities   ConversationActivity[]
@@ -99,28 +98,6 @@ model Channel {
   @@map("channels")
 }
 
-model AgentConfig {
-  id                  String    @id @default(cuid())
-  workspaceId         String    @unique
-  name                String    @default("Assistente")
-  objective           String    @default("")
-  tone                String    @default("humanizado")
-  knowledgeAreas      String    @default("")
-  isActive            Boolean   @default(false)
-  businessHoursStart  Int?
-  businessHoursEnd    Int?
-  maxAiMessages       Int       @default(20)
-  offHoursMessage     String    @default("Olá! No momento estamos fora do horário de atendimento. Retornaremos em breve.")
-  gender              String    @default("neutro")
-  personality         String    @default("")
-  autoAssign          Boolean   @default(false)
-  handoffInstructions String    @default("")
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
-  workspace           Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-
-  @@map("agent_configs")
-}
 
 model Conversation {
   id                 String             @id @default(uuid())
@@ -139,8 +116,6 @@ model Conversation {
   lastMessageAt      DateTime?
   lastMessagePreview String?
   unreadCount        Int                @default(0)
-  aiEnabled          Boolean            @default(false)
-  aiMessageCount     Int                @default(0)
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
   assignedBy         User?              @relation("AssignedByConversations", fields: [assignedById], references: [id])
@@ -236,7 +211,6 @@ model Message {
   status         MessageStatus    @default(SENT)
   isSystem       Boolean          @default(false)
   senderName     String?
-  aiGenerated    Boolean          @default(false)
   sentById       String?
   sentAt         DateTime         @default(now())
   deliveredAt    DateTime?
@@ -380,21 +354,6 @@ model ConversationActivity {
   @@map("conversation_activities")
 }
 
-model Automation {
-  id          String    @id @default(cuid())
-  workspaceId String
-  name        String
-  isActive    Boolean   @default(true)
-  trigger     String
-  conditions  Json      @default("{}")
-  actions     Json      @default("[]")
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-
-  @@index([workspaceId, isActive])
-  @@map("automations")
-}
 
 enum UserRole {
   ADMIN
@@ -438,4 +397,23 @@ enum SubscriptionStatus {
   ACTIVE
   CANCELED
   EXPIRED
+}
+
+model Subscription {
+  id                     String             @id @default(uuid())
+  workspaceId            String
+  provider               String             @default("kirvano")
+  providerSubscriptionId String?
+  plan                   String
+  status                 SubscriptionStatus
+  currentPeriodEnd       DateTime?
+  pendingPlan            String?
+  pendingUserLimit       Int?
+  effectiveDate          DateTime?
+  createdAt              DateTime           @default(now())
+  updatedAt              DateTime           @updatedAt
+  workspace              Workspace          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
+  @@map("subscriptions")
 }

@@ -20,7 +20,6 @@ interface Conversation {
   lastMessageAt: string | null
   pipelineStage: string | null
   assignedToId: string | null
-  aiEnabled: boolean
   contactPhotoUrl: string | null
   channel: { type: string }
 }

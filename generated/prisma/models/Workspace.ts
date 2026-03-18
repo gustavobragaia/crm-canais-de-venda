@@ -44,11 +44,11 @@ export type WorkspaceMinAggregateOutputType = {
   slug: string | null
   logoUrl: string | null
   primaryColor: string | null
-  secondaryColor: string | null
   subscriptionStatus: $Enums.SubscriptionStatus | null
   kirvanoSubscriptionId: string | null
   currentPeriodEnd: Date | null
   trialEndsAt: Date | null
+  plan: string | null
   maxUsers: number | null
   maxConversationsPerMonth: number | null
   conversationsThisMonth: number | null
@@ -62,11 +62,11 @@ export type WorkspaceMaxAggregateOutputType = {
   slug: string | null
   logoUrl: string | null
   primaryColor: string | null
-  secondaryColor: string | null
   subscriptionStatus: $Enums.SubscriptionStatus | null
   kirvanoSubscriptionId: string | null
   currentPeriodEnd: Date | null
   trialEndsAt: Date | null
+  plan: string | null
   maxUsers: number | null
   maxConversationsPerMonth: number | null
   conversationsThisMonth: number | null
@@ -80,11 +80,11 @@ export type WorkspaceCountAggregateOutputType = {
   slug: number
   logoUrl: number
   primaryColor: number
-  secondaryColor: number
   subscriptionStatus: number
   kirvanoSubscriptionId: number
   currentPeriodEnd: number
   trialEndsAt: number
+  plan: number
   maxUsers: number
   maxConversationsPerMonth: number
   conversationsThisMonth: number
@@ -112,11 +112,11 @@ export type WorkspaceMinAggregateInputType = {
   slug?: true
   logoUrl?: true
   primaryColor?: true
-  secondaryColor?: true
   subscriptionStatus?: true
   kirvanoSubscriptionId?: true
   currentPeriodEnd?: true
   trialEndsAt?: true
+  plan?: true
   maxUsers?: true
   maxConversationsPerMonth?: true
   conversationsThisMonth?: true
@@ -130,11 +130,11 @@ export type WorkspaceMaxAggregateInputType = {
   slug?: true
   logoUrl?: true
   primaryColor?: true
-  secondaryColor?: true
   subscriptionStatus?: true
   kirvanoSubscriptionId?: true
   currentPeriodEnd?: true
   trialEndsAt?: true
+  plan?: true
   maxUsers?: true
   maxConversationsPerMonth?: true
   conversationsThisMonth?: true
@@ -148,11 +148,11 @@ export type WorkspaceCountAggregateInputType = {
   slug?: true
   logoUrl?: true
   primaryColor?: true
-  secondaryColor?: true
   subscriptionStatus?: true
   kirvanoSubscriptionId?: true
   currentPeriodEnd?: true
   trialEndsAt?: true
+  plan?: true
   maxUsers?: true
   maxConversationsPerMonth?: true
   conversationsThisMonth?: true
@@ -253,11 +253,11 @@ export type WorkspaceGroupByOutputType = {
   slug: string
   logoUrl: string | null
   primaryColor: string
-  secondaryColor: string
   subscriptionStatus: $Enums.SubscriptionStatus
   kirvanoSubscriptionId: string | null
   currentPeriodEnd: Date | null
   trialEndsAt: Date | null
+  plan: string
   maxUsers: number
   maxConversationsPerMonth: number
   conversationsThisMonth: number
@@ -294,19 +294,18 @@ export type WorkspaceWhereInput = {
   slug?: Prisma.StringFilter<"Workspace"> | string
   logoUrl?: Prisma.StringNullableFilter<"Workspace"> | string | null
   primaryColor?: Prisma.StringFilter<"Workspace"> | string
-  secondaryColor?: Prisma.StringFilter<"Workspace"> | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFilter<"Workspace"> | $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: Prisma.StringNullableFilter<"Workspace"> | string | null
   currentPeriodEnd?: Prisma.DateTimeNullableFilter<"Workspace"> | Date | string | null
   trialEndsAt?: Prisma.DateTimeNullableFilter<"Workspace"> | Date | string | null
+  plan?: Prisma.StringFilter<"Workspace"> | string
   maxUsers?: Prisma.IntFilter<"Workspace"> | number
   maxConversationsPerMonth?: Prisma.IntFilter<"Workspace"> | number
   conversationsThisMonth?: Prisma.IntFilter<"Workspace"> | number
   createdAt?: Prisma.DateTimeFilter<"Workspace"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Workspace"> | Date | string
-  agentConfig?: Prisma.XOR<Prisma.AgentConfigNullableScalarRelationFilter, Prisma.AgentConfigWhereInput> | null
   analyticsDaily?: Prisma.AnalyticsDailyListRelationFilter
-  automations?: Prisma.AutomationListRelationFilter
+  subscriptions?: Prisma.SubscriptionListRelationFilter
   channels?: Prisma.ChannelListRelationFilter
   conversations?: Prisma.ConversationListRelationFilter
   conversationActivities?: Prisma.ConversationActivityListRelationFilter
@@ -327,19 +326,18 @@ export type WorkspaceOrderByWithRelationInput = {
   slug?: Prisma.SortOrder
   logoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   primaryColor?: Prisma.SortOrder
-  secondaryColor?: Prisma.SortOrder
   subscriptionStatus?: Prisma.SortOrder
   kirvanoSubscriptionId?: Prisma.SortOrderInput | Prisma.SortOrder
   currentPeriodEnd?: Prisma.SortOrderInput | Prisma.SortOrder
   trialEndsAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  plan?: Prisma.SortOrder
   maxUsers?: Prisma.SortOrder
   maxConversationsPerMonth?: Prisma.SortOrder
   conversationsThisMonth?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  agentConfig?: Prisma.AgentConfigOrderByWithRelationInput
   analyticsDaily?: Prisma.AnalyticsDailyOrderByRelationAggregateInput
-  automations?: Prisma.AutomationOrderByRelationAggregateInput
+  subscriptions?: Prisma.SubscriptionOrderByRelationAggregateInput
   channels?: Prisma.ChannelOrderByRelationAggregateInput
   conversations?: Prisma.ConversationOrderByRelationAggregateInput
   conversationActivities?: Prisma.ConversationActivityOrderByRelationAggregateInput
@@ -363,19 +361,18 @@ export type WorkspaceWhereUniqueInput = Prisma.AtLeast<{
   name?: Prisma.StringFilter<"Workspace"> | string
   logoUrl?: Prisma.StringNullableFilter<"Workspace"> | string | null
   primaryColor?: Prisma.StringFilter<"Workspace"> | string
-  secondaryColor?: Prisma.StringFilter<"Workspace"> | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFilter<"Workspace"> | $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: Prisma.StringNullableFilter<"Workspace"> | string | null
   currentPeriodEnd?: Prisma.DateTimeNullableFilter<"Workspace"> | Date | string | null
   trialEndsAt?: Prisma.DateTimeNullableFilter<"Workspace"> | Date | string | null
+  plan?: Prisma.StringFilter<"Workspace"> | string
   maxUsers?: Prisma.IntFilter<"Workspace"> | number
   maxConversationsPerMonth?: Prisma.IntFilter<"Workspace"> | number
   conversationsThisMonth?: Prisma.IntFilter<"Workspace"> | number
   createdAt?: Prisma.DateTimeFilter<"Workspace"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Workspace"> | Date | string
-  agentConfig?: Prisma.XOR<Prisma.AgentConfigNullableScalarRelationFilter, Prisma.AgentConfigWhereInput> | null
   analyticsDaily?: Prisma.AnalyticsDailyListRelationFilter
-  automations?: Prisma.AutomationListRelationFilter
+  subscriptions?: Prisma.SubscriptionListRelationFilter
   channels?: Prisma.ChannelListRelationFilter
   conversations?: Prisma.ConversationListRelationFilter
   conversationActivities?: Prisma.ConversationActivityListRelationFilter
@@ -396,11 +393,11 @@ export type WorkspaceOrderByWithAggregationInput = {
   slug?: Prisma.SortOrder
   logoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   primaryColor?: Prisma.SortOrder
-  secondaryColor?: Prisma.SortOrder
   subscriptionStatus?: Prisma.SortOrder
   kirvanoSubscriptionId?: Prisma.SortOrderInput | Prisma.SortOrder
   currentPeriodEnd?: Prisma.SortOrderInput | Prisma.SortOrder
   trialEndsAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  plan?: Prisma.SortOrder
   maxUsers?: Prisma.SortOrder
   maxConversationsPerMonth?: Prisma.SortOrder
   conversationsThisMonth?: Prisma.SortOrder
@@ -422,11 +419,11 @@ export type WorkspaceScalarWhereWithAggregatesInput = {
   slug?: Prisma.StringWithAggregatesFilter<"Workspace"> | string
   logoUrl?: Prisma.StringNullableWithAggregatesFilter<"Workspace"> | string | null
   primaryColor?: Prisma.StringWithAggregatesFilter<"Workspace"> | string
-  secondaryColor?: Prisma.StringWithAggregatesFilter<"Workspace"> | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusWithAggregatesFilter<"Workspace"> | $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: Prisma.StringNullableWithAggregatesFilter<"Workspace"> | string | null
   currentPeriodEnd?: Prisma.DateTimeNullableWithAggregatesFilter<"Workspace"> | Date | string | null
   trialEndsAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Workspace"> | Date | string | null
+  plan?: Prisma.StringWithAggregatesFilter<"Workspace"> | string
   maxUsers?: Prisma.IntWithAggregatesFilter<"Workspace"> | number
   maxConversationsPerMonth?: Prisma.IntWithAggregatesFilter<"Workspace"> | number
   conversationsThisMonth?: Prisma.IntWithAggregatesFilter<"Workspace"> | number
@@ -440,19 +437,18 @@ export type WorkspaceCreateInput = {
   slug: string
   logoUrl?: string | null
   primaryColor?: string
-  secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
+  plan?: string
   maxUsers?: number
   maxConversationsPerMonth?: number
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  agentConfig?: Prisma.AgentConfigCreateNestedOneWithoutWorkspaceInput
   analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
-  automations?: Prisma.AutomationCreateNestedManyWithoutWorkspaceInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutWorkspaceInput
   conversationActivities?: Prisma.ConversationActivityCreateNestedManyWithoutWorkspaceInput
@@ -473,19 +469,18 @@ export type WorkspaceUncheckedCreateInput = {
   slug: string
   logoUrl?: string | null
   primaryColor?: string
-  secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
+  plan?: string
   maxUsers?: number
   maxConversationsPerMonth?: number
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  agentConfig?: Prisma.AgentConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
-  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutWorkspaceInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutWorkspaceInput
   conversationActivities?: Prisma.ConversationActivityUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -506,19 +501,18 @@ export type WorkspaceUpdateInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
-  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  agentConfig?: Prisma.AgentConfigUpdateOneWithoutWorkspaceNestedInput
   analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
-  automations?: Prisma.AutomationUpdateManyWithoutWorkspaceNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutWorkspaceNestedInput
   conversationActivities?: Prisma.ConversationActivityUpdateManyWithoutWorkspaceNestedInput
@@ -539,19 +533,18 @@ export type WorkspaceUncheckedUpdateInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
-  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  agentConfig?: Prisma.AgentConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
-  automations?: Prisma.AutomationUncheckedUpdateManyWithoutWorkspaceNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutWorkspaceNestedInput
   conversationActivities?: Prisma.ConversationActivityUncheckedUpdateManyWithoutWorkspaceNestedInput
@@ -572,11 +565,11 @@ export type WorkspaceCreateManyInput = {
   slug: string
   logoUrl?: string | null
   primaryColor?: string
-  secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
+  plan?: string
   maxUsers?: number
   maxConversationsPerMonth?: number
   conversationsThisMonth?: number
@@ -590,11 +583,11 @@ export type WorkspaceUpdateManyMutationInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
-  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
@@ -608,11 +601,11 @@ export type WorkspaceUncheckedUpdateManyInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
-  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
@@ -626,11 +619,11 @@ export type WorkspaceCountOrderByAggregateInput = {
   slug?: Prisma.SortOrder
   logoUrl?: Prisma.SortOrder
   primaryColor?: Prisma.SortOrder
-  secondaryColor?: Prisma.SortOrder
   subscriptionStatus?: Prisma.SortOrder
   kirvanoSubscriptionId?: Prisma.SortOrder
   currentPeriodEnd?: Prisma.SortOrder
   trialEndsAt?: Prisma.SortOrder
+  plan?: Prisma.SortOrder
   maxUsers?: Prisma.SortOrder
   maxConversationsPerMonth?: Prisma.SortOrder
   conversationsThisMonth?: Prisma.SortOrder
@@ -650,11 +643,11 @@ export type WorkspaceMaxOrderByAggregateInput = {
   slug?: Prisma.SortOrder
   logoUrl?: Prisma.SortOrder
   primaryColor?: Prisma.SortOrder
-  secondaryColor?: Prisma.SortOrder
   subscriptionStatus?: Prisma.SortOrder
   kirvanoSubscriptionId?: Prisma.SortOrder
   currentPeriodEnd?: Prisma.SortOrder
   trialEndsAt?: Prisma.SortOrder
+  plan?: Prisma.SortOrder
   maxUsers?: Prisma.SortOrder
   maxConversationsPerMonth?: Prisma.SortOrder
   conversationsThisMonth?: Prisma.SortOrder
@@ -668,11 +661,11 @@ export type WorkspaceMinOrderByAggregateInput = {
   slug?: Prisma.SortOrder
   logoUrl?: Prisma.SortOrder
   primaryColor?: Prisma.SortOrder
-  secondaryColor?: Prisma.SortOrder
   subscriptionStatus?: Prisma.SortOrder
   kirvanoSubscriptionId?: Prisma.SortOrder
   currentPeriodEnd?: Prisma.SortOrder
   trialEndsAt?: Prisma.SortOrder
+  plan?: Prisma.SortOrder
   maxUsers?: Prisma.SortOrder
   maxConversationsPerMonth?: Prisma.SortOrder
   conversationsThisMonth?: Prisma.SortOrder
@@ -750,20 +743,6 @@ export type WorkspaceUpdateOneRequiredWithoutChannelsNestedInput = {
   upsert?: Prisma.WorkspaceUpsertWithoutChannelsInput
   connect?: Prisma.WorkspaceWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.WorkspaceUpdateToOneWithWhereWithoutChannelsInput, Prisma.WorkspaceUpdateWithoutChannelsInput>, Prisma.WorkspaceUncheckedUpdateWithoutChannelsInput>
-}
-
-export type WorkspaceCreateNestedOneWithoutAgentConfigInput = {
-  create?: Prisma.XOR<Prisma.WorkspaceCreateWithoutAgentConfigInput, Prisma.WorkspaceUncheckedCreateWithoutAgentConfigInput>
-  connectOrCreate?: Prisma.WorkspaceCreateOrConnectWithoutAgentConfigInput
-  connect?: Prisma.WorkspaceWhereUniqueInput
-}
-
-export type WorkspaceUpdateOneRequiredWithoutAgentConfigNestedInput = {
-  create?: Prisma.XOR<Prisma.WorkspaceCreateWithoutAgentConfigInput, Prisma.WorkspaceUncheckedCreateWithoutAgentConfigInput>
-  connectOrCreate?: Prisma.WorkspaceCreateOrConnectWithoutAgentConfigInput
-  upsert?: Prisma.WorkspaceUpsertWithoutAgentConfigInput
-  connect?: Prisma.WorkspaceWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.WorkspaceUpdateToOneWithWhereWithoutAgentConfigInput, Prisma.WorkspaceUpdateWithoutAgentConfigInput>, Prisma.WorkspaceUncheckedUpdateWithoutAgentConfigInput>
 }
 
 export type WorkspaceCreateNestedOneWithoutConversationsInput = {
@@ -922,18 +901,18 @@ export type WorkspaceUpdateOneRequiredWithoutConversationActivitiesNestedInput =
   update?: Prisma.XOR<Prisma.XOR<Prisma.WorkspaceUpdateToOneWithWhereWithoutConversationActivitiesInput, Prisma.WorkspaceUpdateWithoutConversationActivitiesInput>, Prisma.WorkspaceUncheckedUpdateWithoutConversationActivitiesInput>
 }
 
-export type WorkspaceCreateNestedOneWithoutAutomationsInput = {
-  create?: Prisma.XOR<Prisma.WorkspaceCreateWithoutAutomationsInput, Prisma.WorkspaceUncheckedCreateWithoutAutomationsInput>
-  connectOrCreate?: Prisma.WorkspaceCreateOrConnectWithoutAutomationsInput
+export type WorkspaceCreateNestedOneWithoutSubscriptionsInput = {
+  create?: Prisma.XOR<Prisma.WorkspaceCreateWithoutSubscriptionsInput, Prisma.WorkspaceUncheckedCreateWithoutSubscriptionsInput>
+  connectOrCreate?: Prisma.WorkspaceCreateOrConnectWithoutSubscriptionsInput
   connect?: Prisma.WorkspaceWhereUniqueInput
 }
 
-export type WorkspaceUpdateOneRequiredWithoutAutomationsNestedInput = {
-  create?: Prisma.XOR<Prisma.WorkspaceCreateWithoutAutomationsInput, Prisma.WorkspaceUncheckedCreateWithoutAutomationsInput>
-  connectOrCreate?: Prisma.WorkspaceCreateOrConnectWithoutAutomationsInput
-  upsert?: Prisma.WorkspaceUpsertWithoutAutomationsInput
+export type WorkspaceUpdateOneRequiredWithoutSubscriptionsNestedInput = {
+  create?: Prisma.XOR<Prisma.WorkspaceCreateWithoutSubscriptionsInput, Prisma.WorkspaceUncheckedCreateWithoutSubscriptionsInput>
+  connectOrCreate?: Prisma.WorkspaceCreateOrConnectWithoutSubscriptionsInput
+  upsert?: Prisma.WorkspaceUpsertWithoutSubscriptionsInput
   connect?: Prisma.WorkspaceWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.WorkspaceUpdateToOneWithWhereWithoutAutomationsInput, Prisma.WorkspaceUpdateWithoutAutomationsInput>, Prisma.WorkspaceUncheckedUpdateWithoutAutomationsInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.WorkspaceUpdateToOneWithWhereWithoutSubscriptionsInput, Prisma.WorkspaceUpdateWithoutSubscriptionsInput>, Prisma.WorkspaceUncheckedUpdateWithoutSubscriptionsInput>
 }
 
 export type WorkspaceCreateWithoutUsersInput = {
@@ -942,19 +921,18 @@ export type WorkspaceCreateWithoutUsersInput = {
   slug: string
   logoUrl?: string | null
   primaryColor?: string
-  secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
+  plan?: string
   maxUsers?: number
   maxConversationsPerMonth?: number
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  agentConfig?: Prisma.AgentConfigCreateNestedOneWithoutWorkspaceInput
   analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
-  automations?: Prisma.AutomationCreateNestedManyWithoutWorkspaceInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutWorkspaceInput
   conversationActivities?: Prisma.ConversationActivityCreateNestedManyWithoutWorkspaceInput
@@ -974,19 +952,18 @@ export type WorkspaceUncheckedCreateWithoutUsersInput = {
   slug: string
   logoUrl?: string | null
   primaryColor?: string
-  secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
+  plan?: string
   maxUsers?: number
   maxConversationsPerMonth?: number
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  agentConfig?: Prisma.AgentConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
-  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutWorkspaceInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutWorkspaceInput
   conversationActivities?: Prisma.ConversationActivityUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -1022,19 +999,18 @@ export type WorkspaceUpdateWithoutUsersInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
-  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  agentConfig?: Prisma.AgentConfigUpdateOneWithoutWorkspaceNestedInput
   analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
-  automations?: Prisma.AutomationUpdateManyWithoutWorkspaceNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutWorkspaceNestedInput
   conversationActivities?: Prisma.ConversationActivityUpdateManyWithoutWorkspaceNestedInput
@@ -1054,19 +1030,18 @@ export type WorkspaceUncheckedUpdateWithoutUsersInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
-  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  agentConfig?: Prisma.AgentConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
-  automations?: Prisma.AutomationUncheckedUpdateManyWithoutWorkspaceNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutWorkspaceNestedInput
   conversationActivities?: Prisma.ConversationActivityUncheckedUpdateManyWithoutWorkspaceNestedInput
@@ -1086,19 +1061,18 @@ export type WorkspaceCreateWithoutChannelsInput = {
   slug: string
   logoUrl?: string | null
   primaryColor?: string
-  secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
+  plan?: string
   maxUsers?: number
   maxConversationsPerMonth?: number
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  agentConfig?: Prisma.AgentConfigCreateNestedOneWithoutWorkspaceInput
   analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
-  automations?: Prisma.AutomationCreateNestedManyWithoutWorkspaceInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutWorkspaceInput
   conversationActivities?: Prisma.ConversationActivityCreateNestedManyWithoutWorkspaceInput
   leads?: Prisma.LeadCreateNestedManyWithoutWorkspaceInput
@@ -1118,19 +1092,18 @@ export type WorkspaceUncheckedCreateWithoutChannelsInput = {
   slug: string
   logoUrl?: string | null
   primaryColor?: string
-  secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
+  plan?: string
   maxUsers?: number
   maxConversationsPerMonth?: number
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  agentConfig?: Prisma.AgentConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
-  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutWorkspaceInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutWorkspaceInput
   conversationActivities?: Prisma.ConversationActivityUncheckedCreateNestedManyWithoutWorkspaceInput
   leads?: Prisma.LeadUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -1166,19 +1139,18 @@ export type WorkspaceUpdateWithoutChannelsInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
-  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  agentConfig?: Prisma.AgentConfigUpdateOneWithoutWorkspaceNestedInput
   analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
-  automations?: Prisma.AutomationUpdateManyWithoutWorkspaceNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutWorkspaceNestedInput
   conversationActivities?: Prisma.ConversationActivityUpdateManyWithoutWorkspaceNestedInput
   leads?: Prisma.LeadUpdateManyWithoutWorkspaceNestedInput
@@ -1198,163 +1170,18 @@ export type WorkspaceUncheckedUpdateWithoutChannelsInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
-  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
-  maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
-  conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  agentConfig?: Prisma.AgentConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
-  analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
-  automations?: Prisma.AutomationUncheckedUpdateManyWithoutWorkspaceNestedInput
-  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutWorkspaceNestedInput
-  conversationActivities?: Prisma.ConversationActivityUncheckedUpdateManyWithoutWorkspaceNestedInput
-  leads?: Prisma.LeadUncheckedUpdateManyWithoutWorkspaceNestedInput
-  messageTemplates?: Prisma.MessageTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutWorkspaceNestedInput
-  notes?: Prisma.NoteUncheckedUpdateManyWithoutWorkspaceNestedInput
-  pipelineStages?: Prisma.PipelineStageUncheckedUpdateManyWithoutWorkspaceNestedInput
-  stageHistory?: Prisma.StageHistoryUncheckedUpdateManyWithoutWorkspaceNestedInput
-  tags?: Prisma.TagUncheckedUpdateManyWithoutWorkspaceNestedInput
-  users?: Prisma.UserUncheckedUpdateManyWithoutWorkspaceNestedInput
-  webhookLogs?: Prisma.WebhookLogUncheckedUpdateManyWithoutWorkspaceNestedInput
-}
-
-export type WorkspaceCreateWithoutAgentConfigInput = {
-  id?: string
-  name: string
-  slug: string
-  logoUrl?: string | null
-  primaryColor?: string
-  secondaryColor?: string
-  subscriptionStatus?: $Enums.SubscriptionStatus
-  kirvanoSubscriptionId?: string | null
-  currentPeriodEnd?: Date | string | null
-  trialEndsAt?: Date | string | null
-  maxUsers?: number
-  maxConversationsPerMonth?: number
-  conversationsThisMonth?: number
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
-  automations?: Prisma.AutomationCreateNestedManyWithoutWorkspaceInput
-  channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
-  conversations?: Prisma.ConversationCreateNestedManyWithoutWorkspaceInput
-  conversationActivities?: Prisma.ConversationActivityCreateNestedManyWithoutWorkspaceInput
-  leads?: Prisma.LeadCreateNestedManyWithoutWorkspaceInput
-  messageTemplates?: Prisma.MessageTemplateCreateNestedManyWithoutWorkspaceInput
-  messages?: Prisma.MessageCreateNestedManyWithoutWorkspaceInput
-  notes?: Prisma.NoteCreateNestedManyWithoutWorkspaceInput
-  pipelineStages?: Prisma.PipelineStageCreateNestedManyWithoutWorkspaceInput
-  stageHistory?: Prisma.StageHistoryCreateNestedManyWithoutWorkspaceInput
-  tags?: Prisma.TagCreateNestedManyWithoutWorkspaceInput
-  users?: Prisma.UserCreateNestedManyWithoutWorkspaceInput
-  webhookLogs?: Prisma.WebhookLogCreateNestedManyWithoutWorkspaceInput
-}
-
-export type WorkspaceUncheckedCreateWithoutAgentConfigInput = {
-  id?: string
-  name: string
-  slug: string
-  logoUrl?: string | null
-  primaryColor?: string
-  secondaryColor?: string
-  subscriptionStatus?: $Enums.SubscriptionStatus
-  kirvanoSubscriptionId?: string | null
-  currentPeriodEnd?: Date | string | null
-  trialEndsAt?: Date | string | null
-  maxUsers?: number
-  maxConversationsPerMonth?: number
-  conversationsThisMonth?: number
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
-  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutWorkspaceInput
-  channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
-  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutWorkspaceInput
-  conversationActivities?: Prisma.ConversationActivityUncheckedCreateNestedManyWithoutWorkspaceInput
-  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutWorkspaceInput
-  messageTemplates?: Prisma.MessageTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutWorkspaceInput
-  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutWorkspaceInput
-  pipelineStages?: Prisma.PipelineStageUncheckedCreateNestedManyWithoutWorkspaceInput
-  stageHistory?: Prisma.StageHistoryUncheckedCreateNestedManyWithoutWorkspaceInput
-  tags?: Prisma.TagUncheckedCreateNestedManyWithoutWorkspaceInput
-  users?: Prisma.UserUncheckedCreateNestedManyWithoutWorkspaceInput
-  webhookLogs?: Prisma.WebhookLogUncheckedCreateNestedManyWithoutWorkspaceInput
-}
-
-export type WorkspaceCreateOrConnectWithoutAgentConfigInput = {
-  where: Prisma.WorkspaceWhereUniqueInput
-  create: Prisma.XOR<Prisma.WorkspaceCreateWithoutAgentConfigInput, Prisma.WorkspaceUncheckedCreateWithoutAgentConfigInput>
-}
-
-export type WorkspaceUpsertWithoutAgentConfigInput = {
-  update: Prisma.XOR<Prisma.WorkspaceUpdateWithoutAgentConfigInput, Prisma.WorkspaceUncheckedUpdateWithoutAgentConfigInput>
-  create: Prisma.XOR<Prisma.WorkspaceCreateWithoutAgentConfigInput, Prisma.WorkspaceUncheckedCreateWithoutAgentConfigInput>
-  where?: Prisma.WorkspaceWhereInput
-}
-
-export type WorkspaceUpdateToOneWithWhereWithoutAgentConfigInput = {
-  where?: Prisma.WorkspaceWhereInput
-  data: Prisma.XOR<Prisma.WorkspaceUpdateWithoutAgentConfigInput, Prisma.WorkspaceUncheckedUpdateWithoutAgentConfigInput>
-}
-
-export type WorkspaceUpdateWithoutAgentConfigInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
-  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
-  subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
-  kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
-  maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
-  conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
-  automations?: Prisma.AutomationUpdateManyWithoutWorkspaceNestedInput
-  channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
-  conversations?: Prisma.ConversationUpdateManyWithoutWorkspaceNestedInput
-  conversationActivities?: Prisma.ConversationActivityUpdateManyWithoutWorkspaceNestedInput
-  leads?: Prisma.LeadUpdateManyWithoutWorkspaceNestedInput
-  messageTemplates?: Prisma.MessageTemplateUpdateManyWithoutWorkspaceNestedInput
-  messages?: Prisma.MessageUpdateManyWithoutWorkspaceNestedInput
-  notes?: Prisma.NoteUpdateManyWithoutWorkspaceNestedInput
-  pipelineStages?: Prisma.PipelineStageUpdateManyWithoutWorkspaceNestedInput
-  stageHistory?: Prisma.StageHistoryUpdateManyWithoutWorkspaceNestedInput
-  tags?: Prisma.TagUpdateManyWithoutWorkspaceNestedInput
-  users?: Prisma.UserUpdateManyWithoutWorkspaceNestedInput
-  webhookLogs?: Prisma.WebhookLogUpdateManyWithoutWorkspaceNestedInput
-}
-
-export type WorkspaceUncheckedUpdateWithoutAgentConfigInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
-  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
-  subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
-  kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
-  automations?: Prisma.AutomationUncheckedUpdateManyWithoutWorkspaceNestedInput
-  channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutWorkspaceNestedInput
   conversationActivities?: Prisma.ConversationActivityUncheckedUpdateManyWithoutWorkspaceNestedInput
   leads?: Prisma.LeadUncheckedUpdateManyWithoutWorkspaceNestedInput
@@ -1374,19 +1201,18 @@ export type WorkspaceCreateWithoutConversationsInput = {
   slug: string
   logoUrl?: string | null
   primaryColor?: string
-  secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
+  plan?: string
   maxUsers?: number
   maxConversationsPerMonth?: number
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  agentConfig?: Prisma.AgentConfigCreateNestedOneWithoutWorkspaceInput
   analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
-  automations?: Prisma.AutomationCreateNestedManyWithoutWorkspaceInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
   conversationActivities?: Prisma.ConversationActivityCreateNestedManyWithoutWorkspaceInput
   leads?: Prisma.LeadCreateNestedManyWithoutWorkspaceInput
@@ -1406,19 +1232,18 @@ export type WorkspaceUncheckedCreateWithoutConversationsInput = {
   slug: string
   logoUrl?: string | null
   primaryColor?: string
-  secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
+  plan?: string
   maxUsers?: number
   maxConversationsPerMonth?: number
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  agentConfig?: Prisma.AgentConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
-  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutWorkspaceInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
   conversationActivities?: Prisma.ConversationActivityUncheckedCreateNestedManyWithoutWorkspaceInput
   leads?: Prisma.LeadUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -1454,19 +1279,18 @@ export type WorkspaceUpdateWithoutConversationsInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
-  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  agentConfig?: Prisma.AgentConfigUpdateOneWithoutWorkspaceNestedInput
   analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
-  automations?: Prisma.AutomationUpdateManyWithoutWorkspaceNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
   conversationActivities?: Prisma.ConversationActivityUpdateManyWithoutWorkspaceNestedInput
   leads?: Prisma.LeadUpdateManyWithoutWorkspaceNestedInput
@@ -1486,19 +1310,18 @@ export type WorkspaceUncheckedUpdateWithoutConversationsInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
-  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  agentConfig?: Prisma.AgentConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
-  automations?: Prisma.AutomationUncheckedUpdateManyWithoutWorkspaceNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
   conversationActivities?: Prisma.ConversationActivityUncheckedUpdateManyWithoutWorkspaceNestedInput
   leads?: Prisma.LeadUncheckedUpdateManyWithoutWorkspaceNestedInput
@@ -1518,19 +1341,18 @@ export type WorkspaceCreateWithoutTagsInput = {
   slug: string
   logoUrl?: string | null
   primaryColor?: string
-  secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
+  plan?: string
   maxUsers?: number
   maxConversationsPerMonth?: number
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  agentConfig?: Prisma.AgentConfigCreateNestedOneWithoutWorkspaceInput
   analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
-  automations?: Prisma.AutomationCreateNestedManyWithoutWorkspaceInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutWorkspaceInput
   conversationActivities?: Prisma.ConversationActivityCreateNestedManyWithoutWorkspaceInput
@@ -1550,19 +1372,18 @@ export type WorkspaceUncheckedCreateWithoutTagsInput = {
   slug: string
   logoUrl?: string | null
   primaryColor?: string
-  secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
+  plan?: string
   maxUsers?: number
   maxConversationsPerMonth?: number
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  agentConfig?: Prisma.AgentConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
-  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutWorkspaceInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutWorkspaceInput
   conversationActivities?: Prisma.ConversationActivityUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -1598,19 +1419,18 @@ export type WorkspaceUpdateWithoutTagsInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
-  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  agentConfig?: Prisma.AgentConfigUpdateOneWithoutWorkspaceNestedInput
   analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
-  automations?: Prisma.AutomationUpdateManyWithoutWorkspaceNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutWorkspaceNestedInput
   conversationActivities?: Prisma.ConversationActivityUpdateManyWithoutWorkspaceNestedInput
@@ -1630,19 +1450,18 @@ export type WorkspaceUncheckedUpdateWithoutTagsInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
-  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  agentConfig?: Prisma.AgentConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
-  automations?: Prisma.AutomationUncheckedUpdateManyWithoutWorkspaceNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutWorkspaceNestedInput
   conversationActivities?: Prisma.ConversationActivityUncheckedUpdateManyWithoutWorkspaceNestedInput
@@ -1662,19 +1481,18 @@ export type WorkspaceCreateWithoutNotesInput = {
   slug: string
   logoUrl?: string | null
   primaryColor?: string
-  secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
+  plan?: string
   maxUsers?: number
   maxConversationsPerMonth?: number
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  agentConfig?: Prisma.AgentConfigCreateNestedOneWithoutWorkspaceInput
   analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
-  automations?: Prisma.AutomationCreateNestedManyWithoutWorkspaceInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutWorkspaceInput
   conversationActivities?: Prisma.ConversationActivityCreateNestedManyWithoutWorkspaceInput
@@ -1694,19 +1512,18 @@ export type WorkspaceUncheckedCreateWithoutNotesInput = {
   slug: string
   logoUrl?: string | null
   primaryColor?: string
-  secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
+  plan?: string
   maxUsers?: number
   maxConversationsPerMonth?: number
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  agentConfig?: Prisma.AgentConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
-  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutWorkspaceInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutWorkspaceInput
   conversationActivities?: Prisma.ConversationActivityUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -1742,19 +1559,18 @@ export type WorkspaceUpdateWithoutNotesInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
-  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  agentConfig?: Prisma.AgentConfigUpdateOneWithoutWorkspaceNestedInput
   analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
-  automations?: Prisma.AutomationUpdateManyWithoutWorkspaceNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutWorkspaceNestedInput
   conversationActivities?: Prisma.ConversationActivityUpdateManyWithoutWorkspaceNestedInput
@@ -1774,19 +1590,18 @@ export type WorkspaceUncheckedUpdateWithoutNotesInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
-  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  agentConfig?: Prisma.AgentConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
-  automations?: Prisma.AutomationUncheckedUpdateManyWithoutWorkspaceNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutWorkspaceNestedInput
   conversationActivities?: Prisma.ConversationActivityUncheckedUpdateManyWithoutWorkspaceNestedInput
@@ -1806,19 +1621,18 @@ export type WorkspaceCreateWithoutStageHistoryInput = {
   slug: string
   logoUrl?: string | null
   primaryColor?: string
-  secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
+  plan?: string
   maxUsers?: number
   maxConversationsPerMonth?: number
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  agentConfig?: Prisma.AgentConfigCreateNestedOneWithoutWorkspaceInput
   analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
-  automations?: Prisma.AutomationCreateNestedManyWithoutWorkspaceInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutWorkspaceInput
   conversationActivities?: Prisma.ConversationActivityCreateNestedManyWithoutWorkspaceInput
@@ -1838,19 +1652,18 @@ export type WorkspaceUncheckedCreateWithoutStageHistoryInput = {
   slug: string
   logoUrl?: string | null
   primaryColor?: string
-  secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
+  plan?: string
   maxUsers?: number
   maxConversationsPerMonth?: number
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  agentConfig?: Prisma.AgentConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
-  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutWorkspaceInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutWorkspaceInput
   conversationActivities?: Prisma.ConversationActivityUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -1886,19 +1699,18 @@ export type WorkspaceUpdateWithoutStageHistoryInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
-  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  agentConfig?: Prisma.AgentConfigUpdateOneWithoutWorkspaceNestedInput
   analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
-  automations?: Prisma.AutomationUpdateManyWithoutWorkspaceNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutWorkspaceNestedInput
   conversationActivities?: Prisma.ConversationActivityUpdateManyWithoutWorkspaceNestedInput
@@ -1918,19 +1730,18 @@ export type WorkspaceUncheckedUpdateWithoutStageHistoryInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
-  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  agentConfig?: Prisma.AgentConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
-  automations?: Prisma.AutomationUncheckedUpdateManyWithoutWorkspaceNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutWorkspaceNestedInput
   conversationActivities?: Prisma.ConversationActivityUncheckedUpdateManyWithoutWorkspaceNestedInput
@@ -1950,19 +1761,18 @@ export type WorkspaceCreateWithoutMessagesInput = {
   slug: string
   logoUrl?: string | null
   primaryColor?: string
-  secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
+  plan?: string
   maxUsers?: number
   maxConversationsPerMonth?: number
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  agentConfig?: Prisma.AgentConfigCreateNestedOneWithoutWorkspaceInput
   analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
-  automations?: Prisma.AutomationCreateNestedManyWithoutWorkspaceInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutWorkspaceInput
   conversationActivities?: Prisma.ConversationActivityCreateNestedManyWithoutWorkspaceInput
@@ -1982,19 +1792,18 @@ export type WorkspaceUncheckedCreateWithoutMessagesInput = {
   slug: string
   logoUrl?: string | null
   primaryColor?: string
-  secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
+  plan?: string
   maxUsers?: number
   maxConversationsPerMonth?: number
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  agentConfig?: Prisma.AgentConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
-  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutWorkspaceInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutWorkspaceInput
   conversationActivities?: Prisma.ConversationActivityUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -2030,19 +1839,18 @@ export type WorkspaceUpdateWithoutMessagesInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
-  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  agentConfig?: Prisma.AgentConfigUpdateOneWithoutWorkspaceNestedInput
   analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
-  automations?: Prisma.AutomationUpdateManyWithoutWorkspaceNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutWorkspaceNestedInput
   conversationActivities?: Prisma.ConversationActivityUpdateManyWithoutWorkspaceNestedInput
@@ -2062,19 +1870,18 @@ export type WorkspaceUncheckedUpdateWithoutMessagesInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
-  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  agentConfig?: Prisma.AgentConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
-  automations?: Prisma.AutomationUncheckedUpdateManyWithoutWorkspaceNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutWorkspaceNestedInput
   conversationActivities?: Prisma.ConversationActivityUncheckedUpdateManyWithoutWorkspaceNestedInput
@@ -2094,19 +1901,18 @@ export type WorkspaceCreateWithoutPipelineStagesInput = {
   slug: string
   logoUrl?: string | null
   primaryColor?: string
-  secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
+  plan?: string
   maxUsers?: number
   maxConversationsPerMonth?: number
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  agentConfig?: Prisma.AgentConfigCreateNestedOneWithoutWorkspaceInput
   analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
-  automations?: Prisma.AutomationCreateNestedManyWithoutWorkspaceInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutWorkspaceInput
   conversationActivities?: Prisma.ConversationActivityCreateNestedManyWithoutWorkspaceInput
@@ -2126,19 +1932,18 @@ export type WorkspaceUncheckedCreateWithoutPipelineStagesInput = {
   slug: string
   logoUrl?: string | null
   primaryColor?: string
-  secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
+  plan?: string
   maxUsers?: number
   maxConversationsPerMonth?: number
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  agentConfig?: Prisma.AgentConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
-  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutWorkspaceInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutWorkspaceInput
   conversationActivities?: Prisma.ConversationActivityUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -2174,19 +1979,18 @@ export type WorkspaceUpdateWithoutPipelineStagesInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
-  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  agentConfig?: Prisma.AgentConfigUpdateOneWithoutWorkspaceNestedInput
   analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
-  automations?: Prisma.AutomationUpdateManyWithoutWorkspaceNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutWorkspaceNestedInput
   conversationActivities?: Prisma.ConversationActivityUpdateManyWithoutWorkspaceNestedInput
@@ -2206,19 +2010,18 @@ export type WorkspaceUncheckedUpdateWithoutPipelineStagesInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
-  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  agentConfig?: Prisma.AgentConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
-  automations?: Prisma.AutomationUncheckedUpdateManyWithoutWorkspaceNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutWorkspaceNestedInput
   conversationActivities?: Prisma.ConversationActivityUncheckedUpdateManyWithoutWorkspaceNestedInput
@@ -2238,19 +2041,18 @@ export type WorkspaceCreateWithoutLeadsInput = {
   slug: string
   logoUrl?: string | null
   primaryColor?: string
-  secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
+  plan?: string
   maxUsers?: number
   maxConversationsPerMonth?: number
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  agentConfig?: Prisma.AgentConfigCreateNestedOneWithoutWorkspaceInput
   analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
-  automations?: Prisma.AutomationCreateNestedManyWithoutWorkspaceInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutWorkspaceInput
   conversationActivities?: Prisma.ConversationActivityCreateNestedManyWithoutWorkspaceInput
@@ -2270,19 +2072,18 @@ export type WorkspaceUncheckedCreateWithoutLeadsInput = {
   slug: string
   logoUrl?: string | null
   primaryColor?: string
-  secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
+  plan?: string
   maxUsers?: number
   maxConversationsPerMonth?: number
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  agentConfig?: Prisma.AgentConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
-  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutWorkspaceInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutWorkspaceInput
   conversationActivities?: Prisma.ConversationActivityUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -2318,19 +2119,18 @@ export type WorkspaceUpdateWithoutLeadsInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
-  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  agentConfig?: Prisma.AgentConfigUpdateOneWithoutWorkspaceNestedInput
   analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
-  automations?: Prisma.AutomationUpdateManyWithoutWorkspaceNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutWorkspaceNestedInput
   conversationActivities?: Prisma.ConversationActivityUpdateManyWithoutWorkspaceNestedInput
@@ -2350,19 +2150,18 @@ export type WorkspaceUncheckedUpdateWithoutLeadsInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
-  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  agentConfig?: Prisma.AgentConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
-  automations?: Prisma.AutomationUncheckedUpdateManyWithoutWorkspaceNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutWorkspaceNestedInput
   conversationActivities?: Prisma.ConversationActivityUncheckedUpdateManyWithoutWorkspaceNestedInput
@@ -2382,18 +2181,17 @@ export type WorkspaceCreateWithoutAnalyticsDailyInput = {
   slug: string
   logoUrl?: string | null
   primaryColor?: string
-  secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
+  plan?: string
   maxUsers?: number
   maxConversationsPerMonth?: number
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  agentConfig?: Prisma.AgentConfigCreateNestedOneWithoutWorkspaceInput
-  automations?: Prisma.AutomationCreateNestedManyWithoutWorkspaceInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutWorkspaceInput
   conversationActivities?: Prisma.ConversationActivityCreateNestedManyWithoutWorkspaceInput
@@ -2414,18 +2212,17 @@ export type WorkspaceUncheckedCreateWithoutAnalyticsDailyInput = {
   slug: string
   logoUrl?: string | null
   primaryColor?: string
-  secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
+  plan?: string
   maxUsers?: number
   maxConversationsPerMonth?: number
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  agentConfig?: Prisma.AgentConfigUncheckedCreateNestedOneWithoutWorkspaceInput
-  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutWorkspaceInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutWorkspaceInput
   conversationActivities?: Prisma.ConversationActivityUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -2462,18 +2259,17 @@ export type WorkspaceUpdateWithoutAnalyticsDailyInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
-  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  agentConfig?: Prisma.AgentConfigUpdateOneWithoutWorkspaceNestedInput
-  automations?: Prisma.AutomationUpdateManyWithoutWorkspaceNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutWorkspaceNestedInput
   conversationActivities?: Prisma.ConversationActivityUpdateManyWithoutWorkspaceNestedInput
@@ -2494,18 +2290,17 @@ export type WorkspaceUncheckedUpdateWithoutAnalyticsDailyInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
-  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  agentConfig?: Prisma.AgentConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
-  automations?: Prisma.AutomationUncheckedUpdateManyWithoutWorkspaceNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutWorkspaceNestedInput
   conversationActivities?: Prisma.ConversationActivityUncheckedUpdateManyWithoutWorkspaceNestedInput
@@ -2526,19 +2321,18 @@ export type WorkspaceCreateWithoutWebhookLogsInput = {
   slug: string
   logoUrl?: string | null
   primaryColor?: string
-  secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
+  plan?: string
   maxUsers?: number
   maxConversationsPerMonth?: number
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  agentConfig?: Prisma.AgentConfigCreateNestedOneWithoutWorkspaceInput
   analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
-  automations?: Prisma.AutomationCreateNestedManyWithoutWorkspaceInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutWorkspaceInput
   conversationActivities?: Prisma.ConversationActivityCreateNestedManyWithoutWorkspaceInput
@@ -2558,19 +2352,18 @@ export type WorkspaceUncheckedCreateWithoutWebhookLogsInput = {
   slug: string
   logoUrl?: string | null
   primaryColor?: string
-  secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
+  plan?: string
   maxUsers?: number
   maxConversationsPerMonth?: number
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  agentConfig?: Prisma.AgentConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
-  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutWorkspaceInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutWorkspaceInput
   conversationActivities?: Prisma.ConversationActivityUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -2606,19 +2399,18 @@ export type WorkspaceUpdateWithoutWebhookLogsInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
-  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  agentConfig?: Prisma.AgentConfigUpdateOneWithoutWorkspaceNestedInput
   analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
-  automations?: Prisma.AutomationUpdateManyWithoutWorkspaceNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutWorkspaceNestedInput
   conversationActivities?: Prisma.ConversationActivityUpdateManyWithoutWorkspaceNestedInput
@@ -2638,19 +2430,18 @@ export type WorkspaceUncheckedUpdateWithoutWebhookLogsInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
-  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  agentConfig?: Prisma.AgentConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
-  automations?: Prisma.AutomationUncheckedUpdateManyWithoutWorkspaceNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutWorkspaceNestedInput
   conversationActivities?: Prisma.ConversationActivityUncheckedUpdateManyWithoutWorkspaceNestedInput
@@ -2670,19 +2461,18 @@ export type WorkspaceCreateWithoutMessageTemplatesInput = {
   slug: string
   logoUrl?: string | null
   primaryColor?: string
-  secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
+  plan?: string
   maxUsers?: number
   maxConversationsPerMonth?: number
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  agentConfig?: Prisma.AgentConfigCreateNestedOneWithoutWorkspaceInput
   analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
-  automations?: Prisma.AutomationCreateNestedManyWithoutWorkspaceInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutWorkspaceInput
   conversationActivities?: Prisma.ConversationActivityCreateNestedManyWithoutWorkspaceInput
@@ -2702,19 +2492,18 @@ export type WorkspaceUncheckedCreateWithoutMessageTemplatesInput = {
   slug: string
   logoUrl?: string | null
   primaryColor?: string
-  secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
+  plan?: string
   maxUsers?: number
   maxConversationsPerMonth?: number
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  agentConfig?: Prisma.AgentConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
-  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutWorkspaceInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutWorkspaceInput
   conversationActivities?: Prisma.ConversationActivityUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -2750,19 +2539,18 @@ export type WorkspaceUpdateWithoutMessageTemplatesInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
-  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  agentConfig?: Prisma.AgentConfigUpdateOneWithoutWorkspaceNestedInput
   analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
-  automations?: Prisma.AutomationUpdateManyWithoutWorkspaceNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutWorkspaceNestedInput
   conversationActivities?: Prisma.ConversationActivityUpdateManyWithoutWorkspaceNestedInput
@@ -2782,19 +2570,18 @@ export type WorkspaceUncheckedUpdateWithoutMessageTemplatesInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
-  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  agentConfig?: Prisma.AgentConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
-  automations?: Prisma.AutomationUncheckedUpdateManyWithoutWorkspaceNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutWorkspaceNestedInput
   conversationActivities?: Prisma.ConversationActivityUncheckedUpdateManyWithoutWorkspaceNestedInput
@@ -2814,19 +2601,18 @@ export type WorkspaceCreateWithoutConversationActivitiesInput = {
   slug: string
   logoUrl?: string | null
   primaryColor?: string
-  secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
+  plan?: string
   maxUsers?: number
   maxConversationsPerMonth?: number
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  agentConfig?: Prisma.AgentConfigCreateNestedOneWithoutWorkspaceInput
   analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
-  automations?: Prisma.AutomationCreateNestedManyWithoutWorkspaceInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutWorkspaceInput
   leads?: Prisma.LeadCreateNestedManyWithoutWorkspaceInput
@@ -2846,19 +2632,18 @@ export type WorkspaceUncheckedCreateWithoutConversationActivitiesInput = {
   slug: string
   logoUrl?: string | null
   primaryColor?: string
-  secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
+  plan?: string
   maxUsers?: number
   maxConversationsPerMonth?: number
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  agentConfig?: Prisma.AgentConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
-  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutWorkspaceInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutWorkspaceInput
   leads?: Prisma.LeadUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -2894,19 +2679,18 @@ export type WorkspaceUpdateWithoutConversationActivitiesInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
-  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  agentConfig?: Prisma.AgentConfigUpdateOneWithoutWorkspaceNestedInput
   analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
-  automations?: Prisma.AutomationUpdateManyWithoutWorkspaceNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutWorkspaceNestedInput
   leads?: Prisma.LeadUpdateManyWithoutWorkspaceNestedInput
@@ -2926,19 +2710,18 @@ export type WorkspaceUncheckedUpdateWithoutConversationActivitiesInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
-  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  agentConfig?: Prisma.AgentConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
-  automations?: Prisma.AutomationUncheckedUpdateManyWithoutWorkspaceNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutWorkspaceNestedInput
   leads?: Prisma.LeadUncheckedUpdateManyWithoutWorkspaceNestedInput
@@ -2952,23 +2735,22 @@ export type WorkspaceUncheckedUpdateWithoutConversationActivitiesInput = {
   webhookLogs?: Prisma.WebhookLogUncheckedUpdateManyWithoutWorkspaceNestedInput
 }
 
-export type WorkspaceCreateWithoutAutomationsInput = {
+export type WorkspaceCreateWithoutSubscriptionsInput = {
   id?: string
   name: string
   slug: string
   logoUrl?: string | null
   primaryColor?: string
-  secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
+  plan?: string
   maxUsers?: number
   maxConversationsPerMonth?: number
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  agentConfig?: Prisma.AgentConfigCreateNestedOneWithoutWorkspaceInput
   analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutWorkspaceInput
@@ -2984,23 +2766,22 @@ export type WorkspaceCreateWithoutAutomationsInput = {
   webhookLogs?: Prisma.WebhookLogCreateNestedManyWithoutWorkspaceInput
 }
 
-export type WorkspaceUncheckedCreateWithoutAutomationsInput = {
+export type WorkspaceUncheckedCreateWithoutSubscriptionsInput = {
   id?: string
   name: string
   slug: string
   logoUrl?: string | null
   primaryColor?: string
-  secondaryColor?: string
   subscriptionStatus?: $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: string | null
   currentPeriodEnd?: Date | string | null
   trialEndsAt?: Date | string | null
+  plan?: string
   maxUsers?: number
   maxConversationsPerMonth?: number
   conversationsThisMonth?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  agentConfig?: Prisma.AgentConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -3016,39 +2797,38 @@ export type WorkspaceUncheckedCreateWithoutAutomationsInput = {
   webhookLogs?: Prisma.WebhookLogUncheckedCreateNestedManyWithoutWorkspaceInput
 }
 
-export type WorkspaceCreateOrConnectWithoutAutomationsInput = {
+export type WorkspaceCreateOrConnectWithoutSubscriptionsInput = {
   where: Prisma.WorkspaceWhereUniqueInput
-  create: Prisma.XOR<Prisma.WorkspaceCreateWithoutAutomationsInput, Prisma.WorkspaceUncheckedCreateWithoutAutomationsInput>
+  create: Prisma.XOR<Prisma.WorkspaceCreateWithoutSubscriptionsInput, Prisma.WorkspaceUncheckedCreateWithoutSubscriptionsInput>
 }
 
-export type WorkspaceUpsertWithoutAutomationsInput = {
-  update: Prisma.XOR<Prisma.WorkspaceUpdateWithoutAutomationsInput, Prisma.WorkspaceUncheckedUpdateWithoutAutomationsInput>
-  create: Prisma.XOR<Prisma.WorkspaceCreateWithoutAutomationsInput, Prisma.WorkspaceUncheckedCreateWithoutAutomationsInput>
+export type WorkspaceUpsertWithoutSubscriptionsInput = {
+  update: Prisma.XOR<Prisma.WorkspaceUpdateWithoutSubscriptionsInput, Prisma.WorkspaceUncheckedUpdateWithoutSubscriptionsInput>
+  create: Prisma.XOR<Prisma.WorkspaceCreateWithoutSubscriptionsInput, Prisma.WorkspaceUncheckedCreateWithoutSubscriptionsInput>
   where?: Prisma.WorkspaceWhereInput
 }
 
-export type WorkspaceUpdateToOneWithWhereWithoutAutomationsInput = {
+export type WorkspaceUpdateToOneWithWhereWithoutSubscriptionsInput = {
   where?: Prisma.WorkspaceWhereInput
-  data: Prisma.XOR<Prisma.WorkspaceUpdateWithoutAutomationsInput, Prisma.WorkspaceUncheckedUpdateWithoutAutomationsInput>
+  data: Prisma.XOR<Prisma.WorkspaceUpdateWithoutSubscriptionsInput, Prisma.WorkspaceUncheckedUpdateWithoutSubscriptionsInput>
 }
 
-export type WorkspaceUpdateWithoutAutomationsInput = {
+export type WorkspaceUpdateWithoutSubscriptionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
-  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  agentConfig?: Prisma.AgentConfigUpdateOneWithoutWorkspaceNestedInput
   analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutWorkspaceNestedInput
@@ -3064,23 +2844,22 @@ export type WorkspaceUpdateWithoutAutomationsInput = {
   webhookLogs?: Prisma.WebhookLogUpdateManyWithoutWorkspaceNestedInput
 }
 
-export type WorkspaceUncheckedUpdateWithoutAutomationsInput = {
+export type WorkspaceUncheckedUpdateWithoutSubscriptionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
-  secondaryColor?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
   conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  agentConfig?: Prisma.AgentConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutWorkspaceNestedInput
@@ -3103,7 +2882,7 @@ export type WorkspaceUncheckedUpdateWithoutAutomationsInput = {
 
 export type WorkspaceCountOutputType = {
   analyticsDaily: number
-  automations: number
+  subscriptions: number
   channels: number
   conversations: number
   conversationActivities: number
@@ -3120,7 +2899,7 @@ export type WorkspaceCountOutputType = {
 
 export type WorkspaceCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   analyticsDaily?: boolean | WorkspaceCountOutputTypeCountAnalyticsDailyArgs
-  automations?: boolean | WorkspaceCountOutputTypeCountAutomationsArgs
+  subscriptions?: boolean | WorkspaceCountOutputTypeCountSubscriptionsArgs
   channels?: boolean | WorkspaceCountOutputTypeCountChannelsArgs
   conversations?: boolean | WorkspaceCountOutputTypeCountConversationsArgs
   conversationActivities?: boolean | WorkspaceCountOutputTypeCountConversationActivitiesArgs
@@ -3155,8 +2934,8 @@ export type WorkspaceCountOutputTypeCountAnalyticsDailyArgs<ExtArgs extends runt
 /**
  * WorkspaceCountOutputType without action
  */
-export type WorkspaceCountOutputTypeCountAutomationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.AutomationWhereInput
+export type WorkspaceCountOutputTypeCountSubscriptionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SubscriptionWhereInput
 }
 
 /**
@@ -3250,19 +3029,18 @@ export type WorkspaceSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   slug?: boolean
   logoUrl?: boolean
   primaryColor?: boolean
-  secondaryColor?: boolean
   subscriptionStatus?: boolean
   kirvanoSubscriptionId?: boolean
   currentPeriodEnd?: boolean
   trialEndsAt?: boolean
+  plan?: boolean
   maxUsers?: boolean
   maxConversationsPerMonth?: boolean
   conversationsThisMonth?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  agentConfig?: boolean | Prisma.Workspace$agentConfigArgs<ExtArgs>
   analyticsDaily?: boolean | Prisma.Workspace$analyticsDailyArgs<ExtArgs>
-  automations?: boolean | Prisma.Workspace$automationsArgs<ExtArgs>
+  subscriptions?: boolean | Prisma.Workspace$subscriptionsArgs<ExtArgs>
   channels?: boolean | Prisma.Workspace$channelsArgs<ExtArgs>
   conversations?: boolean | Prisma.Workspace$conversationsArgs<ExtArgs>
   conversationActivities?: boolean | Prisma.Workspace$conversationActivitiesArgs<ExtArgs>
@@ -3284,11 +3062,11 @@ export type WorkspaceSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   slug?: boolean
   logoUrl?: boolean
   primaryColor?: boolean
-  secondaryColor?: boolean
   subscriptionStatus?: boolean
   kirvanoSubscriptionId?: boolean
   currentPeriodEnd?: boolean
   trialEndsAt?: boolean
+  plan?: boolean
   maxUsers?: boolean
   maxConversationsPerMonth?: boolean
   conversationsThisMonth?: boolean
@@ -3302,11 +3080,11 @@ export type WorkspaceSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   slug?: boolean
   logoUrl?: boolean
   primaryColor?: boolean
-  secondaryColor?: boolean
   subscriptionStatus?: boolean
   kirvanoSubscriptionId?: boolean
   currentPeriodEnd?: boolean
   trialEndsAt?: boolean
+  plan?: boolean
   maxUsers?: boolean
   maxConversationsPerMonth?: boolean
   conversationsThisMonth?: boolean
@@ -3320,11 +3098,11 @@ export type WorkspaceSelectScalar = {
   slug?: boolean
   logoUrl?: boolean
   primaryColor?: boolean
-  secondaryColor?: boolean
   subscriptionStatus?: boolean
   kirvanoSubscriptionId?: boolean
   currentPeriodEnd?: boolean
   trialEndsAt?: boolean
+  plan?: boolean
   maxUsers?: boolean
   maxConversationsPerMonth?: boolean
   conversationsThisMonth?: boolean
@@ -3332,11 +3110,10 @@ export type WorkspaceSelectScalar = {
   updatedAt?: boolean
 }
 
-export type WorkspaceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "logoUrl" | "primaryColor" | "secondaryColor" | "subscriptionStatus" | "kirvanoSubscriptionId" | "currentPeriodEnd" | "trialEndsAt" | "maxUsers" | "maxConversationsPerMonth" | "conversationsThisMonth" | "createdAt" | "updatedAt", ExtArgs["result"]["workspace"]>
+export type WorkspaceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "logoUrl" | "primaryColor" | "subscriptionStatus" | "kirvanoSubscriptionId" | "currentPeriodEnd" | "trialEndsAt" | "plan" | "maxUsers" | "maxConversationsPerMonth" | "conversationsThisMonth" | "createdAt" | "updatedAt", ExtArgs["result"]["workspace"]>
 export type WorkspaceInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  agentConfig?: boolean | Prisma.Workspace$agentConfigArgs<ExtArgs>
   analyticsDaily?: boolean | Prisma.Workspace$analyticsDailyArgs<ExtArgs>
-  automations?: boolean | Prisma.Workspace$automationsArgs<ExtArgs>
+  subscriptions?: boolean | Prisma.Workspace$subscriptionsArgs<ExtArgs>
   channels?: boolean | Prisma.Workspace$channelsArgs<ExtArgs>
   conversations?: boolean | Prisma.Workspace$conversationsArgs<ExtArgs>
   conversationActivities?: boolean | Prisma.Workspace$conversationActivitiesArgs<ExtArgs>
@@ -3357,9 +3134,8 @@ export type WorkspaceIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
 export type $WorkspacePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Workspace"
   objects: {
-    agentConfig: Prisma.$AgentConfigPayload<ExtArgs> | null
     analyticsDaily: Prisma.$AnalyticsDailyPayload<ExtArgs>[]
-    automations: Prisma.$AutomationPayload<ExtArgs>[]
+    subscriptions: Prisma.$SubscriptionPayload<ExtArgs>[]
     channels: Prisma.$ChannelPayload<ExtArgs>[]
     conversations: Prisma.$ConversationPayload<ExtArgs>[]
     conversationActivities: Prisma.$ConversationActivityPayload<ExtArgs>[]
@@ -3379,11 +3155,11 @@ export type $WorkspacePayload<ExtArgs extends runtime.Types.Extensions.InternalA
     slug: string
     logoUrl: string | null
     primaryColor: string
-    secondaryColor: string
     subscriptionStatus: $Enums.SubscriptionStatus
     kirvanoSubscriptionId: string | null
     currentPeriodEnd: Date | null
     trialEndsAt: Date | null
+    plan: string
     maxUsers: number
     maxConversationsPerMonth: number
     conversationsThisMonth: number
@@ -3783,9 +3559,8 @@ readonly fields: WorkspaceFieldRefs;
  */
 export interface Prisma__WorkspaceClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  agentConfig<T extends Prisma.Workspace$agentConfigArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Workspace$agentConfigArgs<ExtArgs>>): Prisma.Prisma__AgentConfigClient<runtime.Types.Result.GetResult<Prisma.$AgentConfigPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   analyticsDaily<T extends Prisma.Workspace$analyticsDailyArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Workspace$analyticsDailyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AnalyticsDailyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  automations<T extends Prisma.Workspace$automationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Workspace$automationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AutomationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  subscriptions<T extends Prisma.Workspace$subscriptionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Workspace$subscriptionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SubscriptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   channels<T extends Prisma.Workspace$channelsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Workspace$channelsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   conversations<T extends Prisma.Workspace$conversationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Workspace$conversationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConversationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   conversationActivities<T extends Prisma.Workspace$conversationActivitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Workspace$conversationActivitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConversationActivityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -3832,11 +3607,11 @@ export interface WorkspaceFieldRefs {
   readonly slug: Prisma.FieldRef<"Workspace", 'String'>
   readonly logoUrl: Prisma.FieldRef<"Workspace", 'String'>
   readonly primaryColor: Prisma.FieldRef<"Workspace", 'String'>
-  readonly secondaryColor: Prisma.FieldRef<"Workspace", 'String'>
   readonly subscriptionStatus: Prisma.FieldRef<"Workspace", 'SubscriptionStatus'>
   readonly kirvanoSubscriptionId: Prisma.FieldRef<"Workspace", 'String'>
   readonly currentPeriodEnd: Prisma.FieldRef<"Workspace", 'DateTime'>
   readonly trialEndsAt: Prisma.FieldRef<"Workspace", 'DateTime'>
+  readonly plan: Prisma.FieldRef<"Workspace", 'String'>
   readonly maxUsers: Prisma.FieldRef<"Workspace", 'Int'>
   readonly maxConversationsPerMonth: Prisma.FieldRef<"Workspace", 'Int'>
   readonly conversationsThisMonth: Prisma.FieldRef<"Workspace", 'Int'>
@@ -4230,25 +4005,6 @@ export type WorkspaceDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Int
 }
 
 /**
- * Workspace.agentConfig
- */
-export type Workspace$agentConfigArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the AgentConfig
-   */
-  select?: Prisma.AgentConfigSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the AgentConfig
-   */
-  omit?: Prisma.AgentConfigOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.AgentConfigInclude<ExtArgs> | null
-  where?: Prisma.AgentConfigWhereInput
-}
-
-/**
  * Workspace.analyticsDaily
  */
 export type Workspace$analyticsDailyArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -4273,27 +4029,27 @@ export type Workspace$analyticsDailyArgs<ExtArgs extends runtime.Types.Extension
 }
 
 /**
- * Workspace.automations
+ * Workspace.subscriptions
  */
-export type Workspace$automationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Workspace$subscriptionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Automation
+   * Select specific fields to fetch from the Subscription
    */
-  select?: Prisma.AutomationSelect<ExtArgs> | null
+  select?: Prisma.SubscriptionSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Automation
+   * Omit specific fields from the Subscription
    */
-  omit?: Prisma.AutomationOmit<ExtArgs> | null
+  omit?: Prisma.SubscriptionOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.AutomationInclude<ExtArgs> | null
-  where?: Prisma.AutomationWhereInput
-  orderBy?: Prisma.AutomationOrderByWithRelationInput | Prisma.AutomationOrderByWithRelationInput[]
-  cursor?: Prisma.AutomationWhereUniqueInput
+  include?: Prisma.SubscriptionInclude<ExtArgs> | null
+  where?: Prisma.SubscriptionWhereInput
+  orderBy?: Prisma.SubscriptionOrderByWithRelationInput | Prisma.SubscriptionOrderByWithRelationInput[]
+  cursor?: Prisma.SubscriptionWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.AutomationScalarFieldEnum | Prisma.AutomationScalarFieldEnum[]
+  distinct?: Prisma.SubscriptionScalarFieldEnum | Prisma.SubscriptionScalarFieldEnum[]
 }
 
 /**

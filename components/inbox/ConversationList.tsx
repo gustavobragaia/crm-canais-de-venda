@@ -28,7 +28,6 @@ interface Conversation {
   status: keyof typeof STATUS_LABELS
   channel: { type: keyof typeof CHANNEL_STYLES }
   assignedTo: { name: string } | null
-  aiEnabled: boolean
 }
 
 interface ConversationListProps {

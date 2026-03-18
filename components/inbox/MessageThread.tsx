@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useSession } from 'next-auth/react'
-import { Send, Loader2, Bot, Paperclip, X } from 'lucide-react'
+import { Send, Loader2, Paperclip, X } from 'lucide-react'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { AudioMessage } from './AudioMessage'
@@ -15,7 +15,6 @@ interface Message {
   createdAt: string
   isSystem: boolean
   senderName?: string | null
-  aiGenerated?: boolean
   sentBy: { id: string; name: string } | null
   mediaType?: string | null
   mediaUrl?: string | null
@@ -42,6 +41,7 @@ export function MessageThread({ conversationId, contactName, isGroup }: MessageT
 
   useEffect(() => {
     if (!conversationId) return
+    setMessages([])
     setLoading(true)
     fetch(`/api/conversations/${conversationId}/messages`)
       .then((r) => r.json())
@@ -169,7 +169,6 @@ export function MessageThread({ conversationId, contactName, isGroup }: MessageT
               )
             }
             const isOutbound = msg.direction === 'OUTBOUND'
-            const isAi = msg.aiGenerated
             const mediaType = msg.mediaType as 'audio' | 'image' | 'video' | 'document' | null | undefined
 
             return (
@@ -184,9 +183,7 @@ export function MessageThread({ conversationId, contactName, isGroup }: MessageT
                   <div
                     className={`px-4 py-2.5 rounded-2xl text-sm ${
                       isOutbound
-                        ? isAi
-                          ? 'bg-violet-50 text-violet-900 border border-dashed border-violet-300 rounded-br-sm'
-                          : 'bg-blue-500 text-white rounded-br-sm'
+                        ? 'bg-blue-500 text-white rounded-br-sm'
                         : 'bg-white text-gray-900 border border-gray-200 rounded-bl-sm'
                     }`}
                   >
@@ -211,14 +208,8 @@ export function MessageThread({ conversationId, contactName, isGroup }: MessageT
                   </div>
 
                   <div className="flex items-center gap-1.5 px-1">
-                    {isAi && (
-                      <span className="inline-flex items-center gap-0.5 text-[10px] bg-violet-100 text-violet-600 rounded px-1 py-0.5">
-                        <Bot size={9} />
-                        IA
-                      </span>
-                    )}
                     <span className="text-xs text-gray-400">
-                      {isOutbound && !isAi && msg.sentBy ? `${msg.sentBy.name} · ` : ''}
+                      {isOutbound && msg.sentBy ? `${msg.sentBy.name} · ` : ''}
                       {format(new Date(msg.createdAt), 'HH:mm', { locale: ptBR })}
                     </span>
                   </div>

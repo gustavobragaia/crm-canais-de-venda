@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { type UazapiWebhookPayload, type UazapiWebhookMessagePayload, type UazapiWebhookConnectionPayload, type UazapiWebhookHistoryPayload, downloadUazapiMedia } from '@/lib/integrations/uazapi'
 import { db } from '@/lib/db'
 import { pusherServer } from '@/lib/pusher'
-import { processAiResponse } from '@/lib/ai/agent'
+import { canCreateConversation, incrementConversationCount } from '@/lib/billing/conversationGate'
 
 export async function GET() {
   return NextResponse.json({ status: 'OK' })
@@ -109,6 +109,17 @@ async function processMessage(
     ? new Date(msg.messageTimestamp > 1e12 ? msg.messageTimestamp : msg.messageTimestamp * 1000)
     : new Date()
 
+  const allowed = await canCreateConversation(channel.workspaceId, channel.id, chatid)
+  if (!allowed) {
+    console.log('[UAZAPI WEBHOOK] conversation limit reached for workspace:', channel.workspaceId)
+    return
+  }
+
+  const existingConv = await db.conversation.findUnique({
+    where: { workspaceId_channelId_externalId: { workspaceId: channel.workspaceId, channelId: channel.id, externalId: chatid } },
+    select: { id: true },
+  })
+
   const conversation = await db.conversation.upsert({
     where: {
       workspaceId_channelId_externalId: {
@@ -128,6 +139,10 @@ async function processMessage(
     },
     update: { contactName, contactPhotoUrl },
   })
+
+  if (!existingConv) {
+    await incrementConversationCount(channel.workspaceId)
+  }
 
   const savedMessage = await db.message.create({
     data: {
@@ -202,12 +217,6 @@ async function processMessage(
         .catch(err => console.error('[UAZAPI WEBHOOK] inline media download error:', err))
     }
 
-    // Trigger AI agent asynchronously — only for text/mixed-media inbound messages
-    if (direction === 'INBOUND' && (!mediaType || textContent)) {
-      processAiResponse(conversation.id, channel.workspaceId, textContent).catch(err =>
-        console.error('[UAZAPI WEBHOOK] AI agent error:', err)
-      )
-    }
   }
 }
 

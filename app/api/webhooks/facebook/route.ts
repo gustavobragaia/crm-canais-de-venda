@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { pusherServer } from '@/lib/pusher'
 import type { FacebookWebhookPayload } from '@/lib/integrations/facebook'
+import { canCreateConversation, incrementConversationCount } from '@/lib/billing/conversationGate'
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
@@ -31,6 +32,14 @@ export async function POST(req: NextRequest) {
 
         const senderId = messaging.sender.id
 
+        const allowed = await canCreateConversation(channel.workspaceId, channel.id, senderId)
+        if (!allowed) continue
+
+        const existingConv = await db.conversation.findUnique({
+          where: { workspaceId_channelId_externalId: { workspaceId: channel.workspaceId, channelId: channel.id, externalId: senderId } },
+          select: { id: true },
+        })
+
         const conversation = await db.conversation.upsert({
           where: {
             workspaceId_channelId_externalId: {
@@ -48,6 +57,8 @@ export async function POST(req: NextRequest) {
           },
           update: {},
         })
+
+        if (!existingConv) await incrementConversationCount(channel.workspaceId)
 
         const existing = await db.message.findFirst({
           where: { externalId: messaging.message.mid },

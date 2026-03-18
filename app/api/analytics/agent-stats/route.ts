@@ -39,7 +39,6 @@ export async function GET() {
         where: {
           workspaceId,
           direction: 'OUTBOUND',
-          aiGenerated: false,
           sentById: { not: null },
           createdAt: { gte: startOfMonth },
         },

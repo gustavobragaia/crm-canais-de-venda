@@ -36,7 +36,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
   const { id } = await params
   const body = await req.json()
-  const { status, pipelineStage, aiEnabled, assignedToId, assignedById } = body
+  const { status, pipelineStage, assignedToId, assignedById } = body
 
   const conversation = await db.conversation.findFirst({
     where: { id, workspaceId: session.user.workspaceId },
@@ -48,8 +48,6 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
   // Build update data with smart auto-sync
   const updateData: Record<string, unknown> = {}
-
-  if (aiEnabled !== undefined) updateData.aiEnabled = aiEnabled
 
   // Handle assignedToId changes
   if (assignedToId !== undefined) {

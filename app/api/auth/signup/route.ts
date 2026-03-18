@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { hash } from 'bcryptjs'
 import { db } from '@/lib/db'
+import { sendEmail } from '@/lib/email/resend'
+import { adminWelcomeEmail } from '@/lib/email/templates/admin-welcome'
 
 export async function POST(req: NextRequest) {
   try {
@@ -39,6 +41,8 @@ export async function POST(req: NextRequest) {
           slug: workspaceSlug,
           subscriptionStatus: 'TRIAL',
           trialEndsAt,
+          maxUsers: 2,
+          maxConversationsPerMonth: 10,
         },
       })
 
@@ -65,6 +69,21 @@ export async function POST(req: NextRequest) {
 
       return { workspace, admin }
     })
+
+    // Send welcome email to admin (fire-and-forget)
+    const baseUrl = process.env.NEXTAUTH_URL?.replace(/\/$/, '') ?? ''
+    sendEmail({
+      to: adminEmail,
+      subject: 'Bem-vindo ao ClosioCRM',
+      html: adminWelcomeEmail({
+        adminName,
+        adminEmail,
+        adminPassword,
+        workspaceName,
+        workspaceSlug: result.workspace.slug,
+        loginUrl: `${baseUrl}/login?workspace=${result.workspace.slug}`,
+      }),
+    }).catch(err => console.error('[SIGNUP] email error:', err))
 
     return NextResponse.json(
       {
