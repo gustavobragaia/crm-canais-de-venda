@@ -13,6 +13,7 @@ import {
   GitBranch,
   MessageSquare,
   Users,
+  Bot,
 } from 'lucide-react'
 import { ClosioIcon } from '@/components/ClosioLogo'
 
@@ -50,6 +51,7 @@ export function Sidebar() {
     { label: 'Caixa de Entrada', href: `/${slug}/inbox`, icon: Inbox },
     { label: 'Funil', href: `/${slug}/funil`, icon: GitBranch },
     { label: 'Atendimento', href: `/${slug}/pipeline`, icon: Layers },
+    { label: 'Agentes de IA', href: `/${slug}/agents`, icon: Bot, adminOnly: true },
     { label: 'Analytics', href: `/${slug}/analytics`, icon: BarChart2, adminOnly: true },
     { label: 'Configurações', href: `/${slug}/settings`, icon: Settings, adminOnly: true },
   ]

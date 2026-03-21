@@ -72,3 +72,14 @@ export const SubscriptionStatus = {
 } as const
 
 export type SubscriptionStatus = (typeof SubscriptionStatus)[keyof typeof SubscriptionStatus]
+
+
+export const TokenTransactionType = {
+  PURCHASE: 'PURCHASE',
+  CONSUMPTION: 'CONSUMPTION',
+  REFUND: 'REFUND',
+  BONUS: 'BONUS',
+  ADJUSTMENT: 'ADJUSTMENT'
+} as const
+
+export type TokenTransactionType = (typeof TokenTransactionType)[keyof typeof TokenTransactionType]

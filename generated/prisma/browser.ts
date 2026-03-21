@@ -102,3 +102,48 @@ export type ConversationActivity = Prisma.ConversationActivityModel
  * 
  */
 export type Subscription = Prisma.SubscriptionModel
+/**
+ * Model TokenTransaction
+ * 
+ */
+export type TokenTransaction = Prisma.TokenTransactionModel
+/**
+ * Model TokenPackage
+ * 
+ */
+export type TokenPackage = Prisma.TokenPackageModel
+/**
+ * Model ScrapingJob
+ * 
+ */
+export type ScrapingJob = Prisma.ScrapingJobModel
+/**
+ * Model DispatchList
+ * 
+ */
+export type DispatchList = Prisma.DispatchListModel
+/**
+ * Model DispatchListContact
+ * 
+ */
+export type DispatchListContact = Prisma.DispatchListContactModel
+/**
+ * Model WabaChannel
+ * 
+ */
+export type WabaChannel = Prisma.WabaChannelModel
+/**
+ * Model WabaTemplate
+ * 
+ */
+export type WabaTemplate = Prisma.WabaTemplateModel
+/**
+ * Model TemplateDispatch
+ * 
+ */
+export type TemplateDispatch = Prisma.TemplateDispatchModel
+/**
+ * Model AiSalesConfig
+ * 
+ */
+export type AiSalesConfig = Prisma.AiSalesConfigModel

@@ -5,13 +5,27 @@ import { useSession } from 'next-auth/react'
 import { LeadDrawer } from '@/components/LeadDrawer'
 import { usePusherChannel } from '@/hooks/usePusher'
 
-const FUNNEL_STAGES = [
-  { name: 'Não Atribuído',   color: '#6B7280', auto: true  },
-  { name: 'Aguardando',      color: '#F59E0B', auto: true  },
-  { name: 'Em Atendimento',  color: '#3B82F6', auto: true  },
-  { name: 'Reunião Marcada', color: '#8B5CF6', auto: false },
-  { name: 'Contrato Fechado',color: '#10B981', auto: false },
+const ORGANIC_STAGES = [
+  { name: 'Não Atribuído',    color: '#6B7280', auto: true  },
+  { name: 'Aguardando',       color: '#F59E0B', auto: true  },
+  { name: 'Em Atendimento',   color: '#3B82F6', auto: true  },
+  { name: 'Reunião Marcada',  color: '#8B5CF6', auto: false },
+  { name: 'Contrato Fechado', color: '#10B981', auto: false },
 ]
+
+const DISPATCH_STAGES = [
+  { name: 'Disparo Enviado',    color: '#6B7280', auto: true  },
+  { name: 'Disparo Respondido', color: '#F59E0B', auto: true  },
+  { name: 'SDR Ativo',          color: '#A855F7', auto: true  },
+  { name: 'Em Atendimento',     color: '#3B82F6', auto: true  },
+  { name: 'Reunião Marcada',    color: '#8B5CF6', auto: false },
+  { name: 'Contrato Fechado',   color: '#10B981', auto: false },
+]
+
+interface DispatchList {
+  id: string
+  name: string
+}
 
 interface Conversation {
   id: string
@@ -65,7 +79,10 @@ export default function FunilPage() {
   const [loading, setLoading] = useState(true)
   const [draggedId, setDraggedId] = useState<string | null>(null)
   const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [originFilter, setOriginFilter] = useState<'organic' | string>('organic') // 'organic' | listId
+  const [lists, setLists] = useState<DispatchList[]>([])
 
+  const activeStages = originFilter === 'organic' ? ORGANIC_STAGES : DISPATCH_STAGES
   const workspaceId = session?.user.workspaceId
 
   // Real-time updates via Pusher (workspace-level)
@@ -88,11 +105,23 @@ export default function FunilPage() {
   })
 
   useEffect(() => {
-    fetch('/api/conversations?limit=200')
-      .then((r) => r.json())
-      .then((data) => setConversations(data.conversations ?? []))
-      .finally(() => setLoading(false))
+    fetch('/api/agents/listas')
+      .then(r => r.ok ? r.json() : { lists: [] })
+      .then((data: { lists?: DispatchList[] }) => setLists(data.lists ?? []))
+      .catch(() => null)
   }, [])
+
+  useEffect(() => {
+    setLoading(true)
+    const params = new URLSearchParams({ limit: '200' })
+    if (originFilter === 'organic') params.set('source', 'organic')
+    else { params.set('source', 'dispatch'); params.set('dispatchListId', originFilter) }
+
+    fetch(`/api/conversations?${params}`)
+      .then((r) => r.ok ? r.json() : null)
+      .then((data) => setConversations(data?.conversations ?? []))
+      .finally(() => setLoading(false))
+  }, [originFilter])
 
   function getConversationsForStage(stageName: string) {
     if (stageName === 'Não Atribuído') {
@@ -124,13 +153,23 @@ export default function FunilPage() {
 
   return (
     <div className="h-screen flex flex-col">
-      <div className="h-16 px-6 border-b border-gray-200 bg-white flex items-center">
+      <div className="h-16 px-6 border-b border-gray-200 bg-white flex items-center gap-4">
         <h1 className="font-semibold text-gray-900">Funil de Conversas</h1>
+        <select
+          value={originFilter}
+          onChange={e => setOriginFilter(e.target.value)}
+          className="text-sm px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
+        >
+          <option value="organic">Orgânicas</option>
+          {lists.map(l => (
+            <option key={l.id} value={l.id}>Disparo: {l.name}</option>
+          ))}
+        </select>
       </div>
 
       <div className="flex-1 overflow-x-auto p-6">
         <div className="flex gap-4 h-full min-w-max">
-          {FUNNEL_STAGES.map((stage) => {
+          {activeStages.map((stage) => {
             const stageConvs = getConversationsForStage(stage.name)
             const isAutoStage = stage.auto
 

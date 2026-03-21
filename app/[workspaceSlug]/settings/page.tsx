@@ -21,6 +21,8 @@ import {
 } from 'lucide-react'
 import { UpgradeModal } from '@/components/UpgradeModal'
 import { PlansContent } from '@/components/billing/PlansContent'
+import TokensContent from '@/components/billing/TokensContent'
+import { Coins } from 'lucide-react'
 
 interface WorkspaceUser {
   id: string
@@ -34,10 +36,12 @@ interface WorkspaceUser {
 export default function SettingsPage() {
   const { data: session } = useSession()
   const searchParams = useSearchParams()
-  const [activeTab, setActiveTab] = useState<'team' | 'billing' | 'channels'>(
-    (searchParams.get('tab') as 'team' | 'billing' | 'channels') ?? 'team'
+  const [activeTab, setActiveTab] = useState<'team' | 'billing' | 'tokens' | 'channels'>(
+    (searchParams.get('tab') as 'team' | 'billing' | 'tokens' | 'channels') ?? 'team'
   )
-  const [users, setUsers] = useState<Array<{ id: string; name: string; email: string; role: string }>>([])
+  const [users, setUsers] = useState<Array<{ id: string; name: string; email: string; role: string; specializations: string[]; calendarUrl: string | null }>>([])
+  const [editingUserId, setEditingUserId] = useState<string | null>(null)
+  const [specializationInput, setSpecializationInput] = useState('')
   const [showInvite, setShowInvite] = useState(false)
   const [inviteForm, setInviteForm] = useState({ name: '', email: '', role: 'AGENT' as 'ADMIN' | 'AGENT' })
   const [inviteResult, setInviteResult] = useState<{ tempPassword: string; email: string } | null>(null)
@@ -260,6 +264,7 @@ export default function SettingsPage() {
           {[
             { key: 'team', label: 'Equipe', icon: Users },
             { key: 'billing', label: 'Planos', icon: Package },
+            { key: 'tokens', label: 'Tokens', icon: Coins },
             { key: 'channels', label: 'Canais', icon: MessageCircle },
           ].map(({ key, label, icon: Icon }) => (
             <button
@@ -377,6 +382,8 @@ export default function SettingsPage() {
                       <th className="text-left px-5 py-3 text-xs font-medium text-gray-500">Nome</th>
                       <th className="text-left px-5 py-3 text-xs font-medium text-gray-500">Email</th>
                       <th className="text-left px-5 py-3 text-xs font-medium text-gray-500">Cargo</th>
+                      <th className="text-left px-5 py-3 text-xs font-medium text-gray-500">Especializações (SDR)</th>
+                      <th className="text-left px-5 py-3 text-xs font-medium text-gray-500">Link Calendário</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
@@ -391,6 +398,73 @@ export default function SettingsPage() {
                             {u.role === 'ADMIN' ? 'Admin' : 'Agente'}
                           </span>
                         </td>
+                        <td className="px-5 py-4">
+                          {editingUserId === u.id ? (
+                            <div className="space-y-1.5">
+                              <div className="flex flex-wrap gap-1">
+                                {u.specializations.map(s => (
+                                  <span key={s} className="inline-flex items-center gap-1 text-xs bg-violet-100 text-violet-700 px-2 py-0.5 rounded-full">
+                                    {s}
+                                    <button
+                                      onClick={() => {
+                                        const updated = u.specializations.filter(x => x !== s)
+                                        fetch(`/api/users/${u.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ specializations: updated }) })
+                                          .then(() => setUsers(prev => prev.map(x => x.id === u.id ? { ...x, specializations: updated } : x)))
+                                      }}
+                                      className="text-violet-400 hover:text-violet-700 ml-0.5"
+                                    >×</button>
+                                  </span>
+                                ))}
+                              </div>
+                              <input
+                                type="text"
+                                placeholder="Digite e pressione Enter..."
+                                value={specializationInput}
+                                onChange={e => setSpecializationInput(e.target.value)}
+                                onKeyDown={e => {
+                                  if (e.key === 'Enter' && specializationInput.trim()) {
+                                    e.preventDefault()
+                                    const tag = specializationInput.trim().toLowerCase()
+                                    if (!u.specializations.includes(tag)) {
+                                      const updated = [...u.specializations, tag]
+                                      fetch(`/api/users/${u.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ specializations: updated }) })
+                                        .then(() => setUsers(prev => prev.map(x => x.id === u.id ? { ...x, specializations: updated } : x)))
+                                    }
+                                    setSpecializationInput('')
+                                  }
+                                }}
+                                className="w-full text-xs px-2 py-1 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-violet-500"
+                              />
+                            </div>
+                          ) : (
+                            <button onClick={() => { setEditingUserId(u.id); setSpecializationInput('') }} className="text-left">
+                              {u.specializations.length > 0 ? (
+                                <div className="flex flex-wrap gap-1">
+                                  {u.specializations.map(s => (
+                                    <span key={s} className="text-xs bg-violet-100 text-violet-700 px-2 py-0.5 rounded-full">{s}</span>
+                                  ))}
+                                </div>
+                              ) : (
+                                <span className="text-xs text-gray-400 hover:text-violet-600">+ Adicionar</span>
+                              )}
+                            </button>
+                          )}
+                        </td>
+                        <td className="px-5 py-4">
+                          <input
+                            type="url"
+                            placeholder="https://cal.com/..."
+                            defaultValue={u.calendarUrl ?? ''}
+                            onBlur={e => {
+                              const val = e.target.value.trim() || null
+                              if (val !== (u.calendarUrl ?? null)) {
+                                fetch(`/api/users/${u.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ calendarUrl: val }) })
+                                  .then(() => setUsers(prev => prev.map(x => x.id === u.id ? { ...x, calendarUrl: val } : x)))
+                              }
+                            }}
+                            className="text-xs px-2 py-1 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 w-40"
+                          />
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -404,6 +478,11 @@ export default function SettingsPage() {
             <div className="flex-1 overflow-y-auto -m-6">
               <PlansContent />
             </div>
+          )}
+
+          {/* Tokens Tab */}
+          {activeTab === 'tokens' && (
+            <TokensContent />
           )}
 
           {/* Channels Tab */}

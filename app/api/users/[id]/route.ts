@@ -16,7 +16,7 @@ export async function PATCH(
     }
 
     const { id } = await params
-    const body = await req.json() as { agentRole?: string }
+    const body = await req.json() as { agentRole?: string; specializations?: string[]; calendarUrl?: string }
 
     // Ensure the user belongs to this workspace
     const user = await db.user.findFirst({
@@ -31,8 +31,10 @@ export async function PATCH(
       where: { id },
       data: {
         ...(body.agentRole !== undefined && { agentRole: body.agentRole }),
+        ...(body.specializations !== undefined && { specializations: body.specializations }),
+        ...(body.calendarUrl !== undefined && { calendarUrl: body.calendarUrl }),
       },
-      select: { id: true, name: true, email: true, role: true, avatarUrl: true, agentRole: true, isActive: true },
+      select: { id: true, name: true, email: true, role: true, avatarUrl: true, agentRole: true, isActive: true, specializations: true, calendarUrl: true },
     })
 
     return NextResponse.json({ user: updated })

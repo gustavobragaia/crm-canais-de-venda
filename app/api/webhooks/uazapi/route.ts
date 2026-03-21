@@ -4,6 +4,9 @@ import { db } from '@/lib/db'
 import { pusherServer } from '@/lib/pusher'
 import { canCreateConversation, incrementConversationCount } from '@/lib/billing/conversationGate'
 import { persistMedia } from '@/lib/media'
+import { handleDispatchResponse } from '@/lib/agents/disparador'
+import { processMessageContent } from '@/lib/agents/vendedor'
+import { detectHumanTakeover } from '@/lib/agents/vendedor-redis'
 
 export async function GET() {
   return NextResponse.json({ status: 'OK' })
@@ -219,6 +222,42 @@ async function processMessage(
           console.log(`[UAZAPI WEBHOOK] media persisted | messageId=${savedMessage.id} | blob=${!!permanentUrl}`)
         })
         .catch(err => console.error('[UAZAPI WEBHOOK] media download/persist error:', err))
+    }
+
+    // Dispatch response detection: if inbound msg on a dispatch conversation
+    if (direction === 'INBOUND' && conversation.pipelineStage === 'Disparo Enviado') {
+      handleDispatchResponse(conversation.id, channel.workspaceId)
+        .catch(err => console.error('[UAZAPI WEBHOOK] handleDispatchResponse error:', err))
+    }
+
+    // Vendedor SDR: INBOUND message on AI-enabled conversation → debounce + process
+    if (direction === 'INBOUND' && conversation.aiSalesEnabled) {
+      processMessageContent({
+        content: textContent,
+        mediaType: mediaType ?? null,
+        mediaUrl: mediaUrl ?? null,
+        transcription: null, // transcription happens async, vendedor will use text for now
+      })
+        .then(processedContent => {
+          if (!processedContent) return
+          const baseUrl = (process.env.NEXTAUTH_URL ?? '').replace(/\/$/, '')
+          return fetch(`${baseUrl}/api/agents/vendedor/process`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              conversationId: conversation.id,
+              message: processedContent,
+              workspaceId: channel.workspaceId,
+            }),
+          })
+        })
+        .catch(err => console.error('[VENDEDOR] trigger error:', err))
+    }
+
+    // Vendedor SDR: OUTBOUND non-AI message → detect human takeover
+    if (direction === 'OUTBOUND' && conversation.aiSalesEnabled && !savedMessage.aiGenerated) {
+      detectHumanTakeover(conversation.id, textContent)
+        .catch(err => console.error('[VENDEDOR TAKEOVER] error:', err))
     }
 
   }

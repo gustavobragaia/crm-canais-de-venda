@@ -35,8 +35,8 @@ export function StageHistoryTimeline({ conversationId }: StageHistoryTimelinePro
   useEffect(() => {
     setLoading(true)
     fetch(`/api/conversations/${conversationId}/stage-history`)
-      .then(r => r.json())
-      .then((data: StageHistory[] | { history: StageHistory[] }) => setHistory(Array.isArray(data) ? data : (data.history ?? [])))
+      .then(r => r.ok ? r.json() : null)
+      .then((data: StageHistory[] | { history: StageHistory[] } | null) => setHistory(!data ? [] : Array.isArray(data) ? data : (data.history ?? [])))
       .finally(() => setLoading(false))
   }, [conversationId])
 
@@ -46,8 +46,8 @@ export function StageHistoryTimeline({ conversationId }: StageHistoryTimelinePro
       const { conversationId: cid } = (e as CustomEvent<{ conversationId: string }>).detail
       if (cid !== conversationId) return
       fetch(`/api/conversations/${conversationId}/stage-history`)
-        .then(r => r.json())
-        .then((data: StageHistory[] | { history: StageHistory[] }) => setHistory(Array.isArray(data) ? data : (data.history ?? [])))
+        .then(r => r.ok ? r.json() : null)
+        .then((data: StageHistory[] | { history: StageHistory[] } | null) => { if (data) setHistory(Array.isArray(data) ? data : (data.history ?? [])) })
         .catch(() => {})
     }
     window.addEventListener('conversation-updated', handler)

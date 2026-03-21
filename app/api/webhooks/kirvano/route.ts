@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { activatePlan, cancelPlan } from '@/lib/billing/subscriptionService'
+import { addTokens } from '@/lib/billing/tokenService'
+import { findPackageBySlug } from '@/lib/billing/tokenPackages'
+import { TokenTransactionType } from '@/generated/prisma/enums'
 
 // Kirvano webhook event types
 type KirvanoEvent =
@@ -70,12 +73,25 @@ export async function POST(req: NextRequest) {
 
   switch (payload.event) {
     case 'SALE_APPROVED': {
-      const nextBilling = payload.plan?.next_charge_date
-        ? new Date(payload.plan.next_charge_date)
-        : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+      if (planSlug.startsWith('tokens_')) {
+        // Token purchase
+        const pkgSlug = planSlug.replace('tokens_', '')
+        const pkg = findPackageBySlug(pkgSlug)
+        if (pkg) {
+          await addTokens(workspaceId, pkg.tokenAmount, TokenTransactionType.PURCHASE, payload.sale_id, `Compra: ${pkg.name}`)
+          console.info(`[Kirvano] Tokens added: ${pkg.tokenAmount} for workspace ${workspaceId}`)
+        } else {
+          console.warn(`[Kirvano] Unknown token package: ${pkgSlug}`)
+        }
+      } else {
+        // Subscription plan
+        const nextBilling = payload.plan?.next_charge_date
+          ? new Date(payload.plan.next_charge_date)
+          : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
 
-      await activatePlan(workspaceId, planSlug, payload.sale_id, nextBilling)
-      console.info(`[Kirvano] Plan activated: ${planSlug} for workspace ${workspaceId}`)
+        await activatePlan(workspaceId, planSlug, payload.sale_id, nextBilling)
+        console.info(`[Kirvano] Plan activated: ${planSlug} for workspace ${workspaceId}`)
+      }
       break
     }
 
@@ -105,7 +121,20 @@ export async function POST(req: NextRequest) {
     }
 
     case 'SALE_CHARGEBACK':
-    case 'REFUND':
+    case 'REFUND': {
+      if (planSlug.startsWith('tokens_')) {
+        const pkgSlug = planSlug.replace('tokens_', '')
+        const pkg = findPackageBySlug(pkgSlug)
+        if (pkg) {
+          await addTokens(workspaceId, -pkg.tokenAmount, TokenTransactionType.REFUND, payload.sale_id, `Reembolso: ${pkg.name}`)
+          console.info(`[Kirvano] Tokens refunded: ${pkg.tokenAmount} for workspace ${workspaceId}`)
+        }
+      } else {
+        await cancelPlan(workspaceId)
+      }
+      break
+    }
+
     case 'SUBSCRIPTION_CANCELED': {
       await cancelPlan(workspaceId)
       break

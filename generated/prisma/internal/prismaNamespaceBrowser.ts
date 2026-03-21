@@ -67,7 +67,16 @@ export const ModelName = {
   Plan: 'Plan',
   MessageTemplate: 'MessageTemplate',
   ConversationActivity: 'ConversationActivity',
-  Subscription: 'Subscription'
+  Subscription: 'Subscription',
+  TokenTransaction: 'TokenTransaction',
+  TokenPackage: 'TokenPackage',
+  ScrapingJob: 'ScrapingJob',
+  DispatchList: 'DispatchList',
+  DispatchListContact: 'DispatchListContact',
+  WabaChannel: 'WabaChannel',
+  WabaTemplate: 'WabaTemplate',
+  TemplateDispatch: 'TemplateDispatch',
+  AiSalesConfig: 'AiSalesConfig'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -101,7 +110,9 @@ export const WorkspaceScalarFieldEnum = {
   maxConversationsPerMonth: 'maxConversationsPerMonth',
   conversationsThisMonth: 'conversationsThisMonth',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  tokenBalance: 'tokenBalance',
+  hasUsedFreeScraping: 'hasUsedFreeScraping'
 } as const
 
 export type WorkspaceScalarFieldEnum = (typeof WorkspaceScalarFieldEnum)[keyof typeof WorkspaceScalarFieldEnum]
@@ -118,6 +129,8 @@ export const UserScalarFieldEnum = {
   isActive: 'isActive',
   lastActiveAt: 'lastActiveAt',
   agentRole: 'agentRole',
+  specializations: 'specializations',
+  calendarUrl: 'calendarUrl',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -163,6 +176,14 @@ export const ConversationScalarFieldEnum = {
   assignedById: 'assignedById',
   status: 'status',
   pipelineStage: 'pipelineStage',
+  dispatchListId: 'dispatchListId',
+  templateDispatchId: 'templateDispatchId',
+  source: 'source',
+  aiSalesEnabled: 'aiSalesEnabled',
+  aiSalesMessageCount: 'aiSalesMessageCount',
+  qualificationScore: 'qualificationScore',
+  qualificationNotes: 'qualificationNotes',
+  handoffBriefing: 'handoffBriefing',
   lastMessageAt: 'lastMessageAt',
   lastMessagePreview: 'lastMessagePreview',
   unreadCount: 'unreadCount',
@@ -234,6 +255,7 @@ export const MessageScalarFieldEnum = {
   externalId: 'externalId',
   status: 'status',
   isSystem: 'isSystem',
+  aiGenerated: 'aiGenerated',
   senderName: 'senderName',
   sentById: 'sentById',
   sentAt: 'sentAt',
@@ -376,6 +398,173 @@ export const SubscriptionScalarFieldEnum = {
 } as const
 
 export type SubscriptionScalarFieldEnum = (typeof SubscriptionScalarFieldEnum)[keyof typeof SubscriptionScalarFieldEnum]
+
+
+export const TokenTransactionScalarFieldEnum = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  type: 'type',
+  amount: 'amount',
+  balanceBefore: 'balanceBefore',
+  balanceAfter: 'balanceAfter',
+  description: 'description',
+  referenceId: 'referenceId',
+  referenceType: 'referenceType',
+  createdAt: 'createdAt'
+} as const
+
+export type TokenTransactionScalarFieldEnum = (typeof TokenTransactionScalarFieldEnum)[keyof typeof TokenTransactionScalarFieldEnum]
+
+
+export const TokenPackageScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  tokenAmount: 'tokenAmount',
+  priceCents: 'priceCents',
+  checkoutUrl: 'checkoutUrl',
+  isActive: 'isActive',
+  position: 'position',
+  createdAt: 'createdAt'
+} as const
+
+export type TokenPackageScalarFieldEnum = (typeof TokenPackageScalarFieldEnum)[keyof typeof TokenPackageScalarFieldEnum]
+
+
+export const ScrapingJobScalarFieldEnum = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  query: 'query',
+  city: 'city',
+  zip: 'zip',
+  maxLeads: 'maxLeads',
+  status: 'status',
+  totalFound: 'totalFound',
+  validLeads: 'validLeads',
+  results: 'results',
+  listId: 'listId',
+  error: 'error',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type ScrapingJobScalarFieldEnum = (typeof ScrapingJobScalarFieldEnum)[keyof typeof ScrapingJobScalarFieldEnum]
+
+
+export const DispatchListScalarFieldEnum = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  name: 'name',
+  description: 'description',
+  source: 'source',
+  scrapingJobId: 'scrapingJobId',
+  contactCount: 'contactCount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DispatchListScalarFieldEnum = (typeof DispatchListScalarFieldEnum)[keyof typeof DispatchListScalarFieldEnum]
+
+
+export const DispatchListContactScalarFieldEnum = {
+  id: 'id',
+  listId: 'listId',
+  name: 'name',
+  phone: 'phone',
+  address: 'address',
+  businessType: 'businessType',
+  rating: 'rating',
+  reviewCount: 'reviewCount',
+  reviewSummary: 'reviewSummary',
+  website: 'website',
+  placeId: 'placeId',
+  createdAt: 'createdAt'
+} as const
+
+export type DispatchListContactScalarFieldEnum = (typeof DispatchListContactScalarFieldEnum)[keyof typeof DispatchListContactScalarFieldEnum]
+
+
+export const WabaChannelScalarFieldEnum = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  wabaId: 'wabaId',
+  phoneNumberId: 'phoneNumberId',
+  phoneNumber: 'phoneNumber',
+  displayName: 'displayName',
+  accessToken: 'accessToken',
+  qualityRating: 'qualityRating',
+  messagingLimit: 'messagingLimit',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type WabaChannelScalarFieldEnum = (typeof WabaChannelScalarFieldEnum)[keyof typeof WabaChannelScalarFieldEnum]
+
+
+export const WabaTemplateScalarFieldEnum = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  wabaChannelId: 'wabaChannelId',
+  metaTemplateId: 'metaTemplateId',
+  name: 'name',
+  language: 'language',
+  category: 'category',
+  status: 'status',
+  components: 'components',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type WabaTemplateScalarFieldEnum = (typeof WabaTemplateScalarFieldEnum)[keyof typeof WabaTemplateScalarFieldEnum]
+
+
+export const TemplateDispatchScalarFieldEnum = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  wabaChannelId: 'wabaChannelId',
+  dispatchListId: 'dispatchListId',
+  templateName: 'templateName',
+  status: 'status',
+  totalRecipients: 'totalRecipients',
+  sentCount: 'sentCount',
+  failedCount: 'failedCount',
+  respondedCount: 'respondedCount',
+  tokensConsumed: 'tokensConsumed',
+  enableSdr: 'enableSdr',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type TemplateDispatchScalarFieldEnum = (typeof TemplateDispatchScalarFieldEnum)[keyof typeof TemplateDispatchScalarFieldEnum]
+
+
+export const AiSalesConfigScalarFieldEnum = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  agentName: 'agentName',
+  tone: 'tone',
+  businessName: 'businessName',
+  businessDescription: 'businessDescription',
+  targetAudience: 'targetAudience',
+  differentials: 'differentials',
+  productsServices: 'productsServices',
+  commonObjections: 'commonObjections',
+  objectives: 'objectives',
+  calendarUrl: 'calendarUrl',
+  systemPrompt: 'systemPrompt',
+  useCustomPrompt: 'useCustomPrompt',
+  model: 'model',
+  maxMessagesPerConversation: 'maxMessagesPerConversation',
+  debounceSeconds: 'debounceSeconds',
+  blockTtlSeconds: 'blockTtlSeconds',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AiSalesConfigScalarFieldEnum = (typeof AiSalesConfigScalarFieldEnum)[keyof typeof AiSalesConfigScalarFieldEnum]
 
 
 export const SortOrder = {

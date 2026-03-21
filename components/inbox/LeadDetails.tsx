@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
-import { User, Tag, FileText, GitBranch } from 'lucide-react'
+import { User, Tag, FileText, GitBranch, Bot, ShieldOff } from 'lucide-react'
 import { TagSelector } from '@/components/ui/TagSelector'
 import { NotesList } from '@/components/ui/NotesList'
 import { StageHistoryTimeline } from '@/components/ui/StageHistoryTimeline'
@@ -23,6 +23,9 @@ interface ConversationDetail {
   conversationTags: Array<{ tag: TagItem }>
   assignedTo: { id: string; name: string } | null
   channel: { type: string; name: string } | null
+  aiSalesEnabled?: boolean
+  aiSalesMessageCount?: number
+  qualificationScore?: number | null
 }
 
 interface UserItem {
@@ -46,6 +49,8 @@ export function LeadDetails({ conversationId }: LeadDetailsProps) {
   const [conversation, setConversation] = useState<ConversationDetail | null>(null)
   const [users, setUsers] = useState<UserItem[]>([])
   const [stages, setStages] = useState<Array<{ id: string; name: string; color: string }>>([])
+  const [aiToggling, setAiToggling] = useState(false)
+  const [aiUnblocking, setAiUnblocking] = useState(false)
 
   const isAdmin = session?.user.role === 'ADMIN'
 
@@ -53,18 +58,18 @@ export function LeadDetails({ conversationId }: LeadDetailsProps) {
     if (!conversationId) return
     setConversation(null)
     fetch(`/api/conversations/${conversationId}`)
-      .then(r => r.json())
-      .then((data: ConversationDetail) => setConversation(data))
+      .then(r => r.ok ? r.json() : null)
+      .then((data: ConversationDetail | null) => { if (data) setConversation(data) })
   }, [conversationId])
 
   useEffect(() => {
     Promise.all([
-      isAdmin ? fetch('/api/users').then(r => r.json()) : Promise.resolve({ users: [] }),
-      fetch('/api/pipeline/stages').then(r => r.json()),
+      isAdmin ? fetch('/api/users').then(r => r.ok ? r.json() : { users: [] }) : Promise.resolve({ users: [] }),
+      fetch('/api/pipeline/stages').then(r => r.ok ? r.json() : { stages: [] }),
     ]).then(([u, s]) => {
       setUsers(u.users ?? [])
       setStages(s.stages ?? [])
-    })
+    }).catch(() => {})
   }, [isAdmin])
 
   // Real-time updates
@@ -103,6 +108,41 @@ export function LeadDetails({ conversationId }: LeadDetailsProps) {
     setConversation(c =>
       c ? { ...c, assignedTo: users.find(u => u.id === userId) ?? null } : c
     )
+  }
+
+  async function toggleAiSales(enabled: boolean) {
+    if (!conversationId) return
+    setAiToggling(true)
+    try {
+      const res = await fetch('/api/agents/vendedor/toggle', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ conversationId, enabled }),
+      })
+      if (res.ok) {
+        setConversation(c => c ? { ...c, aiSalesEnabled: enabled } : c)
+      }
+    } catch (err) {
+      console.error('Failed to toggle AI:', err)
+    } finally {
+      setAiToggling(false)
+    }
+  }
+
+  async function unblockAi() {
+    if (!conversationId) return
+    setAiUnblocking(true)
+    try {
+      await fetch('/api/agents/vendedor/unblock', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ conversationId }),
+      })
+    } catch (err) {
+      console.error('Failed to unblock AI:', err)
+    } finally {
+      setAiUnblocking(false)
+    }
   }
 
   if (!conversationId || !conversation) {
@@ -185,6 +225,65 @@ export function LeadDetails({ conversationId }: LeadDetailsProps) {
               <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Histórico de etapas</span>
             </div>
             <StageHistoryTimeline conversationId={conversationId} />
+          </div>
+        )}
+
+        {/* AI Vendedor */}
+        {isAdmin && (
+          <div className="bg-white border border-gray-100 rounded-2xl shadow-sm p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Bot size={13} className="text-violet-500" />
+                <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">AI Vendedor</span>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={conversation.aiSalesEnabled ?? false}
+                  onChange={e => toggleAiSales(e.target.checked)}
+                  disabled={aiToggling}
+                  className="sr-only peer"
+                />
+                <div className="w-9 h-5 bg-gray-200 rounded-full peer-checked:bg-violet-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-full" />
+              </label>
+            </div>
+
+            {conversation.aiSalesEnabled && (
+              <>
+                {/* Message count */}
+                {(conversation.aiSalesMessageCount ?? 0) > 0 && (
+                  <p className="text-xs text-gray-500">
+                    {conversation.aiSalesMessageCount} msgs AI enviadas
+                  </p>
+                )}
+
+                {/* Qualification score */}
+                {conversation.qualificationScore != null && (
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-gray-500">Score:</span>
+                    <span className={`text-xs font-bold px-1.5 py-0.5 rounded-full ${
+                      conversation.qualificationScore >= 7
+                        ? 'bg-green-100 text-green-700'
+                        : conversation.qualificationScore >= 4
+                          ? 'bg-yellow-100 text-yellow-700'
+                          : 'bg-red-100 text-red-700'
+                    }`}>
+                      {conversation.qualificationScore}/10
+                    </span>
+                  </div>
+                )}
+
+                {/* Unblock button */}
+                <button
+                  onClick={unblockAi}
+                  disabled={aiUnblocking}
+                  className="flex items-center gap-1.5 text-xs text-violet-600 hover:text-violet-700 disabled:opacity-50"
+                >
+                  <ShieldOff size={12} />
+                  {aiUnblocking ? 'Desbloqueando...' : 'Reativar AI (se bloqueada)'}
+                </button>
+              </>
+            )}
           </div>
         )}
 

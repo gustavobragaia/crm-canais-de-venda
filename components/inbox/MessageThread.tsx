@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useSession } from 'next-auth/react'
-import { Send, Loader2, Paperclip, X } from 'lucide-react'
+import { Send, Loader2, Paperclip, X, Bot, User } from 'lucide-react'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { AudioMessage } from './AudioMessage'
@@ -27,9 +27,66 @@ interface MessageThreadProps {
   conversationId: string | null
   contactName?: string
   isGroup?: boolean
+  aiSalesEnabled?: boolean
+  aiSalesMessageCount?: number
+  qualificationScore?: number | null
+  onToggleAi?: () => void
 }
 
-export function MessageThread({ conversationId, contactName, isGroup }: MessageThreadProps) {
+interface BriefingData {
+  score: number | null
+  notes: string | null
+  needCategory: string | null
+  urgency: string | null
+  briefing: string | null
+  assignedTo: string | null
+  reason: string
+}
+
+function BriefingCard({ content }: { content: string }) {
+  try {
+    const data: BriefingData = JSON.parse(content.replace('[BRIEFING_JSON]', ''))
+    const scoreColor = data.score != null
+      ? data.score >= 7 ? 'text-emerald-700 bg-emerald-50' : data.score >= 4 ? 'text-amber-700 bg-amber-50' : 'text-red-700 bg-red-50'
+      : 'text-gray-600 bg-gray-100'
+    return (
+      <div className="border border-violet-200 bg-violet-50 rounded-2xl p-4 max-w-sm text-left shadow-sm">
+        <div className="flex items-center gap-2 mb-3">
+          <Bot size={14} className="text-violet-600" />
+          <span className="text-xs font-semibold text-violet-800">Handoff — AI Vendedor</span>
+        </div>
+        {data.score != null && (
+          <span className={`inline-block text-xs font-bold px-2 py-0.5 rounded-full mb-2 ${scoreColor}`}>
+            Score: {data.score}/10
+          </span>
+        )}
+        {data.needCategory && (
+          <p className="text-xs text-violet-700 mb-1"><span className="font-medium">Área:</span> {data.needCategory}</p>
+        )}
+        {data.urgency && (
+          <p className="text-xs text-violet-700 mb-1"><span className="font-medium">Urgência:</span> {data.urgency}</p>
+        )}
+        {data.briefing && (
+          <p className="text-xs text-gray-700 mt-2 leading-relaxed">{data.briefing}</p>
+        )}
+        {data.assignedTo && (
+          <p className="text-xs text-violet-700 mt-2 flex items-center gap-1">
+            <User size={11} />
+            <span className="font-medium">Atribuído a:</span> {data.assignedTo}
+          </p>
+        )}
+      </div>
+    )
+  } catch {
+    return (
+      <span className="text-xs text-gray-400 italic bg-gray-100 px-3 py-1 rounded-full">
+        {content}
+      </span>
+    )
+  }
+}
+
+export function MessageThread({ conversationId, contactName, isGroup, aiSalesEnabled, aiSalesMessageCount, qualificationScore, onToggleAi }: MessageThreadProps) {
   const { data: session } = useSession()
   const [messages, setMessages] = useState<Message[]>([])
   const [loading, setLoading] = useState(false)
@@ -149,6 +206,32 @@ export function MessageThread({ conversationId, contactName, isGroup }: MessageT
             Grupo
           </span>
         )}
+        {aiSalesEnabled ? (
+          <div className="flex items-center gap-2 px-3 py-1 bg-violet-50 border border-violet-200 rounded-full">
+            <Bot size={13} className="text-violet-600" />
+            <span className="text-xs text-violet-700 font-medium">
+              AI Vendedor
+              {aiSalesMessageCount != null && ` · ${aiSalesMessageCount} msgs`}
+              {qualificationScore != null && ` · ${qualificationScore}/10`}
+            </span>
+            {onToggleAi && (
+              <button
+                onClick={onToggleAi}
+                className="text-xs text-violet-400 hover:text-violet-700 transition-colors ml-0.5"
+                title="Desativar AI"
+              >
+                Desativar
+              </button>
+            )}
+          </div>
+        ) : onToggleAi && (
+          <button
+            onClick={onToggleAi}
+            className="flex items-center gap-1.5 text-xs bg-violet-100 text-violet-700 hover:bg-violet-200 px-3 py-1 rounded-full transition-colors"
+          >
+            <Bot size={12} /> Ativar AI
+          </button>
+        )}
       </div>
 
       {/* Messages */}
@@ -160,11 +243,21 @@ export function MessageThread({ conversationId, contactName, isGroup }: MessageT
         ) : (
           messages.map((msg) => {
             if (msg.isSystem) {
+              const isBriefing = msg.content?.startsWith('[BRIEFING_JSON]')
+              const isQualification = msg.content?.startsWith('IA atualizou qualificação')
               return (
-                <div key={msg.id} className="flex justify-center my-1">
-                  <span className="text-xs text-gray-400 italic bg-gray-100 px-3 py-1 rounded-full">
-                    {msg.content}
-                  </span>
+                <div key={msg.id} className={`flex my-1 ${isBriefing ? 'justify-start' : 'justify-center'}`}>
+                  {isBriefing ? (
+                    <BriefingCard content={msg.content} />
+                  ) : isQualification ? (
+                    <span className="text-xs text-violet-600 italic bg-violet-50 border border-violet-100 px-3 py-1 rounded-full flex items-center gap-1.5">
+                      <Bot size={11} /> {msg.content}
+                    </span>
+                  ) : (
+                    <span className="text-xs text-gray-400 italic bg-gray-100 px-3 py-1 rounded-full">
+                      {msg.content}
+                    </span>
+                  )}
                 </div>
               )
             }

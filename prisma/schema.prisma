@@ -37,6 +37,15 @@ model Workspace {
   tags                     Tag[]
   users                    User[]
   webhookLogs              WebhookLog[]
+  tokenBalance             Int                @default(0)
+  hasUsedFreeScraping      Boolean            @default(false)
+  tokenTransactions        TokenTransaction[]
+  scrapingJobs             ScrapingJob[]
+  dispatchLists            DispatchList[]
+  wabaChannels             WabaChannel[]
+  wabaTemplates            WabaTemplate[]
+  templateDispatches       TemplateDispatch[]
+  aiSalesConfig            AiSalesConfig?
 
   @@index([slug])
   @@map("workspaces")
@@ -53,6 +62,8 @@ model User {
   isActive                Boolean        @default(true)
   lastActiveAt            DateTime?
   agentRole               String?
+  specializations         String[]       @default([])
+  calendarUrl             String?
   createdAt               DateTime       @default(now())
   updatedAt               DateTime       @updatedAt
   assignedByConversations Conversation[]         @relation("AssignedByConversations")
@@ -113,6 +124,14 @@ model Conversation {
   assignedById       String?
   status             ConversationStatus @default(UNASSIGNED)
   pipelineStage      String?
+  dispatchListId     String?
+  templateDispatchId String?
+  source             String             @default("organic")
+  aiSalesEnabled     Boolean            @default(false)
+  aiSalesMessageCount Int               @default(0)
+  qualificationScore Int?
+  qualificationNotes String?
+  handoffBriefing    String?            @db.Text
   lastMessageAt      DateTime?
   lastMessagePreview String?
   unreadCount        Int                @default(0)
@@ -210,6 +229,7 @@ model Message {
   externalId     String?
   status         MessageStatus    @default(SENT)
   isSystem       Boolean          @default(false)
+  aiGenerated    Boolean          @default(false)
   senderName     String?
   sentById       String?
   sentAt         DateTime         @default(now())
@@ -416,4 +436,205 @@ model Subscription {
 
   @@index([workspaceId])
   @@map("subscriptions")
+}
+
+// ─── Enums para Agentes ───
+
+enum TokenTransactionType {
+  PURCHASE
+  CONSUMPTION
+  REFUND
+  BONUS
+  ADJUSTMENT
+}
+
+
+// ─── Token System ───
+
+model TokenTransaction {
+  id            String               @id @default(uuid())
+  workspaceId   String
+  type          TokenTransactionType
+  amount        Int
+  balanceBefore Int
+  balanceAfter  Int
+  description   String?
+  referenceId   String?
+  referenceType String?
+  createdAt     DateTime             @default(now())
+  workspace     Workspace            @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, createdAt(sort: Desc)])
+  @@map("token_transactions")
+}
+
+model TokenPackage {
+  id          String   @id @default(uuid())
+  name        String
+  slug        String   @unique
+  tokenAmount Int
+  priceCents  Int
+  checkoutUrl String?
+  isActive    Boolean  @default(true)
+  position    Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  @@map("token_packages")
+}
+
+// ─── Buscador ───
+
+model ScrapingJob {
+  id          String    @id @default(uuid())
+  workspaceId String
+  query       String
+  city        String
+  zip         String?
+  maxLeads    Int       @default(20)
+  status      String    @default("QUEUED")
+  totalFound  Int       @default(0)
+  validLeads  Int       @default(0)
+  results     Json      @default("[]")
+  listId      String?
+  error       String?
+  startedAt   DateTime?
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, createdAt(sort: Desc)])
+  @@map("scraping_jobs")
+}
+
+model DispatchList {
+  id            String                @id @default(uuid())
+  workspaceId   String
+  name          String
+  description   String?
+  source        String                @default("buscador")
+  scrapingJobId String?
+  contactCount  Int                   @default(0)
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
+  workspace     Workspace             @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  contacts      DispatchListContact[]
+  dispatches    TemplateDispatch[]
+
+  @@index([workspaceId])
+  @@map("dispatch_lists")
+}
+
+model DispatchListContact {
+  id            String       @id @default(uuid())
+  listId        String
+  name          String?
+  phone         String
+  address       String?
+  businessType  String?
+  rating        Float?
+  reviewCount   Int?
+  reviewSummary String?      @db.Text
+  website       String?
+  placeId       String?
+  createdAt     DateTime     @default(now())
+  list          DispatchList @relation(fields: [listId], references: [id], onDelete: Cascade)
+
+  @@unique([listId, phone])
+  @@index([listId])
+  @@index([phone])
+  @@map("dispatch_list_contacts")
+}
+
+// ─── Disparador (WABA) ───
+
+model WabaChannel {
+  id                 String             @id @default(uuid())
+  workspaceId        String
+  wabaId             String
+  phoneNumberId      String
+  phoneNumber        String
+  displayName        String?
+  accessToken        String
+  qualityRating      String?
+  messagingLimit     String?
+  isActive           Boolean            @default(true)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  workspace          Workspace          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  templateDispatches TemplateDispatch[]
+
+  @@unique([workspaceId, phoneNumberId])
+  @@index([workspaceId])
+  @@map("waba_channels")
+}
+
+model WabaTemplate {
+  id             String   @id @default(uuid())
+  workspaceId    String
+  wabaChannelId  String?
+  metaTemplateId String?
+  name           String
+  language       String   @default("pt_BR")
+  category       String   @default("UTILITY")
+  status         String   @default("PENDING")
+  components     Json
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  workspace      Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, name, language])
+  @@index([workspaceId, status])
+  @@map("waba_templates")
+}
+
+model TemplateDispatch {
+  id              String       @id @default(uuid())
+  workspaceId     String
+  wabaChannelId   String
+  dispatchListId  String
+  templateName    String
+  status          String       @default("QUEUED")
+  totalRecipients Int          @default(0)
+  sentCount       Int          @default(0)
+  failedCount     Int          @default(0)
+  respondedCount  Int          @default(0)
+  tokensConsumed  Int          @default(0)
+  enableSdr       Boolean      @default(false)
+  startedAt       DateTime?
+  completedAt     DateTime?
+  createdAt       DateTime     @default(now())
+  workspace       Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  wabaChannel     WabaChannel  @relation(fields: [wabaChannelId], references: [id], onDelete: Cascade)
+  dispatchList    DispatchList @relation(fields: [dispatchListId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, createdAt(sort: Desc)])
+  @@map("template_dispatches")
+}
+
+// ─── Vendedor SDR ───
+
+model AiSalesConfig {
+  id                        String   @id @default(uuid())
+  workspaceId               String   @unique
+  agentName                 String?
+  tone                      String   @default("informal")
+  businessName              String?
+  businessDescription       String?  @db.Text
+  targetAudience            String?  @db.Text
+  differentials             String?  @db.Text
+  productsServices          Json     @default("[]")
+  commonObjections          Json     @default("[]")
+  objectives                Json     @default("[\"qualify\",\"schedule\"]")
+  calendarUrl               String?
+  systemPrompt              String?  @db.Text
+  useCustomPrompt           Boolean  @default(false)
+  model                     String   @default("gpt-4.1-mini")
+  maxMessagesPerConversation Int     @default(50)
+  debounceSeconds           Int      @default(15)
+  blockTtlSeconds           Int      @default(2400)
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @updatedAt
+  workspace                 Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@map("ai_sales_configs")
 }

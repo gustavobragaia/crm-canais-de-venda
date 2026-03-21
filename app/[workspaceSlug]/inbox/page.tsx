@@ -28,6 +28,17 @@ interface Conversation {
   status: string
   channel: { type: 'WHATSAPP' | 'INSTAGRAM' | 'FACEBOOK' }
   assignedTo: { name: string } | null
+  aiSalesEnabled?: boolean
+  source?: string | null
+  pipelineStage?: string | null
+  qualificationScore?: number | null
+  aiSalesMessageCount?: number
+  dispatchListId?: string | null
+}
+
+interface DispatchList {
+  id: string
+  name: string
 }
 
 interface BillingData {
@@ -45,6 +56,9 @@ export default function InboxPage() {
   const [search, setSearch] = useState('')
   const [assignedToMe, setAssignedToMe] = useState(false)
   const [billing, setBilling] = useState<BillingData | null>(null)
+  const [sourceFilter, setSourceFilter] = useState<'all' | 'organic' | string>('all') // 'all' | 'organic' | listId
+  const [lists, setLists] = useState<DispatchList[]>([])
+  const [pipelineFilter, setPipelineFilter] = useState('')
 
   const workspaceId = session?.user.workspaceId
   const workspaceSlug = session?.user.workspaceSlug ?? ''
@@ -53,12 +67,18 @@ export default function InboxPage() {
     const params = new URLSearchParams()
     if (filter !== 'all') params.set('status', filter)
     if (assignedToMe) params.set('assignedTo', 'me')
+    if (sourceFilter === 'organic') params.set('source', 'organic')
+    else if (sourceFilter !== 'all') {
+      params.set('source', 'dispatch')
+      params.set('dispatchListId', sourceFilter)
+    }
+    if (pipelineFilter) params.set('pipelineStage', pipelineFilter)
 
     const res = await fetch(`/api/conversations?${params}`)
     const data = await res.json()
     setConversations(data.conversations ?? [])
     setLoading(false)
-  }, [filter, assignedToMe])
+  }, [filter, assignedToMe, sourceFilter, pipelineFilter])
 
   useEffect(() => {
     fetchConversations()
@@ -69,6 +89,10 @@ export default function InboxPage() {
     fetch('/api/billing')
       .then(r => r.json())
       .then((data: BillingData) => setBilling(data))
+      .catch(() => null)
+    fetch('/api/agents/listas')
+      .then(r => r.ok ? r.json() : { lists: [] })
+      .then((data: { lists?: DispatchList[] }) => setLists(data.lists ?? []))
       .catch(() => null)
   }, [session])
 
@@ -142,6 +166,36 @@ export default function InboxPage() {
             />
           </div>
 
+          {/* Origin + Pipeline filters */}
+          <div className="flex gap-2 mb-2">
+            <select
+              value={sourceFilter}
+              onChange={e => setSourceFilter(e.target.value)}
+              className="flex-1 text-xs px-2 py-1.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
+            >
+              <option value="all">Todas origens</option>
+              <option value="organic">Orgânicas</option>
+              {lists.map(l => (
+                <option key={l.id} value={l.id}>Disparo: {l.name}</option>
+              ))}
+            </select>
+            <select
+              value={pipelineFilter}
+              onChange={e => setPipelineFilter(e.target.value)}
+              className="flex-1 text-xs px-2 py-1.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
+            >
+              <option value="">Todas etapas</option>
+              <option value="Disparo Enviado">Disparo Enviado</option>
+              <option value="Disparo Respondido">Disparo Respondido</option>
+              <option value="SDR Ativo">SDR Ativo</option>
+              <option value="Não Atribuído">Não Atribuído</option>
+              <option value="Em Atendimento">Em Atendimento</option>
+              <option value="Reunião Marcada">Reunião Marcada</option>
+              <option value="Contrato Fechado">Contrato Fechado</option>
+              <option value="Resolvida">Resolvida</option>
+            </select>
+          </div>
+
           {/* Status filters */}
           <div className="flex gap-1 overflow-x-auto pb-1">
             {STATUS_FILTERS.map((f) => (
@@ -192,6 +246,18 @@ export default function InboxPage() {
         <MessageThread
           conversationId={selectedId}
           contactName={selectedConversation?.contactName}
+          aiSalesEnabled={selectedConversation?.aiSalesEnabled}
+          aiSalesMessageCount={selectedConversation?.aiSalesMessageCount}
+          qualificationScore={selectedConversation?.qualificationScore}
+          onToggleAi={selectedId ? async () => {
+            const current = selectedConversation?.aiSalesEnabled ?? false
+            await fetch('/api/agents/vendedor/toggle', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ conversationId: selectedId, enabled: !current }),
+            })
+            fetchConversations()
+          } : undefined}
         />
       </div>
 

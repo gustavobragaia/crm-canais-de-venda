@@ -35,6 +35,7 @@ export type UserMinAggregateOutputType = {
   isActive: boolean | null
   lastActiveAt: Date | null
   agentRole: string | null
+  calendarUrl: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -50,6 +51,7 @@ export type UserMaxAggregateOutputType = {
   isActive: boolean | null
   lastActiveAt: Date | null
   agentRole: string | null
+  calendarUrl: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -65,6 +67,8 @@ export type UserCountAggregateOutputType = {
   isActive: number
   lastActiveAt: number
   agentRole: number
+  specializations: number
+  calendarUrl: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -82,6 +86,7 @@ export type UserMinAggregateInputType = {
   isActive?: true
   lastActiveAt?: true
   agentRole?: true
+  calendarUrl?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -97,6 +102,7 @@ export type UserMaxAggregateInputType = {
   isActive?: true
   lastActiveAt?: true
   agentRole?: true
+  calendarUrl?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -112,6 +118,8 @@ export type UserCountAggregateInputType = {
   isActive?: true
   lastActiveAt?: true
   agentRole?: true
+  specializations?: true
+  calendarUrl?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -200,6 +208,8 @@ export type UserGroupByOutputType = {
   isActive: boolean
   lastActiveAt: Date | null
   agentRole: string | null
+  specializations: string[]
+  calendarUrl: string | null
   createdAt: Date
   updatedAt: Date
   _count: UserCountAggregateOutputType | null
@@ -236,6 +246,8 @@ export type UserWhereInput = {
   isActive?: Prisma.BoolFilter<"User"> | boolean
   lastActiveAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   agentRole?: Prisma.StringNullableFilter<"User"> | string | null
+  specializations?: Prisma.StringNullableListFilter<"User">
+  calendarUrl?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   assignedByConversations?: Prisma.ConversationListRelationFilter
@@ -258,6 +270,8 @@ export type UserOrderByWithRelationInput = {
   isActive?: Prisma.SortOrder
   lastActiveAt?: Prisma.SortOrderInput | Prisma.SortOrder
   agentRole?: Prisma.SortOrderInput | Prisma.SortOrder
+  specializations?: Prisma.SortOrder
+  calendarUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   assignedByConversations?: Prisma.ConversationOrderByRelationAggregateInput
@@ -284,6 +298,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   isActive?: Prisma.BoolFilter<"User"> | boolean
   lastActiveAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   agentRole?: Prisma.StringNullableFilter<"User"> | string | null
+  specializations?: Prisma.StringNullableListFilter<"User">
+  calendarUrl?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   assignedByConversations?: Prisma.ConversationListRelationFilter
@@ -306,6 +322,8 @@ export type UserOrderByWithAggregationInput = {
   isActive?: Prisma.SortOrder
   lastActiveAt?: Prisma.SortOrderInput | Prisma.SortOrder
   agentRole?: Prisma.SortOrderInput | Prisma.SortOrder
+  specializations?: Prisma.SortOrder
+  calendarUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
@@ -327,6 +345,8 @@ export type UserScalarWhereWithAggregatesInput = {
   isActive?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   lastActiveAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   agentRole?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  specializations?: Prisma.StringNullableListFilter<"User">
+  calendarUrl?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
 }
@@ -341,6 +361,8 @@ export type UserCreateInput = {
   isActive?: boolean
   lastActiveAt?: Date | string | null
   agentRole?: string | null
+  specializations?: Prisma.UserCreatespecializationsInput | string[]
+  calendarUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   assignedByConversations?: Prisma.ConversationCreateNestedManyWithoutAssignedByInput
@@ -363,6 +385,8 @@ export type UserUncheckedCreateInput = {
   isActive?: boolean
   lastActiveAt?: Date | string | null
   agentRole?: string | null
+  specializations?: Prisma.UserCreatespecializationsInput | string[]
+  calendarUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   assignedByConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutAssignedByInput
@@ -383,6 +407,8 @@ export type UserUpdateInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   agentRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  specializations?: Prisma.UserUpdatespecializationsInput | string[]
+  calendarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignedByConversations?: Prisma.ConversationUpdateManyWithoutAssignedByNestedInput
@@ -405,6 +431,8 @@ export type UserUncheckedUpdateInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   agentRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  specializations?: Prisma.UserUpdatespecializationsInput | string[]
+  calendarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignedByConversations?: Prisma.ConversationUncheckedUpdateManyWithoutAssignedByNestedInput
@@ -426,6 +454,8 @@ export type UserCreateManyInput = {
   isActive?: boolean
   lastActiveAt?: Date | string | null
   agentRole?: string | null
+  specializations?: Prisma.UserCreatespecializationsInput | string[]
+  calendarUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -440,6 +470,8 @@ export type UserUpdateManyMutationInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   agentRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  specializations?: Prisma.UserUpdatespecializationsInput | string[]
+  calendarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -455,6 +487,8 @@ export type UserUncheckedUpdateManyInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   agentRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  specializations?: Prisma.UserUpdatespecializationsInput | string[]
+  calendarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -467,6 +501,14 @@ export type UserListRelationFilter = {
 
 export type UserOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type StringNullableListFilter<$PrismaModel = never> = {
+  equals?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel> | null
+  has?: string | Prisma.StringFieldRefInput<$PrismaModel> | null
+  hasEvery?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  hasSome?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  isEmpty?: boolean
 }
 
 export type UserWorkspaceIdEmailCompoundUniqueInput = {
@@ -485,6 +527,8 @@ export type UserCountOrderByAggregateInput = {
   isActive?: Prisma.SortOrder
   lastActiveAt?: Prisma.SortOrder
   agentRole?: Prisma.SortOrder
+  specializations?: Prisma.SortOrder
+  calendarUrl?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -500,6 +544,7 @@ export type UserMaxOrderByAggregateInput = {
   isActive?: Prisma.SortOrder
   lastActiveAt?: Prisma.SortOrder
   agentRole?: Prisma.SortOrder
+  calendarUrl?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -515,6 +560,7 @@ export type UserMinOrderByAggregateInput = {
   isActive?: Prisma.SortOrder
   lastActiveAt?: Prisma.SortOrder
   agentRole?: Prisma.SortOrder
+  calendarUrl?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -571,12 +617,17 @@ export type UserUncheckedUpdateManyWithoutWorkspaceNestedInput = {
   deleteMany?: Prisma.UserScalarWhereInput | Prisma.UserScalarWhereInput[]
 }
 
+export type UserCreatespecializationsInput = {
+  set: string[]
+}
+
 export type EnumUserRoleFieldUpdateOperationsInput = {
   set?: $Enums.UserRole
 }
 
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean
+export type UserUpdatespecializationsInput = {
+  set?: string[]
+  push?: string | string[]
 }
 
 export type UserCreateNestedOneWithoutAssignedByConversationsInput = {
@@ -683,6 +734,8 @@ export type UserCreateWithoutWorkspaceInput = {
   isActive?: boolean
   lastActiveAt?: Date | string | null
   agentRole?: string | null
+  specializations?: Prisma.UserCreatespecializationsInput | string[]
+  calendarUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   assignedByConversations?: Prisma.ConversationCreateNestedManyWithoutAssignedByInput
@@ -703,6 +756,8 @@ export type UserUncheckedCreateWithoutWorkspaceInput = {
   isActive?: boolean
   lastActiveAt?: Date | string | null
   agentRole?: string | null
+  specializations?: Prisma.UserCreatespecializationsInput | string[]
+  calendarUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   assignedByConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutAssignedByInput
@@ -753,6 +808,8 @@ export type UserScalarWhereInput = {
   isActive?: Prisma.BoolFilter<"User"> | boolean
   lastActiveAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   agentRole?: Prisma.StringNullableFilter<"User"> | string | null
+  specializations?: Prisma.StringNullableListFilter<"User">
+  calendarUrl?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
 }
@@ -767,6 +824,8 @@ export type UserCreateWithoutAssignedByConversationsInput = {
   isActive?: boolean
   lastActiveAt?: Date | string | null
   agentRole?: string | null
+  specializations?: Prisma.UserCreatespecializationsInput | string[]
+  calendarUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   assignedConversations?: Prisma.ConversationCreateNestedManyWithoutAssignedToInput
@@ -788,6 +847,8 @@ export type UserUncheckedCreateWithoutAssignedByConversationsInput = {
   isActive?: boolean
   lastActiveAt?: Date | string | null
   agentRole?: string | null
+  specializations?: Prisma.UserCreatespecializationsInput | string[]
+  calendarUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   assignedConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutAssignedToInput
@@ -812,6 +873,8 @@ export type UserCreateWithoutAssignedConversationsInput = {
   isActive?: boolean
   lastActiveAt?: Date | string | null
   agentRole?: string | null
+  specializations?: Prisma.UserCreatespecializationsInput | string[]
+  calendarUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   assignedByConversations?: Prisma.ConversationCreateNestedManyWithoutAssignedByInput
@@ -833,6 +896,8 @@ export type UserUncheckedCreateWithoutAssignedConversationsInput = {
   isActive?: boolean
   lastActiveAt?: Date | string | null
   agentRole?: string | null
+  specializations?: Prisma.UserCreatespecializationsInput | string[]
+  calendarUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   assignedByConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutAssignedByInput
@@ -868,6 +933,8 @@ export type UserUpdateWithoutAssignedByConversationsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   agentRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  specializations?: Prisma.UserUpdatespecializationsInput | string[]
+  calendarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignedConversations?: Prisma.ConversationUpdateManyWithoutAssignedToNestedInput
@@ -889,6 +956,8 @@ export type UserUncheckedUpdateWithoutAssignedByConversationsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   agentRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  specializations?: Prisma.UserUpdatespecializationsInput | string[]
+  calendarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignedConversations?: Prisma.ConversationUncheckedUpdateManyWithoutAssignedToNestedInput
@@ -919,6 +988,8 @@ export type UserUpdateWithoutAssignedConversationsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   agentRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  specializations?: Prisma.UserUpdatespecializationsInput | string[]
+  calendarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignedByConversations?: Prisma.ConversationUpdateManyWithoutAssignedByNestedInput
@@ -940,6 +1011,8 @@ export type UserUncheckedUpdateWithoutAssignedConversationsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   agentRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  specializations?: Prisma.UserUpdatespecializationsInput | string[]
+  calendarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignedByConversations?: Prisma.ConversationUncheckedUpdateManyWithoutAssignedByNestedInput
@@ -959,6 +1032,8 @@ export type UserCreateWithoutNotesInput = {
   isActive?: boolean
   lastActiveAt?: Date | string | null
   agentRole?: string | null
+  specializations?: Prisma.UserCreatespecializationsInput | string[]
+  calendarUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   assignedByConversations?: Prisma.ConversationCreateNestedManyWithoutAssignedByInput
@@ -980,6 +1055,8 @@ export type UserUncheckedCreateWithoutNotesInput = {
   isActive?: boolean
   lastActiveAt?: Date | string | null
   agentRole?: string | null
+  specializations?: Prisma.UserCreatespecializationsInput | string[]
+  calendarUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   assignedByConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutAssignedByInput
@@ -1015,6 +1092,8 @@ export type UserUpdateWithoutNotesInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   agentRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  specializations?: Prisma.UserUpdatespecializationsInput | string[]
+  calendarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignedByConversations?: Prisma.ConversationUpdateManyWithoutAssignedByNestedInput
@@ -1036,6 +1115,8 @@ export type UserUncheckedUpdateWithoutNotesInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   agentRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  specializations?: Prisma.UserUpdatespecializationsInput | string[]
+  calendarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignedByConversations?: Prisma.ConversationUncheckedUpdateManyWithoutAssignedByNestedInput
@@ -1055,6 +1136,8 @@ export type UserCreateWithoutStageHistoryInput = {
   isActive?: boolean
   lastActiveAt?: Date | string | null
   agentRole?: string | null
+  specializations?: Prisma.UserCreatespecializationsInput | string[]
+  calendarUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   assignedByConversations?: Prisma.ConversationCreateNestedManyWithoutAssignedByInput
@@ -1076,6 +1159,8 @@ export type UserUncheckedCreateWithoutStageHistoryInput = {
   isActive?: boolean
   lastActiveAt?: Date | string | null
   agentRole?: string | null
+  specializations?: Prisma.UserCreatespecializationsInput | string[]
+  calendarUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   assignedByConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutAssignedByInput
@@ -1111,6 +1196,8 @@ export type UserUpdateWithoutStageHistoryInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   agentRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  specializations?: Prisma.UserUpdatespecializationsInput | string[]
+  calendarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignedByConversations?: Prisma.ConversationUpdateManyWithoutAssignedByNestedInput
@@ -1132,6 +1219,8 @@ export type UserUncheckedUpdateWithoutStageHistoryInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   agentRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  specializations?: Prisma.UserUpdatespecializationsInput | string[]
+  calendarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignedByConversations?: Prisma.ConversationUncheckedUpdateManyWithoutAssignedByNestedInput
@@ -1151,6 +1240,8 @@ export type UserCreateWithoutSentMessagesInput = {
   isActive?: boolean
   lastActiveAt?: Date | string | null
   agentRole?: string | null
+  specializations?: Prisma.UserCreatespecializationsInput | string[]
+  calendarUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   assignedByConversations?: Prisma.ConversationCreateNestedManyWithoutAssignedByInput
@@ -1172,6 +1263,8 @@ export type UserUncheckedCreateWithoutSentMessagesInput = {
   isActive?: boolean
   lastActiveAt?: Date | string | null
   agentRole?: string | null
+  specializations?: Prisma.UserCreatespecializationsInput | string[]
+  calendarUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   assignedByConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutAssignedByInput
@@ -1207,6 +1300,8 @@ export type UserUpdateWithoutSentMessagesInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   agentRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  specializations?: Prisma.UserUpdatespecializationsInput | string[]
+  calendarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignedByConversations?: Prisma.ConversationUpdateManyWithoutAssignedByNestedInput
@@ -1228,6 +1323,8 @@ export type UserUncheckedUpdateWithoutSentMessagesInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   agentRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  specializations?: Prisma.UserUpdatespecializationsInput | string[]
+  calendarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignedByConversations?: Prisma.ConversationUncheckedUpdateManyWithoutAssignedByNestedInput
@@ -1247,6 +1344,8 @@ export type UserCreateWithoutConversationActivitiesInput = {
   isActive?: boolean
   lastActiveAt?: Date | string | null
   agentRole?: string | null
+  specializations?: Prisma.UserCreatespecializationsInput | string[]
+  calendarUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   assignedByConversations?: Prisma.ConversationCreateNestedManyWithoutAssignedByInput
@@ -1268,6 +1367,8 @@ export type UserUncheckedCreateWithoutConversationActivitiesInput = {
   isActive?: boolean
   lastActiveAt?: Date | string | null
   agentRole?: string | null
+  specializations?: Prisma.UserCreatespecializationsInput | string[]
+  calendarUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   assignedByConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutAssignedByInput
@@ -1303,6 +1404,8 @@ export type UserUpdateWithoutConversationActivitiesInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   agentRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  specializations?: Prisma.UserUpdatespecializationsInput | string[]
+  calendarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignedByConversations?: Prisma.ConversationUpdateManyWithoutAssignedByNestedInput
@@ -1324,6 +1427,8 @@ export type UserUncheckedUpdateWithoutConversationActivitiesInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   agentRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  specializations?: Prisma.UserUpdatespecializationsInput | string[]
+  calendarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignedByConversations?: Prisma.ConversationUncheckedUpdateManyWithoutAssignedByNestedInput
@@ -1343,6 +1448,8 @@ export type UserCreateManyWorkspaceInput = {
   isActive?: boolean
   lastActiveAt?: Date | string | null
   agentRole?: string | null
+  specializations?: Prisma.UserCreatespecializationsInput | string[]
+  calendarUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1357,6 +1464,8 @@ export type UserUpdateWithoutWorkspaceInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   agentRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  specializations?: Prisma.UserUpdatespecializationsInput | string[]
+  calendarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignedByConversations?: Prisma.ConversationUpdateManyWithoutAssignedByNestedInput
@@ -1377,6 +1486,8 @@ export type UserUncheckedUpdateWithoutWorkspaceInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   agentRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  specializations?: Prisma.UserUpdatespecializationsInput | string[]
+  calendarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignedByConversations?: Prisma.ConversationUncheckedUpdateManyWithoutAssignedByNestedInput
@@ -1397,6 +1508,8 @@ export type UserUncheckedUpdateManyWithoutWorkspaceInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   agentRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  specializations?: Prisma.UserUpdatespecializationsInput | string[]
+  calendarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1488,6 +1601,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   isActive?: boolean
   lastActiveAt?: boolean
   agentRole?: boolean
+  specializations?: boolean
+  calendarUrl?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   assignedByConversations?: boolean | Prisma.User$assignedByConversationsArgs<ExtArgs>
@@ -1511,6 +1626,8 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   isActive?: boolean
   lastActiveAt?: boolean
   agentRole?: boolean
+  specializations?: boolean
+  calendarUrl?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   workspace?: boolean | Prisma.WorkspaceDefaultArgs<ExtArgs>
@@ -1527,6 +1644,8 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   isActive?: boolean
   lastActiveAt?: boolean
   agentRole?: boolean
+  specializations?: boolean
+  calendarUrl?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   workspace?: boolean | Prisma.WorkspaceDefaultArgs<ExtArgs>
@@ -1543,11 +1662,13 @@ export type UserSelectScalar = {
   isActive?: boolean
   lastActiveAt?: boolean
   agentRole?: boolean
+  specializations?: boolean
+  calendarUrl?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "workspaceId" | "email" | "passwordHash" | "name" | "role" | "avatarUrl" | "isActive" | "lastActiveAt" | "agentRole" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "workspaceId" | "email" | "passwordHash" | "name" | "role" | "avatarUrl" | "isActive" | "lastActiveAt" | "agentRole" | "specializations" | "calendarUrl" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   assignedByConversations?: boolean | Prisma.User$assignedByConversationsArgs<ExtArgs>
   assignedConversations?: boolean | Prisma.User$assignedConversationsArgs<ExtArgs>
@@ -1587,6 +1708,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     isActive: boolean
     lastActiveAt: Date | null
     agentRole: string | null
+    specializations: string[]
+    calendarUrl: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["user"]>
@@ -2029,6 +2152,8 @@ export interface UserFieldRefs {
   readonly isActive: Prisma.FieldRef<"User", 'Boolean'>
   readonly lastActiveAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly agentRole: Prisma.FieldRef<"User", 'String'>
+  readonly specializations: Prisma.FieldRef<"User", 'String[]'>
+  readonly calendarUrl: Prisma.FieldRef<"User", 'String'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
 }

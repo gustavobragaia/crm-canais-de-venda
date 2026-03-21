@@ -27,10 +27,14 @@ export type AggregateConversation = {
 }
 
 export type ConversationAvgAggregateOutputType = {
+  aiSalesMessageCount: number | null
+  qualificationScore: number | null
   unreadCount: number | null
 }
 
 export type ConversationSumAggregateOutputType = {
+  aiSalesMessageCount: number | null
+  qualificationScore: number | null
   unreadCount: number | null
 }
 
@@ -48,6 +52,14 @@ export type ConversationMinAggregateOutputType = {
   assignedById: string | null
   status: $Enums.ConversationStatus | null
   pipelineStage: string | null
+  dispatchListId: string | null
+  templateDispatchId: string | null
+  source: string | null
+  aiSalesEnabled: boolean | null
+  aiSalesMessageCount: number | null
+  qualificationScore: number | null
+  qualificationNotes: string | null
+  handoffBriefing: string | null
   lastMessageAt: Date | null
   lastMessagePreview: string | null
   unreadCount: number | null
@@ -69,6 +81,14 @@ export type ConversationMaxAggregateOutputType = {
   assignedById: string | null
   status: $Enums.ConversationStatus | null
   pipelineStage: string | null
+  dispatchListId: string | null
+  templateDispatchId: string | null
+  source: string | null
+  aiSalesEnabled: boolean | null
+  aiSalesMessageCount: number | null
+  qualificationScore: number | null
+  qualificationNotes: string | null
+  handoffBriefing: string | null
   lastMessageAt: Date | null
   lastMessagePreview: string | null
   unreadCount: number | null
@@ -90,6 +110,14 @@ export type ConversationCountAggregateOutputType = {
   assignedById: number
   status: number
   pipelineStage: number
+  dispatchListId: number
+  templateDispatchId: number
+  source: number
+  aiSalesEnabled: number
+  aiSalesMessageCount: number
+  qualificationScore: number
+  qualificationNotes: number
+  handoffBriefing: number
   lastMessageAt: number
   lastMessagePreview: number
   unreadCount: number
@@ -100,10 +128,14 @@ export type ConversationCountAggregateOutputType = {
 
 
 export type ConversationAvgAggregateInputType = {
+  aiSalesMessageCount?: true
+  qualificationScore?: true
   unreadCount?: true
 }
 
 export type ConversationSumAggregateInputType = {
+  aiSalesMessageCount?: true
+  qualificationScore?: true
   unreadCount?: true
 }
 
@@ -121,6 +153,14 @@ export type ConversationMinAggregateInputType = {
   assignedById?: true
   status?: true
   pipelineStage?: true
+  dispatchListId?: true
+  templateDispatchId?: true
+  source?: true
+  aiSalesEnabled?: true
+  aiSalesMessageCount?: true
+  qualificationScore?: true
+  qualificationNotes?: true
+  handoffBriefing?: true
   lastMessageAt?: true
   lastMessagePreview?: true
   unreadCount?: true
@@ -142,6 +182,14 @@ export type ConversationMaxAggregateInputType = {
   assignedById?: true
   status?: true
   pipelineStage?: true
+  dispatchListId?: true
+  templateDispatchId?: true
+  source?: true
+  aiSalesEnabled?: true
+  aiSalesMessageCount?: true
+  qualificationScore?: true
+  qualificationNotes?: true
+  handoffBriefing?: true
   lastMessageAt?: true
   lastMessagePreview?: true
   unreadCount?: true
@@ -163,6 +211,14 @@ export type ConversationCountAggregateInputType = {
   assignedById?: true
   status?: true
   pipelineStage?: true
+  dispatchListId?: true
+  templateDispatchId?: true
+  source?: true
+  aiSalesEnabled?: true
+  aiSalesMessageCount?: true
+  qualificationScore?: true
+  qualificationNotes?: true
+  handoffBriefing?: true
   lastMessageAt?: true
   lastMessagePreview?: true
   unreadCount?: true
@@ -271,6 +327,14 @@ export type ConversationGroupByOutputType = {
   assignedById: string | null
   status: $Enums.ConversationStatus
   pipelineStage: string | null
+  dispatchListId: string | null
+  templateDispatchId: string | null
+  source: string
+  aiSalesEnabled: boolean
+  aiSalesMessageCount: number
+  qualificationScore: number | null
+  qualificationNotes: string | null
+  handoffBriefing: string | null
   lastMessageAt: Date | null
   lastMessagePreview: string | null
   unreadCount: number
@@ -315,6 +379,14 @@ export type ConversationWhereInput = {
   assignedById?: Prisma.StringNullableFilter<"Conversation"> | string | null
   status?: Prisma.EnumConversationStatusFilter<"Conversation"> | $Enums.ConversationStatus
   pipelineStage?: Prisma.StringNullableFilter<"Conversation"> | string | null
+  dispatchListId?: Prisma.StringNullableFilter<"Conversation"> | string | null
+  templateDispatchId?: Prisma.StringNullableFilter<"Conversation"> | string | null
+  source?: Prisma.StringFilter<"Conversation"> | string
+  aiSalesEnabled?: Prisma.BoolFilter<"Conversation"> | boolean
+  aiSalesMessageCount?: Prisma.IntFilter<"Conversation"> | number
+  qualificationScore?: Prisma.IntNullableFilter<"Conversation"> | number | null
+  qualificationNotes?: Prisma.StringNullableFilter<"Conversation"> | string | null
+  handoffBriefing?: Prisma.StringNullableFilter<"Conversation"> | string | null
   lastMessageAt?: Prisma.DateTimeNullableFilter<"Conversation"> | Date | string | null
   lastMessagePreview?: Prisma.StringNullableFilter<"Conversation"> | string | null
   unreadCount?: Prisma.IntFilter<"Conversation"> | number
@@ -346,6 +418,14 @@ export type ConversationOrderByWithRelationInput = {
   assignedById?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   pipelineStage?: Prisma.SortOrderInput | Prisma.SortOrder
+  dispatchListId?: Prisma.SortOrderInput | Prisma.SortOrder
+  templateDispatchId?: Prisma.SortOrderInput | Prisma.SortOrder
+  source?: Prisma.SortOrder
+  aiSalesEnabled?: Prisma.SortOrder
+  aiSalesMessageCount?: Prisma.SortOrder
+  qualificationScore?: Prisma.SortOrderInput | Prisma.SortOrder
+  qualificationNotes?: Prisma.SortOrderInput | Prisma.SortOrder
+  handoffBriefing?: Prisma.SortOrderInput | Prisma.SortOrder
   lastMessageAt?: Prisma.SortOrderInput | Prisma.SortOrder
   lastMessagePreview?: Prisma.SortOrderInput | Prisma.SortOrder
   unreadCount?: Prisma.SortOrder
@@ -381,6 +461,14 @@ export type ConversationWhereUniqueInput = Prisma.AtLeast<{
   assignedById?: Prisma.StringNullableFilter<"Conversation"> | string | null
   status?: Prisma.EnumConversationStatusFilter<"Conversation"> | $Enums.ConversationStatus
   pipelineStage?: Prisma.StringNullableFilter<"Conversation"> | string | null
+  dispatchListId?: Prisma.StringNullableFilter<"Conversation"> | string | null
+  templateDispatchId?: Prisma.StringNullableFilter<"Conversation"> | string | null
+  source?: Prisma.StringFilter<"Conversation"> | string
+  aiSalesEnabled?: Prisma.BoolFilter<"Conversation"> | boolean
+  aiSalesMessageCount?: Prisma.IntFilter<"Conversation"> | number
+  qualificationScore?: Prisma.IntNullableFilter<"Conversation"> | number | null
+  qualificationNotes?: Prisma.StringNullableFilter<"Conversation"> | string | null
+  handoffBriefing?: Prisma.StringNullableFilter<"Conversation"> | string | null
   lastMessageAt?: Prisma.DateTimeNullableFilter<"Conversation"> | Date | string | null
   lastMessagePreview?: Prisma.StringNullableFilter<"Conversation"> | string | null
   unreadCount?: Prisma.IntFilter<"Conversation"> | number
@@ -412,6 +500,14 @@ export type ConversationOrderByWithAggregationInput = {
   assignedById?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   pipelineStage?: Prisma.SortOrderInput | Prisma.SortOrder
+  dispatchListId?: Prisma.SortOrderInput | Prisma.SortOrder
+  templateDispatchId?: Prisma.SortOrderInput | Prisma.SortOrder
+  source?: Prisma.SortOrder
+  aiSalesEnabled?: Prisma.SortOrder
+  aiSalesMessageCount?: Prisma.SortOrder
+  qualificationScore?: Prisma.SortOrderInput | Prisma.SortOrder
+  qualificationNotes?: Prisma.SortOrderInput | Prisma.SortOrder
+  handoffBriefing?: Prisma.SortOrderInput | Prisma.SortOrder
   lastMessageAt?: Prisma.SortOrderInput | Prisma.SortOrder
   lastMessagePreview?: Prisma.SortOrderInput | Prisma.SortOrder
   unreadCount?: Prisma.SortOrder
@@ -441,6 +537,14 @@ export type ConversationScalarWhereWithAggregatesInput = {
   assignedById?: Prisma.StringNullableWithAggregatesFilter<"Conversation"> | string | null
   status?: Prisma.EnumConversationStatusWithAggregatesFilter<"Conversation"> | $Enums.ConversationStatus
   pipelineStage?: Prisma.StringNullableWithAggregatesFilter<"Conversation"> | string | null
+  dispatchListId?: Prisma.StringNullableWithAggregatesFilter<"Conversation"> | string | null
+  templateDispatchId?: Prisma.StringNullableWithAggregatesFilter<"Conversation"> | string | null
+  source?: Prisma.StringWithAggregatesFilter<"Conversation"> | string
+  aiSalesEnabled?: Prisma.BoolWithAggregatesFilter<"Conversation"> | boolean
+  aiSalesMessageCount?: Prisma.IntWithAggregatesFilter<"Conversation"> | number
+  qualificationScore?: Prisma.IntNullableWithAggregatesFilter<"Conversation"> | number | null
+  qualificationNotes?: Prisma.StringNullableWithAggregatesFilter<"Conversation"> | string | null
+  handoffBriefing?: Prisma.StringNullableWithAggregatesFilter<"Conversation"> | string | null
   lastMessageAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Conversation"> | Date | string | null
   lastMessagePreview?: Prisma.StringNullableWithAggregatesFilter<"Conversation"> | string | null
   unreadCount?: Prisma.IntWithAggregatesFilter<"Conversation"> | number
@@ -458,6 +562,14 @@ export type ConversationCreateInput = {
   assignedAt?: Date | string | null
   status?: $Enums.ConversationStatus
   pipelineStage?: string | null
+  dispatchListId?: string | null
+  templateDispatchId?: string | null
+  source?: string
+  aiSalesEnabled?: boolean
+  aiSalesMessageCount?: number
+  qualificationScore?: number | null
+  qualificationNotes?: string | null
+  handoffBriefing?: string | null
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -489,6 +601,14 @@ export type ConversationUncheckedCreateInput = {
   assignedById?: string | null
   status?: $Enums.ConversationStatus
   pipelineStage?: string | null
+  dispatchListId?: string | null
+  templateDispatchId?: string | null
+  source?: string
+  aiSalesEnabled?: boolean
+  aiSalesMessageCount?: number
+  qualificationScore?: number | null
+  qualificationNotes?: string | null
+  handoffBriefing?: string | null
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -512,6 +632,14 @@ export type ConversationUpdateInput = {
   assignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   pipelineStage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dispatchListId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  templateDispatchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  aiSalesEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  aiSalesMessageCount?: Prisma.IntFieldUpdateOperationsInput | number
+  qualificationScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -543,6 +671,14 @@ export type ConversationUncheckedUpdateInput = {
   assignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   pipelineStage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dispatchListId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  templateDispatchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  aiSalesEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  aiSalesMessageCount?: Prisma.IntFieldUpdateOperationsInput | number
+  qualificationScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -570,6 +706,14 @@ export type ConversationCreateManyInput = {
   assignedById?: string | null
   status?: $Enums.ConversationStatus
   pipelineStage?: string | null
+  dispatchListId?: string | null
+  templateDispatchId?: string | null
+  source?: string
+  aiSalesEnabled?: boolean
+  aiSalesMessageCount?: number
+  qualificationScore?: number | null
+  qualificationNotes?: string | null
+  handoffBriefing?: string | null
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -587,6 +731,14 @@ export type ConversationUpdateManyMutationInput = {
   assignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   pipelineStage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dispatchListId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  templateDispatchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  aiSalesEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  aiSalesMessageCount?: Prisma.IntFieldUpdateOperationsInput | number
+  qualificationScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -608,6 +760,14 @@ export type ConversationUncheckedUpdateManyInput = {
   assignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   pipelineStage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dispatchListId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  templateDispatchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  aiSalesEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  aiSalesMessageCount?: Prisma.IntFieldUpdateOperationsInput | number
+  qualificationScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -645,6 +805,14 @@ export type ConversationCountOrderByAggregateInput = {
   assignedById?: Prisma.SortOrder
   status?: Prisma.SortOrder
   pipelineStage?: Prisma.SortOrder
+  dispatchListId?: Prisma.SortOrder
+  templateDispatchId?: Prisma.SortOrder
+  source?: Prisma.SortOrder
+  aiSalesEnabled?: Prisma.SortOrder
+  aiSalesMessageCount?: Prisma.SortOrder
+  qualificationScore?: Prisma.SortOrder
+  qualificationNotes?: Prisma.SortOrder
+  handoffBriefing?: Prisma.SortOrder
   lastMessageAt?: Prisma.SortOrder
   lastMessagePreview?: Prisma.SortOrder
   unreadCount?: Prisma.SortOrder
@@ -653,6 +821,8 @@ export type ConversationCountOrderByAggregateInput = {
 }
 
 export type ConversationAvgOrderByAggregateInput = {
+  aiSalesMessageCount?: Prisma.SortOrder
+  qualificationScore?: Prisma.SortOrder
   unreadCount?: Prisma.SortOrder
 }
 
@@ -670,6 +840,14 @@ export type ConversationMaxOrderByAggregateInput = {
   assignedById?: Prisma.SortOrder
   status?: Prisma.SortOrder
   pipelineStage?: Prisma.SortOrder
+  dispatchListId?: Prisma.SortOrder
+  templateDispatchId?: Prisma.SortOrder
+  source?: Prisma.SortOrder
+  aiSalesEnabled?: Prisma.SortOrder
+  aiSalesMessageCount?: Prisma.SortOrder
+  qualificationScore?: Prisma.SortOrder
+  qualificationNotes?: Prisma.SortOrder
+  handoffBriefing?: Prisma.SortOrder
   lastMessageAt?: Prisma.SortOrder
   lastMessagePreview?: Prisma.SortOrder
   unreadCount?: Prisma.SortOrder
@@ -691,6 +869,14 @@ export type ConversationMinOrderByAggregateInput = {
   assignedById?: Prisma.SortOrder
   status?: Prisma.SortOrder
   pipelineStage?: Prisma.SortOrder
+  dispatchListId?: Prisma.SortOrder
+  templateDispatchId?: Prisma.SortOrder
+  source?: Prisma.SortOrder
+  aiSalesEnabled?: Prisma.SortOrder
+  aiSalesMessageCount?: Prisma.SortOrder
+  qualificationScore?: Prisma.SortOrder
+  qualificationNotes?: Prisma.SortOrder
+  handoffBriefing?: Prisma.SortOrder
   lastMessageAt?: Prisma.SortOrder
   lastMessagePreview?: Prisma.SortOrder
   unreadCount?: Prisma.SortOrder
@@ -699,6 +885,8 @@ export type ConversationMinOrderByAggregateInput = {
 }
 
 export type ConversationSumOrderByAggregateInput = {
+  aiSalesMessageCount?: Prisma.SortOrder
+  qualificationScore?: Prisma.SortOrder
   unreadCount?: Prisma.SortOrder
 }
 
@@ -879,6 +1067,14 @@ export type EnumConversationStatusFieldUpdateOperationsInput = {
   set?: $Enums.ConversationStatus
 }
 
+export type NullableIntFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
 export type ConversationCreateNestedOneWithoutConversationTagsInput = {
   create?: Prisma.XOR<Prisma.ConversationCreateWithoutConversationTagsInput, Prisma.ConversationUncheckedCreateWithoutConversationTagsInput>
   connectOrCreate?: Prisma.ConversationCreateOrConnectWithoutConversationTagsInput
@@ -973,6 +1169,14 @@ export type ConversationCreateWithoutWorkspaceInput = {
   assignedAt?: Date | string | null
   status?: $Enums.ConversationStatus
   pipelineStage?: string | null
+  dispatchListId?: string | null
+  templateDispatchId?: string | null
+  source?: string
+  aiSalesEnabled?: boolean
+  aiSalesMessageCount?: number
+  qualificationScore?: number | null
+  qualificationNotes?: string | null
+  handoffBriefing?: string | null
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -1002,6 +1206,14 @@ export type ConversationUncheckedCreateWithoutWorkspaceInput = {
   assignedById?: string | null
   status?: $Enums.ConversationStatus
   pipelineStage?: string | null
+  dispatchListId?: string | null
+  templateDispatchId?: string | null
+  source?: string
+  aiSalesEnabled?: boolean
+  aiSalesMessageCount?: number
+  qualificationScore?: number | null
+  qualificationNotes?: string | null
+  handoffBriefing?: string | null
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -1058,6 +1270,14 @@ export type ConversationScalarWhereInput = {
   assignedById?: Prisma.StringNullableFilter<"Conversation"> | string | null
   status?: Prisma.EnumConversationStatusFilter<"Conversation"> | $Enums.ConversationStatus
   pipelineStage?: Prisma.StringNullableFilter<"Conversation"> | string | null
+  dispatchListId?: Prisma.StringNullableFilter<"Conversation"> | string | null
+  templateDispatchId?: Prisma.StringNullableFilter<"Conversation"> | string | null
+  source?: Prisma.StringFilter<"Conversation"> | string
+  aiSalesEnabled?: Prisma.BoolFilter<"Conversation"> | boolean
+  aiSalesMessageCount?: Prisma.IntFilter<"Conversation"> | number
+  qualificationScore?: Prisma.IntNullableFilter<"Conversation"> | number | null
+  qualificationNotes?: Prisma.StringNullableFilter<"Conversation"> | string | null
+  handoffBriefing?: Prisma.StringNullableFilter<"Conversation"> | string | null
   lastMessageAt?: Prisma.DateTimeNullableFilter<"Conversation"> | Date | string | null
   lastMessagePreview?: Prisma.StringNullableFilter<"Conversation"> | string | null
   unreadCount?: Prisma.IntFilter<"Conversation"> | number
@@ -1075,6 +1295,14 @@ export type ConversationCreateWithoutAssignedByInput = {
   assignedAt?: Date | string | null
   status?: $Enums.ConversationStatus
   pipelineStage?: string | null
+  dispatchListId?: string | null
+  templateDispatchId?: string | null
+  source?: string
+  aiSalesEnabled?: boolean
+  aiSalesMessageCount?: number
+  qualificationScore?: number | null
+  qualificationNotes?: string | null
+  handoffBriefing?: string | null
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -1104,6 +1332,14 @@ export type ConversationUncheckedCreateWithoutAssignedByInput = {
   assignedAt?: Date | string | null
   status?: $Enums.ConversationStatus
   pipelineStage?: string | null
+  dispatchListId?: string | null
+  templateDispatchId?: string | null
+  source?: string
+  aiSalesEnabled?: boolean
+  aiSalesMessageCount?: number
+  qualificationScore?: number | null
+  qualificationNotes?: string | null
+  handoffBriefing?: string | null
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -1137,6 +1373,14 @@ export type ConversationCreateWithoutAssignedToInput = {
   assignedAt?: Date | string | null
   status?: $Enums.ConversationStatus
   pipelineStage?: string | null
+  dispatchListId?: string | null
+  templateDispatchId?: string | null
+  source?: string
+  aiSalesEnabled?: boolean
+  aiSalesMessageCount?: number
+  qualificationScore?: number | null
+  qualificationNotes?: string | null
+  handoffBriefing?: string | null
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -1166,6 +1410,14 @@ export type ConversationUncheckedCreateWithoutAssignedToInput = {
   assignedById?: string | null
   status?: $Enums.ConversationStatus
   pipelineStage?: string | null
+  dispatchListId?: string | null
+  templateDispatchId?: string | null
+  source?: string
+  aiSalesEnabled?: boolean
+  aiSalesMessageCount?: number
+  qualificationScore?: number | null
+  qualificationNotes?: string | null
+  handoffBriefing?: string | null
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -1231,6 +1483,14 @@ export type ConversationCreateWithoutChannelInput = {
   assignedAt?: Date | string | null
   status?: $Enums.ConversationStatus
   pipelineStage?: string | null
+  dispatchListId?: string | null
+  templateDispatchId?: string | null
+  source?: string
+  aiSalesEnabled?: boolean
+  aiSalesMessageCount?: number
+  qualificationScore?: number | null
+  qualificationNotes?: string | null
+  handoffBriefing?: string | null
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -1260,6 +1520,14 @@ export type ConversationUncheckedCreateWithoutChannelInput = {
   assignedById?: string | null
   status?: $Enums.ConversationStatus
   pipelineStage?: string | null
+  dispatchListId?: string | null
+  templateDispatchId?: string | null
+  source?: string
+  aiSalesEnabled?: boolean
+  aiSalesMessageCount?: number
+  qualificationScore?: number | null
+  qualificationNotes?: string | null
+  handoffBriefing?: string | null
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -1309,6 +1577,14 @@ export type ConversationCreateWithoutConversationTagsInput = {
   assignedAt?: Date | string | null
   status?: $Enums.ConversationStatus
   pipelineStage?: string | null
+  dispatchListId?: string | null
+  templateDispatchId?: string | null
+  source?: string
+  aiSalesEnabled?: boolean
+  aiSalesMessageCount?: number
+  qualificationScore?: number | null
+  qualificationNotes?: string | null
+  handoffBriefing?: string | null
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -1339,6 +1615,14 @@ export type ConversationUncheckedCreateWithoutConversationTagsInput = {
   assignedById?: string | null
   status?: $Enums.ConversationStatus
   pipelineStage?: string | null
+  dispatchListId?: string | null
+  templateDispatchId?: string | null
+  source?: string
+  aiSalesEnabled?: boolean
+  aiSalesMessageCount?: number
+  qualificationScore?: number | null
+  qualificationNotes?: string | null
+  handoffBriefing?: string | null
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -1377,6 +1661,14 @@ export type ConversationUpdateWithoutConversationTagsInput = {
   assignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   pipelineStage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dispatchListId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  templateDispatchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  aiSalesEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  aiSalesMessageCount?: Prisma.IntFieldUpdateOperationsInput | number
+  qualificationScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1407,6 +1699,14 @@ export type ConversationUncheckedUpdateWithoutConversationTagsInput = {
   assignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   pipelineStage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dispatchListId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  templateDispatchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  aiSalesEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  aiSalesMessageCount?: Prisma.IntFieldUpdateOperationsInput | number
+  qualificationScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1429,6 +1729,14 @@ export type ConversationCreateWithoutNotesInput = {
   assignedAt?: Date | string | null
   status?: $Enums.ConversationStatus
   pipelineStage?: string | null
+  dispatchListId?: string | null
+  templateDispatchId?: string | null
+  source?: string
+  aiSalesEnabled?: boolean
+  aiSalesMessageCount?: number
+  qualificationScore?: number | null
+  qualificationNotes?: string | null
+  handoffBriefing?: string | null
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -1459,6 +1767,14 @@ export type ConversationUncheckedCreateWithoutNotesInput = {
   assignedById?: string | null
   status?: $Enums.ConversationStatus
   pipelineStage?: string | null
+  dispatchListId?: string | null
+  templateDispatchId?: string | null
+  source?: string
+  aiSalesEnabled?: boolean
+  aiSalesMessageCount?: number
+  qualificationScore?: number | null
+  qualificationNotes?: string | null
+  handoffBriefing?: string | null
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -1497,6 +1813,14 @@ export type ConversationUpdateWithoutNotesInput = {
   assignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   pipelineStage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dispatchListId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  templateDispatchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  aiSalesEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  aiSalesMessageCount?: Prisma.IntFieldUpdateOperationsInput | number
+  qualificationScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1527,6 +1851,14 @@ export type ConversationUncheckedUpdateWithoutNotesInput = {
   assignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   pipelineStage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dispatchListId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  templateDispatchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  aiSalesEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  aiSalesMessageCount?: Prisma.IntFieldUpdateOperationsInput | number
+  qualificationScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1549,6 +1881,14 @@ export type ConversationCreateWithoutStageHistoryInput = {
   assignedAt?: Date | string | null
   status?: $Enums.ConversationStatus
   pipelineStage?: string | null
+  dispatchListId?: string | null
+  templateDispatchId?: string | null
+  source?: string
+  aiSalesEnabled?: boolean
+  aiSalesMessageCount?: number
+  qualificationScore?: number | null
+  qualificationNotes?: string | null
+  handoffBriefing?: string | null
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -1579,6 +1919,14 @@ export type ConversationUncheckedCreateWithoutStageHistoryInput = {
   assignedById?: string | null
   status?: $Enums.ConversationStatus
   pipelineStage?: string | null
+  dispatchListId?: string | null
+  templateDispatchId?: string | null
+  source?: string
+  aiSalesEnabled?: boolean
+  aiSalesMessageCount?: number
+  qualificationScore?: number | null
+  qualificationNotes?: string | null
+  handoffBriefing?: string | null
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -1617,6 +1965,14 @@ export type ConversationUpdateWithoutStageHistoryInput = {
   assignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   pipelineStage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dispatchListId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  templateDispatchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  aiSalesEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  aiSalesMessageCount?: Prisma.IntFieldUpdateOperationsInput | number
+  qualificationScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1647,6 +2003,14 @@ export type ConversationUncheckedUpdateWithoutStageHistoryInput = {
   assignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   pipelineStage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dispatchListId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  templateDispatchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  aiSalesEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  aiSalesMessageCount?: Prisma.IntFieldUpdateOperationsInput | number
+  qualificationScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1669,6 +2033,14 @@ export type ConversationCreateWithoutMessagesInput = {
   assignedAt?: Date | string | null
   status?: $Enums.ConversationStatus
   pipelineStage?: string | null
+  dispatchListId?: string | null
+  templateDispatchId?: string | null
+  source?: string
+  aiSalesEnabled?: boolean
+  aiSalesMessageCount?: number
+  qualificationScore?: number | null
+  qualificationNotes?: string | null
+  handoffBriefing?: string | null
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -1699,6 +2071,14 @@ export type ConversationUncheckedCreateWithoutMessagesInput = {
   assignedById?: string | null
   status?: $Enums.ConversationStatus
   pipelineStage?: string | null
+  dispatchListId?: string | null
+  templateDispatchId?: string | null
+  source?: string
+  aiSalesEnabled?: boolean
+  aiSalesMessageCount?: number
+  qualificationScore?: number | null
+  qualificationNotes?: string | null
+  handoffBriefing?: string | null
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -1737,6 +2117,14 @@ export type ConversationUpdateWithoutMessagesInput = {
   assignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   pipelineStage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dispatchListId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  templateDispatchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  aiSalesEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  aiSalesMessageCount?: Prisma.IntFieldUpdateOperationsInput | number
+  qualificationScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1767,6 +2155,14 @@ export type ConversationUncheckedUpdateWithoutMessagesInput = {
   assignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   pipelineStage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dispatchListId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  templateDispatchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  aiSalesEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  aiSalesMessageCount?: Prisma.IntFieldUpdateOperationsInput | number
+  qualificationScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1789,6 +2185,14 @@ export type ConversationCreateWithoutLeadInput = {
   assignedAt?: Date | string | null
   status?: $Enums.ConversationStatus
   pipelineStage?: string | null
+  dispatchListId?: string | null
+  templateDispatchId?: string | null
+  source?: string
+  aiSalesEnabled?: boolean
+  aiSalesMessageCount?: number
+  qualificationScore?: number | null
+  qualificationNotes?: string | null
+  handoffBriefing?: string | null
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -1819,6 +2223,14 @@ export type ConversationUncheckedCreateWithoutLeadInput = {
   assignedById?: string | null
   status?: $Enums.ConversationStatus
   pipelineStage?: string | null
+  dispatchListId?: string | null
+  templateDispatchId?: string | null
+  source?: string
+  aiSalesEnabled?: boolean
+  aiSalesMessageCount?: number
+  qualificationScore?: number | null
+  qualificationNotes?: string | null
+  handoffBriefing?: string | null
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -1857,6 +2269,14 @@ export type ConversationUpdateWithoutLeadInput = {
   assignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   pipelineStage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dispatchListId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  templateDispatchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  aiSalesEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  aiSalesMessageCount?: Prisma.IntFieldUpdateOperationsInput | number
+  qualificationScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1887,6 +2307,14 @@ export type ConversationUncheckedUpdateWithoutLeadInput = {
   assignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   pipelineStage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dispatchListId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  templateDispatchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  aiSalesEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  aiSalesMessageCount?: Prisma.IntFieldUpdateOperationsInput | number
+  qualificationScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1909,6 +2337,14 @@ export type ConversationCreateWithoutActivitiesInput = {
   assignedAt?: Date | string | null
   status?: $Enums.ConversationStatus
   pipelineStage?: string | null
+  dispatchListId?: string | null
+  templateDispatchId?: string | null
+  source?: string
+  aiSalesEnabled?: boolean
+  aiSalesMessageCount?: number
+  qualificationScore?: number | null
+  qualificationNotes?: string | null
+  handoffBriefing?: string | null
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -1939,6 +2375,14 @@ export type ConversationUncheckedCreateWithoutActivitiesInput = {
   assignedById?: string | null
   status?: $Enums.ConversationStatus
   pipelineStage?: string | null
+  dispatchListId?: string | null
+  templateDispatchId?: string | null
+  source?: string
+  aiSalesEnabled?: boolean
+  aiSalesMessageCount?: number
+  qualificationScore?: number | null
+  qualificationNotes?: string | null
+  handoffBriefing?: string | null
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -1977,6 +2421,14 @@ export type ConversationUpdateWithoutActivitiesInput = {
   assignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   pipelineStage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dispatchListId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  templateDispatchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  aiSalesEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  aiSalesMessageCount?: Prisma.IntFieldUpdateOperationsInput | number
+  qualificationScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2007,6 +2459,14 @@ export type ConversationUncheckedUpdateWithoutActivitiesInput = {
   assignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   pipelineStage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dispatchListId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  templateDispatchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  aiSalesEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  aiSalesMessageCount?: Prisma.IntFieldUpdateOperationsInput | number
+  qualificationScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2032,6 +2492,14 @@ export type ConversationCreateManyWorkspaceInput = {
   assignedById?: string | null
   status?: $Enums.ConversationStatus
   pipelineStage?: string | null
+  dispatchListId?: string | null
+  templateDispatchId?: string | null
+  source?: string
+  aiSalesEnabled?: boolean
+  aiSalesMessageCount?: number
+  qualificationScore?: number | null
+  qualificationNotes?: string | null
+  handoffBriefing?: string | null
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -2049,6 +2517,14 @@ export type ConversationUpdateWithoutWorkspaceInput = {
   assignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   pipelineStage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dispatchListId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  templateDispatchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  aiSalesEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  aiSalesMessageCount?: Prisma.IntFieldUpdateOperationsInput | number
+  qualificationScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2078,6 +2554,14 @@ export type ConversationUncheckedUpdateWithoutWorkspaceInput = {
   assignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   pipelineStage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dispatchListId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  templateDispatchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  aiSalesEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  aiSalesMessageCount?: Prisma.IntFieldUpdateOperationsInput | number
+  qualificationScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2104,6 +2588,14 @@ export type ConversationUncheckedUpdateManyWithoutWorkspaceInput = {
   assignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   pipelineStage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dispatchListId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  templateDispatchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  aiSalesEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  aiSalesMessageCount?: Prisma.IntFieldUpdateOperationsInput | number
+  qualificationScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2124,6 +2616,14 @@ export type ConversationCreateManyAssignedByInput = {
   assignedAt?: Date | string | null
   status?: $Enums.ConversationStatus
   pipelineStage?: string | null
+  dispatchListId?: string | null
+  templateDispatchId?: string | null
+  source?: string
+  aiSalesEnabled?: boolean
+  aiSalesMessageCount?: number
+  qualificationScore?: number | null
+  qualificationNotes?: string | null
+  handoffBriefing?: string | null
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -2144,6 +2644,14 @@ export type ConversationCreateManyAssignedToInput = {
   assignedById?: string | null
   status?: $Enums.ConversationStatus
   pipelineStage?: string | null
+  dispatchListId?: string | null
+  templateDispatchId?: string | null
+  source?: string
+  aiSalesEnabled?: boolean
+  aiSalesMessageCount?: number
+  qualificationScore?: number | null
+  qualificationNotes?: string | null
+  handoffBriefing?: string | null
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -2161,6 +2669,14 @@ export type ConversationUpdateWithoutAssignedByInput = {
   assignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   pipelineStage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dispatchListId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  templateDispatchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  aiSalesEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  aiSalesMessageCount?: Prisma.IntFieldUpdateOperationsInput | number
+  qualificationScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2190,6 +2706,14 @@ export type ConversationUncheckedUpdateWithoutAssignedByInput = {
   assignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   pipelineStage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dispatchListId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  templateDispatchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  aiSalesEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  aiSalesMessageCount?: Prisma.IntFieldUpdateOperationsInput | number
+  qualificationScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2216,6 +2740,14 @@ export type ConversationUncheckedUpdateManyWithoutAssignedByInput = {
   assignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   pipelineStage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dispatchListId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  templateDispatchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  aiSalesEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  aiSalesMessageCount?: Prisma.IntFieldUpdateOperationsInput | number
+  qualificationScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2233,6 +2765,14 @@ export type ConversationUpdateWithoutAssignedToInput = {
   assignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   pipelineStage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dispatchListId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  templateDispatchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  aiSalesEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  aiSalesMessageCount?: Prisma.IntFieldUpdateOperationsInput | number
+  qualificationScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2262,6 +2802,14 @@ export type ConversationUncheckedUpdateWithoutAssignedToInput = {
   assignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   pipelineStage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dispatchListId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  templateDispatchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  aiSalesEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  aiSalesMessageCount?: Prisma.IntFieldUpdateOperationsInput | number
+  qualificationScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2288,6 +2836,14 @@ export type ConversationUncheckedUpdateManyWithoutAssignedToInput = {
   assignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   pipelineStage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dispatchListId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  templateDispatchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  aiSalesEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  aiSalesMessageCount?: Prisma.IntFieldUpdateOperationsInput | number
+  qualificationScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2308,6 +2864,14 @@ export type ConversationCreateManyChannelInput = {
   assignedById?: string | null
   status?: $Enums.ConversationStatus
   pipelineStage?: string | null
+  dispatchListId?: string | null
+  templateDispatchId?: string | null
+  source?: string
+  aiSalesEnabled?: boolean
+  aiSalesMessageCount?: number
+  qualificationScore?: number | null
+  qualificationNotes?: string | null
+  handoffBriefing?: string | null
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -2325,6 +2889,14 @@ export type ConversationUpdateWithoutChannelInput = {
   assignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   pipelineStage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dispatchListId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  templateDispatchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  aiSalesEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  aiSalesMessageCount?: Prisma.IntFieldUpdateOperationsInput | number
+  qualificationScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2354,6 +2926,14 @@ export type ConversationUncheckedUpdateWithoutChannelInput = {
   assignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   pipelineStage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dispatchListId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  templateDispatchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  aiSalesEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  aiSalesMessageCount?: Prisma.IntFieldUpdateOperationsInput | number
+  qualificationScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2380,6 +2960,14 @@ export type ConversationUncheckedUpdateManyWithoutChannelInput = {
   assignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   pipelineStage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dispatchListId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  templateDispatchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  aiSalesEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  aiSalesMessageCount?: Prisma.IntFieldUpdateOperationsInput | number
+  qualificationScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2468,6 +3056,14 @@ export type ConversationSelect<ExtArgs extends runtime.Types.Extensions.Internal
   assignedById?: boolean
   status?: boolean
   pipelineStage?: boolean
+  dispatchListId?: boolean
+  templateDispatchId?: boolean
+  source?: boolean
+  aiSalesEnabled?: boolean
+  aiSalesMessageCount?: boolean
+  qualificationScore?: boolean
+  qualificationNotes?: boolean
+  handoffBriefing?: boolean
   lastMessageAt?: boolean
   lastMessagePreview?: boolean
   unreadCount?: boolean
@@ -2500,6 +3096,14 @@ export type ConversationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   assignedById?: boolean
   status?: boolean
   pipelineStage?: boolean
+  dispatchListId?: boolean
+  templateDispatchId?: boolean
+  source?: boolean
+  aiSalesEnabled?: boolean
+  aiSalesMessageCount?: boolean
+  qualificationScore?: boolean
+  qualificationNotes?: boolean
+  handoffBriefing?: boolean
   lastMessageAt?: boolean
   lastMessagePreview?: boolean
   unreadCount?: boolean
@@ -2525,6 +3129,14 @@ export type ConversationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   assignedById?: boolean
   status?: boolean
   pipelineStage?: boolean
+  dispatchListId?: boolean
+  templateDispatchId?: boolean
+  source?: boolean
+  aiSalesEnabled?: boolean
+  aiSalesMessageCount?: boolean
+  qualificationScore?: boolean
+  qualificationNotes?: boolean
+  handoffBriefing?: boolean
   lastMessageAt?: boolean
   lastMessagePreview?: boolean
   unreadCount?: boolean
@@ -2550,6 +3162,14 @@ export type ConversationSelectScalar = {
   assignedById?: boolean
   status?: boolean
   pipelineStage?: boolean
+  dispatchListId?: boolean
+  templateDispatchId?: boolean
+  source?: boolean
+  aiSalesEnabled?: boolean
+  aiSalesMessageCount?: boolean
+  qualificationScore?: boolean
+  qualificationNotes?: boolean
+  handoffBriefing?: boolean
   lastMessageAt?: boolean
   lastMessagePreview?: boolean
   unreadCount?: boolean
@@ -2557,7 +3177,7 @@ export type ConversationSelectScalar = {
   updatedAt?: boolean
 }
 
-export type ConversationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "workspaceId" | "channelId" | "contactName" | "contactPhone" | "contactEmail" | "contactPhotoUrl" | "externalId" | "assignedToId" | "assignedAt" | "assignedById" | "status" | "pipelineStage" | "lastMessageAt" | "lastMessagePreview" | "unreadCount" | "createdAt" | "updatedAt", ExtArgs["result"]["conversation"]>
+export type ConversationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "workspaceId" | "channelId" | "contactName" | "contactPhone" | "contactEmail" | "contactPhotoUrl" | "externalId" | "assignedToId" | "assignedAt" | "assignedById" | "status" | "pipelineStage" | "dispatchListId" | "templateDispatchId" | "source" | "aiSalesEnabled" | "aiSalesMessageCount" | "qualificationScore" | "qualificationNotes" | "handoffBriefing" | "lastMessageAt" | "lastMessagePreview" | "unreadCount" | "createdAt" | "updatedAt", ExtArgs["result"]["conversation"]>
 export type ConversationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   assignedBy?: boolean | Prisma.Conversation$assignedByArgs<ExtArgs>
   assignedTo?: boolean | Prisma.Conversation$assignedToArgs<ExtArgs>
@@ -2612,6 +3232,14 @@ export type $ConversationPayload<ExtArgs extends runtime.Types.Extensions.Intern
     assignedById: string | null
     status: $Enums.ConversationStatus
     pipelineStage: string | null
+    dispatchListId: string | null
+    templateDispatchId: string | null
+    source: string
+    aiSalesEnabled: boolean
+    aiSalesMessageCount: number
+    qualificationScore: number | null
+    qualificationNotes: string | null
+    handoffBriefing: string | null
     lastMessageAt: Date | null
     lastMessagePreview: string | null
     unreadCount: number
@@ -3063,6 +3691,14 @@ export interface ConversationFieldRefs {
   readonly assignedById: Prisma.FieldRef<"Conversation", 'String'>
   readonly status: Prisma.FieldRef<"Conversation", 'ConversationStatus'>
   readonly pipelineStage: Prisma.FieldRef<"Conversation", 'String'>
+  readonly dispatchListId: Prisma.FieldRef<"Conversation", 'String'>
+  readonly templateDispatchId: Prisma.FieldRef<"Conversation", 'String'>
+  readonly source: Prisma.FieldRef<"Conversation", 'String'>
+  readonly aiSalesEnabled: Prisma.FieldRef<"Conversation", 'Boolean'>
+  readonly aiSalesMessageCount: Prisma.FieldRef<"Conversation", 'Int'>
+  readonly qualificationScore: Prisma.FieldRef<"Conversation", 'Int'>
+  readonly qualificationNotes: Prisma.FieldRef<"Conversation", 'String'>
+  readonly handoffBriefing: Prisma.FieldRef<"Conversation", 'String'>
   readonly lastMessageAt: Prisma.FieldRef<"Conversation", 'DateTime'>
   readonly lastMessagePreview: Prisma.FieldRef<"Conversation", 'String'>
   readonly unreadCount: Prisma.FieldRef<"Conversation", 'Int'>

@@ -1,6 +1,6 @@
 'use client'
 
-import { MessageCircle, Instagram, Facebook } from 'lucide-react'
+import { MessageCircle, Instagram, Facebook, Bot } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 
@@ -28,6 +28,11 @@ interface Conversation {
   status: keyof typeof STATUS_LABELS
   channel: { type: keyof typeof CHANNEL_STYLES }
   assignedTo: { name: string } | null
+  aiSalesEnabled?: boolean
+  source?: string | null
+  pipelineStage?: string | null
+  qualificationScore?: number | null
+  aiSalesMessageCount?: number
 }
 
 interface ConversationListProps {
@@ -94,7 +99,15 @@ export function ConversationList({
 
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between mb-0.5">
-                  <p className="font-medium text-gray-900 text-sm truncate">{conv.contactName}</p>
+                  <p className="font-medium text-gray-900 text-sm truncate flex items-center gap-1.5">
+                    {conv.contactName}
+                    {conv.aiSalesEnabled && (
+                      <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-violet-100 text-violet-700 text-[10px] font-semibold rounded-full flex-shrink-0">
+                        <Bot size={10} />
+                        AI
+                      </span>
+                    )}
+                  </p>
                   <div className="flex items-center gap-1.5 flex-shrink-0 ml-2">
                     {conv.unreadCount > 0 && (
                       <span className="bg-blue-500 text-white text-xs font-medium px-1.5 py-0.5 rounded-full">
@@ -116,10 +129,29 @@ export function ConversationList({
                   {conv.lastMessagePreview ?? 'Sem mensagens'}
                 </p>
 
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1 flex-wrap">
                   <span className={`text-xs px-1.5 py-0.5 rounded-full ${statusStyle.className}`}>
                     {statusStyle.label}
                   </span>
+                  {conv.pipelineStage && (
+                    <span className="text-xs px-1.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 font-medium">
+                      {conv.pipelineStage}
+                    </span>
+                  )}
+                  {conv.qualificationScore != null && (
+                    <span className={`text-xs px-1.5 py-0.5 rounded-full font-semibold ${
+                      conv.qualificationScore >= 7 ? 'bg-emerald-50 text-emerald-700' :
+                      conv.qualificationScore >= 4 ? 'bg-amber-50 text-amber-700' :
+                      'bg-red-50 text-red-700'
+                    }`}>
+                      {conv.qualificationScore}/10
+                    </span>
+                  )}
+                  {conv.source === 'dispatch' && (
+                    <span className="text-xs px-1.5 py-0.5 rounded-full bg-blue-50 text-blue-600">
+                      Disparo
+                    </span>
+                  )}
                   {conv.assignedTo && (
                     <span className="text-xs text-gray-400 truncate">
                       → {conv.assignedTo.name}
