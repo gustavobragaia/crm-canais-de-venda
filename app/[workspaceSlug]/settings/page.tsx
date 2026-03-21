@@ -55,11 +55,17 @@ export default function SettingsPage() {
     phoneNumberId?: string | null
     phoneNumber?: string | null
     instanceName?: string | null
+    pageName?: string | null
     isActive?: boolean
   }>>([])
   const [connectingStatus, setConnectingStatus] = useState<Record<string, 'idle' | 'loading' | 'done'>>({})
   const [uazapiQR, setUazapiQR] = useState<{ base64: string; instanceName: string; channelId: string } | null>(null)
   const uazapiPollRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const [metaPageModal, setMetaPageModal] = useState<{
+    channelType: 'INSTAGRAM' | 'FACEBOOK'
+    userToken: string
+    options: Array<{ id: string; name: string }>
+  } | null>(null)
   const [upgradeData, setUpgradeData] = useState<{
     activeUsers: number; maxUsers: number; plan: string;
     nextPlan: { slug: string; name: string; priceCents: number; userLimit: number; checkoutUrl: string }
@@ -188,6 +194,107 @@ export default function SettingsPage() {
       setConnectingStatus((s) => ({ ...s, [`FIX_${channelId}`]: 'idle' }))
     }
   }, [])
+
+  const handleMetaConnect = useCallback((channelType: 'INSTAGRAM' | 'FACEBOOK') => {
+    const appId = process.env.NEXT_PUBLIC_META_APP_ID
+    if (!appId) {
+      alert('Meta App ID não configurado. Adicione NEXT_PUBLIC_META_APP_ID nas variáveis de ambiente.')
+      return
+    }
+    const redirectUri = encodeURIComponent(`${window.location.origin}/api/meta/callback`)
+    const scope = 'instagram_basic,instagram_manage_messages,pages_messaging,pages_manage_metadata,pages_show_list'
+    const oauthUrl = `https://www.facebook.com/v21.0/dialog/oauth?client_id=${appId}&redirect_uri=${redirectUri}&scope=${scope}&state=${channelType}&response_type=code`
+
+    const popup = window.open(oauthUrl, 'meta_oauth', 'width=600,height=700,scrollbars=yes')
+    if (!popup) {
+      alert('Popup bloqueado. Permita popups para este site e tente novamente.')
+      return
+    }
+
+    const onMessage = async (event: MessageEvent) => {
+      if (event.origin !== window.location.origin) return
+      const { code, channelType: ct, error } = event.data ?? {}
+      window.removeEventListener('message', onMessage)
+
+      if (error || !code) return
+
+      setConnectingStatus((s) => ({ ...s, [ct]: 'loading' }))
+      try {
+        const res = await fetch('/api/meta/connect', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code, channelType: ct }),
+        })
+        const data = await res.json()
+        if (!res.ok) {
+          alert(data.error ?? 'Erro ao conectar.')
+          setConnectingStatus((s) => ({ ...s, [ct]: 'idle' }))
+          return
+        }
+        if (data.step === 'select') {
+          setMetaPageModal({ channelType: ct, userToken: data.userToken, options: data.options })
+          setConnectingStatus((s) => ({ ...s, [ct]: 'idle' }))
+        } else {
+          setConnectingStatus((s) => ({ ...s, [ct]: 'done' }))
+          refreshChannels()
+          setTimeout(() => setConnectingStatus((s) => ({ ...s, [ct]: 'idle' })), 3000)
+        }
+      } catch (e) {
+        console.error(e)
+        setConnectingStatus((s) => ({ ...s, [ct]: 'idle' }))
+      }
+    }
+
+    window.addEventListener('message', onMessage)
+  }, [refreshChannels])
+
+  const handleMetaPageSelect = useCallback(async (pageId: string) => {
+    if (!metaPageModal) return
+    const { channelType, userToken } = metaPageModal
+    setMetaPageModal(null)
+    setConnectingStatus((s) => ({ ...s, [channelType]: 'loading' }))
+    try {
+      const res = await fetch('/api/meta/connect', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ accessToken: userToken, channelType, selectedId: pageId }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        alert(data.error ?? 'Erro ao conectar página.')
+        setConnectingStatus((s) => ({ ...s, [channelType]: 'idle' }))
+        return
+      }
+      setConnectingStatus((s) => ({ ...s, [channelType]: 'done' }))
+      refreshChannels()
+      setTimeout(() => setConnectingStatus((s) => ({ ...s, [channelType]: 'idle' })), 3000)
+    } catch (e) {
+      console.error(e)
+      setConnectingStatus((s) => ({ ...s, [channelType]: 'idle' }))
+    }
+  }, [metaPageModal, refreshChannels])
+
+  const handleMetaDisconnect = useCallback(async (channelId: string, channelType: string) => {
+    if (!window.confirm(`Tem certeza que deseja desconectar este canal ${channelType}?`)) return
+    setConnectingStatus((s) => ({ ...s, [`DISCONNECT_${channelId}`]: 'loading' }))
+    try {
+      const res = await fetch('/api/meta/disconnect', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ channelId }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        alert(data.error ?? 'Erro ao desconectar.')
+        return
+      }
+      refreshChannels()
+    } catch (e) {
+      console.error(e)
+    } finally {
+      setConnectingStatus((s) => ({ ...s, [`DISCONNECT_${channelId}`]: 'idle' }))
+    }
+  }, [refreshChannels])
 
   useEffect(() => () => stopUazapiPoll(), [stopUazapiPoll])
 
@@ -591,35 +698,102 @@ export default function SettingsPage() {
                 </button>
               </div>
 
-              {/* Instagram & Facebook — coming soon */}
+              {/* Instagram & Facebook */}
               <div>
                 <h3 className="text-sm font-medium text-gray-700 mb-3">Instagram &amp; Facebook</h3>
                 <div className="space-y-3">
-                  {[
-                    { type: 'INSTAGRAM', label: 'Instagram Direct', icon: Instagram, color: '#E4405F', desc: 'Mensagens diretas do Instagram' },
-                    { type: 'FACEBOOK', label: 'Facebook Messenger', icon: Facebook, color: '#1877F2', desc: 'Messenger da sua página' },
-                  ].map(({ type, label, icon: Icon, color, desc }) => (
-                    <div key={type} className="bg-white border border-gray-100 shadow-sm rounded-2xl p-4 flex items-center gap-4 opacity-60">
-                      <div className="w-10 h-10 rounded-lg flex items-center justify-center text-white flex-shrink-0" style={{ backgroundColor: color }}>
-                        <Icon size={20} />
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <p className="font-medium text-gray-900 text-sm">{label}</p>
-                          <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 font-medium">
-                            Em breve
-                          </span>
+                  {([
+                    { type: 'INSTAGRAM' as const, label: 'Instagram Direct', icon: Instagram, color: '#E4405F', desc: 'Mensagens diretas do Instagram' },
+                    { type: 'FACEBOOK' as const, label: 'Facebook Messenger', icon: Facebook, color: '#1877F2', desc: 'Messenger da sua página' },
+                  ] as const).map(({ type, label, icon: Icon, color, desc }) => {
+                    const connected = channels.filter((c) => c.type === type)
+                    const isConnecting = connectingStatus[type] === 'loading'
+                    const isDone = connectingStatus[type] === 'done'
+                    return (
+                      <div key={type} className="bg-white border border-gray-100 shadow-sm rounded-2xl p-4">
+                        {/* Connected channels */}
+                        {connected.map((ch) => (
+                          <div key={ch.id} className="flex items-center gap-3 mb-3">
+                            <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white flex-shrink-0" style={{ backgroundColor: color }}>
+                              <Icon size={16} />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-gray-900 truncate">{ch.pageName ?? ch.name}</p>
+                              <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700 font-medium">Conectado</span>
+                            </div>
+                            <button
+                              onClick={() => handleMetaDisconnect(ch.id, label)}
+                              disabled={connectingStatus[`DISCONNECT_${ch.id}`] === 'loading'}
+                              className="text-xs text-gray-400 hover:text-red-500 transition-colors p-1"
+                              title="Desconectar"
+                            >
+                              {connectingStatus[`DISCONNECT_${ch.id}`] === 'loading'
+                                ? <Loader2 size={12} className="animate-spin" />
+                                : <Trash2 size={12} />}
+                            </button>
+                          </div>
+                        ))}
+
+                        {/* Connect button */}
+                        <div className="flex items-center gap-4">
+                          <div className="w-10 h-10 rounded-lg flex items-center justify-center text-white flex-shrink-0" style={{ backgroundColor: color }}>
+                            <Icon size={20} />
+                          </div>
+                          <div className="flex-1">
+                            <p className="font-medium text-gray-900 text-sm">{label}</p>
+                            <p className="text-xs text-gray-500">{desc}</p>
+                          </div>
+                          <button
+                            onClick={() => handleMetaConnect(type)}
+                            disabled={isConnecting || isDone}
+                            className="flex items-center gap-2 text-sm px-3 py-1.5 text-white rounded-lg transition-colors font-medium disabled:opacity-60 hover:opacity-90 flex-shrink-0"
+                            style={{ backgroundColor: color }}
+                          >
+                            {isConnecting ? (
+                              <><Loader2 size={13} className="animate-spin" /> Conectando...</>
+                            ) : isDone ? (
+                              <><CheckCircle2 size={13} /> Conectado!</>
+                            ) : (
+                              connected.length > 0 ? 'Adicionar conta' : 'Conectar'
+                            )}
+                          </button>
                         </div>
-                        <p className="text-xs text-gray-500">{desc}</p>
                       </div>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
               </div>
             </div>
           )}
         </div>
       </div>
+
+      {/* Meta Page Selection Modal */}
+      {metaPageModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-1">Selecionar Página</h2>
+            <p className="text-sm text-gray-500 mb-4">Escolha qual página conectar ao {metaPageModal.channelType === 'INSTAGRAM' ? 'Instagram' : 'Facebook Messenger'}:</p>
+            <div className="space-y-2 max-h-64 overflow-y-auto">
+              {metaPageModal.options.map((page) => (
+                <button
+                  key={page.id}
+                  onClick={() => handleMetaPageSelect(page.id)}
+                  className="w-full text-left px-4 py-3 rounded-xl border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-colors text-sm font-medium text-gray-900"
+                >
+                  {page.name}
+                </button>
+              ))}
+            </div>
+            <button
+              onClick={() => setMetaPageModal(null)}
+              className="mt-4 w-full text-sm text-gray-500 hover:text-gray-700 py-2"
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

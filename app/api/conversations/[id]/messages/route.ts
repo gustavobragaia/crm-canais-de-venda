@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { pusherServer } from '@/lib/pusher'
-import { sendInstagramMessage } from '@/lib/integrations/instagram'
-import { sendFacebookMessage } from '@/lib/integrations/facebook'
+import { sendInstagramMessage, sendInstagramMedia } from '@/lib/integrations/instagram'
+import { sendFacebookMessage, sendFacebookMedia } from '@/lib/integrations/facebook'
 import { sendUazapiMessage, sendUazapiMedia } from '@/lib/integrations/uazapi'
 import { decrypt } from '@/lib/crypto'
 import { put } from '@vercel/blob'
@@ -132,6 +132,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         const to = conversation.contactPhone
           ?? conversation.externalId.replace('@s.whatsapp.net', '').replace('@g.us', '')
         externalId = await sendUazapiMedia(channel.instanceToken, to, mediaType as 'audio' | 'image' | 'video' | 'document', mediaUrl, content || undefined, mediaName)
+      } else if (channel?.type === 'INSTAGRAM' && channel.accessToken) {
+        const token = decrypt(channel.accessToken)
+        externalId = await sendInstagramMedia(conversation.externalId, mediaType, mediaUrl, token)
+      } else if (channel?.type === 'FACEBOOK' && channel.accessToken) {
+        const token = decrypt(channel.accessToken)
+        externalId = await sendFacebookMedia(conversation.externalId, mediaType, mediaUrl, token)
       }
     } catch (err) {
       sendError = err instanceof Error ? err.message : String(err)

@@ -2,14 +2,15 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { encrypt } from '@/lib/crypto'
+import { subscribePageToWebhooks, getInstagramBusinessAccountId } from '@/lib/integrations/meta-common'
 
-const GRAPH_URL = 'https://graph.facebook.com/v18.0'
+const GRAPH_URL = 'https://graph.facebook.com/v21.0'
 
 async function exchangeCodeForToken(code: string): Promise<string> {
   const params = new URLSearchParams({
     client_id: process.env.META_APP_ID!,
     client_secret: process.env.META_APP_SECRET!,
-    redirect_uri: `${process.env.NEXTAUTH_URL}/api/meta/connect`,
+    redirect_uri: `${process.env.NEXTAUTH_URL?.replace(/\/$/, '')}/api/meta/callback`,
     code,
   })
   const res = await fetch(`${GRAPH_URL}/oauth/access_token?${params}`)
@@ -29,7 +30,6 @@ async function getLongLivedToken(shortToken: string): Promise<string> {
   const data = await res.json()
   return data.access_token ?? shortToken
 }
-
 
 async function getPages(userToken: string): Promise<Array<{ id: string; name: string; access_token: string }>> {
   const res = await fetch(`${GRAPH_URL}/me/accounts?fields=id,name,access_token&access_token=${userToken}`)
@@ -70,35 +70,55 @@ export async function POST(req: NextRequest) {
 
     const workspaceId = session.user.workspaceId
 
-    // Instagram or Facebook — pages flow
+    // Step 2: List Facebook Pages the user manages
     const pages = await getPages(userToken)
 
     if (!pages.length) {
       return NextResponse.json({ error: 'Nenhuma página encontrada nesta conta.' }, { status: 400 })
     }
 
-    if (selectedId) {
-      const selected = pages.find((p) => p.id === selectedId)
+    // If only one page, auto-select it
+    const autoSelect = pages.length === 1 ? pages[0] : null
+    const resolvedId = selectedId ?? autoSelect?.id
+
+    if (resolvedId) {
+      const selected = pages.find((p) => p.id === resolvedId)
       if (!selected) {
         return NextResponse.json({ error: 'Página não encontrada.' }, { status: 400 })
       }
 
-      // Use page-level access token (longer-lived, scoped to the page)
+      // Step 3: Save channel with encrypted page-level access token
       const encryptedToken = encrypt(selected.access_token)
       const existing = await db.channel.findFirst({ where: { workspaceId, type: channelType } })
-      const data = {
+
+      // For Instagram: fetch linked Business Account ID
+      let businessAccountId: string | null = null
+      if (channelType === 'INSTAGRAM') {
+        businessAccountId = await getInstagramBusinessAccountId(selected.id, selected.access_token).catch(() => null)
+        if (!businessAccountId) {
+          console.warn('[META CONNECT] No Instagram Business Account linked to page', selected.id)
+        }
+      }
+
+      const channelData = {
         name: channelName ?? selected.name,
         accessToken: encryptedToken,
         pageId: selected.id,
         pageName: selected.name,
+        businessAccountId,
         phoneNumberId: null,
         phoneNumber: null,
-        businessAccountId: null,
+        isActive: true,
       }
 
       const channel = existing
-        ? await db.channel.update({ where: { id: existing.id }, data })
-        : await db.channel.create({ data: { workspaceId, type: channelType, ...data } })
+        ? await db.channel.update({ where: { id: existing.id }, data: channelData })
+        : await db.channel.create({ data: { workspaceId, type: channelType, ...channelData } })
+
+      // Step 4: Subscribe page to webhook events (fire-and-forget — don't block response)
+      subscribePageToWebhooks(selected.id, selected.access_token).catch((err) => {
+        console.warn('[META CONNECT] Webhook subscription failed (non-blocking):', err)
+      })
 
       return NextResponse.json({
         step: 'done',
@@ -108,10 +128,12 @@ export async function POST(req: NextRequest) {
           name: channel.name,
           pageId: channel.pageId,
           pageName: channel.pageName,
+          businessAccountId: channel.businessAccountId,
         },
       })
     }
 
+    // Multiple pages — ask user to select
     return NextResponse.json({
       step: 'select',
       channelType,
