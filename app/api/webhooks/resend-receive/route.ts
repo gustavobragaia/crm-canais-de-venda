@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { Resend } from 'resend'
 import { sendEmail } from '@/lib/email/resend'
 
+const resend = new Resend(process.env.RESEND_API_KEY)
 const FORWARD_TO = process.env.RESEND_FORWARD_TO ?? 'gustavobragaia12@gmail.com'
 const INBOX_ADDRESS = 'gustavo@closiocrm.com'
 
@@ -28,6 +30,21 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ status: 'IGNORED' })
     }
 
+    // Fetch full email content via Resend API
+    let bodyHtml = ''
+    let bodyText = ''
+    try {
+      const full = await resend.emails.get(data.email_id)
+      bodyHtml = (full.data as any)?.html ?? ''
+      bodyText = (full.data as any)?.text ?? ''
+    } catch (e) {
+      console.warn('[RESEND-RECEIVE] could not fetch email body:', e)
+    }
+
+    const html = bodyHtml || (bodyText
+      ? `<pre style="font-family:sans-serif;white-space:pre-wrap">${bodyText}</pre>`
+      : '<p><em>(corpo do email não disponível)</em></p>')
+
     await sendEmail({
       to: FORWARD_TO,
       subject: `[Encaminhado] ${data.subject ?? '(sem assunto)'}`,
@@ -36,7 +53,7 @@ export async function POST(req: NextRequest) {
         <p><strong>Para:</strong> ${data.to?.join(', ')}</p>
         <p><strong>Assunto:</strong> ${data.subject}</p>
         <hr />
-        <p><em>Email recebido em ${INBOX_ADDRESS} e encaminhado automaticamente.</em></p>
+        ${html}
       `,
     })
 
