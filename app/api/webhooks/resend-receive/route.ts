@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { Resend } from 'resend'
 import { sendEmail } from '@/lib/email/resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
 const FORWARD_TO = process.env.RESEND_FORWARD_TO ?? 'gustavobragaia12@gmail.com'
 const INBOX_ADDRESS = 'gustavo@closiocrm.com'
 
@@ -30,13 +28,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ status: 'IGNORED' })
     }
 
-    // Fetch full email content via Resend API
+    // Wait for Resend to index the received email before fetching
+    await new Promise(r => setTimeout(r, 2000))
+
+    // Fetch full email content via Resend API (raw fetch for complete response visibility)
     let bodyHtml = ''
     let bodyText = ''
     try {
-      const full = await resend.emails.get(data.email_id)
-      bodyHtml = (full.data as any)?.html ?? ''
-      bodyText = (full.data as any)?.text ?? ''
+      const res = await fetch(`https://api.resend.com/emails/${data.email_id}`, {
+        headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}` },
+      })
+      const full = await res.json()
+      console.log('[RESEND-RECEIVE] email fetch response:', JSON.stringify(full).slice(0, 1000))
+      bodyHtml = full?.html ?? ''
+      bodyText = full?.text ?? ''
     } catch (e) {
       console.warn('[RESEND-RECEIVE] could not fetch email body:', e)
     }
