@@ -3,6 +3,8 @@ import { auth } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { canConsumeTokens } from '@/lib/billing/tokenService'
 
+export const maxDuration = 300 // 5 min — bulk dispatch can take long
+
 export async function POST(req: NextRequest) {
   const session = await auth()
   if (!session?.user?.workspaceId) {

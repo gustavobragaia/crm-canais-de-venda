@@ -106,6 +106,7 @@ model Channel {
   @@index([workspaceId])
   @@index([workspaceId, type])
   @@index([instanceName])
+  @@index([instanceToken])
   @@map("channels")
 }
 

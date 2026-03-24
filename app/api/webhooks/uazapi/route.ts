@@ -176,11 +176,11 @@ async function processMessage(
     },
   })
 
-  await pusherServer.trigger(
+  pusherServer.trigger(
     `workspace-${channel.workspaceId}`,
     isHistory ? 'history-message' : 'new-message',
     { conversationId: conversation.id, message: savedMessage }
-  )
+  ).catch(err => console.error('[UAZAPI WEBHOOK] Pusher trigger failed:', err))
 
   console.log(
     `[UAZAPI WEBHOOK] ${isHistory ? 'history' : 'message'} saved:`,

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { processDispatch } from '@/lib/agents/disparador'
 
+export const maxDuration = 300 // 5 min — bulk dispatch processing
+
 export async function POST(req: NextRequest) {
   const { dispatchId } = await req.json()
   if (!dispatchId) {

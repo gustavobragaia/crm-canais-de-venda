@@ -107,31 +107,15 @@ export async function POST(req: NextRequest) {
           if (existing) continue
 
           // Process attachment if present
-          let mediaType: string | undefined
-          let mediaUrl: string | undefined
-          let mediaMime: string | undefined
           const attachment = messaging.message?.attachments?.[0]
-
-          if (attachment?.payload?.url && attachment.type !== 'fallback') {
-            const rawType = MEDIA_TYPE_MAP[attachment.type] ?? 'document'
-            try {
-              const accessToken = channel.accessToken ? decrypt(channel.accessToken) : ''
-              const { buffer, contentType } = await downloadMetaMedia(attachment.payload.url, accessToken)
-              const ext = contentType.split('/')[1]?.split(';')[0] ?? 'bin'
-              const filename = `meta-fb-${Date.now()}.${ext}`
-              const blob = await put(`media/${filename}`, buffer, { access: 'public', contentType })
-              mediaType = rawType
-              mediaUrl = blob.url
-              mediaMime = contentType
-            } catch (err) {
-              console.error('[FB WEBHOOK] Failed to download/upload media:', err)
-            }
-          }
+          const hasMedia = !!(attachment?.payload?.url && attachment.type !== 'fallback')
+          const mediaType = hasMedia ? (MEDIA_TYPE_MAP[attachment!.type] ?? 'document') : undefined
 
           const textContent = messaging.message?.text ?? ''
           const content = textContent || (mediaType ? (MEDIA_PLACEHOLDER[mediaType] ?? '[Mídia]') : '')
           const preview = content.slice(0, 100)
 
+          // Save message immediately — media URL will be updated async
           const savedMessage = await db.message.create({
             data: {
               conversationId: conversation.id,
@@ -140,7 +124,7 @@ export async function POST(req: NextRequest) {
               content,
               externalId: messaging.message!.mid,
               status: 'DELIVERED',
-              ...(mediaType ? { mediaType, mediaUrl, mediaMime } : {}),
+              ...(mediaType ? { mediaType } : {}),
             },
           })
 
@@ -153,11 +137,35 @@ export async function POST(req: NextRequest) {
             },
           })
 
-          await pusherServer.trigger(
+          pusherServer.trigger(
             `workspace-${channel.workspaceId}`,
             'new-message',
             { conversationId: conversation.id, message: savedMessage }
-          )
+          ).catch(err => console.error('[FB WEBHOOK] Pusher failed:', err))
+
+          // Fire-and-forget: download + upload media + update message
+          if (hasMedia) {
+            ;(async () => {
+              try {
+                const accessToken = channel.accessToken ? decrypt(channel.accessToken) : ''
+                const { buffer, contentType } = await downloadMetaMedia(attachment!.payload!.url!, accessToken)
+                const ext = contentType.split('/')[1]?.split(';')[0] ?? 'bin'
+                const filename = `meta-fb-${Date.now()}.${ext}`
+                const blob = await put(`media/${filename}`, buffer, { access: 'public', contentType })
+                await db.message.update({
+                  where: { id: savedMessage.id },
+                  data: { mediaUrl: blob.url, mediaMime: contentType },
+                })
+                pusherServer.trigger(
+                  `workspace-${channel.workspaceId}`,
+                  'message-updated',
+                  { conversationId: conversation.id, messageId: savedMessage.id, mediaUrl: blob.url, mediaMime: contentType }
+                ).catch(() => {})
+              } catch (err) {
+                console.error('[FB WEBHOOK] Failed to download/upload media:', err)
+              }
+            })()
+          }
         }
       }
     }
