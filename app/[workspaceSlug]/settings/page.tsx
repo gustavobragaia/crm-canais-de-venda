@@ -744,7 +744,7 @@ export default function SettingsPage() {
                             <p className="font-medium text-gray-900 text-sm">{label}</p>
                             <p className="text-xs text-gray-500">{desc}</p>
                           </div>
-                          {isDemo ? (
+                          {!isDemo ? (
                             <span className="text-xs px-2.5 py-1 bg-gray-100 text-gray-500 rounded-full font-medium flex-shrink-0">
                               Em breve
                             </span>
