@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { useSession } from 'next-auth/react'
 import {
   Loader2, Wifi, WifiOff, Send, FileText, MessageSquare,
   ArrowRight, Trash2, Plus, Coins, X, CheckCircle2, LayoutGrid, List,
@@ -75,6 +76,8 @@ const DISPATCH_STATUS_LABEL: Record<string, string> = {
 }
 
 export default function DisparadorPage() {
+  const { data: session } = useSession()
+  const isDemo = session?.user.workspaceSlug === 'demonstracao'
   const [activeTab, setActiveTab] = useState<Tab>('connection')
   const [channels, setChannels] = useState<WabaChannel[]>([])
   const [templates, setTemplates] = useState<Template[]>([])
@@ -361,14 +364,27 @@ export default function DisparadorPage() {
               </div>
               <p className="text-sm font-medium text-gray-700 mb-1">Nenhuma conta conectada</p>
               <p className="text-xs text-gray-400 mb-5">Conecte seu WhatsApp Business para enviar templates</p>
-              <button
-                onClick={handleWabaConnect}
-                disabled={connecting}
-                className="flex items-center gap-2 px-4 py-2.5 bg-[var(--primary)] text-white text-sm font-medium rounded-xl hover:opacity-90 disabled:opacity-50 mx-auto"
-              >
-                {connecting ? <Loader2 size={14} className="animate-spin" /> : <Wifi size={14} />}
-                Conectar WhatsApp Business
-              </button>
+              {isDemo ? (
+                <div className="flex flex-col items-center gap-3">
+                  <span className="text-xs px-2.5 py-1 bg-gray-100 text-gray-500 rounded-full font-medium">Em breve</span>
+                  <button
+                    disabled
+                    className="flex items-center gap-2 px-4 py-2.5 bg-gray-200 text-gray-400 text-sm font-medium rounded-xl cursor-not-allowed mx-auto"
+                  >
+                    <Wifi size={14} />
+                    Conectar WhatsApp Business
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={handleWabaConnect}
+                  disabled={connecting}
+                  className="flex items-center gap-2 px-4 py-2.5 bg-[var(--primary)] text-white text-sm font-medium rounded-xl hover:opacity-90 disabled:opacity-50 mx-auto"
+                >
+                  {connecting ? <Loader2 size={14} className="animate-spin" /> : <Wifi size={14} />}
+                  Conectar WhatsApp Business
+                </button>
+              )}
             </div>
           )}
         </div>

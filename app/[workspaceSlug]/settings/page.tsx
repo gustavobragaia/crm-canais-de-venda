@@ -35,6 +35,7 @@ interface WorkspaceUser {
 
 export default function SettingsPage() {
   const { data: session } = useSession()
+  const isDemo = session?.user.workspaceSlug === 'demonstracao'
   const searchParams = useSearchParams()
   const [activeTab, setActiveTab] = useState<'team' | 'billing' | 'tokens' | 'channels'>(
     (searchParams.get('tab') as 'team' | 'billing' | 'tokens' | 'channels') ?? 'team'
@@ -743,20 +744,26 @@ export default function SettingsPage() {
                             <p className="font-medium text-gray-900 text-sm">{label}</p>
                             <p className="text-xs text-gray-500">{desc}</p>
                           </div>
-                          <button
-                            onClick={() => handleMetaConnect(type)}
-                            disabled={isConnecting || isDone}
-                            className="flex items-center gap-2 text-sm px-3 py-1.5 text-white rounded-lg transition-colors font-medium disabled:opacity-60 hover:opacity-90 flex-shrink-0"
-                            style={{ backgroundColor: color }}
-                          >
-                            {isConnecting ? (
-                              <><Loader2 size={13} className="animate-spin" /> Conectando...</>
-                            ) : isDone ? (
-                              <><CheckCircle2 size={13} /> Conectado!</>
-                            ) : (
-                              connected.length > 0 ? 'Adicionar conta' : 'Conectar'
-                            )}
-                          </button>
+                          {isDemo ? (
+                            <span className="text-xs px-2.5 py-1 bg-gray-100 text-gray-500 rounded-full font-medium flex-shrink-0">
+                              Em breve
+                            </span>
+                          ) : (
+                            <button
+                              onClick={() => handleMetaConnect(type)}
+                              disabled={isConnecting || isDone}
+                              className="flex items-center gap-2 text-sm px-3 py-1.5 text-white rounded-lg transition-colors font-medium disabled:opacity-60 hover:opacity-90 flex-shrink-0"
+                              style={{ backgroundColor: color }}
+                            >
+                              {isConnecting ? (
+                                <><Loader2 size={13} className="animate-spin" /> Conectando...</>
+                              ) : isDone ? (
+                                <><CheckCircle2 size={13} /> Conectado!</>
+                              ) : (
+                                connected.length > 0 ? 'Adicionar conta' : 'Conectar'
+                              )}
+                            </button>
+                          )}
                         </div>
                       </div>
                     )

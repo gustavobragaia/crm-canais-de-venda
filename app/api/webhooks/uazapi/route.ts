@@ -231,8 +231,8 @@ async function processMessage(
         .catch(err => console.error('[UAZAPI WEBHOOK] handleDispatchResponse error:', err))
     }
 
-    // Vendedor SDR: INBOUND message on AI-enabled conversation → debounce + process
-    if (direction === 'INBOUND' && conversation.aiSalesEnabled) {
+    // Vendedor SDR: INBOUND message on AI-enabled dispatch conversation → debounce + process
+    if (direction === 'INBOUND' && conversation.aiSalesEnabled && conversation.dispatchListId) {
       processMessageContent({
         content: textContent,
         mediaType: mediaType ?? null,
@@ -255,8 +255,8 @@ async function processMessage(
         .catch(err => console.error('[VENDEDOR] trigger error:', err))
     }
 
-    // Vendedor SDR: OUTBOUND non-AI message → detect human takeover
-    if (direction === 'OUTBOUND' && conversation.aiSalesEnabled && !savedMessage.aiGenerated) {
+    // Vendedor SDR: OUTBOUND non-AI message on dispatch conversation → detect human takeover
+    if (direction === 'OUTBOUND' && conversation.aiSalesEnabled && !savedMessage.aiGenerated && conversation.dispatchListId) {
       detectHumanTakeover(conversation.id, textContent)
         .catch(err => console.error('[VENDEDOR TAKEOVER] error:', err))
     }

@@ -32,6 +32,7 @@ interface MessageThreadProps {
   aiSalesMessageCount?: number
   qualificationScore?: number | null
   onToggleAi?: () => void
+  isDispatch?: boolean
 }
 
 interface BriefingData {
@@ -87,13 +88,15 @@ function BriefingCard({ content }: { content: string }) {
   }
 }
 
-export function MessageThread({ conversationId, contactName, isGroup, aiSalesEnabled, aiSalesMessageCount, qualificationScore, onToggleAi }: MessageThreadProps) {
+export function MessageThread({ conversationId, contactName, isGroup, aiSalesEnabled, aiSalesMessageCount, qualificationScore, onToggleAi, isDispatch }: MessageThreadProps) {
   const { data: session } = useSession()
+  const workspaceSlug = session?.user.workspaceSlug ?? ''
   const [messages, setMessages] = useState<Message[]>([])
   const [loading, setLoading] = useState(false)
   const [sending, setSending] = useState(false)
   const [input, setInput] = useState('')
   const [pendingFile, setPendingFile] = useState<File | null>(null)
+  const [showAiUpsell, setShowAiUpsell] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
 
@@ -101,6 +104,7 @@ export function MessageThread({ conversationId, contactName, isGroup, aiSalesEna
     if (!conversationId) return
     setMessages([])
     setLoading(true)
+    setShowAiUpsell(false)
     fetch(`/api/conversations/${conversationId}/messages`)
       .then((r) => r.json())
       .then((data) => setMessages(data.messages ?? []))
@@ -256,13 +260,32 @@ export function MessageThread({ conversationId, contactName, isGroup, aiSalesEna
               </button>
             )}
           </div>
-        ) : onToggleAi && (
-          <button
-            onClick={onToggleAi}
-            className="flex items-center gap-1.5 text-xs bg-violet-100 text-violet-700 hover:bg-violet-200 px-3 py-1 rounded-full transition-colors"
-          >
-            <Bot size={12} /> Ativar AI
-          </button>
+        ) : (
+          <div className="relative">
+            <button
+              onClick={onToggleAi ?? (() => setShowAiUpsell(v => !v))}
+              className="flex items-center gap-1.5 text-xs bg-violet-100 text-violet-700 hover:bg-violet-200 px-3 py-1 rounded-full transition-colors"
+            >
+              <Bot size={12} /> Ativar AI
+            </button>
+            {showAiUpsell && !isDispatch && (
+              <div className="absolute top-full left-0 mt-2 w-64 bg-white border border-violet-200 rounded-2xl shadow-lg p-4 z-50">
+                <div className="flex items-center gap-2 mb-2">
+                  <Bot size={14} className="text-violet-600" />
+                  <span className="text-xs font-semibold text-violet-800">AI Vendedor</span>
+                </div>
+                <p className="text-xs text-gray-600 leading-relaxed mb-3">
+                  O AI Vendedor atua automaticamente em conversas de disparo, qualificando leads e agendando reuniões.
+                </p>
+                <a
+                  href={`/${workspaceSlug}/agents/disparador`}
+                  className="flex items-center gap-1 text-xs font-medium text-violet-600 hover:text-violet-800 transition-colors"
+                >
+                  Contratar via Disparos →
+                </a>
+              </div>
+            )}
+          </div>
         )}
       </div>
 

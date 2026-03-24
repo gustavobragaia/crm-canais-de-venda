@@ -264,7 +264,8 @@ export default function InboxPage() {
           aiSalesEnabled={selectedConversation?.aiSalesEnabled}
           aiSalesMessageCount={selectedConversation?.aiSalesMessageCount}
           qualificationScore={selectedConversation?.qualificationScore}
-          onToggleAi={selectedId ? async () => {
+          isDispatch={!!selectedConversation?.dispatchListId}
+          onToggleAi={selectedId && !!selectedConversation?.dispatchListId ? async () => {
             const current = selectedConversation?.aiSalesEnabled ?? false
             await fetch('/api/agents/vendedor/toggle', {
               method: 'POST',
