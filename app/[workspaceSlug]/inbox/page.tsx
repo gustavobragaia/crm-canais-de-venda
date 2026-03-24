@@ -2,20 +2,21 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useSession } from 'next-auth/react'
-import { Search, Filter, AlertTriangle } from 'lucide-react'
+import { Search, AlertTriangle, ChevronDown } from 'lucide-react'
 import Link from 'next/link'
 import { ConversationList } from '@/components/inbox/ConversationList'
 import { MessageThread } from '@/components/inbox/MessageThread'
 import { LeadDetails } from '@/components/inbox/LeadDetails'
 import { usePusherChannel } from '@/hooks/usePusher'
 
-type FilterStatus = 'all' | 'UNASSIGNED' | 'ASSIGNED' | 'IN_PROGRESS' | 'RESOLVED'
+type FilterStatus = 'all' | 'UNASSIGNED' | 'ASSIGNED' | 'IN_PROGRESS' | 'WAITING_CLIENT' | 'RESOLVED'
 
 const STATUS_FILTERS: Array<{ value: FilterStatus; label: string }> = [
   { value: 'all', label: 'Todas' },
   { value: 'UNASSIGNED', label: 'Não atribuídas' },
   { value: 'ASSIGNED', label: 'Atribuídas' },
   { value: 'IN_PROGRESS', label: 'Em andamento' },
+  { value: 'WAITING_CLIENT', label: 'Aguardando' },
   { value: 'RESOLVED', label: 'Resolvidas' },
 ]
 
@@ -56,7 +57,7 @@ export default function InboxPage() {
   const [search, setSearch] = useState('')
   const [assignedToMe, setAssignedToMe] = useState(false)
   const [billing, setBilling] = useState<BillingData | null>(null)
-  const [sourceFilter, setSourceFilter] = useState<'all' | 'organic' | string>('all') // 'all' | 'organic' | listId
+  const [sourceFilter, setSourceFilter] = useState<'all' | 'organic' | string>('organic') // 'all' | 'organic' | listId
   const [lists, setLists] = useState<DispatchList[]>([])
   const [pipelineFilter, setPipelineFilter] = useState('')
 
@@ -168,32 +169,46 @@ export default function InboxPage() {
 
           {/* Origin + Pipeline filters */}
           <div className="flex gap-2 mb-2">
-            <select
-              value={sourceFilter}
-              onChange={e => setSourceFilter(e.target.value)}
-              className="flex-1 text-xs px-2 py-1.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
-            >
-              <option value="all">Todas origens</option>
-              <option value="organic">Orgânicas</option>
-              {lists.map(l => (
-                <option key={l.id} value={l.id}>Disparo: {l.name}</option>
-              ))}
-            </select>
-            <select
-              value={pipelineFilter}
-              onChange={e => setPipelineFilter(e.target.value)}
-              className="flex-1 text-xs px-2 py-1.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
-            >
-              <option value="">Todas etapas</option>
-              <option value="Disparo Enviado">Disparo Enviado</option>
-              <option value="Disparo Respondido">Disparo Respondido</option>
-              <option value="SDR Ativo">SDR Ativo</option>
-              <option value="Não Atribuído">Não Atribuído</option>
-              <option value="Em Atendimento">Em Atendimento</option>
-              <option value="Reunião Marcada">Reunião Marcada</option>
-              <option value="Contrato Fechado">Contrato Fechado</option>
-              <option value="Resolvida">Resolvida</option>
-            </select>
+            <div className="relative flex-1">
+              <select
+                value={sourceFilter}
+                onChange={e => setSourceFilter(e.target.value)}
+                className="w-full appearance-none text-xs px-2.5 py-1.5 pr-7 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-700 cursor-pointer"
+              >
+                <option value="all">Todas as origens</option>
+                <option value="organic">Caixa de entrada</option>
+                {lists.length > 0 && (
+                  <optgroup label="Disparos">
+                    {lists.map(l => (
+                      <option key={l.id} value={l.id}>{l.name}</option>
+                    ))}
+                  </optgroup>
+                )}
+              </select>
+              <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+            </div>
+            <div className="relative flex-1">
+              <select
+                value={pipelineFilter}
+                onChange={e => setPipelineFilter(e.target.value)}
+                className="w-full appearance-none text-xs px-2.5 py-1.5 pr-7 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-700 cursor-pointer"
+              >
+                <option value="">Todas etapas</option>
+                <optgroup label="Agente SDR de IA">
+                  <option value="Disparo Enviado">Disparo Enviado</option>
+                  <option value="Disparo Respondido">Disparo Respondido</option>
+                  <option value="SDR Ativo">SDR Ativo</option>
+                </optgroup>
+                <optgroup label="Etapas Padrão">
+                  <option value="Não Atribuído">Não Atribuído</option>
+                  <option value="Aguardando">Aguardando</option>
+                  <option value="Em Atendimento">Em Atendimento</option>
+                  <option value="Reunião Marcada">Reunião Marcada</option>
+                  <option value="Contrato Fechado">Contrato Fechado</option>
+                </optgroup>
+              </select>
+              <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+            </div>
           </div>
 
           {/* Status filters */}

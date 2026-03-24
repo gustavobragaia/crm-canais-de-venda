@@ -198,8 +198,8 @@ export default function AgentsHubPage() {
       <div className="bg-gray-50 rounded-2xl p-6">
         <h3 className="font-semibold text-gray-900 mb-1">Como funciona</h3>
         <p className="text-xs text-gray-500 mb-5">Pipeline completo de prospecção e vendas com IA</p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-0">
-          <div className="flex gap-3 md:pr-6">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 md:gap-0 items-center">
+          <div className="flex gap-3 md:pr-4">
             <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-sm font-bold">
               1
             </div>
@@ -213,11 +213,7 @@ export default function AgentsHubPage() {
             <ArrowRight className="w-5 h-5" />
           </div>
 
-          <div className="hidden md:flex items-center justify-center text-gray-300 -ml-8">
-            <ArrowRight className="w-5 h-5" />
-          </div>
-
-          <div className="flex gap-3 md:px-6">
+          <div className="flex gap-3 md:px-4">
             <div className="flex-shrink-0 w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-sm font-bold">
               2
             </div>
@@ -227,7 +223,11 @@ export default function AgentsHubPage() {
             </div>
           </div>
 
-          <div className="flex gap-3 md:pl-6">
+          <div className="hidden md:flex items-center justify-center text-gray-300">
+            <ArrowRight className="w-5 h-5" />
+          </div>
+
+          <div className="flex gap-3 md:pl-4">
             <div className="flex-shrink-0 w-8 h-8 rounded-full bg-violet-100 text-violet-700 flex items-center justify-center text-sm font-bold">
               3
             </div>

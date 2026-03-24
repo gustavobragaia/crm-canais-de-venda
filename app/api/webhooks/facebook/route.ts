@@ -78,6 +78,7 @@ export async function POST(req: NextRequest) {
               externalId: senderId,
               contactName: `Facebook User ${senderId.slice(-6)}`,
               status: 'UNASSIGNED',
+              pipelineStage: 'Não Atribuído',
             },
             update: {},
           })

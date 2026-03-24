@@ -140,6 +140,7 @@ async function processMessage(
       contactPhone,
       contactPhotoUrl,
       status: 'UNASSIGNED',
+      pipelineStage: 'Não Atribuído',
     },
     update: { contactName, contactPhotoUrl },
   })
