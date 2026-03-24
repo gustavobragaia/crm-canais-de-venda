@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useSession } from 'next-auth/react'
-import { Send, Loader2, Paperclip, X, Bot, User } from 'lucide-react'
+import { Send, Loader2, Paperclip, X, Bot, User, Clock } from 'lucide-react'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { AudioMessage } from './AudioMessage'
@@ -21,6 +21,7 @@ interface Message {
   mediaMime?: string | null
   mediaName?: string | null
   transcription?: string | null
+  optimistic?: boolean
 }
 
 interface MessageThreadProps {
@@ -152,8 +153,25 @@ export function MessageThread({ conversationId, contactName, isGroup, aiSalesEna
     setSending(true)
     const content = input
     const file = pendingFile
+    const currentConversationId = conversationId
+    const tempId = `optimistic-${Date.now()}`
+
     setInput('')
     setPendingFile(null)
+
+    // Add optimistic message immediately
+    const optimisticMsg: Message = {
+      id: tempId,
+      direction: 'OUTBOUND',
+      content: content,
+      createdAt: new Date().toISOString(),
+      isSystem: false,
+      sentBy: session?.user ? { id: session.user.id ?? '', name: session.user.name ?? '' } : null,
+      mediaType: file ? (file.type.startsWith('audio/') ? 'audio' : file.type.startsWith('image/') ? 'image' : file.type.startsWith('video/') ? 'video' : 'document') : null,
+      mediaName: file?.name ?? null,
+      optimistic: true,
+    }
+    setMessages(prev => [...prev, optimisticMsg])
 
     try {
       let res: Response
@@ -161,12 +179,12 @@ export function MessageThread({ conversationId, contactName, isGroup, aiSalesEna
         const form = new FormData()
         form.append('file', file)
         if (content.trim()) form.append('content', content)
-        res = await fetch(`/api/conversations/${conversationId}/messages`, {
+        res = await fetch(`/api/conversations/${currentConversationId}/messages`, {
           method: 'POST',
           body: form,
         })
       } else {
-        res = await fetch(`/api/conversations/${conversationId}/messages`, {
+        res = await fetch(`/api/conversations/${currentConversationId}/messages`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ content }),
@@ -174,12 +192,26 @@ export function MessageThread({ conversationId, contactName, isGroup, aiSalesEna
       }
 
       if (res.ok) {
-        const msg = await res.json()
-        setMessages((m) => {
-          if (m.find(x => x.id === msg.id)) return m
-          return [...m, msg]
+        const realMsg = await res.json()
+        // Replace optimistic with real message, handling Pusher race (may already be present)
+        setMessages(prev => {
+          const without = prev.filter(m => m.id !== tempId)
+          if (without.find(m => m.id === realMsg.id)) return without
+          // Only add to current conversation (guard against navigation mid-send)
+          if (conversationId !== currentConversationId) return without
+          return [...without, realMsg]
         })
+      } else {
+        // Remove optimistic and restore input so user can retry
+        setMessages(prev => prev.filter(m => m.id !== tempId))
+        setInput(content)
+        setPendingFile(file)
       }
+    } catch {
+      // Network error — remove optimistic and restore input
+      setMessages(prev => prev.filter(m => m.id !== tempId))
+      setInput(content)
+      setPendingFile(file)
     } finally {
       setSending(false)
     }
@@ -265,7 +297,7 @@ export function MessageThread({ conversationId, contactName, isGroup, aiSalesEna
             const mediaType = msg.mediaType as 'audio' | 'image' | 'video' | 'document' | null | undefined
 
             return (
-              <div key={msg.id} className={`flex ${isOutbound ? 'justify-end' : 'justify-start'}`}>
+              <div key={msg.id} className={`flex ${isOutbound ? 'justify-end' : 'justify-start'} ${msg.optimistic ? 'opacity-60' : ''}`}>
                 <div className={`max-w-sm lg:max-w-md ${isOutbound ? 'items-end' : 'items-start'} flex flex-col gap-0.5`}>
                   {!isOutbound && isGroup && msg.senderName && (
                     <span className="text-xs font-semibold text-blue-500 px-1 mb-0.5">
@@ -301,10 +333,14 @@ export function MessageThread({ conversationId, contactName, isGroup, aiSalesEna
                   </div>
 
                   <div className="flex items-center gap-1.5 px-1">
-                    <span className="text-xs text-gray-400">
-                      {isOutbound && msg.sentBy ? `${msg.sentBy.name} · ` : ''}
-                      {format(new Date(msg.createdAt), 'HH:mm', { locale: ptBR })}
-                    </span>
+                    {msg.optimistic ? (
+                      <Clock size={10} className="text-gray-400" />
+                    ) : (
+                      <span className="text-xs text-gray-400">
+                        {isOutbound && msg.sentBy ? `${msg.sentBy.name} · ` : ''}
+                        {format(new Date(msg.createdAt), 'HH:mm', { locale: ptBR })}
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
