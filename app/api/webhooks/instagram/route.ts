@@ -100,6 +100,12 @@ export async function POST(req: NextRequest) {
                   db.conversation.update({
                     where: { id: conversation.id },
                     data: { contactName: profile.name, contactPhotoUrl: profile.photoUrl },
+                  }).then(() => {
+                    pusherServer.trigger(
+                      `workspace-${channel.workspaceId}`,
+                      'conversation-updated',
+                      { conversationId: conversation.id, conversation: { contactName: profile.name, contactPhotoUrl: profile.photoUrl } }
+                    ).catch(() => {})
                   })
                 )
                 .catch(() => {})

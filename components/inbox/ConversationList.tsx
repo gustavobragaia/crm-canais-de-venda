@@ -33,6 +33,7 @@ interface Conversation {
   pipelineStage?: string | null
   qualificationScore?: number | null
   aiSalesMessageCount?: number
+  contactPhotoUrl?: string | null
 }
 
 interface ConversationListProps {
@@ -92,9 +93,17 @@ export function ConversationList({
           >
             <div className="flex items-start gap-3">
               <div className="flex-shrink-0">
-                <div className={`w-10 h-10 rounded-full ${channelStyle.bg} flex items-center justify-center`}>
-                  <Icon size={18} color={channelStyle.color} />
-                </div>
+                {conv.contactPhotoUrl ? (
+                  <img
+                    src={conv.contactPhotoUrl}
+                    alt={conv.contactName}
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className={`w-10 h-10 rounded-full ${channelStyle.bg} flex items-center justify-center`}>
+                    <Icon size={18} color={channelStyle.color} />
+                  </div>
+                )}
               </div>
 
               <div className="flex-1 min-w-0">
