@@ -118,10 +118,14 @@ export async function POST(req: NextRequest) {
         ? await db.channel.update({ where: { id: existing.id }, data: channelData })
         : await db.channel.create({ data: { workspaceId, type: channelType, ...channelData } })
 
-      // Step 4: Subscribe page to webhook events (fire-and-forget — don't block response)
-      subscribePageToWebhooks(selected.id, selected.access_token).catch((err) => {
-        console.warn('[META CONNECT] Webhook subscription failed (non-blocking):', err)
-      })
+      // Step 4: Subscribe page to webhook events (blocking — failure surfaces as warning)
+      let webhookWarning: string | undefined
+      try {
+        await subscribePageToWebhooks(selected.id, selected.access_token)
+      } catch (err) {
+        webhookWarning = 'Inscrição de webhook falhou. Mensagens recebidas podem não aparecer. Reconecte o canal ou verifique as permissões no Meta Dashboard.'
+        console.error('[META CONNECT] Webhook subscription FAILED:', err)
+      }
 
       return NextResponse.json({
         step: 'done',
@@ -133,6 +137,7 @@ export async function POST(req: NextRequest) {
           pageName: channel.pageName,
           businessAccountId: channel.businessAccountId,
         },
+        ...(webhookWarning ? { warning: webhookWarning } : {}),
       })
     }
 

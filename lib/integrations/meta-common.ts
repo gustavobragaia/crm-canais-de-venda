@@ -16,7 +16,7 @@ async function fetchWithTimeout(url: string, options?: RequestInit): Promise<Res
  * Must be called after connecting a channel to receive incoming messages.
  */
 export async function subscribePageToWebhooks(pageId: string, accessToken: string): Promise<void> {
-  const url = `${GRAPH_URL}/${pageId}/subscribed_apps?subscribed_fields=messages&access_token=${accessToken}`
+  const url = `${GRAPH_URL}/${pageId}/subscribed_apps?subscribed_fields=messages,messaging_postbacks&access_token=${accessToken}`
   const res = await fetchWithTimeout(url, { method: 'POST' })
   const data = await res.json()
   if (!res.ok || !data.success) {
@@ -48,7 +48,7 @@ export async function fetchMetaUserProfile(
   const fields =
     channelType === 'INSTAGRAM'
       ? 'name,username,profile_picture_url'
-      : 'name,profile_pic'
+      : 'first_name,last_name,profile_pic'
 
   const url = `${GRAPH_URL}/${userId}?fields=${fields}&access_token=${accessToken}`
   const res = await fetchWithTimeout(url)
@@ -58,8 +58,13 @@ export async function fetchMetaUserProfile(
   }
   const data = await res.json()
 
-  const name: string =
-    data.name ?? data.username ?? `${channelType === 'INSTAGRAM' ? 'Instagram' : 'Facebook'} User`
+  let name: string
+  if (channelType === 'FACEBOOK') {
+    const parts = [data.first_name, data.last_name].filter(Boolean)
+    name = parts.length > 0 ? parts.join(' ') : 'Facebook User'
+  } else {
+    name = data.name ?? data.username ?? 'Instagram User'
+  }
   const photoUrl: string | undefined =
     data.profile_picture_url ?? data.profile_pic ?? undefined
 

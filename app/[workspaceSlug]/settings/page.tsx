@@ -238,6 +238,9 @@ export default function SettingsPage() {
           setMetaPageModal({ channelType: ct, userToken: data.userToken, options: data.options })
           setConnectingStatus((s) => ({ ...s, [ct]: 'idle' }))
         } else {
+          if (data.warning) {
+            alert(`⚠️ Canal conectado com aviso: ${data.warning}`)
+          }
           setConnectingStatus((s) => ({ ...s, [ct]: 'done' }))
           refreshChannels()
           setTimeout(() => setConnectingStatus((s) => ({ ...s, [ct]: 'idle' })), 3000)
@@ -267,6 +270,9 @@ export default function SettingsPage() {
         alert(data.error ?? 'Erro ao conectar página.')
         setConnectingStatus((s) => ({ ...s, [channelType]: 'idle' }))
         return
+      }
+      if (data.warning) {
+        alert(`⚠️ Canal conectado com aviso: ${data.warning}`)
       }
       setConnectingStatus((s) => ({ ...s, [channelType]: 'done' }))
       refreshChannels()

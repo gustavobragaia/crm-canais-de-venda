@@ -39,6 +39,8 @@ export async function POST(req: NextRequest) {
   try {
     const payload = await req.json() as InstagramWebhookPayload
 
+    console.log('[IG WEBHOOK] Received:', payload.object, 'entries:', payload.entry?.length ?? 0)
+
     if (payload.object === 'instagram') {
       for (const entry of payload.entry) {
         // Instagram sends entry.id = Instagram Business Account ID
@@ -50,7 +52,10 @@ export async function POST(req: NextRequest) {
             ],
           },
         })
-        if (!channel) continue
+        if (!channel) {
+          console.warn('[IG WEBHOOK] No channel found for entry.id:', entry.id)
+          continue
+        }
 
         for (const messaging of entry.messaging) {
           // Skip echo messages (messages sent by the page itself)
@@ -108,7 +113,7 @@ export async function POST(req: NextRequest) {
                     ).catch(() => {})
                   })
                 )
-                .catch(() => {})
+                .catch((err) => console.error('[IG WEBHOOK] Profile fetch failed for', senderId, ':', err?.message ?? err))
             }
           }
 

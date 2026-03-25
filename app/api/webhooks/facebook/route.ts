@@ -39,12 +39,17 @@ export async function POST(req: NextRequest) {
   try {
     const payload = await req.json() as FacebookWebhookPayload
 
+    console.log('[FB WEBHOOK] Received:', payload.object, 'entries:', payload.entry?.length ?? 0)
+
     if (payload.object === 'page') {
       for (const entry of payload.entry) {
         const channel = await db.channel.findFirst({
           where: { pageId: entry.id, type: 'FACEBOOK', isActive: true },
         })
-        if (!channel) continue
+        if (!channel) {
+          console.warn('[FB WEBHOOK] No channel found for pageId:', entry.id)
+          continue
+        }
 
         for (const messaging of entry.messaging) {
           // Skip echo messages (messages sent by the page itself)
@@ -102,7 +107,7 @@ export async function POST(req: NextRequest) {
                     ).catch(() => {})
                   })
                 )
-                .catch(() => {})
+                .catch((err) => console.error('[FB WEBHOOK] Profile fetch failed for', senderId, ':', err?.message ?? err))
             }
           }
 
