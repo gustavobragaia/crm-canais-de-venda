@@ -96,7 +96,10 @@ export async function POST(req: NextRequest) {
       if (channelType === 'INSTAGRAM') {
         businessAccountId = await getInstagramBusinessAccountId(selected.id, selected.access_token).catch(() => null)
         if (!businessAccountId) {
-          console.warn('[META CONNECT] No Instagram Business Account linked to page', selected.id)
+          return NextResponse.json(
+            { error: 'Esta página não tem uma conta Instagram Business vinculada. Vincule uma conta Instagram Business à sua página no Facebook e tente novamente.' },
+            { status: 400 }
+          )
         }
       }
 

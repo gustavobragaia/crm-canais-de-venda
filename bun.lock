@@ -18,7 +18,7 @@
         "openai": "^6.27.0",
         "pg": "^8.20.0",
         "prisma": "^7.4.2",
-        "pusher": "^5.3.2",
+        "pusher": "5.3.3",
         "pusher-js": "^8.4.0",
         "react": "19.2.3",
         "react-dom": "19.2.3",
@@ -577,7 +577,7 @@
 
     "pure-rand": ["pure-rand@6.1.0", "", {}, "sha512-bVWawvoZoBYpp6yIoQtQXHZjmz35RSVHnUOTefl8Vcjr8snTPY1wnpSPMWekcFwbxI6gtmT7rSYPFvz71ldiOA=="],
 
-    "pusher": ["pusher@5.3.2", "", { "dependencies": { "@types/node-fetch": "^2.5.7", "abort-controller": "^3.0.0", "is-base64": "^1.1.0", "node-fetch": "^2.6.1", "tweetnacl": "^1.0.0", "tweetnacl-util": "^0.15.0" } }, "sha512-7hC4Y5kraULHHOBp/r3Qc2p8sDEQ4EoBI4EZVwGzODreTco/uVCmYRkqVYSlHtxE8z1dkrEL4etmh/MV5xkheQ=="],
+    "pusher": ["pusher@5.3.3", "", { "dependencies": { "@types/node-fetch": "^2.5.7", "abort-controller": "^3.0.0", "is-base64": "^1.1.0", "node-fetch": "^2.7.0", "tweetnacl": "^1.0.0", "tweetnacl-util": "^0.15.0" } }, "sha512-wxXNGeAPT6vcwCBMGDFfJp6YXtUD0WRurb4fJgU/nbA0rNfcOcSZmba9j4zM8ywmORst1fXpHRUsgB1r/ssTmw=="],
 
     "pusher-js": ["pusher-js@8.4.0", "", { "dependencies": { "tweetnacl": "^1.0.3" } }, "sha512-wp3HqIIUc1GRyu1XrP6m2dgyE9MoCsXVsWNlohj0rjSkLf+a0jLvEyVubdg58oMk7bhjBWnFClgp8jfAa6Ak4Q=="],
 
