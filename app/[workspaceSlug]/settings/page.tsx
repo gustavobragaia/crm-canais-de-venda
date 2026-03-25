@@ -203,8 +203,10 @@ export default function SettingsPage() {
       return
     }
     const redirectUri = encodeURIComponent(`${window.location.origin}/api/meta/callback`)
-    const scope = 'instagram_basic,instagram_manage_messages,pages_messaging,pages_manage_metadata,pages_show_list'
-    const oauthUrl = `https://www.facebook.com/v21.0/dialog/oauth?client_id=${appId}&redirect_uri=${redirectUri}&scope=${scope}&state=${channelType}&response_type=code`
+    const configId = process.env.NEXT_PUBLIC_META_IG_FB_CONFIG_ID
+    const oauthUrl = configId
+      ? `https://www.facebook.com/v21.0/dialog/oauth?client_id=${appId}&redirect_uri=${redirectUri}&config_id=${configId}&state=${channelType}&response_type=code`
+      : `https://www.facebook.com/v21.0/dialog/oauth?client_id=${appId}&redirect_uri=${redirectUri}&scope=instagram_basic,instagram_manage_messages,pages_messaging,pages_manage_metadata,pages_show_list&state=${channelType}&response_type=code`
 
     const popup = window.open(oauthUrl, 'meta_oauth', 'width=600,height=700,scrollbars=yes')
     if (!popup) {
@@ -744,26 +746,20 @@ export default function SettingsPage() {
                             <p className="font-medium text-gray-900 text-sm">{label}</p>
                             <p className="text-xs text-gray-500">{desc}</p>
                           </div>
-                          {!isDemo ? (
-                            <span className="text-xs px-2.5 py-1 bg-gray-100 text-gray-500 rounded-full font-medium flex-shrink-0">
-                              Em breve
-                            </span>
-                          ) : (
-                            <button
-                              onClick={() => handleMetaConnect(type)}
-                              disabled={isConnecting || isDone}
-                              className="flex items-center gap-2 text-sm px-3 py-1.5 text-white rounded-lg transition-colors font-medium disabled:opacity-60 hover:opacity-90 flex-shrink-0"
-                              style={{ backgroundColor: color }}
-                            >
-                              {isConnecting ? (
-                                <><Loader2 size={13} className="animate-spin" /> Conectando...</>
-                              ) : isDone ? (
-                                <><CheckCircle2 size={13} /> Conectado!</>
-                              ) : (
-                                connected.length > 0 ? 'Adicionar conta' : 'Conectar'
-                              )}
-                            </button>
-                          )}
+                          <button
+                            onClick={() => handleMetaConnect(type)}
+                            disabled={isConnecting || isDone}
+                            className="flex items-center gap-2 text-sm px-3 py-1.5 text-white rounded-lg transition-colors font-medium disabled:opacity-60 hover:opacity-90 flex-shrink-0"
+                            style={{ backgroundColor: color }}
+                          >
+                            {isConnecting ? (
+                              <><Loader2 size={13} className="animate-spin" /> Conectando...</>
+                            ) : isDone ? (
+                              <><CheckCircle2 size={13} /> Conectado!</>
+                            ) : (
+                              connected.length > 0 ? 'Adicionar conta' : 'Conectar'
+                            )}
+                          </button>
                         </div>
                       </div>
                     )

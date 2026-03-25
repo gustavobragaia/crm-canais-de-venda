@@ -118,7 +118,18 @@ export async function POST(req: NextRequest) {
           const mediaType = hasMedia ? (MEDIA_TYPE_MAP[attachment!.type] ?? 'document') : undefined
 
           const textContent = messaging.message?.text ?? ''
-          const content = textContent || (mediaType ? (MEDIA_PLACEHOLDER[mediaType] ?? '[Mídia]') : '')
+          let content: string
+          if (textContent) {
+            content = textContent
+          } else if (mediaType) {
+            content = MEDIA_PLACEHOLDER[mediaType] ?? '[Mídia]'
+          } else if (attachment && !attachment.payload?.url) {
+            content = '[Mídia temporária]' // EC-19: ephemeral/view-once
+          } else if (attachment?.type === 'fallback') {
+            content = '[Conteúdo não suportado]' // EC-24: fallback attachment
+          } else {
+            content = '[Mensagem]'
+          }
           const preview = content.slice(0, 100)
 
           // Save message immediately — media URL will be updated async
