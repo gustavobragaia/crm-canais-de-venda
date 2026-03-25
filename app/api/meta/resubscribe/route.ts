@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
 
     const where = channelId
       ? { id: channelId, workspaceId: session.user.workspaceId, isActive: true }
-      : { workspaceId: session.user.workspaceId, type: { in: ['FACEBOOK', 'INSTAGRAM'] as const }, isActive: true }
+      : { workspaceId: session.user.workspaceId, type: { in: ['FACEBOOK', 'INSTAGRAM'] as ('FACEBOOK' | 'INSTAGRAM')[] }, isActive: true }
 
     const channels = await db.channel.findMany({ where })
 
