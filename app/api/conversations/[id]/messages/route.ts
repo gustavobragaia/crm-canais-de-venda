@@ -160,7 +160,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         externalId = await sendFacebookMessage(conversation.externalId, content, accessToken)
       }
     } catch (err) {
-      console.error('[SEND_MESSAGE]', err)
+      sendError = err instanceof Error ? err.message : String(err)
+      console.error('[SEND_MESSAGE]', sendError)
     }
   }
 
@@ -175,7 +176,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       direction: 'OUTBOUND',
       content: content || '',
       externalId,
-      status: 'SENT',
+      status: sendError ? 'FAILED' : 'SENT',
       sentById: session.user.id,
       ...(mediaType ? { mediaType, mediaUrl, mediaMime, mediaName } : {}),
     },
