@@ -305,6 +305,29 @@ export default function SettingsPage() {
     }
   }, [refreshChannels])
 
+  const handleMetaResubscribe = useCallback(async (channelId: string) => {
+    setConnectingStatus((s) => ({ ...s, [`RESUB_${channelId}`]: 'loading' }))
+    try {
+      const res = await fetch('/api/meta/resubscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ channelId }),
+      })
+      const data = await res.json()
+      const result = data.results?.[0]
+      if (result?.success) {
+        alert('Webhook re-inscrito com sucesso! Mensagens devem começar a chegar.')
+      } else {
+        alert(`Falhou: ${result?.error ?? 'Erro desconhecido'}. Verifique o Dashboard da Meta.`)
+      }
+    } catch (e) {
+      console.error(e)
+      alert('Erro ao re-inscrever webhook.')
+    } finally {
+      setConnectingStatus((s) => ({ ...s, [`RESUB_${channelId}`]: 'idle' }))
+    }
+  }, [])
+
   useEffect(() => () => stopUazapiPoll(), [stopUazapiPoll])
 
   useEffect(() => {
@@ -730,6 +753,16 @@ export default function SettingsPage() {
                               <p className="text-sm font-medium text-gray-900 truncate">{ch.pageName ?? ch.name}</p>
                               <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700 font-medium">Conectado</span>
                             </div>
+                            <button
+                              onClick={() => handleMetaResubscribe(ch.id)}
+                              disabled={connectingStatus[`RESUB_${ch.id}`] === 'loading'}
+                              className="text-xs px-2 py-1 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 disabled:opacity-50"
+                              title="Re-inscrever webhook (use após configurar o Dashboard da Meta)"
+                            >
+                              {connectingStatus[`RESUB_${ch.id}`] === 'loading'
+                                ? <Loader2 size={12} className="animate-spin" />
+                                : 'Re-inscrever'}
+                            </button>
                             <button
                               onClick={() => handleMetaDisconnect(ch.id, label)}
                               disabled={connectingStatus[`DISCONNECT_${ch.id}`] === 'loading'}
