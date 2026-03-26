@@ -31,6 +31,20 @@ export async function processDispatch(dispatchId: string): Promise<void> {
     const accessToken = decrypt(dispatch.wabaChannel.accessToken)
     const contacts = dispatch.dispatchList.contacts
 
+    // Find the UazAPI Channel for this workspace (conversations route through UazAPI, not WABA)
+    const uazapiChannel = await db.channel.findFirst({
+      where: {
+        workspaceId: dispatch.workspaceId,
+        type: 'WHATSAPP',
+        provider: 'UAZAPI',
+        isActive: true,
+      },
+      select: { id: true },
+    })
+    if (!uazapiChannel) {
+      throw new Error('Nenhum canal UazAPI ativo encontrado. Conecte o WhatsApp (UazAPI) antes de disparar.')
+    }
+
     // 2. Update status
     await db.templateDispatch.update({
       where: { id: dispatchId },
@@ -58,18 +72,19 @@ export async function processDispatch(dispatchId: string): Promise<void> {
           const result = await consumeTokens(dispatch.workspaceId, 1, 'disparador', dispatchId)
           if (result.success) tokensConsumed++
 
-          // Create conversation for this dispatch
+          // Create conversation linked to UazAPI Channel (responses come via UazAPI webhook)
           const externalId = contact.phone.replace(/\D/g, '') + '@s.whatsapp.net'
           await db.conversation.upsert({
             where: {
               workspaceId_channelId_externalId: {
                 workspaceId: dispatch.workspaceId,
-                channelId: dispatch.wabaChannelId,
+                channelId: uazapiChannel.id,
                 externalId,
               },
             },
             create: {
               workspaceId: dispatch.workspaceId,
+              channelId: uazapiChannel.id,
               contactName: contact.name ?? contact.phone,
               contactPhone: contact.phone,
               externalId,

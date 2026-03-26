@@ -45,12 +45,7 @@ export async function POST(req: NextRequest) {
       for (const entry of payload.entry) {
         // Instagram sends entry.id = Instagram Business Account ID
         const channel = await db.channel.findFirst({
-          where: {
-            OR: [
-              { businessAccountId: entry.id, type: 'INSTAGRAM', isActive: true },
-              { pageId: entry.id, type: 'INSTAGRAM', isActive: true },
-            ],
-          },
+          where: { businessAccountId: entry.id, type: 'INSTAGRAM', isActive: true },
         })
         if (!channel) {
           console.warn('[IG WEBHOOK] No channel found for entry.id:', entry.id)

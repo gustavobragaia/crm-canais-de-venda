@@ -160,25 +160,32 @@ export default function DisparadorPage() {
       }
 
       // @ts-expect-error FB SDK global
-      window.FB.login(async (response: { authResponse?: { accessToken: string } }) => {
-        if (!response.authResponse?.accessToken) {
+      // FB.login callback must be synchronous — async work wrapped in IIFE
+      // Embedded Signup with config_id REQUIRES response_type: 'code' — returns authResponse.code
+      window.FB.login((response: { authResponse?: { code?: string; accessToken?: string } }) => {
+        ;(async () => {
+          const code = response.authResponse?.code
+          if (!code) {
+            console.error('[WABA CONNECT] FB.login failed — no code in response:', response)
+            alert('Falha na autorização. Verifique se você completou todas as etapas.')
+            setConnecting(false)
+            return
+          }
+
+          const res = await fetch('/api/waba/connect', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ code }),
+          })
+
+          if (res.ok) {
+            fetchData()
+          } else {
+            const data = await res.json()
+            alert(data.error ?? 'Erro ao conectar')
+          }
           setConnecting(false)
-          return
-        }
-
-        const res = await fetch('/api/waba/connect', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ accessToken: response.authResponse.accessToken }),
-        })
-
-        if (res.ok) {
-          fetchData()
-        } else {
-          const data = await res.json()
-          alert(data.error ?? 'Erro ao conectar')
-        }
-        setConnecting(false)
+        })()
       }, {
         config_id: process.env.NEXT_PUBLIC_META_WABA_CONFIG_ID,
         response_type: 'code',
