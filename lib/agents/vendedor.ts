@@ -13,7 +13,7 @@ import {
 
 // ─── Types ───
 
-interface QualificationResult {
+export interface QualificationResult {
   score: number
   notes: string
   needCategory: string
@@ -91,7 +91,7 @@ export async function handleInboundWithDebounce(
 
 // ─── Qualification Extraction ───
 
-async function extractQualification(
+export async function extractQualification(
   chatHistory: Array<{ role: 'user' | 'assistant'; content: string }>,
   apiKey: string,
 ): Promise<QualificationResult | null> {
@@ -473,33 +473,15 @@ export async function processAiResponse(
 
   console.log(`[VENDEDOR] response sent | conversation=${conversationId} | lines=${lines.length} | totalMsgs=${newMsgCount}`)
 
-  // 17. Periodic qualification update every 5 AI messages
+  // 17. Periodic qualification update every 5 AI messages — publish to queue
   if (newMsgCount % 5 === 0) {
-    extractQualification(chatHistory, apiKey).then(async (qualification) => {
-      if (!qualification) return
-      await db.conversation.update({
-        where: { id: conversationId },
-        data: {
-          qualificationScore: qualification.score,
-          qualificationNotes: qualification.notes,
-        },
-      })
-      const qualMsg = await db.message.create({
-        data: {
-          conversationId,
-          workspaceId,
-          direction: 'OUTBOUND',
-          content: `IA atualizou qualificação: ${qualification.score}/10 — ${qualification.notes}`,
-          status: 'SENT',
-          aiGenerated: true,
-          senderName: 'Sistema',
-          sentAt: new Date(),
-        },
-      })
-      await pusherServer.trigger(`workspace-${workspaceId}`, 'new-message', {
-        conversationId, message: qualMsg,
-      }).catch(() => {})
-    }).catch(() => {})
+    const { publishToQueue } = await import('@/lib/qstash')
+    publishToQueue('/api/queue/qualify-lead', {
+      conversationId,
+      workspaceId,
+      chatHistoryJson: JSON.stringify(chatHistory),
+      apiKey,
+    }).catch((err) => console.error('[VENDEDOR] qualify-lead queue error:', err))
   }
 
   // 18. Handle handoff if detected

@@ -7,6 +7,7 @@ import { sendFacebookMessage, sendFacebookMedia } from '@/lib/integrations/faceb
 import { sendUazapiMessage, sendUazapiMedia } from '@/lib/integrations/uazapi'
 import { decrypt } from '@/lib/crypto'
 import { put } from '@vercel/blob'
+import { sendRateLimit } from '@/lib/ratelimit'
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth()
@@ -72,6 +73,13 @@ function detectMediaType(mime: string): 'audio' | 'image' | 'video' | 'document'
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth()
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  if (session.user?.workspaceId) {
+    const { success } = await sendRateLimit.limit(session.user.workspaceId)
+    if (!success) {
+      return NextResponse.json({ error: 'Muitas mensagens enviadas. Aguarde um momento.' }, { status: 429 })
+    }
+  }
 
   const { id } = await params
 

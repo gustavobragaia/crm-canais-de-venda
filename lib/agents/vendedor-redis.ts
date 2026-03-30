@@ -3,6 +3,7 @@ import { redis } from '@/lib/redis'
 const KEYS = {
   block: (convId: string) => `vendedor:block:${convId}`,
   debounce: (convId: string) => `vendedor:debounce:${convId}`,
+  debounceTs: (convId: string) => `vendedor:debounce_ts:${convId}`,
   lastAiMsg: (convId: string) => `vendedor:last_ai:${convId}`,
 }
 
@@ -21,6 +22,15 @@ export async function unblockAI(conversationId: string): Promise<void> {
 
 export async function addToDebounceBuffer(conversationId: string, message: string): Promise<void> {
   await redis.rpush(KEYS.debounce(conversationId), message)
+  await redis.expire(KEYS.debounce(conversationId), 300) // 5 min TTL
+}
+
+export async function setDebounceTimestamp(conversationId: string, ts: number): Promise<void> {
+  await redis.set(KEYS.debounceTs(conversationId), ts, { ex: 60 })
+}
+
+export async function getDebounceTimestamp(conversationId: string): Promise<number | null> {
+  return (await redis.get<number>(KEYS.debounceTs(conversationId))) ?? null
 }
 
 export async function getDebounceBuffer(conversationId: string): Promise<string[]> {

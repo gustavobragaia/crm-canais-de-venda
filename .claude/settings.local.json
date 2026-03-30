@@ -5,7 +5,8 @@
       "Bash(npm install prisma @prisma/client next-auth@beta bcryptjs pusher pusher-js inngest stripe @vercel/blob)",
       "Bash(npm install -D @types/bcryptjs)",
       "Bash(npx prisma init)",
-      "Bash(cat /Users/gustavobragaia/Documents/CRM-OMBOARDING-CONVERSAS/app/[workspaceSlug]/settings/page.tsx)"
+      "Bash(cat /Users/gustavobragaia/Documents/CRM-OMBOARDING-CONVERSAS/app/[workspaceSlug]/settings/page.tsx)",
+      "Bash(ls -la /Users/gustavobragaia/Documents/CRM-OMBOARDING-CONVERSAS/app/[workspaceSlug]/agents/)"
     ]
   }
 }

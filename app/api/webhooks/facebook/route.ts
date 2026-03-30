@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { decrypt } from '@/lib/crypto'
 import { pusherServer } from '@/lib/pusher'
-import { put } from '@vercel/blob'
 import type { FacebookWebhookPayload } from '@/lib/integrations/facebook'
 import { canCreateConversation, incrementConversationCount } from '@/lib/billing/conversationGate'
-import { fetchMetaUserProfile, downloadMetaMedia } from '@/lib/integrations/meta-common'
+import { publishToQueue } from '@/lib/qstash'
 
 const MEDIA_TYPE_MAP: Record<string, string> = {
   image: 'image',
@@ -91,23 +89,15 @@ export async function POST(req: NextRequest) {
           if (!existingConv) {
             await incrementConversationCount(channel.workspaceId)
 
-            // Fire-and-forget: fetch real contact name + photo
+            // Queue: fetch real contact name + photo with retry
             if (channel.accessToken) {
-              const token = decrypt(channel.accessToken)
-              fetchMetaUserProfile(senderId, token, 'FACEBOOK')
-                .then((profile) =>
-                  db.conversation.update({
-                    where: { id: conversation.id },
-                    data: { contactName: profile.name, contactPhotoUrl: profile.photoUrl },
-                  }).then(() => {
-                    pusherServer.trigger(
-                      `workspace-${channel.workspaceId}`,
-                      'conversation-updated',
-                      { conversationId: conversation.id, conversation: { contactName: profile.name, contactPhotoUrl: profile.photoUrl } }
-                    ).catch(() => {})
-                  })
-                )
-                .catch((err) => console.error('[FB WEBHOOK] Profile fetch failed for', senderId, ':', err?.message ?? err))
+              await publishToQueue('/api/queue/profile-fetch', {
+                conversationId: conversation.id,
+                workspaceId: channel.workspaceId,
+                senderId,
+                channelType: 'FACEBOOK',
+                accessToken: channel.accessToken,
+              }).catch((err) => console.error('[FB WEBHOOK] qstash profile-fetch error:', err))
             }
           }
 
@@ -165,28 +155,17 @@ export async function POST(req: NextRequest) {
             { conversationId: conversation.id, message: savedMessage }
           ).catch(err => console.error('[FB WEBHOOK] Pusher failed:', err))
 
-          // Fire-and-forget: download + upload media + update message
-          if (hasMedia) {
-            ;(async () => {
-              try {
-                const accessToken = channel.accessToken ? decrypt(channel.accessToken) : ''
-                const { buffer, contentType } = await downloadMetaMedia(attachment!.payload!.url!, accessToken)
-                const ext = contentType.split('/')[1]?.split(';')[0] ?? 'bin'
-                const filename = `meta-fb-${Date.now()}.${ext}`
-                const blob = await put(`media/${filename}`, buffer, { access: 'public', contentType })
-                await db.message.update({
-                  where: { id: savedMessage.id },
-                  data: { mediaUrl: blob.url, mediaMime: contentType },
-                })
-                pusherServer.trigger(
-                  `workspace-${channel.workspaceId}`,
-                  'message-updated',
-                  { conversationId: conversation.id, messageId: savedMessage.id, mediaUrl: blob.url, mediaMime: contentType }
-                ).catch(() => {})
-              } catch (err) {
-                console.error('[FB WEBHOOK] Failed to download/upload media:', err)
-              }
-            })()
+          // Queue: download + persist media with retry
+          if (hasMedia && attachment?.payload?.url) {
+            await publishToQueue('/api/queue/media-persist', {
+              messageId: savedMessage.id,
+              conversationId: conversation.id,
+              workspaceId: channel.workspaceId,
+              source: 'meta',
+              mediaUrl: attachment.payload.url,
+              accessToken: channel.accessToken ?? '',
+              mediaMime: attachment.type ?? 'application/octet-stream',
+            }).catch((err) => console.error('[FB WEBHOOK] qstash media-persist error:', err))
           }
         }
       }

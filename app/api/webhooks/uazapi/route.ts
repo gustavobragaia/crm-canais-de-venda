@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { type UazapiWebhookPayload, type UazapiWebhookMessagePayload, type UazapiWebhookConnectionPayload, type UazapiWebhookHistoryPayload, downloadUazapiMedia } from '@/lib/integrations/uazapi'
+import { type UazapiWebhookPayload, type UazapiWebhookMessagePayload, type UazapiWebhookConnectionPayload, type UazapiWebhookHistoryPayload } from '@/lib/integrations/uazapi'
 import { db } from '@/lib/db'
 import { pusherServer } from '@/lib/pusher'
 import { canCreateConversation, incrementConversationCount } from '@/lib/billing/conversationGate'
-import { persistMedia } from '@/lib/media'
-import { handleDispatchResponse } from '@/lib/agents/disparador'
 import { processMessageContent } from '@/lib/agents/vendedor'
-import { detectHumanTakeover } from '@/lib/agents/vendedor-redis'
+import { addToDebounceBuffer, setDebounceTimestamp } from '@/lib/agents/vendedor-redis'
+import { publishToQueue } from '@/lib/qstash'
 
 export async function GET() {
   return NextResponse.json({ status: 'OK' })
@@ -191,74 +190,67 @@ async function processMessage(
 
   // Only for real-time inbound messages (not history):
   if (!isHistory) {
-    // Audio: via /api/transcription (needs MP3 generation + optional OpenAI transcription)
+    // Audio: queue transcription with retry
     if (mediaType === 'audio' && msg.messageid && channel.instanceToken) {
-      const baseUrl = (process.env.NEXTAUTH_URL ?? '').replace(/\/$/, '')
-      console.log(`[UAZAPI WEBHOOK] triggering audio transcription | messageId=${savedMessage.id}`)
-      fetch(`${baseUrl}/api/transcription`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messageId: savedMessage.id, externalId: msg.messageid, instanceToken: channel.instanceToken }),
-      })
-        .then(res => { if (!res.ok) res.text().then(b => console.error(`[UAZAPI WEBHOOK] transcription HTTP error: ${res.status} ${b.slice(0, 200)}`)) })
-        .catch(err => console.error('[UAZAPI WEBHOOK] transcription trigger error:', err))
+      console.log(`[UAZAPI WEBHOOK] queueing audio transcription | messageId=${savedMessage.id}`)
+      await publishToQueue('/api/queue/transcribe', {
+        messageId: savedMessage.id,
+        conversationId: conversation.id,
+        workspaceId: channel.workspaceId,
+        instanceToken: channel.instanceToken,
+        mediaMessageId: msg.messageid,
+      }).catch(err => console.error('[UAZAPI WEBHOOK] qstash transcribe error:', err))
     }
 
-    // Image/video/document: download from UazAPI and persist to Vercel Blob for permanent storage
+    // Image/video/document: queue media persist with retry
     if ((mediaType === 'image' || mediaType === 'video' || mediaType === 'document') && msg.messageid && channel.instanceToken) {
-      console.log(`[UAZAPI WEBHOOK] downloading media | messageId=${savedMessage.id} | mediaType=${mediaType}`)
-      downloadUazapiMedia(channel.instanceToken, msg.messageid)
-        .then(async ({ fileURL, mimetype }) => {
-          console.log(`[UAZAPI WEBHOOK] download result | messageId=${savedMessage.id} | fileURL=${!!fileURL} | url=${fileURL?.slice(0, 80)}`)
-          if (!fileURL) return
-          // Persist to Vercel Blob for permanent URL
-          const permanentUrl = await persistMedia(fileURL, savedMessage.id, mimetype ?? mediaMime)
-          const finalUrl = permanentUrl ?? fileURL
-          await db.message.update({ where: { id: savedMessage.id }, data: { mediaUrl: finalUrl } })
-          await pusherServer.trigger(
-            `conversation-${savedMessage.conversationId}`,
-            'message-updated',
-            { messageId: savedMessage.id, mediaUrl: finalUrl }
-          )
-          console.log(`[UAZAPI WEBHOOK] media persisted | messageId=${savedMessage.id} | blob=${!!permanentUrl}`)
-        })
-        .catch(err => console.error('[UAZAPI WEBHOOK] media download/persist error:', err))
+      console.log(`[UAZAPI WEBHOOK] queueing media persist | messageId=${savedMessage.id} | mediaType=${mediaType}`)
+      await publishToQueue('/api/queue/media-persist', {
+        messageId: savedMessage.id,
+        conversationId: conversation.id,
+        workspaceId: channel.workspaceId,
+        source: 'uazapi',
+        instanceToken: channel.instanceToken,
+        mediaMessageId: msg.messageid,
+        mediaMime,
+      }).catch(err => console.error('[UAZAPI WEBHOOK] qstash media error:', err))
     }
 
     // Dispatch response detection: if inbound msg on a dispatch conversation
     if (direction === 'INBOUND' && conversation.pipelineStage === 'Disparo Enviado') {
-      handleDispatchResponse(conversation.id, channel.workspaceId)
-        .catch(err => console.error('[UAZAPI WEBHOOK] handleDispatchResponse error:', err))
+      await publishToQueue('/api/queue/dispatch-response', {
+        conversationId: conversation.id,
+        workspaceId: channel.workspaceId,
+      }).catch(err => console.error('[UAZAPI WEBHOOK] qstash dispatch-response error:', err))
     }
 
-    // Vendedor SDR: INBOUND message on AI-enabled dispatch conversation → debounce + process
+    // Vendedor SDR: INBOUND message on AI-enabled dispatch conversation → debounce + queue
     if (direction === 'INBOUND' && conversation.aiSalesEnabled && conversation.dispatchListId) {
-      processMessageContent({
+      const processedContent = await processMessageContent({
         content: textContent,
         mediaType: mediaType ?? null,
         mediaUrl: mediaUrl ?? null,
-        transcription: null, // transcription happens async, vendedor will use text for now
-      })
-        .then(processedContent => {
-          if (!processedContent) return
-          const baseUrl = (process.env.NEXTAUTH_URL ?? '').replace(/\/$/, '')
-          return fetch(`${baseUrl}/api/agents/vendedor/process`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              conversationId: conversation.id,
-              message: processedContent,
-              workspaceId: channel.workspaceId,
-            }),
-          })
-        })
-        .catch(err => console.error('[VENDEDOR] trigger error:', err))
+        transcription: null,
+      }).catch(err => { console.error('[UAZAPI WEBHOOK] processMessageContent error:', err); return null })
+
+      if (processedContent) {
+        const scheduledAt = Date.now()
+        await addToDebounceBuffer(conversation.id, processedContent)
+        await setDebounceTimestamp(conversation.id, scheduledAt)
+        await publishToQueue('/api/queue/vendedor-check', {
+          conversationId: conversation.id,
+          workspaceId: channel.workspaceId,
+          scheduledAt,
+        }, { delay: 15 }).catch(err => console.error('[UAZAPI WEBHOOK] qstash vendedor error:', err))
+      }
     }
 
     // Vendedor SDR: OUTBOUND non-AI message on dispatch conversation → detect human takeover
     if (direction === 'OUTBOUND' && conversation.aiSalesEnabled && !savedMessage.aiGenerated && conversation.dispatchListId) {
-      detectHumanTakeover(conversation.id, textContent)
-        .catch(err => console.error('[VENDEDOR TAKEOVER] error:', err))
+      await publishToQueue('/api/queue/human-takeover', {
+        conversationId: conversation.id,
+        textContent: textContent ?? '',
+      }).catch(err => console.error('[UAZAPI WEBHOOK] qstash human-takeover error:', err))
     }
 
   }

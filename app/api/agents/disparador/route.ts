@@ -2,13 +2,20 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { canConsumeTokens } from '@/lib/billing/tokenService'
+import { publishToQueue } from '@/lib/qstash'
+import { dispatchRateLimit } from '@/lib/ratelimit'
 
-export const maxDuration = 300 // 5 min — bulk dispatch can take long
+export const maxDuration = 30 // reduced: now just enqueues, doesn't process
 
 export async function POST(req: NextRequest) {
   const session = await auth()
   if (!session?.user?.workspaceId) {
     return NextResponse.json({ error: 'Não autorizado.' }, { status: 401 })
+  }
+
+  const { success: rateLimitOk } = await dispatchRateLimit.limit(session.user.workspaceId)
+  if (!rateLimitOk) {
+    return NextResponse.json({ error: 'Muitos disparos recentes. Aguarde 1 minuto.' }, { status: 429 })
   }
 
   const { wabaChannelId, templateName, listIds, enableSdr } = await req.json() as {
@@ -51,13 +58,19 @@ export async function POST(req: NextRequest) {
     },
   })
 
-  // Fire-and-forget async processing
-  const baseUrl = process.env.NEXTAUTH_URL?.replace(/\/$/, '') ?? ''
-  fetch(`${baseUrl}/api/agents/disparador/process`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ dispatchId: dispatch.id }),
-  }).catch((err) => console.error('[DISPARADOR] fire-and-forget error:', err))
+  // Enqueue via QStash (durable, with retries)
+  try {
+    await publishToQueue('/api/queue/dispatch-fan-out', { dispatchId: dispatch.id }, { retries: 1 })
+  } catch (err) {
+    // Fallback: fire-and-forget HTTP (como antes)
+    console.error('[DISPARADOR] QStash publish failed, falling back to fire-and-forget:', err)
+    const baseUrl = process.env.NEXTAUTH_URL?.replace(/\/$/, '') ?? ''
+    fetch(`${baseUrl}/api/agents/disparador/process`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ dispatchId: dispatch.id }),
+    }).catch(() => {})
+  }
 
   return NextResponse.json({ dispatchId: dispatch.id, totalContacts })
 }
