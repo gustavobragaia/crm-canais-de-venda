@@ -4,7 +4,10 @@ if (!process.env.QSTASH_TOKEN) {
   console.warn('[QSTASH] QSTASH_TOKEN not set — queue publishing will be skipped in dev mode')
 }
 
-export const qstash = new Client({ token: process.env.QSTASH_TOKEN ?? 'placeholder' })
+export const qstash = new Client({
+  token: process.env.QSTASH_TOKEN ?? 'placeholder',
+  ...(process.env.QSTASH_URL ? { baseUrl: process.env.QSTASH_URL } : {}),
+})
 
 export const qstashReceiver = new Receiver({
   currentSigningKey: process.env.QSTASH_CURRENT_SIGNING_KEY ?? '',
