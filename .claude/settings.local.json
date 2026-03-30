@@ -6,7 +6,10 @@
       "Bash(npm install -D @types/bcryptjs)",
       "Bash(npx prisma init)",
       "Bash(cat /Users/gustavobragaia/Documents/CRM-OMBOARDING-CONVERSAS/app/[workspaceSlug]/settings/page.tsx)",
-      "Bash(ls -la /Users/gustavobragaia/Documents/CRM-OMBOARDING-CONVERSAS/app/[workspaceSlug]/agents/)"
+      "Bash(ls -la /Users/gustavobragaia/Documents/CRM-OMBOARDING-CONVERSAS/app/[workspaceSlug]/agents/)",
+      "Bash(mkdir -p /Users/gustavobragaia/Documents/CRM-OMBOARDING-CONVERSAS/app/api/queue/message-ingest)",
+      "Bash(mkdir -p /Users/gustavobragaia/Documents/CRM-OMBOARDING-CONVERSAS/app/api/queue/message-status-update)",
+      "Bash(mkdir -p /Users/gustavobragaia/Documents/CRM-OMBOARDING-CONVERSAS/app/api/queue/channel-status-update)"
     ]
   }
 }

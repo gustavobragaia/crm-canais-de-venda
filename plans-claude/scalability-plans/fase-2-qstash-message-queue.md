@@ -1,1174 +1,1044 @@
-# Fase 2: Message Queue para Webhooks — QStash
+# Fase 2: Message Queue — QStash (COMPLETO)
 
-## Contexto
+## Status
 
-**Problema:** 10+ fire-and-forget patterns nos webhooks (UazAPI, Facebook, Instagram) e no disparador.
-Todos morrem silenciosamente no serverless sem retry. O vendedor usa `setTimeout(15s)` que é cortado
-pela Vercel. O disparador roda loop sequencial de até 300s. Com 30+ workspaces, isso vai quebrar.
+### Fase 2A — Fire-and-forget → QStash ✅ IMPLEMENTADO
 
-**Decisão:** QStash (Upstash) — mesmo ecossistema do Redis já existente. HTTP-based, sem SDK pesado,
-500K msgs/mês no free tier, retry nativo, delay nativo.
+Side-effects (transcription, media-persist, profile-fetch, vendedor-check, dispatch, human-takeover,
+qualify-lead) já foram migrados para workers QStash. Webhooks ainda fazem 5-7 DB calls síncronos.
 
-**Inngest foi removido** (commit `e4c6628`). Não usar Inngest.
+### Fase 2B — Zero DB nos Webhooks 🔲 A IMPLEMENTAR
 
----
-
-## Arquitetura
-
-```
-WEBHOOK (fast, <300ms)                    QUEUE (QStash)                    WORKER ROUTES
-┌─────────────────────┐                   ┌──────────────┐                  ┌──────────────────────────────┐
-│ /webhooks/uazapi    │──qstash.publish──>│ transcribe   │──────────────────>│ /api/queue/transcribe        │
-│                     │──qstash.publish──>│ media-persist│──────────────────>│ /api/queue/media-persist     │
-│                     │──qstash.publish──>│ dispatch-resp│──────────────────>│ /api/queue/dispatch-response │
-│                     │──redis+qstash───> │ vendedor     │──delay:15s──────> │ /api/queue/vendedor-check    │
-│                     │──qstash.publish──>│ human-takeo  │──────────────────>│ /api/queue/human-takeover    │
-│                     │──qstash.publish──>│ qualify-lead │──────────────────>│ /api/queue/qualify-lead      │
-├─────────────────────┤                   ├──────────────┤                  ├──────────────────────────────┤
-│ /webhooks/facebook  │──qstash.publish──>│ profile-fetch│──────────────────>│ /api/queue/profile-fetch     │
-│ /webhooks/instagram │──qstash.publish──>│ media-persist│──────────────────>│ /api/queue/media-persist     │
-├─────────────────────┤                   ├──────────────┤                  ├──────────────────────────────┤
-│ /agents/disparador  │──qstash.publish──>│ dispatch-fan │──────────────────>│ /api/queue/dispatch-fan-out  │
-│                     │                   │ dispatch-send│──staggered──────> │ /api/queue/dispatch-send     │
-└─────────────────────┘                   └──────────────┘                  └──────────────────────────────┘
-```
-
-**O que fica SYNC no webhook** (não muda): parse → dedup → billing gate → conversation upsert →
-message create → conv update → Pusher
-
-**O que vai pra FILA**: transcription, media-persist, profile-fetch, vendedor-check,
-human-takeover, qualify-lead, dispatch-fan-out, dispatch-send, dispatch-response
+Mover TODOS os DB calls dos webhooks para um worker `message-ingest`. Webhook faz apenas
+parse + publish ao QStash. Objetivo: escalabilidade (50+ webhooks simultâneos sem saturar pool DB).
 
 ---
 
-## Fase A — Infraestrutura (1–2h)
+## Fase 2B: Webhooks "Parse + Publish" — Zero DB
 
-### A1. Instalar dependências
+### Contexto
 
-```bash
-bun add @upstash/qstash @upstash/ratelimit
+Cada webhook (UazAPI, Facebook, Instagram) faz 5-7 DB round-trips síncronos (~30-50ms cada = 200-350ms).
+Com 30+ workspaces, 50 webhooks simultâneos = 50 conexões Prisma no Supabase pool (port 6543, max limitado).
+Sob carga, conexões esgotam e mensagens falham.
+
+**Solução:** Webhook faz ZERO DB calls. Apenas parse + `publishToQueue()`. Worker QStash faz tudo.
+**Tradeoff:** Mensagens demoram 1-2s para UI (vs ~250ms). Aceitável para escalabilidade.
+
+### Arquitetura
+
+```
+WEBHOOK (~10-30ms, ZERO DB)      QSTASH              WORKER message-ingest (~300-600ms)
+┌────────────────────┐           ┌─────────┐         ┌──────────────────────────────────┐
+│ Parse payload      │           │         │         │ 1. Channel lookup                │
+│ Normalize fields   │──publish─>│ DEDUP   │──────>  │ 2. Billing gate (Redis SETNX)    │
+│ Return 200         │           │ by msgId│         │ 3. Conversation upsert           │
+└────────────────────┘           └─────────┘         │ 4. Message dedup + create        │
+                                                     │ 5. Metadata update               │
+  ZERO imports de:                                   │ 6. Pusher trigger                │
+  - db (Prisma)                                      │ 7. Queue side-effects            │
+  - billing                                          │    (transcribe, media-persist,   │
+  - pusher                                           │    vendedor, dispatch, etc.)     │
+                                                     └──────────────────────────────────┘
 ```
 
-**Verificação A1:**
-```bash
-# Confirmar instalação
-cat package.json | grep -E "qstash|ratelimit"
-# Deve mostrar: "@upstash/qstash": "^x.x.x" e "@upstash/ratelimit": "^x.x.x"
-```
+**Deduplicação em 2 níveis:**
+
+1. QStash `deduplicationId: "msg-{externalId}"` → rejeita publish duplicado
+2. Worker `db.message.findFirst({ externalId })` → rejeita se já existe no DB
 
 ---
 
-### A2. Criar `lib/qstash.ts`
+## Fase 2B.1 — Payload Normalizado + Tipos (15min)
+
+### Criar `lib/queue/types.ts`
 
 ```typescript
-import { Client, Receiver } from '@upstash/qstash'
-
-if (!process.env.QSTASH_TOKEN) throw new Error('QSTASH_TOKEN is required')
-
-export const qstash = new Client({ token: process.env.QSTASH_TOKEN })
-
-export const qstashReceiver = new Receiver({
-  currentSigningKey: process.env.QSTASH_CURRENT_SIGNING_KEY!,
-  nextSigningKey: process.env.QSTASH_NEXT_SIGNING_KEY!,
-})
-
 /**
- * Publica job na fila. URL é construída automaticamente com NEXTAUTH_URL.
- * Em desenvolvimento (NODE_ENV !== 'production'), loga e retorna sem publicar
- * para não precisar de ngrok em dev.
+ * Payload normalizado para o worker message-ingest.
+ * Provider-agnostic: UazAPI, Facebook e Instagram produzem o mesmo shape.
  */
-export async function publishToQueue(
-  route: string,
-  body: Record<string, unknown>,
-  options?: {
-    delay?: number        // segundos
-    retries?: number      // default: 3
-    deduplicationId?: string
+export type MessageIngestPayload = {
+  // Routing
+  provider: "UAZAPI" | "FACEBOOK" | "INSTAGRAM";
+  channelIdentifier: string; // instanceToken (UazAPI) | pageId (FB) | businessAccountId (IG)
+
+  // Contato
+  contactExternalId: string; // chatid (UazAPI) | senderId (Meta)
+  contactName: string;
+  contactPhone?: string;
+  contactPhotoUrl?: string;
+
+  // Mensagem
+  externalId: string; // msg.messageid (UazAPI) | messaging.message.mid (Meta)
+  direction: "INBOUND" | "OUTBOUND";
+  content: string; // texto ou placeholder ("[Imagem]", "[Áudio]", etc.)
+  senderName?: string;
+  sentAt: string; // ISO string
+
+  // Mídia
+  mediaType?: string; // 'image' | 'video' | 'audio' | 'document'
+  mediaUrl?: string;
+  mediaMime?: string;
+  mediaName?: string;
+
+  // Flags
+  isHistory?: boolean;
+  aiGenerated?: boolean;
+
+  // UazAPI-specific (downstream: transcription, media-persist)
+  instanceToken?: string;
+  mediaMessageId?: string; // UazAPI msg.messageid para download
+
+  // Meta-specific (downstream: media-persist, profile-fetch)
+  attachmentUrl?: string; // URL do CDN Meta (expira ~15min)
+  attachmentType?: string; // 'image' | 'video' | 'audio' | 'file'
+};
+
+export type MessageStatusUpdatePayload = {
+  provider: "UAZAPI";
+  channelIdentifier: string;
+  externalIds: string[];
+  status: "SENT" | "DELIVERED" | "READ" | "FAILED";
+};
+
+export type ChannelStatusUpdatePayload = {
+  provider: "UAZAPI";
+  channelIdentifier: string;
+  status: "connected" | "disconnected" | "connecting";
+};
+```
+
+**Testes 2B.1:**
+
+- [ ] `import { MessageIngestPayload } from '@/lib/queue/types'` sem erro de compilação
+
+---
+
+## Fase 2B.2 — Worker `message-ingest` (1-2h)
+
+### Criar `app/api/queue/message-ingest/route.ts`
+
+**Este é o worker mais complexo. Ele faz TUDO que os 3 webhooks faziam.**
+
+**Imports necessários:**
+
+```typescript
+import { NextRequest, NextResponse } from "next/server";
+import { verifyQStashSignature, parseQStashBody } from "@/lib/queue/verify";
+import type { MessageIngestPayload } from "@/lib/queue/types";
+import { db } from "@/lib/db";
+import { pusherServer } from "@/lib/pusher";
+import { redis } from "@/lib/redis";
+import { publishToQueue } from "@/lib/qstash";
+import { processMessageContent } from "@/lib/agents/vendedor";
+import {
+  addToDebounceBuffer,
+  setDebounceTimestamp,
+} from "@/lib/agents/vendedor-redis";
+import { incrementConversationCount } from "@/lib/billing/conversationGate";
+
+export const maxDuration = 60;
+```
+
+**Lógica completa do worker — 9 steps:**
+
+#### STEP 1 — Channel lookup (provider-specific)
+
+```typescript
+let channel;
+if (payload.provider === "UAZAPI") {
+  channel = await db.channel.findFirst({
+    where: {
+      instanceToken: payload.channelIdentifier,
+      provider: "UAZAPI",
+      type: "WHATSAPP",
+    },
+  });
+} else if (payload.provider === "FACEBOOK") {
+  channel = await db.channel.findFirst({
+    where: {
+      pageId: payload.channelIdentifier,
+      type: "FACEBOOK",
+      isActive: true,
+    },
+  });
+} else {
+  channel = await db.channel.findFirst({
+    where: {
+      businessAccountId: payload.channelIdentifier,
+      type: "INSTAGRAM",
+      isActive: true,
+    },
+  });
+}
+if (!channel)
+  return NextResponse.json({ skipped: true, reason: "channel-not-found" });
+```
+
+**Edge case:** Canal deletado entre publish e worker → skip. Retornar 200 (não retentar).
+
+#### STEP 2 — Message dedup (DB-level, segundo nível de proteção)
+
+```typescript
+if (payload.externalId) {
+  const existing = await db.message.findFirst({
+    where: { externalId: payload.externalId },
+  });
+  if (existing) {
+    // Mensagem já existe — trigger Pusher mesmo assim (caso retry perdeu o Pusher)
+    await pusherServer
+      .trigger(
+        `workspace-${channel.workspaceId}`,
+        payload.isHistory ? "history-message" : "new-message",
+        { conversationId: existing.conversationId, message: existing },
+      )
+      .catch(() => {});
+    return NextResponse.json({ skipped: true, reason: "duplicate" });
   }
-): Promise<void> {
-  if (process.env.NODE_ENV !== 'production' && !process.env.QSTASH_FORCE_PUBLISH) {
-    console.log(`[QSTASH DEV] would publish to ${route}`, body)
-    return
-  }
-
-  const baseUrl = (process.env.NEXTAUTH_URL ?? '').replace(/\/$/, '')
-  if (!baseUrl) throw new Error('NEXTAUTH_URL is required for QStash publishing')
-
-  await qstash.publishJSON({
-    url: `${baseUrl}${route}`,
-    body,
-    retries: options?.retries ?? 3,
-    ...(options?.delay ? { delay: options.delay } : {}),
-    ...(options?.deduplicationId ? { deduplicationId: options.deduplicationId } : {}),
-  })
 }
 ```
 
-**Edge cases A2:**
-- Se `NEXTAUTH_URL` não estiver configurado na Vercel, todos os publishes falham silenciosamente
-  — por isso o `throw new Error` é intencional
-- `deduplicationId` previne jobs duplicados no QStash se o webhook for chamado 2x pelo mesmo evento
+**Edge case:** Worker crashou após criar mensagem mas antes do Pusher. No retry, dedup encontra
+a mensagem. O Pusher é re-disparado aqui. Frontend recebe o event e mostra a mensagem. **Safe.**
 
----
+**Edge case:** Mensagem sem `externalId` (outbound manual UazAPI raro): pula dedup. Risco de
+duplicata é baixo (mensagens outbound não são retentadas pelo webhook provider).
 
-### A3. Criar `lib/queue/verify.ts`
+#### STEP 3 — Billing gate (Redis atomic)
 
 ```typescript
-import { qstashReceiver } from '@/lib/qstash'
-import { NextRequest, NextResponse } from 'next/server'
-
-/**
- * Verifica assinatura QStash. Usar no início de cada worker.
- * Em dev (sem QSTASH_CURRENT_SIGNING_KEY), bypass automático.
- * Retorna null se válido, ou NextResponse 401 se inválido.
- */
-export async function verifyQStashSignature(req: NextRequest): Promise<NextResponse | null> {
-  // Em desenvolvimento sem keys configuradas, permitir qualquer request
-  if (!process.env.QSTASH_CURRENT_SIGNING_KEY) {
-    console.warn('[QUEUE] QStash signature verification skipped (dev mode)')
-    return null
-  }
-
-  const signature = req.headers.get('upstash-signature')
-  if (!signature) {
-    return NextResponse.json({ error: 'Missing QStash signature' }, { status: 401 })
-  }
-
-  const body = await req.text()
-
-  try {
-    const isValid = await qstashReceiver.verify({
-      signature,
-      body,
-    })
-    if (!isValid) {
-      return NextResponse.json({ error: 'Invalid QStash signature' }, { status: 401 })
-    }
-    return null
-  } catch (err) {
-    console.error('[QUEUE] QStash signature verification error:', err)
-    return NextResponse.json({ error: 'Signature verification failed' }, { status: 401 })
-  }
-}
-
-/**
- * Parse do body já lido na verificação. Usar após verifyQStashSignature retornar null.
- */
-export async function parseQStashBody<T>(req: NextRequest): Promise<T> {
-  const body = await req.text()
-  return JSON.parse(body) as T
+const { allowed, isNew } = await tryCreateConversationAtomic(
+  channel.workspaceId,
+  channel.id,
+  payload.contactExternalId,
+);
+if (!allowed) {
+  console.log(
+    `[QUEUE/MESSAGE-INGEST] conversation limit reached ws=${channel.workspaceId}`,
+  );
+  return NextResponse.json({ skipped: true, reason: "conversation-limit" });
 }
 ```
 
-**Edge cases A3:**
-- `req.text()` só pode ser chamado UMA vez — se chamado antes da verificação, a verificação falha
-  com "body already consumed". Por isso `verifyQStashSignature` lê o body e `parseQStashBody` relê
-  — isso funciona porque `NextRequest` não tem streaming de body em edge runtime do Next.js
-- Workers que não usam `verifyQStashSignature` ficam expostos publicamente — NUNCA omitir
+`tryCreateConversationAtomic` usa Redis SETNX — ver Fase 2B.4.
 
----
+**Edge case:** 2 workers para o MESMO contato simultaneamente: SETNX retorna 1 para o primeiro,
+0 para o segundo. Apenas o primeiro incrementa o counter. O `upsert` é idempotente. **Safe.**
 
-### A4. Criar `lib/ratelimit.ts`
+**Edge case:** 2 workers para contatos DIFERENTES simultaneamente: ambos SETNX retornam 1. Ambos
+leem `conversationsThisMonth=99` (limite=100). Ambos passam. Resultado: 101 conversas (1 a mais
+que o limite). Margem aceitável. Se precisar exatidão: usar Redis INCR para o counter.
+
+#### STEP 4 — Conversation upsert
 
 ```typescript
-import { Ratelimit } from '@upstash/ratelimit'
-import { redis } from '@/lib/redis'
-
-// 10 mensagens/segundo por workspace (envio de mensagens manuais)
-export const sendRateLimit = new Ratelimit({
-  redis,
-  limiter: Ratelimit.slidingWindow(10, '1 s'),
-  prefix: 'ratelimit:send',
-})
-
-// 5 disparos/minuto por workspace
-export const dispatchRateLimit = new Ratelimit({
-  redis,
-  limiter: Ratelimit.slidingWindow(5, '1 m'),
-  prefix: 'ratelimit:dispatch',
-})
+const conversation = await db.conversation.upsert({
+  where: {
+    workspaceId_channelId_externalId: {
+      workspaceId: channel.workspaceId,
+      channelId: channel.id,
+      externalId: payload.contactExternalId,
+    },
+  },
+  create: {
+    workspaceId: channel.workspaceId,
+    channelId: channel.id,
+    externalId: payload.contactExternalId,
+    contactName: payload.contactName,
+    contactPhone: payload.contactPhone,
+    contactPhotoUrl: payload.contactPhotoUrl,
+    status: "UNASSIGNED",
+    pipelineStage: "Não Atribuído",
+  },
+  update: {
+    contactName: payload.contactName,
+    ...(payload.contactPhotoUrl
+      ? { contactPhotoUrl: payload.contactPhotoUrl }
+      : {}),
+  },
+});
 ```
 
----
+**Edge case para Meta:** Facebook/Instagram cria com `"Facebook User ABC123"`. O `profile-fetch`
+worker atualiza o nome depois. O upsert.update atualiza contactName — se o worker já rodou e
+o nome real já está no DB, a próxima mensagem vai sobrescrever com o placeholder novamente.
+**FIX:** Para Meta, NÃO atualizar contactName no update se já existe:
 
-### A5. Env vars — adicionar no Vercel Dashboard
-
-```
-QSTASH_TOKEN=<from upstash console>
-QSTASH_CURRENT_SIGNING_KEY=<from upstash console>
-QSTASH_NEXT_SIGNING_KEY=<from upstash console>
-```
-
-**IMPORTANTE:** `NEXTAUTH_URL` já deve existir SEM trailing slash. QStash constrói URL assim:
-`https://seu-dominio.vercel.app/api/queue/transcribe`
-
-**Verificação A5 (curl manual):**
-```bash
-# Testar que env vars estão corretas na Vercel
-curl -X POST https://qstash.upstash.io/v2/publish/https://SEU-DOMINIO/api/queue/transcribe \
-  -H "Authorization: Bearer $QSTASH_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"test": true}'
-# Deve retornar 200 com messageId
-```
-
----
-
-### Testes Fase A
-
-- [ ] `bun add @upstash/qstash @upstash/ratelimit` sem erros
-- [ ] `lib/qstash.ts` importa sem erro: `import { publishToQueue } from '@/lib/qstash'`
-- [ ] `lib/queue/verify.ts` importa sem erro
-- [ ] `lib/ratelimit.ts` importa sem erro
-- [ ] Em dev sem `QSTASH_CURRENT_SIGNING_KEY`, `verifyQStashSignature` retorna `null` (bypass)
-- [ ] Em dev sem `QSTASH_FORCE_PUBLISH`, `publishToQueue` apenas loga (não faz HTTP)
-
----
-
-## Fase B — Worker Routes (2–3h)
-
-> **Padrão de todos os workers:**
-> 1. `verifyQStashSignature(req)` — retornar 401 se falhar
-> 2. `parseQStashBody<T>(req)` — parsear body
-> 3. Lógica de negócio
-> 4. Retornar `200 OK` com JSON `{ success: true }`
-> 5. QStash considera QUALQUER status >= 400 como falha e reprocessa (até `retries` configurado)
-> 6. Retornar 200 para "falhas esperadas" (dedup, skip) — evita retry desnecessário
-
----
-
-### B1. `app/api/queue/transcribe/route.ts`
-
-**Move lógica de** `app/api/transcription/route.ts`
-
-**Payload:**
 ```typescript
-type TranscribePayload = {
-  messageId: string
-  conversationId: string
-  workspaceId: string
-  instanceToken: string
-  mediaMessageId: string  // msg.messageid do UazAPI
+// Para Meta: não sobrescrever nome real com placeholder
+update: payload.provider === 'UAZAPI'
+  ? { contactName: payload.contactName, ...(payload.contactPhotoUrl ? { contactPhotoUrl: payload.contactPhotoUrl } : {}) }
+  : { ...(payload.contactPhotoUrl ? { contactPhotoUrl: payload.contactPhotoUrl } : {}) },
+```
+
+#### STEP 5 — Increment conversation count
+
+```typescript
+if (isNew) {
+  await incrementConversationCount(channel.workspaceId);
 }
 ```
 
-**Lógica** (mover de `/api/transcription/route.ts`):
-1. Download de áudio via UazAPI (`downloadUazapiMedia(instanceToken, mediaMessageId)`)
-2. Upload para Vercel Blob
-3. Transcrição via OpenAI Whisper
-4. `db.message.update({ where: { id: messageId }, data: { transcription, mediaUrl } })`
-5. `pusherServer.trigger(`workspace-${workspaceId}`, 'message-updated', { conversationId, messageId, transcription })`
+#### STEP 6 — Create message
 
-**Configuração QStash:** `retries: 3`
-
-**Edge cases B1:**
-- Se `downloadUazapiMedia` retornar `fileURL` vazio (mídia expirada no WhatsApp), retornar 200 com
-  `{ skipped: true, reason: 'no-media-url' }` — não retry (mídia não vai aparecer)
-- Se OpenAI Whisper falhar por arquivo muito grande (>25MB), logar e retornar 200 com
-  `{ skipped: true, reason: 'file-too-large' }` — não retry
-- Se `messageId` não existir no DB (mensagem deletada), retornar 200 silenciosamente
-
-**Curl test B1:**
-```bash
-curl -X POST http://localhost:3000/api/queue/transcribe \
-  -H "Content-Type: application/json" \
-  -d '{"messageId":"msg-id","conversationId":"conv-id","workspaceId":"ws-id","instanceToken":"tok","mediaMessageId":"media-id"}'
-# Em dev: QSTASH_CURRENT_SIGNING_KEY não configurado → bypass de assinatura
-```
-
----
-
-### B2. `app/api/queue/media-persist/route.ts`
-
-**Payload:**
 ```typescript
-type MediaPersistPayload = {
-  messageId: string
-  conversationId: string
-  workspaceId: string
-  source: 'uazapi' | 'meta'
-  // UazAPI:
-  instanceToken?: string
-  mediaMessageId?: string
-  // Meta:
-  mediaUrl?: string         // URL direta do CDN da Meta (expira em ~1h)
-  accessToken?: string      // criptografado, usar decrypt()
-  mediaMime?: string
-}
-```
-
-**Lógica:**
-1. Se `source === 'uazapi'`: `downloadUazapiMedia(instanceToken!, mediaMessageId!)` → `{ fileURL, mimetype }`
-2. Se `source === 'meta'`: `downloadMetaMedia(mediaUrl!, decrypt(accessToken!))` → `{ buffer, contentType }`
-3. Upload para Vercel Blob: `put('media/...', buffer, { access: 'public' })`
-4. `db.message.update({ where: { id: messageId }, data: { mediaUrl: blob.url, mediaMime } })`
-5. `pusherServer.trigger(`workspace-${workspaceId}`, 'message-updated', { ... })`
-
-**Configuração QStash:** `retries: 3`
-
-**Edge cases B2:**
-- URLs da Meta expiram em ~1h — se job demorar muito na fila, download falhará com 401/403.
-  QStash pode retentar depois de horas. Solução: se erro for 401/403 no download Meta, retornar
-  200 `{ skipped: true, reason: 'media-url-expired' }` — não faz sentido retentar
-- Se Vercel Blob estiver fora, lançar erro (retries do QStash vão funcionar)
-- Verificar se `message.mediaUrl` já existe antes de baixar (dedup: job pode ter rodado 2x)
-
-**Curl test B2:**
-```bash
-curl -X POST http://localhost:3000/api/queue/media-persist \
-  -H "Content-Type: application/json" \
-  -d '{"messageId":"id","conversationId":"c","workspaceId":"w","source":"uazapi","instanceToken":"tok","mediaMessageId":"mid","mediaMime":"image/jpeg"}'
-```
-
----
-
-### B3. `app/api/queue/profile-fetch/route.ts`
-
-**Payload:**
-```typescript
-type ProfileFetchPayload = {
-  conversationId: string
-  workspaceId: string
-  senderId: string
-  channelType: 'FACEBOOK' | 'INSTAGRAM'
-  accessToken: string  // criptografado, usar decrypt()
-}
-```
-
-**Lógica:**
-1. `fetchMetaUserProfile(senderId, decrypt(accessToken), channelType)` → `{ name, photoUrl }`
-2. `db.conversation.update({ where: { id: conversationId }, data: { contactName, contactPhotoUrl } })`
-3. `pusherServer.trigger(`workspace-${workspaceId}`, 'conversation-updated', { conversationId, ... })`
-
-**Configuração QStash:** `retries: 2`
-
-**Edge cases B3:**
-- `fetchMetaUserProfile` pode retornar `{ name: undefined }` para contas privadas — nesse caso,
-  não atualizar `contactName` (não sobrescrever o nome existente com `undefined`)
-- Token Meta expirado → erro 190 da Graph API → retornar 200 `{ skipped: true, reason: 'token-expired' }`
-  não faz sentido retentar (token não vai se curar)
-
-**Curl test B3:**
-```bash
-curl -X POST http://localhost:3000/api/queue/profile-fetch \
-  -H "Content-Type: application/json" \
-  -d '{"conversationId":"c","workspaceId":"w","senderId":"123","channelType":"FACEBOOK","accessToken":"enc:xxx"}'
-```
-
----
-
-### B4. `app/api/queue/vendedor-check/route.ts` — Debounce Durável
-
-**Substitui o `setTimeout(15s)` do `handleInboundWithDebounce`**
-
-**Payload:**
-```typescript
-type VendedorCheckPayload = {
-  conversationId: string
-  workspaceId: string
-  scheduledAt: number  // Date.now() no momento do publish
-}
-```
-
-**Lógica:**
-1. Ler `vendedor:debounce_ts:{conversationId}` do Redis
-2. Se `storedTs > scheduledAt` → outra mensagem chegou depois → retornar 200 `{ skipped: true, reason: 'newer-message' }`
-3. Se `storedTs <= scheduledAt` ou null → ler buffer `vendedor:debounce:{conversationId}` (Redis LRANGE)
-4. Se buffer vazio → retornar 200 `{ skipped: true, reason: 'empty-buffer' }`
-5. Limpar buffer (`clearDebounceBuffer(conversationId)`)
-6. Concatenar mensagens + chamar `processAiResponse(workspaceId, conversationId, concatenated)`
-
-**Configuração QStash:** `delay: 15, retries: 2`
-
-**Redis keys usados:**
-```
-vendedor:debounce:{conversationId}     → RPUSH lista de mensagens (TTL: 300s)
-vendedor:debounce_ts:{conversationId}  → SET timestamp da última mensagem (TTL: 60s)
-```
-
-**Como o debounce funciona com 3 mensagens rápidas (t=0, t=5, t=10):**
-```
-t=0:  rpush buffer["msg1"], set ts=0,  qstash delay:15 { scheduledAt: 0  }
-t=5:  rpush buffer["msg2"], set ts=5,  qstash delay:15 { scheduledAt: 5  }
-t=10: rpush buffer["msg3"], set ts=10, qstash delay:15 { scheduledAt: 10 }
-
-t=15: worker { scheduledAt: 0  } → ts=10 > 0  → SKIP
-t=20: worker { scheduledAt: 5  } → ts=10 > 5  → SKIP
-t=25: worker { scheduledAt: 10 } → ts=10 == 10 → PROCESSA ["msg1","msg2","msg3"]
-```
-
-**Edge cases B4:**
-- `processAiResponse` pode demorar 5–25s (OpenAI call). QStash default timeout para workers é 30s
-  no Vercel Hobby (60s no Pro). Configurar `maxDuration = 60` no arquivo da rota
-- Se `processAiResponse` falhar no meio (ex.: OpenAI timeout), QStash retentar chamará
-  `vendedor-check` de novo. O buffer já foi limpo (passo 5). Solução: limpar APÓS processar, ou
-  aceitar que retry não terá mensagens para processar (retorna `empty-buffer` — ok)
-- Versão mais segura: limpar buffer ANTES de chamar `processAiResponse`, e se falhar,
-  as mensagens já foram descartadas (tradeoff: melhor que enviar mensagem duplicada para o lead)
-
-**Adicionar em `lib/agents/vendedor-redis.ts` (novo key):**
-```typescript
-// Adicionar após as funções existentes:
-export async function setDebounceTimestamp(conversationId: string, ts: number): Promise<void> {
-  await redis.set(`vendedor:debounce_ts:${conversationId}`, ts, { ex: 60 })
-}
-
-export async function getDebounceTimestamp(conversationId: string): Promise<number | null> {
-  const val = await redis.get<number>(`vendedor:debounce_ts:${conversationId}`)
-  return val
-}
-```
-
-**Adicionar TTL no `addToDebounceBuffer` existente:**
-```typescript
-// Após redis.rpush, adicionar:
-await redis.expire(`vendedor:debounce:${conversationId}`, 300) // 5 min TTL
-```
-
-**Curl test B4:**
-```bash
-curl -X POST http://localhost:3000/api/queue/vendedor-check \
-  -H "Content-Type: application/json" \
-  -d '{"conversationId":"c","workspaceId":"w","scheduledAt":1234567890}'
-# Deve retornar { skipped: true, reason: "empty-buffer" } se buffer vazio
-```
-
----
-
-### B5. `app/api/queue/human-takeover/route.ts`
-
-**Payload:**
-```typescript
-type HumanTakeoverPayload = {
-  conversationId: string
-  textContent: string
-}
-```
-
-**Lógica:**
-1. `detectHumanTakeover(conversationId, textContent)` (de `lib/agents/vendedor-redis.ts`)
-   — se detectar mensagem humana, chama `blockAI(conversationId)` internamente
-
-**Configuração QStash:** `retries: 2`
-
-**Edge cases B5:**
-- `detectHumanTakeover` tem lógica de Redis internamente — se falhar, o retry vai funcionar
-- Idempotente: chamar 2x o `blockAI` não causa problema (SET idempotente no Redis)
-
-**Curl test B5:**
-```bash
-curl -X POST http://localhost:3000/api/queue/human-takeover \
-  -H "Content-Type: application/json" \
-  -d '{"conversationId":"c","textContent":"ok vou checar"}'
-```
-
----
-
-### B6. `app/api/queue/qualify-lead/route.ts`
-
-**Payload:**
-```typescript
-type QualifyLeadPayload = {
-  conversationId: string
-  workspaceId: string
-  chatHistoryJson: string  // JSON.stringify(chatHistory)
-  apiKey: string           // criptografado, usar decrypt()
-}
-```
-
-**Lógica** (mover de `vendedor.ts` linhas 477–502):
-1. `const chatHistory = JSON.parse(chatHistoryJson)`
-2. `extractQualification(chatHistory, decrypt(apiKey))` → `{ name?, phone?, interest?, ... }`
-3. `db.conversation.update({ where: { id: conversationId }, data: qualification })`
-4. `pusherServer.trigger(`workspace-${workspaceId}`, 'conversation-updated', { conversationId, ... })`
-
-**Configuração QStash:** `retries: 2`
-
-**Edge cases B6:**
-- `chatHistoryJson` pode ser muito grande para payload QStash (limite: 1MB). Se histórico for
-  grande, salvar no Redis com TTL de 5min e passar só a key
-- OpenAI pode retornar qualification parcial (alguns campos null) — sempre fazer merge com dados
-  existentes, não sobrescrever com null
-
-**Curl test B6:**
-```bash
-curl -X POST http://localhost:3000/api/queue/qualify-lead \
-  -H "Content-Type: application/json" \
-  -d '{"conversationId":"c","workspaceId":"w","chatHistoryJson":"[]","apiKey":"enc:xxx"}'
-```
-
----
-
-### B7. `app/api/queue/dispatch-fan-out/route.ts`
-
-**Payload:**
-```typescript
-type DispatchFanOutPayload = {
-  dispatchId: string
-}
-```
-
-**Lógica:**
-1. Carregar dispatch + contatos:
-   ```typescript
-   const dispatch = await db.templateDispatch.findUnique({
-     where: { id: dispatchId },
-     include: { wabaChannel: true, dispatchList: { include: { contacts: true } } }
-   })
-   ```
-2. Guard: `if (!dispatch || dispatch.status !== 'PENDING') return 200 { skipped: true }`
-3. `db.templateDispatch.update({ status: 'SENDING', startedAt: new Date() })`
-4. Para cada contato com delay escalonado (máximo 50 envios/segundo):
-   ```typescript
-   for (let i = 0; i < contacts.length; i++) {
-     await publishToQueue('/api/queue/dispatch-send', { ...payload }, {
-       delay: Math.floor(i / 50),  // escalonar: 50 por segundo
-       retries: 3,
-       deduplicationId: `dispatch-send-${dispatchId}-${contact.id}`
-     })
-   }
-   ```
-5. Retornar 200 `{ total: contacts.length }`
-
-**Configuração QStash:** `retries: 1`
-
-**Edge cases B7:**
-- Dispatch com 1000 contatos → fan-out publica 1000 jobs. QStash publishJSON é 1 HTTP call por job.
-  Com 1000 calls, o fan-out pode demorar ~10s. Verificar se o worker está dentro do timeout do Vercel.
-  Alternativa: usar `qstash.batchPublish()` se disponível, ou publicar em batches de 100
-- Guard de status `!== 'PENDING'` previne re-execução se QStash retentar o fan-out
-- `deduplicationId` por contato previne envios duplicados se fan-out rodar 2x
-
----
-
-### B8. `app/api/queue/dispatch-send/route.ts`
-
-**Payload:**
-```typescript
-type DispatchSendPayload = {
-  dispatchId: string
-  contactPhone: string
-  contactName: string | null
-  contactId: string
-  templateName: string
-  phoneNumberId: string
-  accessToken: string      // criptografado, usar decrypt()
-  workspaceId: string
-  channelId: string
-  dispatchListId: string
-}
-```
-
-**Lógica:**
-1. `sendTemplateMessage(decrypt(accessToken), phoneNumberId, contactPhone, templateName)` (de `lib/integrations/waba.ts`)
-2. `consumeTokens(workspaceId, 1, 'disparador', dispatchId)` (de `lib/billing/tokenService.ts`)
-3. Upsert conversation:
-   ```typescript
-   const externalId = contactPhone.replace(/\D/g, '') + '@s.whatsapp.net'
-   await db.conversation.upsert({
-     where: { workspaceId_channelId_externalId: { workspaceId, channelId, externalId } },
-     create: { workspaceId, contactName: contactName ?? contactPhone, contactPhone, externalId,
-               source: 'dispatch', pipelineStage: 'Disparo Enviado',
-               dispatchListId, templateDispatchId: dispatchId, status: 'UNASSIGNED',
-               channelId },
-     update: { pipelineStage: 'Disparo Enviado', templateDispatchId: dispatchId, source: 'dispatch' }
-   })
-   ```
-4. Incrementar `sentCount` + verificar auto-complete:
-   ```typescript
-   const updated = await db.templateDispatch.update({
-     where: { id: dispatchId },
-     data: { sentCount: { increment: 1 } },
-     select: { sentCount: true, failedCount: true, totalRecipients: true, workspaceId: true }
-   })
-   await pusherServer.trigger(`workspace-${workspaceId}`, 'dispatch-progress', {
-     dispatchId, sentCount: updated.sentCount, failedCount: updated.failedCount, total: updated.totalRecipients
-   }).catch(() => {})
-   if (updated.sentCount + updated.failedCount >= updated.totalRecipients) {
-     await db.templateDispatch.update({ where: { id: dispatchId },
-       data: { status: 'COMPLETED', completedAt: new Date() } })
-     await pusherServer.trigger(`workspace-${workspaceId}`, 'dispatch-completed', { dispatchId }).catch(() => {})
-   }
-   ```
-
-**Configuração QStash:** `retries: 3`
-
-**Failure handler — `app/api/queue/dispatch-send-failed/route.ts`:**
-QStash não tem `onFailure` nativo igual ao Inngest. Solução: criar endpoint separado que
-incrementa `failedCount`. Chamar via QStash `Callback` header no publish do `dispatch-send`.
-
-No `dispatch-fan-out`, ao publicar cada `dispatch-send`, adicionar callback:
-```typescript
-await qstash.publishJSON({
-  url: `${baseUrl}/api/queue/dispatch-send`,
-  body: payload,
-  retries: 3,
-  failureCallback: `${baseUrl}/api/queue/dispatch-send-failed`,
-  deduplicationId: `dispatch-send-${dispatchId}-${contact.id}`
-})
-```
-
-**`app/api/queue/dispatch-send-failed/route.ts`:**
-```typescript
-// Payload enviado pelo QStash como failure callback
-type DispatchSendFailedPayload = {
-  dispatchId: string
-  workspaceId: string
-}
-// Incrementar failedCount + verificar auto-complete (mesmo padrão do dispatch-send)
-```
-
-**Edge cases B8:**
-- `sendTemplateMessage` pode falhar com `{ error: { code: 131030 } }` (número inválido na Meta).
-  Esse é erro permanente — não adianta retentar. Retornar 200 imediatamente + marcar como falha
-  chamando `db.templateDispatch.update({ failedCount: { increment: 1 } })` diretamente
-- Race condition em `sentCount + failedCount >= totalRecipients`: múltiplos workers podem ler
-  o mesmo `updated` e tentar marcar COMPLETED. Usar `updateMany` com condição:
-  ```typescript
-  await db.templateDispatch.updateMany({
-    where: { id: dispatchId, status: 'SENDING' },
-    data: { status: 'COMPLETED', completedAt: new Date() }
-  })
-  ```
-- `accessToken` está criptografado no DB. Lembrar de `decrypt(accessToken)` antes de usar
-
-**Curl test B8:**
-```bash
-curl -X POST http://localhost:3000/api/queue/dispatch-send \
-  -H "Content-Type: application/json" \
-  -d '{"dispatchId":"d","contactPhone":"5511999999999","contactName":"Teste","contactId":"cid","templateName":"template_name","phoneNumberId":"pid","accessToken":"enc:xxx","workspaceId":"w","channelId":"ch","dispatchListId":"dl"}'
-```
-
----
-
-### B9. `app/api/queue/dispatch-response/route.ts`
-
-**Payload:**
-```typescript
-type DispatchResponsePayload = {
-  conversationId: string
-  workspaceId: string
-}
-```
-
-**Lógica** (mover de `handleDispatchResponse` em `lib/agents/disparador.ts`):
-1. Chamar `handleDispatchResponse(conversationId, workspaceId)`
-
-**Configuração QStash:** `retries: 2`
-
-**Curl test B9:**
-```bash
-curl -X POST http://localhost:3000/api/queue/dispatch-response \
-  -H "Content-Type: application/json" \
-  -d '{"conversationId":"c","workspaceId":"w"}'
-```
-
----
-
-### Testes Fase B
-
-Para cada worker (sem assinatura em dev):
-
-- [ ] Cada rota responde 200 com body válido ao receber payload correto
-- [ ] Cada rota responde 401 em produção sem header `upstash-signature`
-- [ ] `transcribe`: mensagem com áudio → DB atualiza `transcription`
-- [ ] `media-persist`: imagem UazAPI → Vercel Blob URL no DB
-- [ ] `media-persist`: imagem Meta → Vercel Blob URL no DB (com `decrypt(accessToken)`)
-- [ ] `profile-fetch`: conversa FB → `contactName` atualizado
-- [ ] `vendedor-check`: buffer vazio → `{ skipped: true }`
-- [ ] `vendedor-check`: buffer com mensagem + ts correto → `processAiResponse` chamado
-- [ ] `dispatch-fan-out`: dispatch PENDING → jobs publicados no QStash dashboard
-- [ ] `dispatch-fan-out`: dispatch não-PENDING → `{ skipped: true }`
-- [ ] `dispatch-send`: contato válido → `sentCount` incrementado, Pusher evento disparado
-- [ ] `dispatch-send`: número inválido → `failedCount` incrementado, não retenta
-
----
-
-## Fase C — Conectar Webhooks (1–2h)
-
-### C1. `app/api/webhooks/uazapi/route.ts`
-
-**Substituir 6 fire-and-forget por `publishToQueue`:**
-
-**C1.A — Transcrição (linhas ~195-205)**
-
-ANTES:
-```typescript
-fetch(`${baseUrl}/api/transcription`, {
-  method: 'POST', headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ messageId: savedMessage.id, externalId: msg.messageid, instanceToken: channel.instanceToken }),
-}).then(...).catch(err => console.error(...))
-```
-
-DEPOIS:
-```typescript
-await publishToQueue('/api/queue/transcribe', {
-  messageId: savedMessage.id,
-  conversationId: conversation.id,
-  workspaceId: channel.workspaceId,
-  instanceToken: channel.instanceToken,
-  mediaMessageId: msg.messageid,
-}).catch(err => console.error('[UAZAPI WEBHOOK] qstash transcribe error:', err))
-```
-
----
-
-**C1.B — Media persist (linhas ~208-226)**
-
-ANTES:
-```typescript
-downloadUazapiMedia(channel.instanceToken, msg.messageid)
-  .then(async ({ fileURL, mimetype }) => { ... })
-  .catch(err => console.error(...))
-```
-
-DEPOIS:
-```typescript
-await publishToQueue('/api/queue/media-persist', {
-  messageId: savedMessage.id,
-  conversationId: conversation.id,
-  workspaceId: channel.workspaceId,
-  source: 'uazapi',
-  instanceToken: channel.instanceToken,
-  mediaMessageId: msg.messageid,
-  mediaMime,
-}).catch(err => console.error('[UAZAPI WEBHOOK] qstash media error:', err))
-```
-
----
-
-**C1.C — Dispatch response (linhas ~229-232)**
-
-ANTES:
-```typescript
-handleDispatchResponse(conversation.id, channel.workspaceId)
-  .catch(err => console.error(...))
-```
-
-DEPOIS:
-```typescript
-await publishToQueue('/api/queue/dispatch-response', {
-  conversationId: conversation.id,
-  workspaceId: channel.workspaceId,
-}).catch(err => console.error('[UAZAPI WEBHOOK] qstash dispatch-response error:', err))
-```
-
----
-
-**C1.D — Vendedor SDR (linhas ~235-256)**
-
-ANTES:
-```typescript
-processMessageContent({ content: textContent, ... })
-  .then(processedContent => {
-    if (!processedContent) return
-    return fetch(`${baseUrl}/api/agents/vendedor/process`, {
-      method: 'POST', body: JSON.stringify({ conversationId, message: processedContent, workspaceId })
-    })
-  }).catch(...)
-```
-
-DEPOIS:
-```typescript
-// processMessageContent deve completar ANTES de publicar (ele pode chamar OpenAI vision)
-const processedContent = await processMessageContent({
-  content: textContent, mediaType: mediaType ?? null, mediaUrl: mediaUrl ?? null, transcription: null,
-}).catch(err => { console.error('[UAZAPI WEBHOOK] processMessageContent error:', err); return null })
-
-if (processedContent && conversation.aiSalesEnabled && conversation.dispatchListId) {
-  const scheduledAt = Date.now()
-  await addToDebounceBuffer(conversation.id, processedContent)
-  await setDebounceTimestamp(conversation.id, scheduledAt)
-  await publishToQueue('/api/queue/vendedor-check', {
+const savedMessage = await db.message.create({
+  data: {
     conversationId: conversation.id,
     workspaceId: channel.workspaceId,
-    scheduledAt,
-  }, { delay: 15 }).catch(err => console.error('[UAZAPI WEBHOOK] qstash vendedor error:', err))
-}
+    direction: payload.direction,
+    content: payload.content,
+    externalId: payload.externalId || undefined,
+    status: payload.direction === "OUTBOUND" ? "SENT" : "DELIVERED",
+    senderName: payload.senderName ?? null,
+    sentAt: new Date(payload.sentAt),
+    aiGenerated: payload.aiGenerated ?? false,
+    ...(payload.mediaType
+      ? {
+          mediaType: payload.mediaType,
+          mediaUrl: payload.mediaUrl,
+          mediaMime: payload.mediaMime,
+          mediaName: payload.mediaName,
+        }
+      : {}),
+  },
+});
 ```
 
-**IMPORTANTE:** `processMessageContent` pode chamar OpenAI vision (~2-3s). Isso aumenta o tempo
-do webhook. Alternativa: publicar `vendedor-check` sem processar content, e mover
-`processMessageContent` para dentro do worker `vendedor-check`. Escolha: manter no webhook para
-simplicidade (visão é rara), aceitar latência extra.
+#### STEP 7 — Conversation metadata update
 
----
-
-**C1.E — Human takeover (linhas ~259-262)**
-
-ANTES:
 ```typescript
-detectHumanTakeover(conversation.id, textContent).catch(...)
+await db.conversation.update({
+  where: { id: conversation.id },
+  data: {
+    lastMessageAt: new Date(payload.sentAt),
+    lastMessagePreview: payload.content.slice(0, 100),
+    ...(payload.direction === "INBOUND"
+      ? { unreadCount: { increment: 1 } }
+      : {}),
+  },
+});
 ```
 
-DEPOIS:
-```typescript
-await publishToQueue('/api/queue/human-takeover', {
-  conversationId: conversation.id,
-  textContent,
-}).catch(err => console.error('[UAZAPI WEBHOOK] qstash human-takeover error:', err))
-```
-
----
-
-**Adicionar imports no topo do arquivo:**
-```typescript
-import { publishToQueue } from '@/lib/qstash'
-import { addToDebounceBuffer, setDebounceTimestamp } from '@/lib/agents/vendedor-redis'
-```
-
-**Remover imports não mais usados:**
-- `handleDispatchResponse` (agora é worker)
-- `detectHumanTakeover` (agora é worker)
-- `handleInboundWithDebounce` / `processMessageContent` (se movido)
-
----
-
-### C2. `app/api/webhooks/facebook/route.ts`
-
-**C2.A — Profile fetch (linhas ~94-111)**
-
-ANTES:
-```typescript
-fetchMetaUserProfile(senderId, token, 'FACEBOOK')
-  .then((profile) => db.conversation.update(...).then(() => pusherServer.trigger(...)))
-  .catch((err) => console.error(...))
-```
-
-DEPOIS:
-```typescript
-await publishToQueue('/api/queue/profile-fetch', {
-  conversationId: conversation.id,
-  workspaceId: channel.workspaceId,
-  senderId,
-  channelType: 'FACEBOOK',
-  accessToken: channel.accessToken,  // já criptografado
-}).catch(err => console.error('[FB WEBHOOK] qstash profile error:', err))
-```
-
----
-
-**C2.B — Media download IIFE (linhas ~169-190)**
-
-ANTES:
-```typescript
-;(async () => {
-  try {
-    const accessToken = channel.accessToken ? decrypt(channel.accessToken) : ''
-    const { buffer, contentType } = await downloadMetaMedia(...)
-    ...
-  } catch (err) { console.error(...) }
-})()
-```
-
-DEPOIS:
-```typescript
-await publishToQueue('/api/queue/media-persist', {
-  messageId: savedMessage.id,
-  conversationId: conversation.id,
-  workspaceId: channel.workspaceId,
-  source: 'meta',
-  mediaUrl: attachment?.payload?.url,
-  accessToken: channel.accessToken,  // já criptografado
-  mediaMime: attachment?.payload?.contentType ?? 'application/octet-stream',
-}).catch(err => console.error('[FB WEBHOOK] qstash media error:', err))
-```
-
----
-
-### C3. `app/api/webhooks/instagram/route.ts`
-
-Mesmas mudanças que Facebook (C2.A e C2.B), trocando `channelType: 'INSTAGRAM'` e prefixo de log.
-
----
-
-### C4. `app/api/agents/disparador/route.ts`
-
-**Fire-and-forget (linhas ~54-60)**
-
-ANTES:
-```typescript
-fetch(`${baseUrl}/api/agents/disparador/process`, {
-  method: 'POST', headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ dispatchId: dispatch.id }),
-}).catch((err) => console.error('[DISPARADOR] fire-and-forget error:', err))
-```
-
-DEPOIS:
-```typescript
-try {
-  await publishToQueue('/api/queue/dispatch-fan-out', { dispatchId: dispatch.id }, { retries: 1 })
-} catch (err) {
-  // Fallback: fire-and-forget HTTP (como antes)
-  console.error('[DISPARADOR] QStash publish failed, falling back:', err)
-  const baseUrl = process.env.NEXTAUTH_URL?.replace(/\/$/, '') ?? ''
-  fetch(`${baseUrl}/api/agents/disparador/process`, {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ dispatchId: dispatch.id }),
-  }).catch(() => {})
-}
-```
-
-**Adicionar import:**
-```typescript
-import { publishToQueue } from '@/lib/qstash'
-```
-
----
-
-### Testes Fase C
-
-- [ ] Webhook UazAPI retorna `< 300ms` após as mudanças (medir com curl `-w "%{time_total}"`)
-- [ ] Mensagem de áudio → job `transcribe` aparece no QStash dashboard → transcrição no DB
-- [ ] Mensagem de imagem → job `media-persist` aparece → Blob URL no DB
-- [ ] Resposta em conversa de dispatch → job `dispatch-response` aparece → pipelineStage atualizado
-- [ ] 3 mensagens rápidas para conversa SDR → 3 jobs `vendedor-check` no dashboard → só 1 executa (2 skipped)
-- [ ] Mensagem outbound manual → job `human-takeover` aparece → blockAI se detectado
-- [ ] Webhook Facebook → job `profile-fetch` aparece → contactName atualizado
-- [ ] Webhook Facebook com imagem → job `media-persist` aparece com `source: 'meta'`
-- [ ] Webhook Instagram → mesmos jobs que Facebook
-- [ ] POST `/api/agents/disparador` → job `dispatch-fan-out` aparece no QStash dashboard
-
----
-
-## Fase D — Rate Limiting (30min)
-
-### D1. `app/api/conversations/[id]/messages/route.ts` — POST handler
-
-Após auth check (após linha com `session` verificado), adicionar:
+#### STEP 8 — Pusher notification
 
 ```typescript
-import { sendRateLimit } from '@/lib/ratelimit'
-
-// Dentro do POST handler, após verificar session:
-const { success } = await sendRateLimit.limit(session.user.workspaceId)
-if (!success) {
-  return NextResponse.json(
-    { error: 'Muitas mensagens enviadas. Aguarde um momento.' },
-    { status: 429 }
+pusherServer
+  .trigger(
+    `workspace-${channel.workspaceId}`,
+    payload.isHistory ? "history-message" : "new-message",
+    { conversationId: conversation.id, message: savedMessage },
   )
-}
+  .catch((err) => console.error("[QUEUE/MESSAGE-INGEST] Pusher failed:", err));
 ```
 
-### D2. `app/api/agents/disparador/route.ts` — POST handler
+#### STEP 9 — Queue side-effects (INBOUND + !isHistory only)
 
 ```typescript
-import { dispatchRateLimit } from '@/lib/ratelimit'
+if (payload.direction === "INBOUND" && !payload.isHistory) {
+  const workspaceId = channel.workspaceId;
+  const conversationId = conversation.id;
 
-// Após verificar session:
-const { success } = await dispatchRateLimit.limit(session.user.workspaceId)
-if (!success) {
-  return NextResponse.json(
-    { error: 'Muitos disparos recentes. Aguarde 1 minuto.' },
-    { status: 429 }
-  )
+  // 9A. Audio transcription (UazAPI only)
+  if (
+    payload.mediaType === "audio" &&
+    payload.instanceToken &&
+    payload.mediaMessageId
+  ) {
+    await publishToQueue("/api/queue/transcribe", {
+      messageId: savedMessage.id,
+      conversationId,
+      workspaceId,
+      instanceToken: payload.instanceToken,
+      mediaMessageId: payload.mediaMessageId,
+    }).catch((err) =>
+      console.error("[QUEUE/MESSAGE-INGEST] transcribe error:", err),
+    );
+  }
+
+  // 9B. Media persist
+  if (
+    payload.mediaType &&
+    ["image", "video", "document"].includes(payload.mediaType)
+  ) {
+    if (
+      payload.provider === "UAZAPI" &&
+      payload.instanceToken &&
+      payload.mediaMessageId
+    ) {
+      await publishToQueue("/api/queue/media-persist", {
+        messageId: savedMessage.id,
+        conversationId,
+        workspaceId,
+        source: "uazapi",
+        instanceToken: payload.instanceToken,
+        mediaMessageId: payload.mediaMessageId,
+        mediaMime: payload.mediaMime,
+      }).catch((err) =>
+        console.error("[QUEUE/MESSAGE-INGEST] media-persist error:", err),
+      );
+    } else if (payload.attachmentUrl && channel.accessToken) {
+      await publishToQueue("/api/queue/media-persist", {
+        messageId: savedMessage.id,
+        conversationId,
+        workspaceId,
+        source: "meta",
+        mediaUrl: payload.attachmentUrl,
+        accessToken: channel.accessToken,
+        mediaMime: payload.attachmentType,
+      }).catch((err) =>
+        console.error("[QUEUE/MESSAGE-INGEST] media-persist error:", err),
+      );
+    }
+  }
+
+  // 9C. Profile fetch (Meta only, new conversations)
+  if (isNew && channel.accessToken && payload.provider !== "UAZAPI") {
+    await publishToQueue("/api/queue/profile-fetch", {
+      conversationId,
+      workspaceId,
+      senderId: payload.contactExternalId,
+      channelType: payload.provider,
+      accessToken: channel.accessToken,
+    }).catch((err) =>
+      console.error("[QUEUE/MESSAGE-INGEST] profile-fetch error:", err),
+    );
+  }
+
+  // 9D. Dispatch response
+  if (conversation.pipelineStage === "Disparo Enviado") {
+    await publishToQueue("/api/queue/dispatch-response", {
+      conversationId,
+      workspaceId,
+    }).catch((err) =>
+      console.error("[QUEUE/MESSAGE-INGEST] dispatch-response error:", err),
+    );
+  }
+
+  // 9E. Vendedor SDR
+  if (conversation.aiSalesEnabled && conversation.dispatchListId) {
+    const processedContent = await processMessageContent({
+      content: payload.content,
+      mediaType: payload.mediaType ?? null,
+      mediaUrl: payload.mediaUrl ?? null,
+      transcription: null,
+    }).catch(() => null);
+
+    if (processedContent) {
+      const scheduledAt = Date.now();
+      await addToDebounceBuffer(conversationId, processedContent);
+      await setDebounceTimestamp(conversationId, scheduledAt);
+      await publishToQueue(
+        "/api/queue/vendedor-check",
+        {
+          conversationId,
+          workspaceId,
+          scheduledAt,
+        },
+        { delay: 15 },
+      ).catch((err) =>
+        console.error("[QUEUE/MESSAGE-INGEST] vendedor error:", err),
+      );
+    }
+  }
+}
+
+// 9F. Human takeover (OUTBOUND only)
+if (
+  payload.direction === "OUTBOUND" &&
+  !payload.aiGenerated &&
+  conversation.aiSalesEnabled &&
+  conversation.dispatchListId
+) {
+  await publishToQueue("/api/queue/human-takeover", {
+    conversationId: conversation.id,
+    textContent: payload.content,
+  }).catch((err) =>
+    console.error("[QUEUE/MESSAGE-INGEST] human-takeover error:", err),
+  );
 }
 ```
 
-### Testes Fase D
+**NOTA sobre `conversation.pipelineStage` e `conversation.aiSalesEnabled`:** O `upsert` no Step 4
+retorna o conversation, mas **sem** os campos `pipelineStage`, `aiSalesEnabled`, `dispatchListId`.
+**FIX:** Adicionar `select` no upsert ou fazer um `findUnique` separado após o upsert:
 
-- [ ] 15 mensagens em 1s para o mesmo workspace → 10 retornam 200, 5 retornam 429
-- [ ] 15 mensagens em 1s para workspaces diferentes → todas retornam 200 (limites independentes)
-- [ ] 6 disparos em 1min → 5 retornam 200, 1 retorna 429
-- [ ] Verificar que frontend mostra erro ao receber 429 (toast, não quebra silenciosamente)
+```typescript
+const convDetails = await db.conversation.findUnique({
+  where: { id: conversation.id },
+  select: { pipelineStage: true, aiSalesEnabled: true, dispatchListId: true },
+});
+```
 
-**Edge case D:**
-- Rate limit usa Redis → `~1 command por check`. Com 2 rotas + 500 req/dia → 1K commands/dia.
-  Upstash free tier: 10K commands/dia. Safe.
-- Workers QStash NÃO passam pelo rate limit (chamam lógica diretamente, não as rotas HTTP)
+Usar `convDetails` nos steps 9D, 9E, 9F.
+
+**Testes 2B.2:**
+
+- [ ] Worker cria conversa nova + mensagem quando não existem
+- [ ] Worker faz upsert (não duplica) quando conversa já existe
+- [ ] Worker rejeita mensagem duplicada por externalId
+- [ ] Worker re-dispara Pusher em mensagem duplicada (retry safety)
+- [ ] Worker respeita billing limit
+- [ ] Worker dispara Pusher `new-message` com payload correto
+- [ ] Worker enfileira `transcribe` para áudio UazAPI
+- [ ] Worker enfileira `media-persist` para imagem UazAPI e Meta
+- [ ] Worker enfileira `profile-fetch` para nova conversa Meta
+- [ ] Worker enfileira `dispatch-response` para conversa dispatch
+- [ ] Worker enfileira `vendedor-check` com delay 15s
+- [ ] Worker enfileira `human-takeover` para OUTBOUND
+- [ ] Meta: não sobrescreve contactName real com placeholder no update
 
 ---
 
-## Fase E — Fallbacks e Monitoramento (30min)
+## Fase 2B.3 — Workers auxiliares (30min)
 
-### E1. Manter rotas antigas como fallback manual
+### Criar `app/api/queue/message-status-update/route.ts`
 
-Não deletar:
-- `app/api/agents/disparador/process/route.ts` — útil para trigger manual de dispatch travado
-- `app/api/agents/vendedor/process/route.ts` — útil para debug de SDR
-- `app/api/transcription/route.ts` — útil para reprocessar transcrição manual
+Recebe `MessageStatusUpdatePayload`. Para cada `externalId`:
 
-### E2. `app/api/agents/vendedor/process/route.ts` — fix imediato com waitUntil
+1. `db.message.findFirst({ externalId })`
+2. Skip se não existe ou mesmo status
+3. `db.message.update({ status, readAt?, deliveredAt? })`
+4. `pusherServer.trigger('message-updated', { messageId, status })`
 
-Enquanto QStash não está 100% em produção, usar `waitUntil` como bridge:
+**Config QStash:** `retries: 2`
+
+**Edge cases:**
+
+- IDs que não existem no DB (mensagens antigas) → skip
+- Status fora de ordem (READ antes de DELIVERED) → aceitar, não verificar ordem
+- Array grande (50+) → loop sequencial ok (workers sem rate limit externo)
+
+**Testes 2B.3a:**
+
+- [ ] READ → message.readAt atualizado + Pusher event
+- [ ] DELIVERED → message.deliveredAt atualizado
+- [ ] ID inexistente → skip sem erro
+- [ ] Status repetido → skip sem update
+
+### Criar `app/api/queue/channel-status-update/route.ts`
+
+Recebe `ChannelStatusUpdatePayload`:
+
+1. `db.channel.findFirst({ instanceToken: channelIdentifier, provider: 'UAZAPI' })`
+2. `connected` → `isActive: true, webhookVerifiedAt: new Date()`
+3. `disconnected` → `isActive: false` + Pusher `channel-status-update`
+4. `connecting` → noop, retornar 200
+
+**Config QStash:** `retries: 2`
+
+**Testes 2B.3b:**
+
+- [ ] `connected` → channel.isActive = true
+- [ ] `disconnected` → channel.isActive = false + Pusher event
+- [ ] `connecting` → nenhuma mudança
+
+---
+
+## Fase 2B.4 — Billing Gate Redis (30min)
+
+### Modificar `lib/billing/conversationGate.ts`
+
+Adicionar função com Redis atomic SETNX:
 
 ```typescript
-import { waitUntil } from '@vercel/functions'
-// bun add @vercel/functions
+import { redis } from "@/lib/redis";
 
-export const maxDuration = 60
+/**
+ * Atomic billing gate for concurrent workers.
+ * Uses Redis SETNX to prevent double-counting new conversations.
+ */
+export async function tryCreateConversationAtomic(
+  workspaceId: string,
+  channelId: string,
+  externalId: string,
+): Promise<{ allowed: boolean; isNew: boolean }> {
+  const convKey = `conv-lock:${workspaceId}:${channelId}:${externalId}`;
+
+  // SETNX: 1 se criou key (conversa nova), 0 se já existia
+  const wasSet = await redis.setnx(convKey, "1");
+  if (wasSet) await redis.expire(convKey, 300); // TTL 5min
+
+  const isNew = wasSet === 1;
+
+  if (!isNew) {
+    // Conversa existente ou outro worker está criando → allowed
+    return { allowed: true, isNew: false };
+  }
+
+  // Nova conversa — verificar limite do workspace
+  const workspace = await db.workspace.findUnique({
+    where: { id: workspaceId },
+    select: { conversationsThisMonth: true, maxConversationsPerMonth: true },
+  });
+  if (!workspace) {
+    await redis.del(convKey);
+    return { allowed: false, isNew: false };
+  }
+
+  if (workspace.conversationsThisMonth >= workspace.maxConversationsPerMonth) {
+    await redis.del(convKey);
+    return { allowed: false, isNew: false };
+  }
+
+  return { allowed: true, isNew: true };
+}
+```
+
+**Manter** `canCreateConversation` e `incrementConversationCount` originais como estão (usadas em outros contextos).
+
+**Edge cases:**
+
+- Redis SETNX + worker crash antes do upsert: key expira em 5min, próxima mensagem tenta de novo. Safe.
+- 2 workers para mesmo contato: SETNX garante 1 só incrementa. Safe.
+- 2 workers para contatos diferentes no limite: margem de ±1 conversa. Aceitável.
+
+**Testes 2B.4:**
+
+- [ ] Nova conversa → `{ allowed: true, isNew: true }`
+- [ ] Conversa existente → `{ allowed: true, isNew: false }`
+- [ ] Limite atingido → `{ allowed: false, isNew: false }` + key deletada
+- [ ] 2 chamadas simultâneas para mesmo contato → só 1 `isNew: true`
+
+---
+
+## Fase 2B.5 — Refatorar Webhooks (1-2h)
+
+### Refatorar `app/api/webhooks/uazapi/route.ts`
+
+**Código completo do webhook refatorado:**
+
+```typescript
+import { NextRequest, NextResponse } from "next/server";
+import {
+  type UazapiWebhookPayload,
+  type UazapiWebhookMessagePayload,
+  type UazapiWebhookConnectionPayload,
+  type UazapiWebhookHistoryPayload,
+} from "@/lib/integrations/uazapi";
+import { publishToQueue } from "@/lib/qstash";
+import type { MessageIngestPayload } from "@/lib/queue/types";
+
+// ZERO imports de: db, pusherServer, canCreateConversation, incrementConversationCount,
+// processMessageContent, addToDebounceBuffer, setDebounceTimestamp, persistMedia
+
+export async function GET() {
+  return NextResponse.json({ status: "OK" });
+}
 
 export async function POST(req: NextRequest) {
-  const { conversationId, message, workspaceId, debounceSeconds } = await req.json()
+  try {
+    const body = await req.text();
+    const payload = JSON.parse(body) as UazapiWebhookPayload;
+    console.log("[UAZAPI WEBHOOK] EventType:", payload.EventType);
 
-  waitUntil(
-    handleInboundWithDebounce(conversationId, message, workspaceId, debounceSeconds)
-      .catch(err => console.error('[VENDEDOR PROCESS] error:', err))
-  )
-
-  return NextResponse.json({ started: true })
-}
-```
-
-### E3. Cron de dispatches travados
-
-Adicionar em `vercel.json`:
-```json
-{
-  "crons": [
-    {
-      "path": "/api/cron/fix-stuck-dispatches",
-      "schedule": "*/10 * * * *"
+    if (payload.EventType === "messages" || payload.EventType === "history") {
+      await handleMessage(
+        payload as UazapiWebhookMessagePayload | UazapiWebhookHistoryPayload,
+        payload.EventType === "history",
+      );
+    } else if (payload.EventType === "messages_update") {
+      await handleMessagesUpdate(payload);
+    } else if (payload.EventType === "connection") {
+      await handleConnection(payload as UazapiWebhookConnectionPayload);
     }
-  ]
+
+    return NextResponse.json({ status: "EVENT_RECEIVED" });
+  } catch (error) {
+    console.error("[UAZAPI WEBHOOK] error:", error);
+    return NextResponse.json({ status: "ERROR" });
+  }
+}
+
+function extractMediaType(messageType: string): string | null {
+  const t = messageType.toLowerCase();
+  if (t === "image" || t.includes("image")) return "image";
+  if (t === "video" || t.includes("video")) return "video";
+  if (t === "document" || t.includes("document") || t.includes("pdf"))
+    return "document";
+  if (
+    t === "audio" ||
+    t === "ptt" ||
+    t === "myaudio" ||
+    t.includes("audio") ||
+    t.includes("ptt") ||
+    t.includes("voice")
+  )
+    return "audio";
+  return null;
+}
+
+async function handleMessage(
+  payload: UazapiWebhookMessagePayload | UazapiWebhookHistoryPayload,
+  isHistory: boolean,
+) {
+  const msg = payload.message;
+  if (!isHistory && msg.fromMe && msg.wasSentByApi) return;
+
+  const direction = msg.fromMe ? "OUTBOUND" : "INBOUND";
+  const chat = payload.chat ?? {};
+  const chatid = msg.chatid;
+  const isGroup = chatid.endsWith("@g.us");
+
+  const contactPhone = isGroup
+    ? undefined
+    : chat.phone
+      ? chat.phone.replace(/\D/g, "")
+      : chatid.replace("@s.whatsapp.net", "").replace("@lid", "");
+
+  const contactName =
+    chat.wa_contactName ||
+    chat.wa_name ||
+    chat.name ||
+    msg.senderName ||
+    contactPhone ||
+    chatid.split("@")[0];
+  const contactPhotoUrl = chat.imagePreview || chat.image || undefined;
+
+  const mediaType = extractMediaType(msg.messageType) ?? undefined;
+  const mediaUrl = msg.fileURL ?? msg.media?.url ?? undefined;
+  const mediaMime = msg.media?.mimetype ?? undefined;
+  const mediaName = msg.media?.filename ?? undefined;
+
+  const rawText =
+    msg.text ||
+    (typeof msg.content === "string" ? msg.content : "") ||
+    msg.media?.caption ||
+    "";
+  const textContent = rawText === "[Media]" && mediaType ? "" : rawText;
+
+  const sentAt = msg.messageTimestamp
+    ? new Date(
+        msg.messageTimestamp > 1e12
+          ? msg.messageTimestamp
+          : msg.messageTimestamp * 1000,
+      )
+    : new Date();
+
+  // Build display content
+  const content =
+    mediaType && !textContent
+      ? `[${mediaType.charAt(0).toUpperCase() + mediaType.slice(1)}]`
+      : textContent || "[Mensagem]";
+
+  const ingestPayload: MessageIngestPayload = {
+    provider: "UAZAPI",
+    channelIdentifier: payload.token,
+    contactExternalId: chatid,
+    contactName,
+    contactPhone,
+    contactPhotoUrl,
+    externalId: msg.messageid || "",
+    direction,
+    content,
+    senderName: msg.senderName,
+    sentAt: sentAt.toISOString(),
+    mediaType,
+    mediaUrl,
+    mediaMime,
+    mediaName,
+    isHistory,
+    instanceToken: payload.token,
+    mediaMessageId: msg.messageid || undefined,
+  };
+
+  await publishToQueue("/api/queue/message-ingest", ingestPayload, {
+    deduplicationId: msg.messageid ? `msg-${msg.messageid}` : undefined,
+    retries: 3,
+  }).catch((err) =>
+    console.error("[UAZAPI WEBHOOK] qstash publish error:", err),
+  );
+}
+
+async function handleMessagesUpdate(payload: UazapiWebhookPayload) {
+  const event = (
+    payload as { event?: { MessageIDs?: string[]; Type?: string } }
+  ).event;
+  if (!event?.MessageIDs?.length) return;
+
+  const statusMap: Record<string, string> = {
+    read: "READ",
+    delivered: "DELIVERED",
+    sent: "SENT",
+    failed: "FAILED",
+  };
+  const newStatus = statusMap[event.Type?.toLowerCase() ?? ""];
+  if (!newStatus) return;
+
+  await publishToQueue(
+    "/api/queue/message-status-update",
+    {
+      provider: "UAZAPI",
+      channelIdentifier: (payload as { token: string }).token,
+      externalIds: event.MessageIDs,
+      status: newStatus,
+    },
+    { retries: 2 },
+  ).catch((err) =>
+    console.error("[UAZAPI WEBHOOK] qstash status-update error:", err),
+  );
+}
+
+async function handleConnection(payload: UazapiWebhookConnectionPayload) {
+  const status = payload.data?.status;
+  if (!status) return;
+
+  await publishToQueue(
+    "/api/queue/channel-status-update",
+    {
+      provider: "UAZAPI",
+      channelIdentifier: payload.token,
+      status,
+    },
+    { retries: 2 },
+  ).catch((err) =>
+    console.error("[UAZAPI WEBHOOK] qstash channel-status error:", err),
+  );
 }
 ```
 
-**`app/api/cron/fix-stuck-dispatches/route.ts`:**
+**Edge case:** Se QStash falhar no publish, mensagem é perdida. Para zero data loss, adicionar
+fallback síncrono no `.catch()`:
+
 ```typescript
-// Verificar dispatches em SENDING há >15min
-const stuckDispatches = await db.templateDispatch.findMany({
-  where: { status: 'SENDING', startedAt: { lt: new Date(Date.now() - 15 * 60 * 1000) } }
+.catch(async (err) => {
+  console.error('[UAZAPI WEBHOOK] qstash failed, processing sync:', err)
+  const { processMessageIngest } = await import('@/lib/queue/message-ingest-logic')
+  await processMessageIngest(ingestPayload).catch(e => console.error('[FALLBACK]', e))
 })
-// Para cada um: verificar se sentCount + failedCount >= totalRecipients → marcar COMPLETED
-// Ou re-publicar no QStash se ainda há contatos faltando
 ```
+
+**Recomendação:** Implementar o fallback. É a diferença entre "escalável" e "escalável + confiável".
+
+---
+
+### Refatorar `app/api/webhooks/facebook/route.ts`
+
+```typescript
+import { NextRequest, NextResponse } from "next/server";
+import type { FacebookWebhookPayload } from "@/lib/integrations/facebook";
+import { publishToQueue } from "@/lib/qstash";
+import type { MessageIngestPayload } from "@/lib/queue/types";
+
+// ZERO imports de: db, pusher, billing, crypto, blob, meta-common
+
+const MEDIA_TYPE_MAP: Record<string, string> = {
+  image: "image",
+  video: "video",
+  audio: "audio",
+  file: "document",
+};
+const MEDIA_PLACEHOLDER: Record<string, string> = {
+  image: "[Imagem]",
+  video: "[Vídeo]",
+  audio: "[Áudio]",
+  document: "[Arquivo]",
+};
+
+export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url);
+  const mode = searchParams.get("hub.mode");
+  const token = searchParams.get("hub.verify_token");
+  const challenge = searchParams.get("hub.challenge");
+
+  if (
+    mode === "subscribe" &&
+    token ===
+      (process.env.META_VERIFY_TOKEN ?? process.env.WHATSAPP_VERIFY_TOKEN)
+  ) {
+    return new NextResponse(challenge, { status: 200 });
+  }
+  return NextResponse.json({ error: "Verification failed" }, { status: 403 });
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    const payload = (await req.json()) as FacebookWebhookPayload;
+    console.log("[FB WEBHOOK] entries:", payload.entry?.length ?? 0);
+
+    if (payload.object === "page") {
+      for (const entry of payload.entry) {
+        for (const messaging of entry.messaging) {
+          if (messaging.message?.is_echo) continue;
+          const hasText = !!messaging.message?.text;
+          const hasAttachment =
+            (messaging.message?.attachments?.length ?? 0) > 0;
+          if (!hasText && !hasAttachment) continue;
+
+          const senderId = messaging.sender.id;
+          const mid = messaging.message!.mid;
+
+          const attachment = messaging.message?.attachments?.[0];
+          const hasMedia = !!(
+            attachment?.payload?.url && attachment.type !== "fallback"
+          );
+          const mediaType = hasMedia
+            ? (MEDIA_TYPE_MAP[attachment!.type] ?? "document")
+            : undefined;
+
+          const textContent = messaging.message?.text ?? "";
+          let content: string;
+          if (textContent) content = textContent;
+          else if (mediaType)
+            content = MEDIA_PLACEHOLDER[mediaType] ?? "[Mídia]";
+          else if (attachment && !attachment.payload?.url)
+            content = "[Mídia temporária]";
+          else if (attachment?.type === "fallback")
+            content = "[Conteúdo não suportado]";
+          else content = "[Mensagem]";
+
+          const ingestPayload: MessageIngestPayload = {
+            provider: "FACEBOOK",
+            channelIdentifier: entry.id,
+            contactExternalId: senderId,
+            contactName: `Facebook User ${senderId.slice(-6)}`,
+            externalId: mid,
+            direction: "INBOUND",
+            content,
+            sentAt: new Date(messaging.timestamp || Date.now()).toISOString(),
+            mediaType,
+            attachmentUrl: hasMedia ? attachment?.payload?.url : undefined,
+            attachmentType: hasMedia ? attachment?.type : undefined,
+          };
+
+          await publishToQueue("/api/queue/message-ingest", ingestPayload, {
+            deduplicationId: `msg-${mid}`,
+            retries: 3,
+          }).catch((err) => console.error("[FB WEBHOOK] qstash error:", err));
+        }
+      }
+    }
+  } catch (err) {
+    console.error("[FB WEBHOOK]", err);
+  }
+  return NextResponse.json({ status: "EVENT_RECEIVED" });
+}
+```
+
+**Edge case:** `messaging.timestamp` pode ser undefined → `new Date(undefined)` = Invalid Date.
+**FIX já incluído:** `new Date(messaging.timestamp || Date.now())`
+
+---
+
+### Refatorar `app/api/webhooks/instagram/route.ts`
+
+**Idêntico ao Facebook** com 4 diferenças:
+
+1. `payload.object === 'instagram'` (não `'page'`)
+2. `provider: 'INSTAGRAM'`
+3. `channelIdentifier: entry.id` = `businessAccountId`
+4. `contactName: \`Instagram User ${senderId.slice(-6)}\``
+
+---
+
+**Testes 2B.5:**
+
+- [ ] UazAPI webhook retorna em <50ms (`curl -w "%{time_total}"`)
+- [ ] Facebook webhook retorna em <30ms
+- [ ] Instagram webhook retorna em <30ms
+- [ ] ZERO imports de `db` em qualquer webhook (verificar com `grep "from '@/lib/db'" app/api/webhooks/`)
+- [ ] Job `message-ingest` aparece no QStash dashboard após cada tipo de mensagem
+- [ ] Job `message-status-update` aparece após read receipt UazAPI
+- [ ] Job `channel-status-update` aparece após desconexão
+- [ ] Mesma mensagem 2x → QStash dashboard mostra segunda como DUPLICATE
+- [ ] Mensagem sem messageid (UazAPI outbound) → publica sem dedup → worker processa
 
 ---
 
 ## Verificação End-to-End
 
-### 1. Test de Latência do Webhook
+### Teste 1: Latência
+
 ```bash
-curl -w "\nTotal time: %{time_total}s\n" -X POST https://SEU-DOMINIO/api/webhooks/uazapi \
+curl -w "\nTotal: %{time_total}s\n" -X POST https://SEU-DOMINIO/api/webhooks/uazapi \
   -H "Content-Type: application/json" \
-  -d '{"event":"message","instance":"INST_ID","payload":{...}}'
-# Esperado: < 300ms
+  -d '{"EventType":"messages","token":"xxx","message":{"messageid":"test1","chatid":"551199@s.whatsapp.net","fromMe":false,"messageType":"text","text":"Ola","messageTimestamp":1711900000}}'
+# Esperado: < 0.050s
 ```
 
-### 2. Test do Vendedor Debounce
-1. Enviar 3 mensagens WhatsApp em < 10s
-2. Abrir QStash dashboard → verificar 3 jobs `vendedor-check` agendados para t+15s, t+20s, t+25s
-3. Aguardar ~25s → verificar que 2 jobs mostram `skipped` e 1 processou
-4. Verificar resposta AI chegou no WhatsApp
+### Teste 2: Mensagem completa
 
-### 3. Test do Disparador Fan-out
-1. Criar dispatch com 5 contatos → POST `/api/agents/disparador`
-2. QStash dashboard → 1 job `dispatch-fan-out` → após executar, 5 jobs `dispatch-send`
-3. UI mostra progress bar atualizando conforme jobs completam
-4. Verificar `status: 'COMPLETED'` no DB após todos os jobs
+1. Enviar mensagem WhatsApp → webhook publica em <50ms
+2. QStash dashboard → job `message-ingest` aparece
+3. Worker executa → mensagem aparece na UI em <2s
 
-### 4. Test de Rate Limit
+### Teste 3: Deduplicação
+
+1. Chamar webhook 2x com mesmo payload/messageid
+2. QStash → 1 job (segundo rejeitado por dedup)
+3. DB → 1 mensagem
+
+### Teste 4: Billing
+
+1. Workspace com `maxConversationsPerMonth = 2`
+2. 3 contatos diferentes enviam mensagem
+3. 2 primeiras → conversas criadas
+4. 3ª → worker loga `conversation-limit`, mensagem não criada
+
+### Teste 5: Carga
+
 ```bash
-# Enviar 15 mensagens em 1s (ajustar workspaceId e token)
-for i in $(seq 1 15); do
-  curl -s -o /dev/null -w "%{http_code}\n" -X POST https://SEU-DOMINIO/api/conversations/CONV_ID/messages \
-    -H "Authorization: Bearer TOKEN" -H "Content-Type: application/json" \
-    -d '{"content":"test"}'
+for i in $(seq 1 20); do
+  curl -s -o /dev/null -w "%{http_code} %{time_total}s\n" \
+    -X POST https://SEU-DOMINIO/api/webhooks/uazapi \
+    -H "Content-Type: application/json" \
+    -d "{\"EventType\":\"messages\",\"token\":\"xxx\",\"message\":{\"messageid\":\"load-$i\",\"chatid\":\"55119900${i}@s.whatsapp.net\",\"fromMe\":false,\"messageType\":\"text\",\"text\":\"Test $i\",\"messageTimestamp\":1711900000}}" &
 done
-# Esperado: 10x "200", 5x "429"
+wait
+# Todas 200 em < 100ms. QStash → 20 jobs message-ingest.
 ```
-
-### 5. Test de Retry
-1. Parar UazAPI temporariamente
-2. Enviar mensagem de áudio no WhatsApp → webhook publica job `transcribe`
-3. QStash dashboard → job falha 3x com backoff exponencial
-4. Reiniciar UazAPI → 4ª tentativa (ou próximo retry) deve suceder
-5. Verificar `transcription` no DB
-
-### 6. Test de Falha Permanente no Dispatch
-1. Criar dispatch com 1 número inválido + 4 válidos
-2. Verificar que `sentCount = 4, failedCount = 1, status = COMPLETED`
-3. Verificar que `failureCallback` incrementou `failedCount` corretamente
-
----
-
-## Custo
-
-| Serviço | Free Tier | Uso Estimado/mês | Status |
-|---------|-----------|------------------|--------|
-| QStash | 500K msgs | ~70K msgs | OK |
-| Upstash Redis | 10K cmds/dia | ~3K cmds/dia | OK |
-| Ratelimit | Usa Redis | +1K cmds/dia | OK |
-
-**Custo adicional: $0/mês** até escalar significativamente.
 
 ---
 
 ## Checklist Final
 
-### Fase A — Infraestrutura
-- [ ] `bun add @upstash/qstash @upstash/ratelimit`
-- [ ] Criar `lib/qstash.ts` com `publishToQueue` + dev bypass
-- [ ] Criar `lib/queue/verify.ts` com `verifyQStashSignature` + `parseQStashBody`
-- [ ] Criar `lib/ratelimit.ts` com `sendRateLimit` + `dispatchRateLimit`
-- [ ] Adicionar env vars no Vercel: `QSTASH_TOKEN`, `QSTASH_CURRENT_SIGNING_KEY`, `QSTASH_NEXT_SIGNING_KEY`
+### 2B.1 — Types
 
-### Fase B — Workers
-- [ ] `app/api/queue/transcribe/route.ts` — mover lógica de `/api/transcription`
-- [ ] `app/api/queue/media-persist/route.ts` — UazAPI + Meta
-- [ ] `app/api/queue/profile-fetch/route.ts` — FB + Instagram
-- [ ] `app/api/queue/vendedor-check/route.ts` — debounce durável
-- [ ] `app/api/queue/human-takeover/route.ts` — detectHumanTakeover
-- [ ] `app/api/queue/qualify-lead/route.ts` — extractQualification
-- [ ] `app/api/queue/dispatch-fan-out/route.ts` — fan-out com delay escalonado
-- [ ] `app/api/queue/dispatch-send/route.ts` — send + billing + upsert
-- [ ] `app/api/queue/dispatch-send-failed/route.ts` — failure callback
-- [ ] `app/api/queue/dispatch-response/route.ts` — handleDispatchResponse
-- [ ] Adicionar `setDebounceTimestamp` + `getDebounceTimestamp` em `lib/agents/vendedor-redis.ts`
-- [ ] Adicionar TTL no `addToDebounceBuffer` em `lib/agents/vendedor-redis.ts`
+- [ ] `lib/queue/types.ts` criado com 3 tipos
 
-### Fase C — Webhooks
-- [ ] `uazapi/route.ts`: transcrição → qstash
-- [ ] `uazapi/route.ts`: media persist → qstash
-- [ ] `uazapi/route.ts`: dispatch response → qstash
-- [ ] `uazapi/route.ts`: vendedor SDR → redis + qstash delay 15s
-- [ ] `uazapi/route.ts`: human takeover → qstash
-- [ ] `facebook/route.ts`: profile fetch → qstash
-- [ ] `facebook/route.ts`: media download IIFE → qstash
-- [ ] `instagram/route.ts`: profile fetch → qstash
-- [ ] `instagram/route.ts`: media download IIFE → qstash
-- [ ] `disparador/route.ts`: fire-and-forget → qstash com fallback
+### 2B.2 — Worker principal
 
-### Fase D — Rate Limiting
-- [ ] Rate limit em `messages/route.ts` POST
-- [ ] Rate limit em `disparador/route.ts` POST
+- [ ] `app/api/queue/message-ingest/route.ts` — 9 steps completos
 
-### Fase E — Fallbacks
-- [ ] `vendedor/process/route.ts`: adicionar `waitUntil` + `maxDuration: 60`
-- [ ] `bun add @vercel/functions`
-- [ ] Criar cron `fix-stuck-dispatches` + `vercel.json`
+### 2B.3 — Workers auxiliares
+
+- [ ] `app/api/queue/message-status-update/route.ts`
+- [ ] `app/api/queue/channel-status-update/route.ts`
+
+### 2B.4 — Billing
+
+- [ ] `tryCreateConversationAtomic()` em `lib/billing/conversationGate.ts`
+
+### 2B.5 — Webhooks
+
+- [ ] `app/api/webhooks/uazapi/route.ts` → parse + publish
+- [ ] `app/api/webhooks/facebook/route.ts` → parse + publish
+- [ ] `app/api/webhooks/instagram/route.ts` → parse + publish
+- [ ] ZERO `db` imports em webhooks
 
 ### Verificação
-- [ ] Webhook latência < 300ms
-- [ ] Vendedor debounce: 3 mensagens → 1 resposta AI
-- [ ] Disparador: 5 contatos → progress Pusher → COMPLETED
-- [ ] Rate limit: 15 msgs/s → 10 passam, 5 retornam 429
-- [ ] Retry: UazAPI offline → QStash retenta 3x → sucede quando volta
+
+- [ ] Webhook < 50ms
+- [ ] Mensagem na UI < 2s
+- [ ] Dedup funciona
+- [ ] Billing limit respeitado
+- [ ] Read receipts atualizam
+- [ ] Channel disconnect notifica UI
 
 ---
 
-## Arquivos Críticos
+## Arquivos
 
-| Arquivo | Ação |
-|---------|------|
-| `lib/qstash.ts` | **NOVO** |
-| `lib/queue/verify.ts` | **NOVO** |
-| `lib/ratelimit.ts` | **NOVO** |
-| `lib/agents/vendedor-redis.ts` | **MODIFICAR** — `setDebounceTimestamp` + TTL |
-| `app/api/queue/transcribe/route.ts` | **NOVO** |
-| `app/api/queue/media-persist/route.ts` | **NOVO** |
-| `app/api/queue/profile-fetch/route.ts` | **NOVO** |
-| `app/api/queue/vendedor-check/route.ts` | **NOVO** |
-| `app/api/queue/human-takeover/route.ts` | **NOVO** |
-| `app/api/queue/qualify-lead/route.ts` | **NOVO** |
-| `app/api/queue/dispatch-fan-out/route.ts` | **NOVO** |
-| `app/api/queue/dispatch-send/route.ts` | **NOVO** |
-| `app/api/queue/dispatch-send-failed/route.ts` | **NOVO** |
-| `app/api/queue/dispatch-response/route.ts` | **NOVO** |
-| `app/api/webhooks/uazapi/route.ts` | **MODIFICAR** — 5 fire-and-forget → qstash |
-| `app/api/webhooks/facebook/route.ts` | **MODIFICAR** — 2 fire-and-forget → qstash |
-| `app/api/webhooks/instagram/route.ts` | **MODIFICAR** — 2 fire-and-forget → qstash |
-| `app/api/agents/disparador/route.ts` | **MODIFICAR** — fire-and-forget → qstash com fallback |
-| `app/api/conversations/[id]/messages/route.ts` | **MODIFICAR** — rate limit |
-| `app/api/agents/vendedor/process/route.ts` | **MODIFICAR** — waitUntil |
+| Arquivo                                        | Ação                                             |
+| ---------------------------------------------- | ------------------------------------------------ |
+| `lib/queue/types.ts`                           | **NOVO** — tipos normalizados                    |
+| `app/api/queue/message-ingest/route.ts`        | **NOVO** — worker principal (~200 linhas)        |
+| `app/api/queue/message-status-update/route.ts` | **NOVO** — status updates                        |
+| `app/api/queue/channel-status-update/route.ts` | **NOVO** — channel connection                    |
+| `app/api/webhooks/uazapi/route.ts`             | **REWRITE** — thin parse + publish (~130 linhas) |
+| `app/api/webhooks/facebook/route.ts`           | **REWRITE** — thin parse + publish (~80 linhas)  |
+| `app/api/webhooks/instagram/route.ts`          | **REWRITE** — thin parse + publish (~80 linhas)  |
+| `lib/billing/conversationGate.ts`              | **MODIFY** — add `tryCreateConversationAtomic`   |
+
+**NÃO MODIFICAR:** Todos os workers existentes da Fase 2A, `lib/qstash.ts`, `lib/queue/verify.ts`.
