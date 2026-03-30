@@ -36,7 +36,7 @@ export async function publishToQueue(
   const baseUrl = (process.env.NEXTAUTH_URL ?? '').replace(/\/$/, '')
   if (!baseUrl) throw new Error('NEXTAUTH_URL is required for QStash publishing')
 
-  await qstash.publishJSON({
+  const result = await qstash.publishJSON({
     url: `${baseUrl}${route}`,
     body,
     retries: options?.retries ?? 3,
@@ -44,4 +44,5 @@ export async function publishToQueue(
     ...(options?.deduplicationId ? { deduplicationId: options.deduplicationId } : {}),
     ...(options?.failureCallback ? { failureCallback: options.failureCallback } : {}),
   })
+  console.log(`[QSTASH] job published jobId=${result.messageId} route=${route}`)
 }

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
+import { publishToQueue } from '@/lib/qstash'
 
 // WABA webhook verification (GET)
 export async function GET(req: NextRequest) {
@@ -35,41 +36,34 @@ export async function POST(req: NextRequest) {
         const phoneNumberId = value?.metadata?.phone_number_id
         if (!phoneNumberId) continue
 
-        // Look up WabaChannel by phoneNumberId
+        // 1 DB call to validate the channel — necessary before queuing
         const wabaChannel = await db.wabaChannel.findFirst({
           where: { phoneNumberId, isActive: true },
         })
         if (!wabaChannel) continue
 
-        // Handle status updates — sent → delivered → read → failed
-        // These track delivery status of template messages sent by Disparador
+        // Handle status updates — offload to queue worker
         const statuses: Array<{ id: string; status: string; timestamp: string; errors?: Array<{ code: number; title: string }> }> = value?.statuses ?? []
         for (const status of statuses) {
-          const message = await db.message.findFirst({
-            where: { externalId: status.id },
-          })
-          if (!message) continue
+          const statusMap: Record<string, 'SENT' | 'DELIVERED' | 'READ' | 'FAILED'> = {
+            sent: 'SENT',
+            delivered: 'DELIVERED',
+            read: 'READ',
+            failed: 'FAILED',
+          }
+          const mappedStatus = statusMap[status.status]
+          if (!mappedStatus) continue
 
-          const updateData: Record<string, unknown> = {}
-          if (status.status === 'delivered') {
-            updateData.status = 'DELIVERED'
-            updateData.deliveredAt = new Date(parseInt(status.timestamp) * 1000)
-          } else if (status.status === 'read') {
-            updateData.status = 'READ'
-            updateData.readAt = new Date(parseInt(status.timestamp) * 1000)
-          } else if (status.status === 'failed') {
-            updateData.status = 'FAILED'
-            if (status.errors?.length) {
-              console.error('[WABA WEBHOOK] Message failed:', status.id, status.errors)
-            }
+          if (status.status === 'failed' && status.errors?.length) {
+            console.error('[WABA WEBHOOK] Message failed:', status.id, status.errors)
           }
 
-          if (Object.keys(updateData).length > 0) {
-            await db.message.update({
-              where: { id: message.id },
-              data: updateData,
-            }).catch((err) => console.error('[WABA WEBHOOK] Status update failed:', err))
-          }
+          await publishToQueue('/api/queue/message-status-update', {
+            provider: 'UAZAPI', // worker doesn't use provider, just needs externalIds
+            channelIdentifier: phoneNumberId,
+            externalIds: [status.id],
+            status: mappedStatus,
+          }).catch(err => console.error('[WABA WEBHOOK] status-update publish error:', err))
         }
 
         // Handle errors at the value level (rate limits, invalid numbers, etc.)
@@ -78,7 +72,6 @@ export async function POST(req: NextRequest) {
         }
 
         // Inbound messages: log only — actual processing happens via UazAPI webhook
-        // (same phone number is connected on both WABA and UazAPI)
         const messages = value?.messages ?? []
         if (messages.length > 0) {
           console.log(`[WABA WEBHOOK] Received ${messages.length} inbound message(s) on ${phoneNumberId} — handled by UazAPI`)

@@ -11,6 +11,8 @@ import { addToDebounceBuffer, setDebounceTimestamp } from '@/lib/agents/vendedor
  * Called by the QStash worker AND as a sync fallback when QStash publish fails.
  */
 export async function processMessageIngest(payload: MessageIngestPayload): Promise<void> {
+  console.log(`[MESSAGE-INGEST] starting provider=${payload.provider} externalId=${payload.externalId} direction=${payload.direction}`)
+
   // STEP 1 — Channel lookup (provider-specific)
   let channel: Awaited<ReturnType<typeof db.channel.findFirst>>
   if (payload.provider === 'UAZAPI') {

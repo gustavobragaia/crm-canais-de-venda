@@ -107,6 +107,7 @@ async function handleMessage(
     mediaMessageId: msg.messageid,
   }
 
+  console.log(`[UAZAPI WEBHOOK] publishing to qstash externalId=${msg.messageid} direction=${direction}`)
   await publishToQueue('/api/queue/message-ingest', ingestPayload,
     msg.messageid ? { deduplicationId: `msg-${msg.messageid}` } : {}
   ).catch(async (err) => {
