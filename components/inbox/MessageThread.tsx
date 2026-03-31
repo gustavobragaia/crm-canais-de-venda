@@ -118,13 +118,18 @@ export function MessageThread({ conversationId, contactName, isGroup, aiSalesEna
   useEffect(() => {
     if (!conversationId || !session) return
 
+    const refetchMessages = () => {
+      fetch(`/api/conversations/${conversationId}/messages`)
+        .then(r => r.json())
+        .then(data => setMessages(data.messages ?? []))
+        .catch(() => null)
+    }
+
     const handleNewMessage = (e: Event) => {
-      const { conversationId: cid, message } = (e as CustomEvent<{ conversationId: string; message: Message }>).detail
+      const { conversationId: cid } = (e as CustomEvent<{ conversationId: string }>).detail
+      console.log(`[MessageThread] new-message event cid=${cid} current=${conversationId} match=${cid === conversationId}`)
       if (cid === conversationId) {
-        setMessages(prev => {
-          if (prev.find(m => m.id === message.id)) return prev
-          return [...prev, message]
-        })
+        refetchMessages()
       }
     }
 

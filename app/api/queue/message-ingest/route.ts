@@ -13,7 +13,13 @@ export async function POST(req: NextRequest) {
 
   console.log(`[QUEUE/MESSAGE-INGEST] provider=${payload.provider} externalId=${payload.externalId} direction=${payload.direction}`)
 
-  await processMessageIngest(payload)
+  try {
+    await processMessageIngest(payload)
+    console.log(`[QUEUE/MESSAGE-INGEST] completed successfully externalId=${payload.externalId}`)
+  } catch (err) {
+    console.error(`[QUEUE/MESSAGE-INGEST] FATAL ERROR externalId=${payload.externalId}`, err)
+    throw err
+  }
 
   return NextResponse.json({ success: true })
 }

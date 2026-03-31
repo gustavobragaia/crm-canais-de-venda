@@ -137,14 +137,16 @@ export async function processMessageIngest(payload: MessageIngestPayload): Promi
     },
   })
 
+  console.log(`[MESSAGE-INGEST] DB write OK messageId=${savedMessage.id} conversationId=${conversation.id}`)
+
   // STEP 8 — Pusher notification
+  const pusherEvent = payload.isHistory ? 'history-message' : 'new-message'
+  console.log(`[MESSAGE-INGEST] triggering Pusher event=${pusherEvent} channel=workspace-${channel.workspaceId}`)
   pusherServer.trigger(
     `workspace-${channel.workspaceId}`,
-    payload.isHistory ? 'history-message' : 'new-message',
+    pusherEvent,
     { conversationId: conversation.id, message: savedMessage }
-  ).catch(err => console.error('[MESSAGE-INGEST] Pusher failed:', err))
-
-  console.log(`[MESSAGE-INGEST] saved messageId=${savedMessage.id} conversationId=${conversation.id}`)
+  ).catch(err => console.error('[MESSAGE-INGEST] Pusher FAILED:', err))
 
   // STEP 9 — Queue side-effects (INBOUND + !isHistory only)
   if (payload.direction === 'INBOUND' && !payload.isHistory) {
