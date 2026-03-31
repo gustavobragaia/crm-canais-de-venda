@@ -103,6 +103,10 @@ export default function InboxPage() {
       fetchConversations()
       window.dispatchEvent(new CustomEvent('new-message', { detail: data }))
     },
+    'history-message': (data: unknown) => {
+      fetchConversations()
+      window.dispatchEvent(new CustomEvent('new-message', { detail: data }))
+    },
     'message-sent': (data: unknown) => {
       fetchConversations()
       window.dispatchEvent(new CustomEvent('message-sent', { detail: data }))

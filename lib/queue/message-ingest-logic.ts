@@ -43,7 +43,12 @@ export async function processMessageIngest(payload: MessageIngestPayload): Promi
     })
     if (existing) {
       console.log(`[MESSAGE-INGEST] SKIP duplicate externalId=${payload.externalId} existingId=${existing.id}`)
-      const fullMessage = await db.message.findUnique({ where: { id: existing.id } })
+      const fullMessage = await db.message.findUnique({
+        where: { id: existing.id },
+        include: {
+          sentBy: { select: { id: true, name: true, avatarUrl: true } },
+        },
+      })
       if (fullMessage) {
         pusherServer.trigger(
           `workspace-${channel.workspaceId}`,
@@ -116,6 +121,9 @@ export async function processMessageIngest(payload: MessageIngestPayload): Promi
         mediaMime: payload.mediaMime,
         mediaName: payload.mediaName,
       } : {}),
+    },
+    include: {
+      sentBy: { select: { id: true, name: true, avatarUrl: true } },
     },
   })
 
