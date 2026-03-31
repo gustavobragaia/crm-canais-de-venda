@@ -4,11 +4,10 @@ if (!process.env.QSTASH_TOKEN) {
   console.warn('[QSTASH] QSTASH_TOKEN not set — queue publishing will be skipped in dev mode')
 }
 
-// In production: new Client() reads QSTASH_TOKEN + QSTASH_URL from env automatically.
-// In dev (no token): use placeholder to avoid crash at module load.
-export const qstash = process.env.QSTASH_TOKEN
-  ? new Client()
-  : new Client({ token: 'placeholder' })
+export const qstash = new Client({
+  token: process.env.QSTASH_TOKEN ?? 'placeholder',
+  baseUrl: process.env.QSTASH_URL ?? 'https://qstash.upstash.io',
+})
 
 export const qstashReceiver = new Receiver({
   currentSigningKey: process.env.QSTASH_CURRENT_SIGNING_KEY ?? '',
