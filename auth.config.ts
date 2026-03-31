@@ -20,6 +20,7 @@ export const authConfig: NextAuthConfig = {
         '/data-deletion',
         '/api/auth',
         '/api/webhooks',
+        '/api/queue',
         '/api/health',
       ]
       const isPublic = PUBLIC_PATHS.some((p) => pathname.startsWith(p))
