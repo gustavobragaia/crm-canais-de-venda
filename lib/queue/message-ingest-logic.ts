@@ -30,9 +30,10 @@ export async function processMessageIngest(payload: MessageIngestPayload): Promi
   }
 
   if (!channel) {
-    console.log(`[MESSAGE-INGEST] channel not found for identifier=${payload.channelIdentifier}`)
+    console.log(`[MESSAGE-INGEST] SKIP channel not found for identifier=${payload.channelIdentifier}`)
     return
   }
+  console.log(`[MESSAGE-INGEST] channel found: id=${channel.id} ws=${channel.workspaceId}`)
 
   // STEP 2 — Message dedup (DB-level)
   if (payload.externalId) {
@@ -41,6 +42,7 @@ export async function processMessageIngest(payload: MessageIngestPayload): Promi
       select: { id: true, conversationId: true },
     })
     if (existing) {
+      console.log(`[MESSAGE-INGEST] SKIP duplicate externalId=${payload.externalId} existingId=${existing.id}`)
       const fullMessage = await db.message.findUnique({ where: { id: existing.id } })
       if (fullMessage) {
         pusherServer.trigger(
@@ -57,8 +59,9 @@ export async function processMessageIngest(payload: MessageIngestPayload): Promi
   const { allowed, isNew } = await tryCreateConversationAtomic(
     channel.workspaceId, channel.id, payload.contactExternalId,
   )
+  console.log(`[MESSAGE-INGEST] billing gate: allowed=${allowed} isNew=${isNew}`)
   if (!allowed) {
-    console.log(`[MESSAGE-INGEST] conversation limit reached ws=${channel.workspaceId}`)
+    console.log(`[MESSAGE-INGEST] SKIP conversation limit reached ws=${channel.workspaceId}`)
     return
   }
 
