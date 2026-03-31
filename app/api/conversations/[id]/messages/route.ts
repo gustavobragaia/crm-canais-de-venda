@@ -37,12 +37,15 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       include: {
         sentBy: { select: { id: true, name: true, avatarUrl: true } },
       },
-      orderBy: { createdAt: 'asc' },
+      orderBy: { createdAt: 'desc' },
       skip: (page - 1) * limit,
       take: limit,
     }),
     db.message.count({ where: { conversationId: id } }),
   ])
+
+  // Return in chronological order (oldest first) for correct rendering
+  messages.reverse()
 
   // Reset unread count
   await db.conversation.update({
