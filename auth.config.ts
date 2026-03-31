@@ -11,6 +11,7 @@ export const authConfig: NextAuthConfig = {
   callbacks: {
     authorized({ auth, request }) {
       const { pathname } = request.nextUrl
+      // IMPORTANT: Keep in sync with proxy.ts PUBLIC_PATHS
       const PUBLIC_PATHS = [
         '/login',
         '/signup',
@@ -21,6 +22,7 @@ export const authConfig: NextAuthConfig = {
         '/api/auth',
         '/api/webhooks',
         '/api/queue',
+        '/api/cron',
         '/api/health',
       ]
       const isPublic = PUBLIC_PATHS.some((p) => pathname.startsWith(p))
