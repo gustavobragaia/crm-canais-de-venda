@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useRef } from 'react'
 import { MessageCircle, Instagram, Facebook, Bot } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
@@ -41,6 +42,8 @@ interface ConversationListProps {
   selectedId: string | null
   onSelect: (id: string) => void
   loading?: boolean
+  loadingMore?: boolean
+  onSentinelVisible?: () => void
 }
 
 export function ConversationList({
@@ -48,7 +51,20 @@ export function ConversationList({
   selectedId,
   onSelect,
   loading,
+  loadingMore,
+  onSentinelVisible,
 }: ConversationListProps) {
+  const sentinelRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!onSentinelVisible || !sentinelRef.current) return
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) onSentinelVisible() },
+      { threshold: 0.1 }
+    )
+    observer.observe(sentinelRef.current)
+    return () => observer.disconnect()
+  }, [onSentinelVisible])
   if (loading) {
     return (
       <div className="flex flex-col gap-1 p-2">
@@ -76,7 +92,7 @@ export function ConversationList({
   }
 
   return (
-    <div className="overflow-y-auto">
+    <div className="overflow-y-auto flex-1 flex flex-col">
       {conversations.map((conv) => {
         const channelStyle = CHANNEL_STYLES[conv.channel.type]
         const Icon = channelStyle.icon
@@ -172,6 +188,24 @@ export function ConversationList({
           </button>
         )
       })}
+
+      <div ref={sentinelRef} className="h-1 shrink-0" />
+
+      {loadingMore && (
+        <div className="flex flex-col gap-1 p-2">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="p-4 rounded-lg animate-pulse">
+              <div className="flex gap-3">
+                <div className="w-10 h-10 bg-gray-200 rounded-full" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-4 bg-gray-200 rounded w-3/4" />
+                  <div className="h-3 bg-gray-200 rounded w-1/2" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

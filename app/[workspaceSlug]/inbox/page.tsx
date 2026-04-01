@@ -53,8 +53,12 @@ export default function InboxPage() {
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
+  const [loadingMore, setLoadingMore] = useState(false)
+  const [page, setPage] = useState(1)
+  const [hasMore, setHasMore] = useState(true)
   const [filter, setFilter] = useState<FilterStatus>('all')
-  const [search, setSearch] = useState('')
+  const [searchInput, setSearchInput] = useState('')
+  const [searchQuery, setSearchQuery] = useState('')
   const [assignedToMe, setAssignedToMe] = useState(false)
   const [billing, setBilling] = useState<BillingData | null>(null)
   const [sourceFilter, setSourceFilter] = useState<'all' | 'organic' | string>('organic') // 'all' | 'organic' | listId
@@ -64,26 +68,53 @@ export default function InboxPage() {
   const workspaceId = session?.user.workspaceId
   const workspaceSlug = session?.user.workspaceSlug ?? ''
 
-  const fetchConversations = useCallback(async () => {
+  // Debounce search input
+  useEffect(() => {
+    const t = setTimeout(() => setSearchQuery(searchInput), 400)
+    return () => clearTimeout(t)
+  }, [searchInput])
+
+  const buildParams = useCallback((p: number) => {
     const params = new URLSearchParams()
+    params.set('page', String(p))
     if (filter !== 'all') params.set('status', filter)
     if (assignedToMe) params.set('assignedTo', 'me')
+    if (searchQuery) params.set('search', searchQuery)
     if (sourceFilter === 'organic') params.set('source', 'organic')
     else if (sourceFilter !== 'all') {
       params.set('source', 'dispatch')
       params.set('dispatchListId', sourceFilter)
     }
     if (pipelineFilter) params.set('pipelineStage', pipelineFilter)
+    return params
+  }, [filter, assignedToMe, searchQuery, sourceFilter, pipelineFilter])
 
-    const res = await fetch(`/api/conversations?${params}`)
+  const resetAndFetch = useCallback(async () => {
+    setLoading(true)
+    setPage(1)
+    setHasMore(true)
+    const res = await fetch(`/api/conversations?${buildParams(1)}`)
     const data = await res.json()
     setConversations(data.conversations ?? [])
+    setHasMore(data.hasMore ?? false)
     setLoading(false)
-  }, [filter, assignedToMe, sourceFilter, pipelineFilter])
+  }, [buildParams])
+
+  const loadMore = useCallback(async () => {
+    if (loadingMore || !hasMore) return
+    setLoadingMore(true)
+    const nextPage = page + 1
+    const res = await fetch(`/api/conversations?${buildParams(nextPage)}`)
+    const data = await res.json()
+    setConversations(prev => [...prev, ...(data.conversations ?? [])])
+    setHasMore(data.hasMore ?? false)
+    setPage(nextPage)
+    setLoadingMore(false)
+  }, [loadingMore, hasMore, page, buildParams])
 
   useEffect(() => {
-    fetchConversations()
-  }, [fetchConversations])
+    resetAndFetch()
+  }, [resetAndFetch])
 
   useEffect(() => {
     if (!session) return
@@ -100,22 +131,22 @@ export default function InboxPage() {
   // Real-time updates via Pusher (workspace-level events)
   usePusherChannel(`workspace-${workspaceId}`, {
     'new-message': (data: unknown) => {
-      fetchConversations()
+      resetAndFetch()
       window.dispatchEvent(new CustomEvent('new-message', { detail: data }))
     },
     'history-message': (data: unknown) => {
-      fetchConversations()
+      resetAndFetch()
       window.dispatchEvent(new CustomEvent('new-message', { detail: data }))
     },
     'message-sent': (data: unknown) => {
-      fetchConversations()
+      resetAndFetch()
       window.dispatchEvent(new CustomEvent('message-sent', { detail: data }))
     },
     'conversation-assigned': () => {
-      fetchConversations()
+      resetAndFetch()
     },
     'conversation-updated': (data: unknown) => {
-      fetchConversations()
+      resetAndFetch()
       window.dispatchEvent(new CustomEvent('conversation-updated', { detail: data }))
     },
   })
@@ -131,13 +162,6 @@ export default function InboxPage() {
   })
 
   const selectedConversation = conversations.find((c) => c.id === selectedId)
-
-  const filteredConversations = conversations.filter((c) =>
-    search
-      ? c.contactName.toLowerCase().includes(search.toLowerCase()) ||
-        c.lastMessagePreview?.toLowerCase().includes(search.toLowerCase())
-      : true
-  )
 
   return (
     <div className="h-screen flex overflow-hidden">
@@ -165,8 +189,8 @@ export default function InboxPage() {
             <input
               type="text"
               placeholder="Buscar conversa..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
               className="w-full pl-9 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -253,10 +277,12 @@ export default function InboxPage() {
         )}
 
         <ConversationList
-          conversations={filteredConversations as Parameters<typeof ConversationList>[0]['conversations']}
+          conversations={conversations as Parameters<typeof ConversationList>[0]['conversations']}
           selectedId={selectedId}
           onSelect={setSelectedId}
           loading={loading}
+          loadingMore={loadingMore}
+          onSentinelVisible={loadMore}
         />
       </div>
 
@@ -276,7 +302,7 @@ export default function InboxPage() {
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ conversationId: selectedId, enabled: !current }),
             })
-            fetchConversations()
+            resetAndFetch()
           } : undefined}
         />
       </div>
