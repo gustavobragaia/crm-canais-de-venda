@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
   for (const externalId of payload.externalIds) {
     const message = await db.message.findFirst({
       where: { externalId },
-      select: { id: true, status: true, workspaceId: true },
+      select: { id: true, status: true, workspaceId: true, conversationId: true },
     })
     if (!message) continue
     if (message.status === newStatus) continue
@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
     })
 
     pusherServer.trigger(
-      `workspace-${message.workspaceId}`,
+      `conversation-${message.conversationId}`,
       'message-updated',
       { messageId: message.id, status: newStatus }
     ).catch(err => console.error('[QUEUE/MESSAGE-STATUS-UPDATE] Pusher failed:', err))

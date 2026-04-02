@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Read(//Users/gustavobrogaia/Documents/CRM-OMBOARDING-CONVERSAS/app/api/**)"
     ]
   }
 }

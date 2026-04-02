@@ -129,36 +129,12 @@ export default function InboxPage() {
   }, [session])
 
   // Real-time updates via Pusher (workspace-level events)
-  usePusherChannel(`workspace-${workspaceId}`, {
-    'new-message': (data: unknown) => {
-      resetAndFetch()
-      window.dispatchEvent(new CustomEvent('new-message', { detail: data }))
-    },
-    'history-message': (data: unknown) => {
-      resetAndFetch()
-      window.dispatchEvent(new CustomEvent('new-message', { detail: data }))
-    },
-    'message-sent': (data: unknown) => {
-      resetAndFetch()
-      window.dispatchEvent(new CustomEvent('message-sent', { detail: data }))
-    },
-    'conversation-assigned': () => {
-      resetAndFetch()
-    },
-    'conversation-updated': (data: unknown) => {
-      resetAndFetch()
-      window.dispatchEvent(new CustomEvent('conversation-updated', { detail: data }))
-    },
-  })
-
-  // Real-time updates for the selected conversation (notes, transcriptions)
-  usePusherChannel(selectedId ? `conversation-${selectedId}` : '', {
-    'note-added': (data: unknown) => {
-      window.dispatchEvent(new CustomEvent('note-added', { detail: data }))
-    },
-    'message-updated': (data: unknown) => {
-      window.dispatchEvent(new CustomEvent('message-updated', { detail: data }))
-    },
+  usePusherChannel(workspaceId ? `workspace-${workspaceId}` : '', {
+    'new-message': () => { resetAndFetch() },
+    'history-message': () => { resetAndFetch() },
+    'message-sent': () => { resetAndFetch() },
+    'conversation-assigned': () => { resetAndFetch() },
+    'conversation-updated': () => { resetAndFetch() },
   })
 
   const selectedConversation = conversations.find((c) => c.id === selectedId)

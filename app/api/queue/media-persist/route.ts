@@ -111,9 +111,9 @@ export async function POST(req: NextRequest) {
   })
 
   await pusherServer.trigger(
-    `workspace-${workspaceId}`,
+    `conversation-${conversationId}`,
     'message-updated',
-    { conversationId, messageId, mediaUrl: finalUrl, mediaMime: finalMime }
+    { messageId, mediaUrl: finalUrl, mediaMime: finalMime }
   ).catch(() => {})
 
   console.log(`[QUEUE/MEDIA-PERSIST] done messageId=${messageId}`)

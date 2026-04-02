@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useSession } from 'next-auth/react'
+import { usePusherChannel } from '@/hooks/usePusher'
 import { Send, Loader2, Paperclip, X, Bot, User, Clock } from 'lucide-react'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
@@ -91,6 +92,7 @@ function BriefingCard({ content }: { content: string }) {
 export function MessageThread({ conversationId, contactName, isGroup, aiSalesEnabled, aiSalesMessageCount, qualificationScore, onToggleAi, isDispatch }: MessageThreadProps) {
   const { data: session } = useSession()
   const workspaceSlug = session?.user.workspaceSlug ?? ''
+  const workspaceId = session?.user.workspaceId
   const [messages, setMessages] = useState<Message[]>([])
   const [loading, setLoading] = useState(false)
   const [sending, setSending] = useState(false)
@@ -99,6 +101,14 @@ export function MessageThread({ conversationId, contactName, isGroup, aiSalesEna
   const [showAiUpsell, setShowAiUpsell] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
+
+  const refetchMessages = useCallback(() => {
+    if (!conversationId) return
+    fetch(`/api/conversations/${conversationId}/messages`)
+      .then(r => r.json())
+      .then(data => setMessages(data.messages ?? []))
+      .catch(() => null)
+  }, [conversationId])
 
   useEffect(() => {
     if (!conversationId) return
@@ -115,45 +125,44 @@ export function MessageThread({ conversationId, contactName, isGroup, aiSalesEna
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
-  useEffect(() => {
-    if (!conversationId || !session) return
+  // Pusher: new inbound/outbound messages on this conversation
+  usePusherChannel(workspaceId ? `workspace-${workspaceId}` : '', {
+    'new-message': (data: unknown) => {
+      const { conversationId: cid } = data as { conversationId: string }
+      if (cid === conversationId) refetchMessages()
+    },
+    'history-message': (data: unknown) => {
+      const { conversationId: cid } = data as { conversationId: string }
+      if (cid === conversationId) refetchMessages()
+    },
+    'message-sent': (data: unknown) => {
+      const { conversationId: cid } = data as { conversationId: string }
+      if (cid === conversationId) refetchMessages()
+    },
+  })
 
-    const refetchMessages = () => {
-      fetch(`/api/conversations/${conversationId}/messages`)
-        .then(r => r.json())
-        .then(data => setMessages(data.messages ?? []))
-        .catch(() => null)
-    }
-
-    const handleNewMessage = (e: Event) => {
-      const { conversationId: cid } = (e as CustomEvent<{ conversationId: string }>).detail
-      console.log(`[MessageThread] new-message event cid=${cid} current=${conversationId} match=${cid === conversationId}`)
-      if (cid === conversationId) {
-        refetchMessages()
+  // Pusher: surgical updates (transcription, media URL, delivery status)
+  usePusherChannel(conversationId ? `conversation-${conversationId}` : '', {
+    'message-updated': (data: unknown) => {
+      const { messageId, transcription, mediaUrl, mediaMime, status } = data as {
+        messageId: string
+        transcription?: string
+        mediaUrl?: string
+        mediaMime?: string
+        status?: string
       }
-    }
-
-    const handleMessageUpdated = (e: Event) => {
-      const { messageId, transcription, mediaUrl } = (e as CustomEvent<{ messageId: string; transcription?: string; mediaUrl?: string }>).detail
       setMessages(prev => prev.map(m => {
         if (m.id !== messageId) return m
         return {
           ...m,
           ...(transcription !== undefined ? { transcription } : {}),
           ...(mediaUrl !== undefined ? { mediaUrl } : {}),
+          ...(mediaMime !== undefined ? { mediaMime } : {}),
+          ...(status !== undefined ? { status } : {}),
         }
       }))
-    }
-
-    window.addEventListener('new-message', handleNewMessage)
-    window.addEventListener('message-sent', handleNewMessage)
-    window.addEventListener('message-updated', handleMessageUpdated)
-    return () => {
-      window.removeEventListener('new-message', handleNewMessage)
-      window.removeEventListener('message-sent', handleNewMessage)
-      window.removeEventListener('message-updated', handleMessageUpdated)
-    }
-  }, [conversationId, session])
+    },
+  })
 
   async function handleSend(e: React.FormEvent) {
     e.preventDefault()
