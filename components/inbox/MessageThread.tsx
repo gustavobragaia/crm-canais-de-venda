@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { useSession } from 'next-auth/react'
 import { usePusherChannel } from '@/hooks/usePusher'
 import { Send, Loader2, Paperclip, X, Bot, User, Clock } from 'lucide-react'
+import { toast } from 'sonner'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { AudioMessage } from './AudioMessage'
@@ -219,6 +220,9 @@ export function MessageThread({ conversationId, contactName, isGroup, aiSalesEna
           if (conversationId !== currentConversationId) return without
           return [...without, realMsg]
         })
+        if (realMsg.sendError) {
+          toast.error('Falha ao enviar mensagem', { description: realMsg.sendError })
+        }
       } else {
         // Remove optimistic and restore input so user can retry
         setMessages(prev => prev.filter(m => m.id !== tempId))
