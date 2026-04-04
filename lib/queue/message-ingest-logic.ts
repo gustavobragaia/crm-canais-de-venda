@@ -24,8 +24,14 @@ export async function processMessageIngest(payload: MessageIngestPayload): Promi
       where: { pageId: payload.channelIdentifier, type: 'FACEBOOK', isActive: true },
     })
   } else {
+    // Instagram: entry.id may be stored in either businessAccountId or pageId
     channel = await db.channel.findFirst({
-      where: { businessAccountId: payload.channelIdentifier, type: 'INSTAGRAM', isActive: true },
+      where: {
+        OR: [
+          { businessAccountId: payload.channelIdentifier, type: 'INSTAGRAM', isActive: true },
+          { pageId: payload.channelIdentifier, type: 'INSTAGRAM', isActive: true },
+        ],
+      },
     })
   }
 
