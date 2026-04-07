@@ -493,30 +493,6 @@ export default function AnalyticsPage() {
             </div>
           )}
 
-          {/* Usage bar */}
-          <div className="bg-white border border-gray-200 rounded-xl p-5">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="font-medium text-gray-900">Uso este mês</h3>
-              <span className="text-sm text-gray-500">
-                {overview?.conversationsThisMonth} / {overview?.maxConversationsPerMonth}
-              </span>
-            </div>
-            <div className="h-2 bg-gray-100 rounded-full overflow-hidden mb-4">
-              <div
-                className="h-full bg-blue-500 rounded-full transition-all"
-                style={{
-                  width: `${Math.min(
-                    ((overview?.conversationsThisMonth ?? 0) / (overview?.maxConversationsPerMonth ?? 1)) * 100,
-                    100
-                  )}%`,
-                }}
-              />
-            </div>
-            <div className="flex justify-between text-xs text-gray-400 mt-1">
-              <span>Fechados: {overview?.closedLeads ?? 0}</span>
-              <span>Total: {overview?.total ?? 0} conversas</span>
-            </div>
-          </div>
         </div>
 
         {/* ─── AI Metrics ─── */}
@@ -603,7 +579,7 @@ export default function AnalyticsPage() {
         <div className="bg-white border border-gray-200 rounded-xl p-5">
           <div className="flex items-center gap-2 mb-4">
             <h2 className="font-semibold text-gray-900">Heatmap de Atendimento</h2>
-            <span className="text-xs text-gray-400">(últimos 30 dias — mensagens recebidas)</span>
+            <span className="text-xs text-gray-400">(últimos 7 dias — primeira mensagem do lead por dia)</span>
           </div>
 
           <div className="overflow-x-auto">

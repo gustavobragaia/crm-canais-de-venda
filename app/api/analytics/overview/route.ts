@@ -42,7 +42,7 @@ export async function GET(req: NextRequest) {
     }),
     db.conversation.groupBy({
       by: ['channelId'],
-      where: { workspaceId, createdAt: { gte: startOfMonth } },
+      where: { workspaceId, lastMessageAt: { gte: startOfMonth } },
       _count: { id: true },
     }),
     db.workspace.findUnique({

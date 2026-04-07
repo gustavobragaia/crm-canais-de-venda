@@ -17,7 +17,7 @@ export async function GET() {
         select: { id: true, name: true, role: true },
       }),
       db.conversation.findMany({
-        where: { workspaceId, assignedToId: { not: null }, createdAt: { gte: startOfMonth } },
+        where: { workspaceId, assignedToId: { not: null }, lastMessageAt: { gte: startOfMonth } },
         select: {
           id: true,
           assignedToId: true,

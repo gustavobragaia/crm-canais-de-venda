@@ -47,7 +47,7 @@ export async function GET() {
       where: {
         workspaceId,
         contactPhone: { not: null },
-        createdAt: { gte: startOfMonth },
+        lastMessageAt: { gte: startOfMonth },
       },
       select: { contactPhone: true },
     })

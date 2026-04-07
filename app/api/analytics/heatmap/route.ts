@@ -24,7 +24,7 @@ export async function GET() {
         FROM messages
         WHERE "workspaceId" = ${workspaceId}
           AND direction = 'INBOUND'
-          AND COALESCE("sentAt", "createdAt") >= NOW() - INTERVAL '30 days'
+          AND COALESCE("sentAt", "createdAt") >= NOW() - INTERVAL '7 days'
         GROUP BY "conversationId", msg_date
       ) AS first_msgs
       GROUP BY day, hour
