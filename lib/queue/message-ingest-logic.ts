@@ -56,11 +56,11 @@ export async function processMessageIngest(payload: MessageIngestPayload): Promi
         },
       })
       if (fullMessage) {
-        pusherServer.trigger(
+        await pusherServer.trigger(
           `workspace-${channel.workspaceId}`,
           payload.isHistory ? 'history-message' : 'new-message',
           { conversationId: existing.conversationId, message: fullMessage }
-        ).catch(() => {})
+        ).catch(err => console.error('[MESSAGE-INGEST] Pusher dedup FAILED:', err))
       }
       return
     }
@@ -145,10 +145,10 @@ export async function processMessageIngest(payload: MessageIngestPayload): Promi
 
   console.log(`[MESSAGE-INGEST] DB write OK messageId=${savedMessage.id} conversationId=${conversation.id}`)
 
-  // STEP 8 — Pusher notification
+  // STEP 8 — Pusher notification (MUST await in serverless to prevent early termination)
   const pusherEvent = payload.isHistory ? 'history-message' : 'new-message'
   console.log(`[MESSAGE-INGEST] triggering Pusher event=${pusherEvent} channel=workspace-${channel.workspaceId}`)
-  pusherServer.trigger(
+  await pusherServer.trigger(
     `workspace-${channel.workspaceId}`,
     pusherEvent,
     { conversationId: conversation.id, message: savedMessage }
