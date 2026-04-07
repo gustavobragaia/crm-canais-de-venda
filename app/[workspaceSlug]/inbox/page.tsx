@@ -100,6 +100,15 @@ export default function InboxPage() {
     setLoading(false)
   }, [buildParams])
 
+  // Silent refresh: updates conversations without showing skeleton loader
+  const silentRefresh = useCallback(async () => {
+    const res = await fetch(`/api/conversations?${buildParams(1)}`)
+    const data = await res.json()
+    setConversations(data.conversations ?? [])
+    setHasMore(data.hasMore ?? false)
+    setPage(1)
+  }, [buildParams])
+
   const loadMore = useCallback(async () => {
     if (loadingMore || !hasMore) return
     setLoadingMore(true)
@@ -130,11 +139,11 @@ export default function InboxPage() {
 
   // Real-time updates via Pusher (workspace-level events)
   usePusherChannel(workspaceId ? `workspace-${workspaceId}` : '', {
-    'new-message': () => { resetAndFetch() },
-    'history-message': () => { resetAndFetch() },
-    'message-sent': () => { resetAndFetch() },
-    'conversation-assigned': () => { resetAndFetch() },
-    'conversation-updated': () => { resetAndFetch() },
+    'new-message': () => { silentRefresh() },
+    'history-message': () => { silentRefresh() },
+    'message-sent': () => { silentRefresh() },
+    'conversation-assigned': () => { silentRefresh() },
+    'conversation-updated': () => { silentRefresh() },
   })
 
   const selectedConversation = conversations.find((c) => c.id === selectedId)
