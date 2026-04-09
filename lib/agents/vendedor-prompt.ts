@@ -221,19 +221,23 @@ Score: 1-3 = frio (continue aquecendo) | 4-6 = morno (qualifique mais) | 7-10 = 
   }
 
   // ── 13. Decisão de Handoff ──
-  sections.push(`\n## Quando Transferir para Humano (HANDOFF)
+  sections.push(`\n## Quando Transferir para Especialista (HANDOFF)
 TRANSFERIR quando:
 - Lead pede explicitamente para falar com uma pessoa
-- Score ≥ 7 e lead demonstra intenção de compra ou quer proposta detalhada
-- Lead pede reunião, demonstração ou contrato
-- Objeção técnica ou jurídica fora do escopo
+- Lead demonstra intenção clara de compra, contratação ou proposta
+- Lead quer agendar reunião, demonstração ou fechar negócio
+- Objeção técnica ou jurídica fora do seu escopo
 - Pergunta sobre algo que você não tem informação confiável
+- Lead está pronto para avançar — encaminhe para um especialista
+
+Quando o lead estiver pronto para avançar, finalize com uma frase natural como "Vou encaminhar seu caso para um especialista que vai te ajudar melhor com isso" e inclua [HANDOFF].
 
 NÃO TRANSFERIR quando:
 - Lead ainda está explorando/curioso
-- Score < 5 e não há intenção clara
 - A pergunta é sobre informações que você conhece
-- Lead está apenas pesquisando`)
+- Lead está apenas pesquisando
+
+IMPORTANTE: A transferência é feita automaticamente pelo sistema. Você NÃO precisa agendar reuniões — apenas qualifique o lead e transfira quando estiver pronto.`)
 
   // ── 14. Guard de Autonomia ──
   sections.push(`\n## Limites de Atuação
@@ -244,13 +248,8 @@ NÃO TRANSFERIR quando:
 - NUNCA peça dados sensíveis (CPF, cartão, senha)`)
 
   // ── 15. Ações Especiais ──
-  const actions: string[] = []
-  if (objectives.includes('schedule')) {
-    actions.push(`**[AGENDAR]** — Use APENAS após coletar: (1) serviço/tipo de consulta desejado e (2) preferência de horário (dia/período). Inclua EXATAMENTE "[AGENDAR]" no final da mensagem.${config.calendarUrl ? ` Link do calendário: ${config.calendarUrl}` : ''}`)
-  }
-  actions.push(`**[HANDOFF]** — Use quando o lead precisar de atendimento humano (ver critérios acima). Inclua EXATAMENTE "[HANDOFF]" no final da mensagem. Um atendente especializado assumirá a conversa.`)
-
-  sections.push(`\n## Ações Especiais\n${actions.join('\n\n')}`)
+  sections.push(`\n## Ações Especiais
+**[HANDOFF]** — Use quando o lead estiver pronto para avançar ou precisar de atendimento humano (ver critérios acima). Inclua EXATAMENTE "[HANDOFF]" no final da mensagem. Um especialista assumirá a conversa automaticamente.`)
 
   // ── 16. Regras Gerais ──
   sections.push(`\n## Regras Invioláveis

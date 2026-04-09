@@ -258,6 +258,26 @@ async function handleHandoff(
   console.log(`[VENDEDOR] handoff | conversation=${conversationId} | reason=${reason} | assignedTo=${bestAgent?.name ?? 'none'} | score=${qualification?.score ?? '?'}`)
 }
 
+// ─── Send Helper ───
+
+async function sendMessageToChannel(
+  channel: { instanceToken: string | null; type: string | null; provider: string | null; accessToken: string | null },
+  conversation: { externalId: string; contactPhone: string | null },
+  text: string,
+): Promise<string> {
+  const sendTo = conversation.contactPhone
+    ?? conversation.externalId.replace('@s.whatsapp.net', '').replace('@g.us', '')
+
+  if (channel.type === 'WHATSAPP' && channel.provider === 'UAZAPI' && channel.instanceToken) {
+    return sendUazapiMessage(channel.instanceToken, sendTo, text)
+  } else if (channel.type === 'INSTAGRAM' && channel.accessToken) {
+    return sendInstagramMessage(conversation.externalId, text, decrypt(channel.accessToken))
+  } else if (channel.type === 'FACEBOOK' && channel.accessToken) {
+    return sendFacebookMessage(conversation.externalId, text, decrypt(channel.accessToken))
+  }
+  throw new Error(`Unsupported channel type=${channel.type} provider=${channel.provider}`)
+}
+
 // ─── Core AI Response ───
 
 export async function processAiResponse(
@@ -373,6 +393,31 @@ export async function processAiResponse(
     return
   }
 
+  const handoffMinScore = config.handoffMinScore ?? 7
+
+  // 10A. Early qualification for long messages (high intent signal)
+  if (userMessage.length > 200 && conversation.aiSalesMessageCount >= 1) {
+    const earlyQual = await extractQualification(chatHistory, apiKey)
+    if (earlyQual && earlyQual.score >= handoffMinScore) {
+      // Send a natural handoff message before transferring
+      const handoffMsg = 'Entendi seu caso! Vou encaminhar para um especialista que vai poder te ajudar melhor com isso.'
+      const earlyExternalId = await sendMessageToChannel(channel, conversation, handoffMsg).catch(() => '')
+      await db.message.create({
+        data: {
+          conversationId, workspaceId, direction: 'OUTBOUND',
+          content: handoffMsg, externalId: earlyExternalId || undefined,
+          status: earlyExternalId ? 'SENT' : 'FAILED',
+          aiGenerated: true, senderName: config.agentName ?? 'Sora', sentAt: new Date(),
+        },
+      })
+      await pusherServer.trigger(`workspace-${workspaceId}`, 'new-message', { conversationId }).catch(() => {})
+      await generateContextSummary(conversationId, chatHistory, apiKey).catch(() => {})
+      await handleHandoff(conversationId, workspaceId, `Qualificação antecipada (score ${earlyQual.score})`, chatHistory, apiKey)
+      console.log(`[SORA] early handoff | conversation=${conversationId} | score=${earlyQual.score}`)
+      return
+    }
+  }
+
   const res = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
@@ -396,47 +441,8 @@ export async function processAiResponse(
 
   // 11. Detect actions
   const hasHandoff = aiContent.includes('[HANDOFF]')
-  const hasSchedule = aiContent.includes('[AGENDAR]')
 
-  let cleanContent = aiContent.replace(/\[HANDOFF\]/g, '').replace(/\[AGENDAR\]/g, '').trim()
-
-  // 12. Handle [AGENDAR]: find best agent's calendarUrl, set pipelineStage
-  if (hasSchedule) {
-    const agentForCalendar = await findBestAgent(workspaceId, leadContext?.businessType ?? '')
-    const calendarUrl = agentForCalendar?.calendarUrl ?? config.calendarUrl
-
-    if (calendarUrl) {
-      cleanContent += `\n\n${calendarUrl}`
-    }
-
-    await db.conversation.update({
-      where: { id: conversationId },
-      data: {
-        pipelineStage: 'Reunião Marcada',
-        ...(agentForCalendar && !conversation.assignedToId && {
-          assignedToId: agentForCalendar.id,
-          status: 'IN_PROGRESS',
-          assignedAt: new Date(),
-        }),
-      },
-    })
-
-    const scheduleMsg = await db.message.create({
-      data: {
-        conversationId,
-        workspaceId,
-        direction: 'OUTBOUND',
-        content: `Link de agendamento enviado${agentForCalendar ? ` — Agente: ${agentForCalendar.name}` : ''}`,
-        status: 'SENT',
-        aiGenerated: true,
-        senderName: 'Sistema',
-        sentAt: new Date(),
-      },
-    })
-    await pusherServer.trigger(`workspace-${workspaceId}`, 'new-message', {
-      conversationId, message: scheduleMsg,
-    }).catch(() => {})
-  }
+  let cleanContent = aiContent.replace(/\[HANDOFF\]/g, '').trim()
 
   // 13. Split into lines and send
   const lines = cleanContent
@@ -446,31 +452,11 @@ export async function processAiResponse(
     .map((l: string) => l.trim())
     .filter((l: string) => l.length > 0)
 
-  const sendTo = conversation.contactPhone
-    ?? conversation.externalId.replace('@s.whatsapp.net', '').replace('@g.us', '')
-
-  // Determine send function based on channel type
-  type SendFn = (text: string) => Promise<string>
-  let sendFn: SendFn
-
-  if (channel.type === 'WHATSAPP' && channel.provider === 'UAZAPI' && channel.instanceToken) {
-    sendFn = (text) => sendUazapiMessage(channel.instanceToken!, sendTo, text)
-  } else if (channel.type === 'INSTAGRAM' && channel.accessToken) {
-    const token = decrypt(channel.accessToken)
-    sendFn = (text) => sendInstagramMessage(conversation.externalId, text, token)
-  } else if (channel.type === 'FACEBOOK' && channel.accessToken) {
-    const token = decrypt(channel.accessToken)
-    sendFn = (text) => sendFacebookMessage(conversation.externalId, text, token)
-  } else {
-    console.log(`[SORA] unsupported channel type=${channel.type} provider=${channel.provider} | conversation=${conversationId}`)
-    return
-  }
-
   const allSentLines: string[] = []
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i]
-    const externalId = await sendFn(line).catch((err) => {
+    const externalId = await sendMessageToChannel(channel, conversation, line).catch((err) => {
       console.error(`[SORA] send failed | conversation=${conversationId}`, err)
       return ''
     })
@@ -512,15 +498,35 @@ export async function processAiResponse(
 
   console.log(`[SORA] response sent | conversation=${conversationId} | lines=${lines.length} | totalMsgs=${newMsgCount}`)
 
-  // 17. Periodic qualification update every 5 AI messages — publish to queue
-  if (newMsgCount % 5 === 0) {
-    const { publishToQueue } = await import('@/lib/qstash')
-    publishToQueue('/api/queue/qualify-lead', {
-      conversationId,
-      workspaceId,
-      chatHistoryJson: JSON.stringify(chatHistory),
-      apiKey,
-    }).catch((err) => console.error('[VENDEDOR] qualify-lead queue error:', err))
+  // 17. Rule-based qualification + auto handoff (every 3 AI messages, or at message 2)
+  if (newMsgCount >= 2 && (newMsgCount % 3 === 0 || newMsgCount === 2)) {
+    const qualification = await extractQualification(chatHistory, apiKey)
+    if (qualification) {
+      await db.conversation.update({
+        where: { id: conversationId },
+        data: { qualificationScore: qualification.score, qualificationNotes: qualification.notes },
+      })
+
+      // High-intent keyword fallback
+      const HIGH_INTENT_KEYWORDS = [
+        'quero contratar', 'preciso de', 'quero fechar', 'pode me ajudar com',
+        'quanto custa', 'como funciona para contratar', 'quero saber mais sobre',
+        'tenho interesse', 'gostaria de contratar', 'quero uma proposta',
+      ]
+      const lowerMsg = userMessage.toLowerCase()
+      const hasHighIntent = HIGH_INTENT_KEYWORDS.some(k => lowerMsg.includes(k))
+
+      // Auto handoff: score >= threshold OR high-intent keywords detected
+      if (qualification.score >= handoffMinScore || hasHighIntent) {
+        const reason = hasHighIntent && qualification.score < handoffMinScore
+          ? `Intenção alta detectada (score ${qualification.score}, keywords)`
+          : `Lead qualificado (score ${qualification.score}/${handoffMinScore})`
+        await generateContextSummary(conversationId, chatHistory, apiKey).catch(() => {})
+        await handleHandoff(conversationId, workspaceId, reason, chatHistory, apiKey)
+        console.log(`[SORA] auto handoff | conversation=${conversationId} | reason=${reason}`)
+        return
+      }
+    }
   }
 
   // 18. Generate cumulative summary every 10 AI messages
@@ -530,9 +536,8 @@ export async function processAiResponse(
     )
   }
 
-  // 19. Handle handoff if detected
+  // 19. Handle handoff if AI explicitly requested it
   if (hasHandoff) {
-    // Generate summary before handoff for the receiving agent
     await generateContextSummary(conversationId, chatHistory, apiKey).catch(() => {})
     await handleHandoff(conversationId, workspaceId, 'AI solicitou handoff', chatHistory, apiKey)
   }

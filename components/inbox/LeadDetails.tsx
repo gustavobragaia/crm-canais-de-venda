@@ -26,6 +26,8 @@ interface ConversationDetail {
   aiSalesEnabled?: boolean
   aiSalesMessageCount?: number
   qualificationScore?: number | null
+  qualificationNotes?: string | null
+  handoffBriefing?: string | null
 }
 
 interface UserItem {
@@ -234,7 +236,7 @@ export function LeadDetails({ conversationId }: LeadDetailsProps) {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Bot size={13} className="text-violet-500" />
-                <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">AI Vendedor</span>
+                <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Sora</span>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
@@ -248,41 +250,59 @@ export function LeadDetails({ conversationId }: LeadDetailsProps) {
               </label>
             </div>
 
+            {/* Message count */}
+            {(conversation.aiSalesMessageCount ?? 0) > 0 && (
+              <p className="text-xs text-gray-500">
+                {conversation.aiSalesMessageCount} msgs enviadas
+              </p>
+            )}
+
+            {/* Qualification score */}
+            {conversation.qualificationScore != null && (
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-gray-500">Score:</span>
+                <span className={`text-xs font-bold px-1.5 py-0.5 rounded-full ${
+                  conversation.qualificationScore >= 7
+                    ? 'bg-green-100 text-green-700'
+                    : conversation.qualificationScore >= 4
+                      ? 'bg-yellow-100 text-yellow-700'
+                      : 'bg-red-100 text-red-700'
+                }`}>
+                  {conversation.qualificationScore}/10
+                </span>
+              </div>
+            )}
+
+            {/* Qualification notes */}
+            {conversation.qualificationNotes && (
+              <div className="space-y-1">
+                <span className="text-xs font-medium text-gray-500">Observações da Sora</span>
+                <p className="text-xs text-gray-600 bg-gray-50 rounded-lg p-2 leading-relaxed">
+                  {conversation.qualificationNotes}
+                </p>
+              </div>
+            )}
+
+            {/* Handoff briefing */}
+            {conversation.handoffBriefing && (
+              <div className="space-y-1">
+                <span className="text-xs font-medium text-violet-600">Briefing</span>
+                <p className="text-xs text-gray-600 bg-violet-50 rounded-lg p-2 leading-relaxed">
+                  {conversation.handoffBriefing}
+                </p>
+              </div>
+            )}
+
+            {/* Unblock button (only when AI is active) */}
             {conversation.aiSalesEnabled && (
-              <>
-                {/* Message count */}
-                {(conversation.aiSalesMessageCount ?? 0) > 0 && (
-                  <p className="text-xs text-gray-500">
-                    {conversation.aiSalesMessageCount} msgs AI enviadas
-                  </p>
-                )}
-
-                {/* Qualification score */}
-                {conversation.qualificationScore != null && (
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-gray-500">Score:</span>
-                    <span className={`text-xs font-bold px-1.5 py-0.5 rounded-full ${
-                      conversation.qualificationScore >= 7
-                        ? 'bg-green-100 text-green-700'
-                        : conversation.qualificationScore >= 4
-                          ? 'bg-yellow-100 text-yellow-700'
-                          : 'bg-red-100 text-red-700'
-                    }`}>
-                      {conversation.qualificationScore}/10
-                    </span>
-                  </div>
-                )}
-
-                {/* Unblock button */}
-                <button
-                  onClick={unblockAi}
-                  disabled={aiUnblocking}
-                  className="flex items-center gap-1.5 text-xs text-violet-600 hover:text-violet-700 disabled:opacity-50"
-                >
-                  <ShieldOff size={12} />
-                  {aiUnblocking ? 'Desbloqueando...' : 'Reativar AI (se bloqueada)'}
-                </button>
-              </>
+              <button
+                onClick={unblockAi}
+                disabled={aiUnblocking}
+                className="flex items-center gap-1.5 text-xs text-violet-600 hover:text-violet-700 disabled:opacity-50"
+              >
+                <ShieldOff size={12} />
+                {aiUnblocking ? 'Desbloqueando...' : 'Reativar Sora (se bloqueada)'}
+              </button>
             )}
           </div>
         )}
