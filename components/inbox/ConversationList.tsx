@@ -108,7 +108,7 @@ export function ConversationList({
             }`}
           >
             <div className="flex items-start gap-3">
-              <div className="flex-shrink-0">
+              <div className="relative flex-shrink-0">
                 {conv.contactPhotoUrl ? (
                   <img
                     src={conv.contactPhotoUrl}
@@ -120,19 +120,20 @@ export function ConversationList({
                     <Icon size={18} color={channelStyle.color} />
                   </div>
                 )}
+                {conv.aiSalesEnabled && (
+                  <img
+                    src="/ai-avatar.svg"
+                    alt="Sora"
+                    className="absolute -bottom-0.5 -right-0.5 w-4.5 h-4.5 rounded-full border-2 border-white animate-pulse-subtle"
+                    style={{ width: 18, height: 18 }}
+                  />
+                )}
               </div>
 
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between mb-0.5">
-                  <p className="font-medium text-gray-900 text-sm truncate flex items-center gap-1.5">
+                  <p className="font-medium text-gray-900 text-sm truncate">
                     {conv.contactName}
-                    {conv.aiSalesEnabled && (
-                      <img
-                        src="/ai-avatar.svg"
-                        alt="Sora"
-                        className="w-4 h-4 rounded-full object-cover flex-shrink-0 animate-pulse-subtle"
-                      />
-                    )}
                   </p>
                   <div className="flex items-center gap-1.5 flex-shrink-0 ml-2">
                     {conv.unreadCount > 0 && (
