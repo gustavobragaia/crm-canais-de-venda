@@ -1085,6 +1085,7 @@ export default function SoraPage() {
                     <tr className="bg-gray-50 border-b border-gray-100">
                       <th className="text-left px-5 py-3 text-xs font-medium text-gray-500">Nome</th>
                       <th className="text-left px-5 py-3 text-xs font-medium text-gray-500">Cargo</th>
+                      <th className="text-left px-5 py-3 text-xs font-medium text-gray-500">Especializações</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
@@ -1097,6 +1098,58 @@ export default function SoraPage() {
                         <td className="px-5 py-4">
                           <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">{u.role}</span>
                         </td>
+                        <td className="px-5 py-4">
+                          {editingUserId === u.id ? (
+                            <div className="space-y-1.5">
+                              <div className="flex flex-wrap gap-1">
+                                {u.specializations.map(s => (
+                                  <span key={s} className="inline-flex items-center gap-1 text-xs bg-violet-100 text-violet-700 px-2 py-0.5 rounded-full">
+                                    {s}
+                                    <button
+                                      onClick={() => updateUserSpec(u.id, u.specializations.filter(x => x !== s))}
+                                      className="text-violet-400 hover:text-violet-700"
+                                    >×</button>
+                                  </span>
+                                ))}
+                              </div>
+                              <input
+                                type="text"
+                                placeholder="Adicionar (Enter)"
+                                value={specInput}
+                                onChange={e => setSpecInput(e.target.value)}
+                                onKeyDown={e => {
+                                  if (e.key === 'Enter' && specInput.trim()) {
+                                    e.preventDefault()
+                                    const tag = specInput.trim().toLowerCase()
+                                    if (!u.specializations.includes(tag)) {
+                                      updateUserSpec(u.id, [...u.specializations, tag])
+                                    }
+                                    setSpecInput('')
+                                  }
+                                  if (e.key === 'Escape') setEditingUserId(null)
+                                }}
+                                onBlur={() => setEditingUserId(null)}
+                                autoFocus
+                                className="text-xs px-2 py-1 border border-violet-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-violet-500 w-36"
+                              />
+                            </div>
+                          ) : (
+                            <button
+                              onClick={() => { setEditingUserId(u.id); setSpecInput('') }}
+                              className="text-left"
+                            >
+                              {u.specializations.length > 0 ? (
+                                <div className="flex flex-wrap gap-1">
+                                  {u.specializations.map(s => (
+                                    <span key={s} className="text-xs bg-violet-100 text-violet-700 px-2 py-0.5 rounded-full">{s}</span>
+                                  ))}
+                                </div>
+                              ) : (
+                                <span className="text-xs text-gray-400 hover:text-violet-600">+ Adicionar</span>
+                              )}
+                            </button>
+                          )}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -1106,7 +1159,7 @@ export default function SoraPage() {
 
             <div className="px-6 py-4 border-t border-gray-100 bg-gray-50">
               <p className="text-xs text-gray-500">
-                ℹ️ A Sora transfere automaticamente para um membro da equipe quando o lead está qualificado.
+                ℹ️ A Sora transfere para o atendente cuja especialização mais se aproxima da necessidade do lead. Se nenhum match, transfere para um admin.
               </p>
             </div>
           </div>
