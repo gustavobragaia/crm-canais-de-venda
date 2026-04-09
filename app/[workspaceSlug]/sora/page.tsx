@@ -683,41 +683,23 @@ export default function SoraPage() {
               {/* Bloco 1: Comportamento */}
               <SectionCard title="Como a Sora deve atuar?" icon="🧠">
                 <div className="space-y-3">
-                  {[
-                    { key: 'qualify', label: 'Qualificar leads antes de transferir', desc: 'Sora coleta informações BANT e avalia o potencial do lead' },
-                    { key: 'schedule', label: 'Agendar reuniões', desc: 'Sora pode sugerir e facilitar agendamentos' },
-                  ].map(({ key, label, desc }) => (
-                    <label key={key} className="flex items-start gap-3 cursor-pointer">
-                      <div
-                        className={`w-5 h-5 rounded flex items-center justify-center border shrink-0 mt-0.5 transition-colors ${
-                          config.objectives.includes(key) ? 'bg-violet-600 border-violet-600' : 'border-gray-300'
-                        }`}
-                        onClick={() => {
-                          const has = config.objectives.includes(key)
-                          setConfig(c => ({ ...c, objectives: has ? c.objectives.filter(o => o !== key) : [...c.objectives, key] }))
-                        }}
-                      >
-                        {config.objectives.includes(key) && <Check size={12} className="text-white" strokeWidth={3} />}
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">{label}</p>
-                        <p className="text-xs text-gray-500 mt-0.5">{desc}</p>
-                      </div>
-                    </label>
-                  ))}
-
-                  {config.objectives.includes('schedule') && (
-                    <div className="ml-8 mt-2">
-                      <label className="block text-xs font-medium text-gray-700 mb-1.5">Link do Calendário</label>
-                      <input
-                        type="url"
-                        placeholder="https://cal.com/seu-nome"
-                        value={config.calendarUrl ?? ''}
-                        onChange={e => setConfig(c => ({ ...c, calendarUrl: e.target.value || null }))}
-                        className="w-full text-sm px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500"
-                      />
+                  <label className="flex items-start gap-3 cursor-pointer">
+                    <div
+                      className={`w-5 h-5 rounded flex items-center justify-center border shrink-0 mt-0.5 transition-colors ${
+                        config.objectives.includes('qualify') ? 'bg-violet-600 border-violet-600' : 'border-gray-300'
+                      }`}
+                      onClick={() => {
+                        const has = config.objectives.includes('qualify')
+                        setConfig(c => ({ ...c, objectives: has ? c.objectives.filter(o => o !== 'qualify') : [...c.objectives, 'qualify'] }))
+                      }}
+                    >
+                      {config.objectives.includes('qualify') && <Check size={12} className="text-white" strokeWidth={3} />}
                     </div>
-                  )}
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">Qualificar leads antes de transferir</p>
+                      <p className="text-xs text-gray-500 mt-0.5">Sora coleta informações BANT e avalia o potencial do lead</p>
+                    </div>
+                  </label>
                 </div>
               </SectionCard>
 
@@ -1089,7 +1071,6 @@ export default function SoraPage() {
               <h2 className="font-semibold text-gray-900">Equipe & Handoff</h2>
               <p className="text-sm text-gray-500 mt-1">
                 Configure para quem a Sora transfere os leads qualificados.
-                A Sora escolhe o atendente com especialização mais próxima da necessidade do lead.
               </p>
             </div>
 
@@ -1104,8 +1085,6 @@ export default function SoraPage() {
                     <tr className="bg-gray-50 border-b border-gray-100">
                       <th className="text-left px-5 py-3 text-xs font-medium text-gray-500">Nome</th>
                       <th className="text-left px-5 py-3 text-xs font-medium text-gray-500">Cargo</th>
-                      <th className="text-left px-5 py-3 text-xs font-medium text-gray-500">Especializações</th>
-                      <th className="text-left px-5 py-3 text-xs font-medium text-gray-500">Link Calendário</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
@@ -1118,70 +1097,6 @@ export default function SoraPage() {
                         <td className="px-5 py-4">
                           <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">{u.role}</span>
                         </td>
-                        <td className="px-5 py-4">
-                          {editingUserId === u.id ? (
-                            <div className="space-y-1.5">
-                              <div className="flex flex-wrap gap-1">
-                                {u.specializations.map(s => (
-                                  <span key={s} className="inline-flex items-center gap-1 text-xs bg-violet-100 text-violet-700 px-2 py-0.5 rounded-full">
-                                    {s}
-                                    <button
-                                      onClick={() => updateUserSpec(u.id, u.specializations.filter(x => x !== s))}
-                                      className="text-violet-400 hover:text-violet-700"
-                                    >×</button>
-                                  </span>
-                                ))}
-                              </div>
-                              <input
-                                type="text"
-                                placeholder="Adicionar (Enter)"
-                                value={specInput}
-                                onChange={e => setSpecInput(e.target.value)}
-                                onKeyDown={e => {
-                                  if (e.key === 'Enter' && specInput.trim()) {
-                                    e.preventDefault()
-                                    const tag = specInput.trim().toLowerCase()
-                                    if (!u.specializations.includes(tag)) {
-                                      updateUserSpec(u.id, [...u.specializations, tag])
-                                    }
-                                    setSpecInput('')
-                                  }
-                                  if (e.key === 'Escape') setEditingUserId(null)
-                                }}
-                                onBlur={() => setEditingUserId(null)}
-                                autoFocus
-                                className="text-xs px-2 py-1 border border-violet-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-violet-500 w-36"
-                              />
-                            </div>
-                          ) : (
-                            <button
-                              onClick={() => { setEditingUserId(u.id); setSpecInput('') }}
-                              className="text-left"
-                            >
-                              {u.specializations.length > 0 ? (
-                                <div className="flex flex-wrap gap-1">
-                                  {u.specializations.map(s => (
-                                    <span key={s} className="text-xs bg-violet-100 text-violet-700 px-2 py-0.5 rounded-full">{s}</span>
-                                  ))}
-                                </div>
-                              ) : (
-                                <span className="text-xs text-gray-400 hover:text-violet-600">+ Adicionar especialização</span>
-                              )}
-                            </button>
-                          )}
-                        </td>
-                        <td className="px-5 py-4">
-                          <input
-                            type="url"
-                            placeholder="https://cal.com/..."
-                            defaultValue={u.calendarUrl ?? ''}
-                            onBlur={e => {
-                              const val = e.target.value.trim() || null
-                              if (val !== (u.calendarUrl ?? null)) updateUserCalendar(u.id, val)
-                            }}
-                            className="text-xs px-2 py-1 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-violet-500 w-44"
-                          />
-                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -1191,8 +1106,7 @@ export default function SoraPage() {
 
             <div className="px-6 py-4 border-t border-gray-100 bg-gray-50">
               <p className="text-xs text-gray-500">
-                ℹ️ A Sora transfere para o atendente cuja especialização mais se aproxima da necessidade do lead.
-                Se nenhum match, transfere para um admin.
+                ℹ️ A Sora transfere automaticamente para um membro da equipe quando o lead está qualificado.
               </p>
             </div>
           </div>
