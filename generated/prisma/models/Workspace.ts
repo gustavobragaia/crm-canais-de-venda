@@ -31,6 +31,8 @@ export type WorkspaceAvgAggregateOutputType = {
   maxConversationsPerMonth: number | null
   conversationsThisMonth: number | null
   tokenBalance: number | null
+  soraMonthlyLimit: number | null
+  soraUsedThisMonth: number | null
 }
 
 export type WorkspaceSumAggregateOutputType = {
@@ -38,6 +40,8 @@ export type WorkspaceSumAggregateOutputType = {
   maxConversationsPerMonth: number | null
   conversationsThisMonth: number | null
   tokenBalance: number | null
+  soraMonthlyLimit: number | null
+  soraUsedThisMonth: number | null
 }
 
 export type WorkspaceMinAggregateOutputType = {
@@ -58,6 +62,11 @@ export type WorkspaceMinAggregateOutputType = {
   updatedAt: Date | null
   tokenBalance: number | null
   hasUsedFreeScraping: boolean | null
+  soraEnabled: boolean | null
+  soraMonthlyLimit: number | null
+  soraUsedThisMonth: number | null
+  soraResetDate: Date | null
+  soraOverflowEnabled: boolean | null
 }
 
 export type WorkspaceMaxAggregateOutputType = {
@@ -78,6 +87,11 @@ export type WorkspaceMaxAggregateOutputType = {
   updatedAt: Date | null
   tokenBalance: number | null
   hasUsedFreeScraping: boolean | null
+  soraEnabled: boolean | null
+  soraMonthlyLimit: number | null
+  soraUsedThisMonth: number | null
+  soraResetDate: Date | null
+  soraOverflowEnabled: boolean | null
 }
 
 export type WorkspaceCountAggregateOutputType = {
@@ -98,6 +112,11 @@ export type WorkspaceCountAggregateOutputType = {
   updatedAt: number
   tokenBalance: number
   hasUsedFreeScraping: number
+  soraEnabled: number
+  soraMonthlyLimit: number
+  soraUsedThisMonth: number
+  soraResetDate: number
+  soraOverflowEnabled: number
   _all: number
 }
 
@@ -107,6 +126,8 @@ export type WorkspaceAvgAggregateInputType = {
   maxConversationsPerMonth?: true
   conversationsThisMonth?: true
   tokenBalance?: true
+  soraMonthlyLimit?: true
+  soraUsedThisMonth?: true
 }
 
 export type WorkspaceSumAggregateInputType = {
@@ -114,6 +135,8 @@ export type WorkspaceSumAggregateInputType = {
   maxConversationsPerMonth?: true
   conversationsThisMonth?: true
   tokenBalance?: true
+  soraMonthlyLimit?: true
+  soraUsedThisMonth?: true
 }
 
 export type WorkspaceMinAggregateInputType = {
@@ -134,6 +157,11 @@ export type WorkspaceMinAggregateInputType = {
   updatedAt?: true
   tokenBalance?: true
   hasUsedFreeScraping?: true
+  soraEnabled?: true
+  soraMonthlyLimit?: true
+  soraUsedThisMonth?: true
+  soraResetDate?: true
+  soraOverflowEnabled?: true
 }
 
 export type WorkspaceMaxAggregateInputType = {
@@ -154,6 +182,11 @@ export type WorkspaceMaxAggregateInputType = {
   updatedAt?: true
   tokenBalance?: true
   hasUsedFreeScraping?: true
+  soraEnabled?: true
+  soraMonthlyLimit?: true
+  soraUsedThisMonth?: true
+  soraResetDate?: true
+  soraOverflowEnabled?: true
 }
 
 export type WorkspaceCountAggregateInputType = {
@@ -174,6 +207,11 @@ export type WorkspaceCountAggregateInputType = {
   updatedAt?: true
   tokenBalance?: true
   hasUsedFreeScraping?: true
+  soraEnabled?: true
+  soraMonthlyLimit?: true
+  soraUsedThisMonth?: true
+  soraResetDate?: true
+  soraOverflowEnabled?: true
   _all?: true
 }
 
@@ -281,6 +319,11 @@ export type WorkspaceGroupByOutputType = {
   updatedAt: Date
   tokenBalance: number
   hasUsedFreeScraping: boolean
+  soraEnabled: boolean
+  soraMonthlyLimit: number
+  soraUsedThisMonth: number
+  soraResetDate: Date | null
+  soraOverflowEnabled: boolean
   _count: WorkspaceCountAggregateOutputType | null
   _avg: WorkspaceAvgAggregateOutputType | null
   _sum: WorkspaceSumAggregateOutputType | null
@@ -324,6 +367,11 @@ export type WorkspaceWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Workspace"> | Date | string
   tokenBalance?: Prisma.IntFilter<"Workspace"> | number
   hasUsedFreeScraping?: Prisma.BoolFilter<"Workspace"> | boolean
+  soraEnabled?: Prisma.BoolFilter<"Workspace"> | boolean
+  soraMonthlyLimit?: Prisma.IntFilter<"Workspace"> | number
+  soraUsedThisMonth?: Prisma.IntFilter<"Workspace"> | number
+  soraResetDate?: Prisma.DateTimeNullableFilter<"Workspace"> | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFilter<"Workspace"> | boolean
   analyticsDaily?: Prisma.AnalyticsDailyListRelationFilter
   subscriptions?: Prisma.SubscriptionListRelationFilter
   channels?: Prisma.ChannelListRelationFilter
@@ -345,6 +393,7 @@ export type WorkspaceWhereInput = {
   wabaTemplates?: Prisma.WabaTemplateListRelationFilter
   templateDispatches?: Prisma.TemplateDispatchListRelationFilter
   aiSalesConfig?: Prisma.XOR<Prisma.AiSalesConfigNullableScalarRelationFilter, Prisma.AiSalesConfigWhereInput> | null
+  knowledgeDocuments?: Prisma.KnowledgeDocumentListRelationFilter
 }
 
 export type WorkspaceOrderByWithRelationInput = {
@@ -365,6 +414,11 @@ export type WorkspaceOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   tokenBalance?: Prisma.SortOrder
   hasUsedFreeScraping?: Prisma.SortOrder
+  soraEnabled?: Prisma.SortOrder
+  soraMonthlyLimit?: Prisma.SortOrder
+  soraUsedThisMonth?: Prisma.SortOrder
+  soraResetDate?: Prisma.SortOrderInput | Prisma.SortOrder
+  soraOverflowEnabled?: Prisma.SortOrder
   analyticsDaily?: Prisma.AnalyticsDailyOrderByRelationAggregateInput
   subscriptions?: Prisma.SubscriptionOrderByRelationAggregateInput
   channels?: Prisma.ChannelOrderByRelationAggregateInput
@@ -386,6 +440,7 @@ export type WorkspaceOrderByWithRelationInput = {
   wabaTemplates?: Prisma.WabaTemplateOrderByRelationAggregateInput
   templateDispatches?: Prisma.TemplateDispatchOrderByRelationAggregateInput
   aiSalesConfig?: Prisma.AiSalesConfigOrderByWithRelationInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentOrderByRelationAggregateInput
 }
 
 export type WorkspaceWhereUniqueInput = Prisma.AtLeast<{
@@ -409,6 +464,11 @@ export type WorkspaceWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"Workspace"> | Date | string
   tokenBalance?: Prisma.IntFilter<"Workspace"> | number
   hasUsedFreeScraping?: Prisma.BoolFilter<"Workspace"> | boolean
+  soraEnabled?: Prisma.BoolFilter<"Workspace"> | boolean
+  soraMonthlyLimit?: Prisma.IntFilter<"Workspace"> | number
+  soraUsedThisMonth?: Prisma.IntFilter<"Workspace"> | number
+  soraResetDate?: Prisma.DateTimeNullableFilter<"Workspace"> | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFilter<"Workspace"> | boolean
   analyticsDaily?: Prisma.AnalyticsDailyListRelationFilter
   subscriptions?: Prisma.SubscriptionListRelationFilter
   channels?: Prisma.ChannelListRelationFilter
@@ -430,6 +490,7 @@ export type WorkspaceWhereUniqueInput = Prisma.AtLeast<{
   wabaTemplates?: Prisma.WabaTemplateListRelationFilter
   templateDispatches?: Prisma.TemplateDispatchListRelationFilter
   aiSalesConfig?: Prisma.XOR<Prisma.AiSalesConfigNullableScalarRelationFilter, Prisma.AiSalesConfigWhereInput> | null
+  knowledgeDocuments?: Prisma.KnowledgeDocumentListRelationFilter
 }, "id" | "slug">
 
 export type WorkspaceOrderByWithAggregationInput = {
@@ -450,6 +511,11 @@ export type WorkspaceOrderByWithAggregationInput = {
   updatedAt?: Prisma.SortOrder
   tokenBalance?: Prisma.SortOrder
   hasUsedFreeScraping?: Prisma.SortOrder
+  soraEnabled?: Prisma.SortOrder
+  soraMonthlyLimit?: Prisma.SortOrder
+  soraUsedThisMonth?: Prisma.SortOrder
+  soraResetDate?: Prisma.SortOrderInput | Prisma.SortOrder
+  soraOverflowEnabled?: Prisma.SortOrder
   _count?: Prisma.WorkspaceCountOrderByAggregateInput
   _avg?: Prisma.WorkspaceAvgOrderByAggregateInput
   _max?: Prisma.WorkspaceMaxOrderByAggregateInput
@@ -478,6 +544,11 @@ export type WorkspaceScalarWhereWithAggregatesInput = {
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Workspace"> | Date | string
   tokenBalance?: Prisma.IntWithAggregatesFilter<"Workspace"> | number
   hasUsedFreeScraping?: Prisma.BoolWithAggregatesFilter<"Workspace"> | boolean
+  soraEnabled?: Prisma.BoolWithAggregatesFilter<"Workspace"> | boolean
+  soraMonthlyLimit?: Prisma.IntWithAggregatesFilter<"Workspace"> | number
+  soraUsedThisMonth?: Prisma.IntWithAggregatesFilter<"Workspace"> | number
+  soraResetDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Workspace"> | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolWithAggregatesFilter<"Workspace"> | boolean
 }
 
 export type WorkspaceCreateInput = {
@@ -498,6 +569,11 @@ export type WorkspaceCreateInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
   analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
@@ -519,6 +595,7 @@ export type WorkspaceCreateInput = {
   wabaTemplates?: Prisma.WabaTemplateCreateNestedManyWithoutWorkspaceInput
   templateDispatches?: Prisma.TemplateDispatchCreateNestedManyWithoutWorkspaceInput
   aiSalesConfig?: Prisma.AiSalesConfigCreateNestedOneWithoutWorkspaceInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentCreateNestedManyWithoutWorkspaceInput
 }
 
 export type WorkspaceUncheckedCreateInput = {
@@ -539,6 +616,11 @@ export type WorkspaceUncheckedCreateInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -560,6 +642,7 @@ export type WorkspaceUncheckedCreateInput = {
   wabaTemplates?: Prisma.WabaTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
   templateDispatches?: Prisma.TemplateDispatchUncheckedCreateNestedManyWithoutWorkspaceInput
   aiSalesConfig?: Prisma.AiSalesConfigUncheckedCreateNestedOneWithoutWorkspaceInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUncheckedCreateNestedManyWithoutWorkspaceInput
 }
 
 export type WorkspaceUpdateInput = {
@@ -580,6 +663,11 @@ export type WorkspaceUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
@@ -601,6 +689,7 @@ export type WorkspaceUpdateInput = {
   wabaTemplates?: Prisma.WabaTemplateUpdateManyWithoutWorkspaceNestedInput
   templateDispatches?: Prisma.TemplateDispatchUpdateManyWithoutWorkspaceNestedInput
   aiSalesConfig?: Prisma.AiSalesConfigUpdateOneWithoutWorkspaceNestedInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUpdateManyWithoutWorkspaceNestedInput
 }
 
 export type WorkspaceUncheckedUpdateInput = {
@@ -621,6 +710,11 @@ export type WorkspaceUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
@@ -642,6 +736,7 @@ export type WorkspaceUncheckedUpdateInput = {
   wabaTemplates?: Prisma.WabaTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
   templateDispatches?: Prisma.TemplateDispatchUncheckedUpdateManyWithoutWorkspaceNestedInput
   aiSalesConfig?: Prisma.AiSalesConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUncheckedUpdateManyWithoutWorkspaceNestedInput
 }
 
 export type WorkspaceCreateManyInput = {
@@ -662,6 +757,11 @@ export type WorkspaceCreateManyInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
 }
 
 export type WorkspaceUpdateManyMutationInput = {
@@ -682,6 +782,11 @@ export type WorkspaceUpdateManyMutationInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type WorkspaceUncheckedUpdateManyInput = {
@@ -702,6 +807,11 @@ export type WorkspaceUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type WorkspaceCountOrderByAggregateInput = {
@@ -722,6 +832,11 @@ export type WorkspaceCountOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
   tokenBalance?: Prisma.SortOrder
   hasUsedFreeScraping?: Prisma.SortOrder
+  soraEnabled?: Prisma.SortOrder
+  soraMonthlyLimit?: Prisma.SortOrder
+  soraUsedThisMonth?: Prisma.SortOrder
+  soraResetDate?: Prisma.SortOrder
+  soraOverflowEnabled?: Prisma.SortOrder
 }
 
 export type WorkspaceAvgOrderByAggregateInput = {
@@ -729,6 +844,8 @@ export type WorkspaceAvgOrderByAggregateInput = {
   maxConversationsPerMonth?: Prisma.SortOrder
   conversationsThisMonth?: Prisma.SortOrder
   tokenBalance?: Prisma.SortOrder
+  soraMonthlyLimit?: Prisma.SortOrder
+  soraUsedThisMonth?: Prisma.SortOrder
 }
 
 export type WorkspaceMaxOrderByAggregateInput = {
@@ -749,6 +866,11 @@ export type WorkspaceMaxOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
   tokenBalance?: Prisma.SortOrder
   hasUsedFreeScraping?: Prisma.SortOrder
+  soraEnabled?: Prisma.SortOrder
+  soraMonthlyLimit?: Prisma.SortOrder
+  soraUsedThisMonth?: Prisma.SortOrder
+  soraResetDate?: Prisma.SortOrder
+  soraOverflowEnabled?: Prisma.SortOrder
 }
 
 export type WorkspaceMinOrderByAggregateInput = {
@@ -769,6 +891,11 @@ export type WorkspaceMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
   tokenBalance?: Prisma.SortOrder
   hasUsedFreeScraping?: Prisma.SortOrder
+  soraEnabled?: Prisma.SortOrder
+  soraMonthlyLimit?: Prisma.SortOrder
+  soraUsedThisMonth?: Prisma.SortOrder
+  soraResetDate?: Prisma.SortOrder
+  soraOverflowEnabled?: Prisma.SortOrder
 }
 
 export type WorkspaceSumOrderByAggregateInput = {
@@ -776,6 +903,8 @@ export type WorkspaceSumOrderByAggregateInput = {
   maxConversationsPerMonth?: Prisma.SortOrder
   conversationsThisMonth?: Prisma.SortOrder
   tokenBalance?: Prisma.SortOrder
+  soraMonthlyLimit?: Prisma.SortOrder
+  soraUsedThisMonth?: Prisma.SortOrder
 }
 
 export type WorkspaceScalarRelationFilter = {
@@ -1116,6 +1245,20 @@ export type WorkspaceUpdateOneRequiredWithoutAiSalesConfigNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.WorkspaceUpdateToOneWithWhereWithoutAiSalesConfigInput, Prisma.WorkspaceUpdateWithoutAiSalesConfigInput>, Prisma.WorkspaceUncheckedUpdateWithoutAiSalesConfigInput>
 }
 
+export type WorkspaceCreateNestedOneWithoutKnowledgeDocumentsInput = {
+  create?: Prisma.XOR<Prisma.WorkspaceCreateWithoutKnowledgeDocumentsInput, Prisma.WorkspaceUncheckedCreateWithoutKnowledgeDocumentsInput>
+  connectOrCreate?: Prisma.WorkspaceCreateOrConnectWithoutKnowledgeDocumentsInput
+  connect?: Prisma.WorkspaceWhereUniqueInput
+}
+
+export type WorkspaceUpdateOneRequiredWithoutKnowledgeDocumentsNestedInput = {
+  create?: Prisma.XOR<Prisma.WorkspaceCreateWithoutKnowledgeDocumentsInput, Prisma.WorkspaceUncheckedCreateWithoutKnowledgeDocumentsInput>
+  connectOrCreate?: Prisma.WorkspaceCreateOrConnectWithoutKnowledgeDocumentsInput
+  upsert?: Prisma.WorkspaceUpsertWithoutKnowledgeDocumentsInput
+  connect?: Prisma.WorkspaceWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.WorkspaceUpdateToOneWithWhereWithoutKnowledgeDocumentsInput, Prisma.WorkspaceUpdateWithoutKnowledgeDocumentsInput>, Prisma.WorkspaceUncheckedUpdateWithoutKnowledgeDocumentsInput>
+}
+
 export type WorkspaceCreateWithoutUsersInput = {
   id?: string
   name: string
@@ -1134,6 +1277,11 @@ export type WorkspaceCreateWithoutUsersInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
   analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
@@ -1154,6 +1302,7 @@ export type WorkspaceCreateWithoutUsersInput = {
   wabaTemplates?: Prisma.WabaTemplateCreateNestedManyWithoutWorkspaceInput
   templateDispatches?: Prisma.TemplateDispatchCreateNestedManyWithoutWorkspaceInput
   aiSalesConfig?: Prisma.AiSalesConfigCreateNestedOneWithoutWorkspaceInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentCreateNestedManyWithoutWorkspaceInput
 }
 
 export type WorkspaceUncheckedCreateWithoutUsersInput = {
@@ -1174,6 +1323,11 @@ export type WorkspaceUncheckedCreateWithoutUsersInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -1194,6 +1348,7 @@ export type WorkspaceUncheckedCreateWithoutUsersInput = {
   wabaTemplates?: Prisma.WabaTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
   templateDispatches?: Prisma.TemplateDispatchUncheckedCreateNestedManyWithoutWorkspaceInput
   aiSalesConfig?: Prisma.AiSalesConfigUncheckedCreateNestedOneWithoutWorkspaceInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUncheckedCreateNestedManyWithoutWorkspaceInput
 }
 
 export type WorkspaceCreateOrConnectWithoutUsersInput = {
@@ -1230,6 +1385,11 @@ export type WorkspaceUpdateWithoutUsersInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
@@ -1250,6 +1410,7 @@ export type WorkspaceUpdateWithoutUsersInput = {
   wabaTemplates?: Prisma.WabaTemplateUpdateManyWithoutWorkspaceNestedInput
   templateDispatches?: Prisma.TemplateDispatchUpdateManyWithoutWorkspaceNestedInput
   aiSalesConfig?: Prisma.AiSalesConfigUpdateOneWithoutWorkspaceNestedInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUpdateManyWithoutWorkspaceNestedInput
 }
 
 export type WorkspaceUncheckedUpdateWithoutUsersInput = {
@@ -1270,6 +1431,11 @@ export type WorkspaceUncheckedUpdateWithoutUsersInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
@@ -1290,6 +1456,7 @@ export type WorkspaceUncheckedUpdateWithoutUsersInput = {
   wabaTemplates?: Prisma.WabaTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
   templateDispatches?: Prisma.TemplateDispatchUncheckedUpdateManyWithoutWorkspaceNestedInput
   aiSalesConfig?: Prisma.AiSalesConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUncheckedUpdateManyWithoutWorkspaceNestedInput
 }
 
 export type WorkspaceCreateWithoutChannelsInput = {
@@ -1310,6 +1477,11 @@ export type WorkspaceCreateWithoutChannelsInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
   analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutWorkspaceInput
@@ -1330,6 +1502,7 @@ export type WorkspaceCreateWithoutChannelsInput = {
   wabaTemplates?: Prisma.WabaTemplateCreateNestedManyWithoutWorkspaceInput
   templateDispatches?: Prisma.TemplateDispatchCreateNestedManyWithoutWorkspaceInput
   aiSalesConfig?: Prisma.AiSalesConfigCreateNestedOneWithoutWorkspaceInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentCreateNestedManyWithoutWorkspaceInput
 }
 
 export type WorkspaceUncheckedCreateWithoutChannelsInput = {
@@ -1350,6 +1523,11 @@ export type WorkspaceUncheckedCreateWithoutChannelsInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -1370,6 +1548,7 @@ export type WorkspaceUncheckedCreateWithoutChannelsInput = {
   wabaTemplates?: Prisma.WabaTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
   templateDispatches?: Prisma.TemplateDispatchUncheckedCreateNestedManyWithoutWorkspaceInput
   aiSalesConfig?: Prisma.AiSalesConfigUncheckedCreateNestedOneWithoutWorkspaceInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUncheckedCreateNestedManyWithoutWorkspaceInput
 }
 
 export type WorkspaceCreateOrConnectWithoutChannelsInput = {
@@ -1406,6 +1585,11 @@ export type WorkspaceUpdateWithoutChannelsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutWorkspaceNestedInput
@@ -1426,6 +1610,7 @@ export type WorkspaceUpdateWithoutChannelsInput = {
   wabaTemplates?: Prisma.WabaTemplateUpdateManyWithoutWorkspaceNestedInput
   templateDispatches?: Prisma.TemplateDispatchUpdateManyWithoutWorkspaceNestedInput
   aiSalesConfig?: Prisma.AiSalesConfigUpdateOneWithoutWorkspaceNestedInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUpdateManyWithoutWorkspaceNestedInput
 }
 
 export type WorkspaceUncheckedUpdateWithoutChannelsInput = {
@@ -1446,6 +1631,11 @@ export type WorkspaceUncheckedUpdateWithoutChannelsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutWorkspaceNestedInput
@@ -1466,6 +1656,7 @@ export type WorkspaceUncheckedUpdateWithoutChannelsInput = {
   wabaTemplates?: Prisma.WabaTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
   templateDispatches?: Prisma.TemplateDispatchUncheckedUpdateManyWithoutWorkspaceNestedInput
   aiSalesConfig?: Prisma.AiSalesConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUncheckedUpdateManyWithoutWorkspaceNestedInput
 }
 
 export type WorkspaceCreateWithoutConversationsInput = {
@@ -1486,6 +1677,11 @@ export type WorkspaceCreateWithoutConversationsInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
   analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
@@ -1506,6 +1702,7 @@ export type WorkspaceCreateWithoutConversationsInput = {
   wabaTemplates?: Prisma.WabaTemplateCreateNestedManyWithoutWorkspaceInput
   templateDispatches?: Prisma.TemplateDispatchCreateNestedManyWithoutWorkspaceInput
   aiSalesConfig?: Prisma.AiSalesConfigCreateNestedOneWithoutWorkspaceInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentCreateNestedManyWithoutWorkspaceInput
 }
 
 export type WorkspaceUncheckedCreateWithoutConversationsInput = {
@@ -1526,6 +1723,11 @@ export type WorkspaceUncheckedCreateWithoutConversationsInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -1546,6 +1748,7 @@ export type WorkspaceUncheckedCreateWithoutConversationsInput = {
   wabaTemplates?: Prisma.WabaTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
   templateDispatches?: Prisma.TemplateDispatchUncheckedCreateNestedManyWithoutWorkspaceInput
   aiSalesConfig?: Prisma.AiSalesConfigUncheckedCreateNestedOneWithoutWorkspaceInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUncheckedCreateNestedManyWithoutWorkspaceInput
 }
 
 export type WorkspaceCreateOrConnectWithoutConversationsInput = {
@@ -1582,6 +1785,11 @@ export type WorkspaceUpdateWithoutConversationsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
@@ -1602,6 +1810,7 @@ export type WorkspaceUpdateWithoutConversationsInput = {
   wabaTemplates?: Prisma.WabaTemplateUpdateManyWithoutWorkspaceNestedInput
   templateDispatches?: Prisma.TemplateDispatchUpdateManyWithoutWorkspaceNestedInput
   aiSalesConfig?: Prisma.AiSalesConfigUpdateOneWithoutWorkspaceNestedInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUpdateManyWithoutWorkspaceNestedInput
 }
 
 export type WorkspaceUncheckedUpdateWithoutConversationsInput = {
@@ -1622,6 +1831,11 @@ export type WorkspaceUncheckedUpdateWithoutConversationsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
@@ -1642,6 +1856,7 @@ export type WorkspaceUncheckedUpdateWithoutConversationsInput = {
   wabaTemplates?: Prisma.WabaTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
   templateDispatches?: Prisma.TemplateDispatchUncheckedUpdateManyWithoutWorkspaceNestedInput
   aiSalesConfig?: Prisma.AiSalesConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUncheckedUpdateManyWithoutWorkspaceNestedInput
 }
 
 export type WorkspaceCreateWithoutTagsInput = {
@@ -1662,6 +1877,11 @@ export type WorkspaceCreateWithoutTagsInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
   analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
@@ -1682,6 +1902,7 @@ export type WorkspaceCreateWithoutTagsInput = {
   wabaTemplates?: Prisma.WabaTemplateCreateNestedManyWithoutWorkspaceInput
   templateDispatches?: Prisma.TemplateDispatchCreateNestedManyWithoutWorkspaceInput
   aiSalesConfig?: Prisma.AiSalesConfigCreateNestedOneWithoutWorkspaceInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentCreateNestedManyWithoutWorkspaceInput
 }
 
 export type WorkspaceUncheckedCreateWithoutTagsInput = {
@@ -1702,6 +1923,11 @@ export type WorkspaceUncheckedCreateWithoutTagsInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -1722,6 +1948,7 @@ export type WorkspaceUncheckedCreateWithoutTagsInput = {
   wabaTemplates?: Prisma.WabaTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
   templateDispatches?: Prisma.TemplateDispatchUncheckedCreateNestedManyWithoutWorkspaceInput
   aiSalesConfig?: Prisma.AiSalesConfigUncheckedCreateNestedOneWithoutWorkspaceInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUncheckedCreateNestedManyWithoutWorkspaceInput
 }
 
 export type WorkspaceCreateOrConnectWithoutTagsInput = {
@@ -1758,6 +1985,11 @@ export type WorkspaceUpdateWithoutTagsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
@@ -1778,6 +2010,7 @@ export type WorkspaceUpdateWithoutTagsInput = {
   wabaTemplates?: Prisma.WabaTemplateUpdateManyWithoutWorkspaceNestedInput
   templateDispatches?: Prisma.TemplateDispatchUpdateManyWithoutWorkspaceNestedInput
   aiSalesConfig?: Prisma.AiSalesConfigUpdateOneWithoutWorkspaceNestedInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUpdateManyWithoutWorkspaceNestedInput
 }
 
 export type WorkspaceUncheckedUpdateWithoutTagsInput = {
@@ -1798,6 +2031,11 @@ export type WorkspaceUncheckedUpdateWithoutTagsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
@@ -1818,6 +2056,7 @@ export type WorkspaceUncheckedUpdateWithoutTagsInput = {
   wabaTemplates?: Prisma.WabaTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
   templateDispatches?: Prisma.TemplateDispatchUncheckedUpdateManyWithoutWorkspaceNestedInput
   aiSalesConfig?: Prisma.AiSalesConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUncheckedUpdateManyWithoutWorkspaceNestedInput
 }
 
 export type WorkspaceCreateWithoutNotesInput = {
@@ -1838,6 +2077,11 @@ export type WorkspaceCreateWithoutNotesInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
   analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
@@ -1858,6 +2102,7 @@ export type WorkspaceCreateWithoutNotesInput = {
   wabaTemplates?: Prisma.WabaTemplateCreateNestedManyWithoutWorkspaceInput
   templateDispatches?: Prisma.TemplateDispatchCreateNestedManyWithoutWorkspaceInput
   aiSalesConfig?: Prisma.AiSalesConfigCreateNestedOneWithoutWorkspaceInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentCreateNestedManyWithoutWorkspaceInput
 }
 
 export type WorkspaceUncheckedCreateWithoutNotesInput = {
@@ -1878,6 +2123,11 @@ export type WorkspaceUncheckedCreateWithoutNotesInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -1898,6 +2148,7 @@ export type WorkspaceUncheckedCreateWithoutNotesInput = {
   wabaTemplates?: Prisma.WabaTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
   templateDispatches?: Prisma.TemplateDispatchUncheckedCreateNestedManyWithoutWorkspaceInput
   aiSalesConfig?: Prisma.AiSalesConfigUncheckedCreateNestedOneWithoutWorkspaceInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUncheckedCreateNestedManyWithoutWorkspaceInput
 }
 
 export type WorkspaceCreateOrConnectWithoutNotesInput = {
@@ -1934,6 +2185,11 @@ export type WorkspaceUpdateWithoutNotesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
@@ -1954,6 +2210,7 @@ export type WorkspaceUpdateWithoutNotesInput = {
   wabaTemplates?: Prisma.WabaTemplateUpdateManyWithoutWorkspaceNestedInput
   templateDispatches?: Prisma.TemplateDispatchUpdateManyWithoutWorkspaceNestedInput
   aiSalesConfig?: Prisma.AiSalesConfigUpdateOneWithoutWorkspaceNestedInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUpdateManyWithoutWorkspaceNestedInput
 }
 
 export type WorkspaceUncheckedUpdateWithoutNotesInput = {
@@ -1974,6 +2231,11 @@ export type WorkspaceUncheckedUpdateWithoutNotesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
@@ -1994,6 +2256,7 @@ export type WorkspaceUncheckedUpdateWithoutNotesInput = {
   wabaTemplates?: Prisma.WabaTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
   templateDispatches?: Prisma.TemplateDispatchUncheckedUpdateManyWithoutWorkspaceNestedInput
   aiSalesConfig?: Prisma.AiSalesConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUncheckedUpdateManyWithoutWorkspaceNestedInput
 }
 
 export type WorkspaceCreateWithoutStageHistoryInput = {
@@ -2014,6 +2277,11 @@ export type WorkspaceCreateWithoutStageHistoryInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
   analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
@@ -2034,6 +2302,7 @@ export type WorkspaceCreateWithoutStageHistoryInput = {
   wabaTemplates?: Prisma.WabaTemplateCreateNestedManyWithoutWorkspaceInput
   templateDispatches?: Prisma.TemplateDispatchCreateNestedManyWithoutWorkspaceInput
   aiSalesConfig?: Prisma.AiSalesConfigCreateNestedOneWithoutWorkspaceInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentCreateNestedManyWithoutWorkspaceInput
 }
 
 export type WorkspaceUncheckedCreateWithoutStageHistoryInput = {
@@ -2054,6 +2323,11 @@ export type WorkspaceUncheckedCreateWithoutStageHistoryInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -2074,6 +2348,7 @@ export type WorkspaceUncheckedCreateWithoutStageHistoryInput = {
   wabaTemplates?: Prisma.WabaTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
   templateDispatches?: Prisma.TemplateDispatchUncheckedCreateNestedManyWithoutWorkspaceInput
   aiSalesConfig?: Prisma.AiSalesConfigUncheckedCreateNestedOneWithoutWorkspaceInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUncheckedCreateNestedManyWithoutWorkspaceInput
 }
 
 export type WorkspaceCreateOrConnectWithoutStageHistoryInput = {
@@ -2110,6 +2385,11 @@ export type WorkspaceUpdateWithoutStageHistoryInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
@@ -2130,6 +2410,7 @@ export type WorkspaceUpdateWithoutStageHistoryInput = {
   wabaTemplates?: Prisma.WabaTemplateUpdateManyWithoutWorkspaceNestedInput
   templateDispatches?: Prisma.TemplateDispatchUpdateManyWithoutWorkspaceNestedInput
   aiSalesConfig?: Prisma.AiSalesConfigUpdateOneWithoutWorkspaceNestedInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUpdateManyWithoutWorkspaceNestedInput
 }
 
 export type WorkspaceUncheckedUpdateWithoutStageHistoryInput = {
@@ -2150,6 +2431,11 @@ export type WorkspaceUncheckedUpdateWithoutStageHistoryInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
@@ -2170,6 +2456,7 @@ export type WorkspaceUncheckedUpdateWithoutStageHistoryInput = {
   wabaTemplates?: Prisma.WabaTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
   templateDispatches?: Prisma.TemplateDispatchUncheckedUpdateManyWithoutWorkspaceNestedInput
   aiSalesConfig?: Prisma.AiSalesConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUncheckedUpdateManyWithoutWorkspaceNestedInput
 }
 
 export type WorkspaceCreateWithoutMessagesInput = {
@@ -2190,6 +2477,11 @@ export type WorkspaceCreateWithoutMessagesInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
   analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
@@ -2210,6 +2502,7 @@ export type WorkspaceCreateWithoutMessagesInput = {
   wabaTemplates?: Prisma.WabaTemplateCreateNestedManyWithoutWorkspaceInput
   templateDispatches?: Prisma.TemplateDispatchCreateNestedManyWithoutWorkspaceInput
   aiSalesConfig?: Prisma.AiSalesConfigCreateNestedOneWithoutWorkspaceInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentCreateNestedManyWithoutWorkspaceInput
 }
 
 export type WorkspaceUncheckedCreateWithoutMessagesInput = {
@@ -2230,6 +2523,11 @@ export type WorkspaceUncheckedCreateWithoutMessagesInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -2250,6 +2548,7 @@ export type WorkspaceUncheckedCreateWithoutMessagesInput = {
   wabaTemplates?: Prisma.WabaTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
   templateDispatches?: Prisma.TemplateDispatchUncheckedCreateNestedManyWithoutWorkspaceInput
   aiSalesConfig?: Prisma.AiSalesConfigUncheckedCreateNestedOneWithoutWorkspaceInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUncheckedCreateNestedManyWithoutWorkspaceInput
 }
 
 export type WorkspaceCreateOrConnectWithoutMessagesInput = {
@@ -2286,6 +2585,11 @@ export type WorkspaceUpdateWithoutMessagesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
@@ -2306,6 +2610,7 @@ export type WorkspaceUpdateWithoutMessagesInput = {
   wabaTemplates?: Prisma.WabaTemplateUpdateManyWithoutWorkspaceNestedInput
   templateDispatches?: Prisma.TemplateDispatchUpdateManyWithoutWorkspaceNestedInput
   aiSalesConfig?: Prisma.AiSalesConfigUpdateOneWithoutWorkspaceNestedInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUpdateManyWithoutWorkspaceNestedInput
 }
 
 export type WorkspaceUncheckedUpdateWithoutMessagesInput = {
@@ -2326,6 +2631,11 @@ export type WorkspaceUncheckedUpdateWithoutMessagesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
@@ -2346,6 +2656,7 @@ export type WorkspaceUncheckedUpdateWithoutMessagesInput = {
   wabaTemplates?: Prisma.WabaTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
   templateDispatches?: Prisma.TemplateDispatchUncheckedUpdateManyWithoutWorkspaceNestedInput
   aiSalesConfig?: Prisma.AiSalesConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUncheckedUpdateManyWithoutWorkspaceNestedInput
 }
 
 export type WorkspaceCreateWithoutPipelineStagesInput = {
@@ -2366,6 +2677,11 @@ export type WorkspaceCreateWithoutPipelineStagesInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
   analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
@@ -2386,6 +2702,7 @@ export type WorkspaceCreateWithoutPipelineStagesInput = {
   wabaTemplates?: Prisma.WabaTemplateCreateNestedManyWithoutWorkspaceInput
   templateDispatches?: Prisma.TemplateDispatchCreateNestedManyWithoutWorkspaceInput
   aiSalesConfig?: Prisma.AiSalesConfigCreateNestedOneWithoutWorkspaceInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentCreateNestedManyWithoutWorkspaceInput
 }
 
 export type WorkspaceUncheckedCreateWithoutPipelineStagesInput = {
@@ -2406,6 +2723,11 @@ export type WorkspaceUncheckedCreateWithoutPipelineStagesInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -2426,6 +2748,7 @@ export type WorkspaceUncheckedCreateWithoutPipelineStagesInput = {
   wabaTemplates?: Prisma.WabaTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
   templateDispatches?: Prisma.TemplateDispatchUncheckedCreateNestedManyWithoutWorkspaceInput
   aiSalesConfig?: Prisma.AiSalesConfigUncheckedCreateNestedOneWithoutWorkspaceInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUncheckedCreateNestedManyWithoutWorkspaceInput
 }
 
 export type WorkspaceCreateOrConnectWithoutPipelineStagesInput = {
@@ -2462,6 +2785,11 @@ export type WorkspaceUpdateWithoutPipelineStagesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
@@ -2482,6 +2810,7 @@ export type WorkspaceUpdateWithoutPipelineStagesInput = {
   wabaTemplates?: Prisma.WabaTemplateUpdateManyWithoutWorkspaceNestedInput
   templateDispatches?: Prisma.TemplateDispatchUpdateManyWithoutWorkspaceNestedInput
   aiSalesConfig?: Prisma.AiSalesConfigUpdateOneWithoutWorkspaceNestedInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUpdateManyWithoutWorkspaceNestedInput
 }
 
 export type WorkspaceUncheckedUpdateWithoutPipelineStagesInput = {
@@ -2502,6 +2831,11 @@ export type WorkspaceUncheckedUpdateWithoutPipelineStagesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
@@ -2522,6 +2856,7 @@ export type WorkspaceUncheckedUpdateWithoutPipelineStagesInput = {
   wabaTemplates?: Prisma.WabaTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
   templateDispatches?: Prisma.TemplateDispatchUncheckedUpdateManyWithoutWorkspaceNestedInput
   aiSalesConfig?: Prisma.AiSalesConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUncheckedUpdateManyWithoutWorkspaceNestedInput
 }
 
 export type WorkspaceCreateWithoutLeadsInput = {
@@ -2542,6 +2877,11 @@ export type WorkspaceCreateWithoutLeadsInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
   analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
@@ -2562,6 +2902,7 @@ export type WorkspaceCreateWithoutLeadsInput = {
   wabaTemplates?: Prisma.WabaTemplateCreateNestedManyWithoutWorkspaceInput
   templateDispatches?: Prisma.TemplateDispatchCreateNestedManyWithoutWorkspaceInput
   aiSalesConfig?: Prisma.AiSalesConfigCreateNestedOneWithoutWorkspaceInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentCreateNestedManyWithoutWorkspaceInput
 }
 
 export type WorkspaceUncheckedCreateWithoutLeadsInput = {
@@ -2582,6 +2923,11 @@ export type WorkspaceUncheckedCreateWithoutLeadsInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -2602,6 +2948,7 @@ export type WorkspaceUncheckedCreateWithoutLeadsInput = {
   wabaTemplates?: Prisma.WabaTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
   templateDispatches?: Prisma.TemplateDispatchUncheckedCreateNestedManyWithoutWorkspaceInput
   aiSalesConfig?: Prisma.AiSalesConfigUncheckedCreateNestedOneWithoutWorkspaceInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUncheckedCreateNestedManyWithoutWorkspaceInput
 }
 
 export type WorkspaceCreateOrConnectWithoutLeadsInput = {
@@ -2638,6 +2985,11 @@ export type WorkspaceUpdateWithoutLeadsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
@@ -2658,6 +3010,7 @@ export type WorkspaceUpdateWithoutLeadsInput = {
   wabaTemplates?: Prisma.WabaTemplateUpdateManyWithoutWorkspaceNestedInput
   templateDispatches?: Prisma.TemplateDispatchUpdateManyWithoutWorkspaceNestedInput
   aiSalesConfig?: Prisma.AiSalesConfigUpdateOneWithoutWorkspaceNestedInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUpdateManyWithoutWorkspaceNestedInput
 }
 
 export type WorkspaceUncheckedUpdateWithoutLeadsInput = {
@@ -2678,6 +3031,11 @@ export type WorkspaceUncheckedUpdateWithoutLeadsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
@@ -2698,6 +3056,7 @@ export type WorkspaceUncheckedUpdateWithoutLeadsInput = {
   wabaTemplates?: Prisma.WabaTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
   templateDispatches?: Prisma.TemplateDispatchUncheckedUpdateManyWithoutWorkspaceNestedInput
   aiSalesConfig?: Prisma.AiSalesConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUncheckedUpdateManyWithoutWorkspaceNestedInput
 }
 
 export type WorkspaceCreateWithoutAnalyticsDailyInput = {
@@ -2718,6 +3077,11 @@ export type WorkspaceCreateWithoutAnalyticsDailyInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutWorkspaceInput
@@ -2738,6 +3102,7 @@ export type WorkspaceCreateWithoutAnalyticsDailyInput = {
   wabaTemplates?: Prisma.WabaTemplateCreateNestedManyWithoutWorkspaceInput
   templateDispatches?: Prisma.TemplateDispatchCreateNestedManyWithoutWorkspaceInput
   aiSalesConfig?: Prisma.AiSalesConfigCreateNestedOneWithoutWorkspaceInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentCreateNestedManyWithoutWorkspaceInput
 }
 
 export type WorkspaceUncheckedCreateWithoutAnalyticsDailyInput = {
@@ -2758,6 +3123,11 @@ export type WorkspaceUncheckedCreateWithoutAnalyticsDailyInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -2778,6 +3148,7 @@ export type WorkspaceUncheckedCreateWithoutAnalyticsDailyInput = {
   wabaTemplates?: Prisma.WabaTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
   templateDispatches?: Prisma.TemplateDispatchUncheckedCreateNestedManyWithoutWorkspaceInput
   aiSalesConfig?: Prisma.AiSalesConfigUncheckedCreateNestedOneWithoutWorkspaceInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUncheckedCreateNestedManyWithoutWorkspaceInput
 }
 
 export type WorkspaceCreateOrConnectWithoutAnalyticsDailyInput = {
@@ -2814,6 +3185,11 @@ export type WorkspaceUpdateWithoutAnalyticsDailyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutWorkspaceNestedInput
@@ -2834,6 +3210,7 @@ export type WorkspaceUpdateWithoutAnalyticsDailyInput = {
   wabaTemplates?: Prisma.WabaTemplateUpdateManyWithoutWorkspaceNestedInput
   templateDispatches?: Prisma.TemplateDispatchUpdateManyWithoutWorkspaceNestedInput
   aiSalesConfig?: Prisma.AiSalesConfigUpdateOneWithoutWorkspaceNestedInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUpdateManyWithoutWorkspaceNestedInput
 }
 
 export type WorkspaceUncheckedUpdateWithoutAnalyticsDailyInput = {
@@ -2854,6 +3231,11 @@ export type WorkspaceUncheckedUpdateWithoutAnalyticsDailyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutWorkspaceNestedInput
@@ -2874,6 +3256,7 @@ export type WorkspaceUncheckedUpdateWithoutAnalyticsDailyInput = {
   wabaTemplates?: Prisma.WabaTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
   templateDispatches?: Prisma.TemplateDispatchUncheckedUpdateManyWithoutWorkspaceNestedInput
   aiSalesConfig?: Prisma.AiSalesConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUncheckedUpdateManyWithoutWorkspaceNestedInput
 }
 
 export type WorkspaceCreateWithoutWebhookLogsInput = {
@@ -2894,6 +3277,11 @@ export type WorkspaceCreateWithoutWebhookLogsInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
   analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
@@ -2914,6 +3302,7 @@ export type WorkspaceCreateWithoutWebhookLogsInput = {
   wabaTemplates?: Prisma.WabaTemplateCreateNestedManyWithoutWorkspaceInput
   templateDispatches?: Prisma.TemplateDispatchCreateNestedManyWithoutWorkspaceInput
   aiSalesConfig?: Prisma.AiSalesConfigCreateNestedOneWithoutWorkspaceInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentCreateNestedManyWithoutWorkspaceInput
 }
 
 export type WorkspaceUncheckedCreateWithoutWebhookLogsInput = {
@@ -2934,6 +3323,11 @@ export type WorkspaceUncheckedCreateWithoutWebhookLogsInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -2954,6 +3348,7 @@ export type WorkspaceUncheckedCreateWithoutWebhookLogsInput = {
   wabaTemplates?: Prisma.WabaTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
   templateDispatches?: Prisma.TemplateDispatchUncheckedCreateNestedManyWithoutWorkspaceInput
   aiSalesConfig?: Prisma.AiSalesConfigUncheckedCreateNestedOneWithoutWorkspaceInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUncheckedCreateNestedManyWithoutWorkspaceInput
 }
 
 export type WorkspaceCreateOrConnectWithoutWebhookLogsInput = {
@@ -2990,6 +3385,11 @@ export type WorkspaceUpdateWithoutWebhookLogsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
@@ -3010,6 +3410,7 @@ export type WorkspaceUpdateWithoutWebhookLogsInput = {
   wabaTemplates?: Prisma.WabaTemplateUpdateManyWithoutWorkspaceNestedInput
   templateDispatches?: Prisma.TemplateDispatchUpdateManyWithoutWorkspaceNestedInput
   aiSalesConfig?: Prisma.AiSalesConfigUpdateOneWithoutWorkspaceNestedInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUpdateManyWithoutWorkspaceNestedInput
 }
 
 export type WorkspaceUncheckedUpdateWithoutWebhookLogsInput = {
@@ -3030,6 +3431,11 @@ export type WorkspaceUncheckedUpdateWithoutWebhookLogsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
@@ -3050,6 +3456,7 @@ export type WorkspaceUncheckedUpdateWithoutWebhookLogsInput = {
   wabaTemplates?: Prisma.WabaTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
   templateDispatches?: Prisma.TemplateDispatchUncheckedUpdateManyWithoutWorkspaceNestedInput
   aiSalesConfig?: Prisma.AiSalesConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUncheckedUpdateManyWithoutWorkspaceNestedInput
 }
 
 export type WorkspaceCreateWithoutMessageTemplatesInput = {
@@ -3070,6 +3477,11 @@ export type WorkspaceCreateWithoutMessageTemplatesInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
   analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
@@ -3090,6 +3502,7 @@ export type WorkspaceCreateWithoutMessageTemplatesInput = {
   wabaTemplates?: Prisma.WabaTemplateCreateNestedManyWithoutWorkspaceInput
   templateDispatches?: Prisma.TemplateDispatchCreateNestedManyWithoutWorkspaceInput
   aiSalesConfig?: Prisma.AiSalesConfigCreateNestedOneWithoutWorkspaceInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentCreateNestedManyWithoutWorkspaceInput
 }
 
 export type WorkspaceUncheckedCreateWithoutMessageTemplatesInput = {
@@ -3110,6 +3523,11 @@ export type WorkspaceUncheckedCreateWithoutMessageTemplatesInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -3130,6 +3548,7 @@ export type WorkspaceUncheckedCreateWithoutMessageTemplatesInput = {
   wabaTemplates?: Prisma.WabaTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
   templateDispatches?: Prisma.TemplateDispatchUncheckedCreateNestedManyWithoutWorkspaceInput
   aiSalesConfig?: Prisma.AiSalesConfigUncheckedCreateNestedOneWithoutWorkspaceInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUncheckedCreateNestedManyWithoutWorkspaceInput
 }
 
 export type WorkspaceCreateOrConnectWithoutMessageTemplatesInput = {
@@ -3166,6 +3585,11 @@ export type WorkspaceUpdateWithoutMessageTemplatesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
@@ -3186,6 +3610,7 @@ export type WorkspaceUpdateWithoutMessageTemplatesInput = {
   wabaTemplates?: Prisma.WabaTemplateUpdateManyWithoutWorkspaceNestedInput
   templateDispatches?: Prisma.TemplateDispatchUpdateManyWithoutWorkspaceNestedInput
   aiSalesConfig?: Prisma.AiSalesConfigUpdateOneWithoutWorkspaceNestedInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUpdateManyWithoutWorkspaceNestedInput
 }
 
 export type WorkspaceUncheckedUpdateWithoutMessageTemplatesInput = {
@@ -3206,6 +3631,11 @@ export type WorkspaceUncheckedUpdateWithoutMessageTemplatesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
@@ -3226,6 +3656,7 @@ export type WorkspaceUncheckedUpdateWithoutMessageTemplatesInput = {
   wabaTemplates?: Prisma.WabaTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
   templateDispatches?: Prisma.TemplateDispatchUncheckedUpdateManyWithoutWorkspaceNestedInput
   aiSalesConfig?: Prisma.AiSalesConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUncheckedUpdateManyWithoutWorkspaceNestedInput
 }
 
 export type WorkspaceCreateWithoutConversationActivitiesInput = {
@@ -3246,6 +3677,11 @@ export type WorkspaceCreateWithoutConversationActivitiesInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
   analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
@@ -3266,6 +3702,7 @@ export type WorkspaceCreateWithoutConversationActivitiesInput = {
   wabaTemplates?: Prisma.WabaTemplateCreateNestedManyWithoutWorkspaceInput
   templateDispatches?: Prisma.TemplateDispatchCreateNestedManyWithoutWorkspaceInput
   aiSalesConfig?: Prisma.AiSalesConfigCreateNestedOneWithoutWorkspaceInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentCreateNestedManyWithoutWorkspaceInput
 }
 
 export type WorkspaceUncheckedCreateWithoutConversationActivitiesInput = {
@@ -3286,6 +3723,11 @@ export type WorkspaceUncheckedCreateWithoutConversationActivitiesInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -3306,6 +3748,7 @@ export type WorkspaceUncheckedCreateWithoutConversationActivitiesInput = {
   wabaTemplates?: Prisma.WabaTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
   templateDispatches?: Prisma.TemplateDispatchUncheckedCreateNestedManyWithoutWorkspaceInput
   aiSalesConfig?: Prisma.AiSalesConfigUncheckedCreateNestedOneWithoutWorkspaceInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUncheckedCreateNestedManyWithoutWorkspaceInput
 }
 
 export type WorkspaceCreateOrConnectWithoutConversationActivitiesInput = {
@@ -3342,6 +3785,11 @@ export type WorkspaceUpdateWithoutConversationActivitiesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
@@ -3362,6 +3810,7 @@ export type WorkspaceUpdateWithoutConversationActivitiesInput = {
   wabaTemplates?: Prisma.WabaTemplateUpdateManyWithoutWorkspaceNestedInput
   templateDispatches?: Prisma.TemplateDispatchUpdateManyWithoutWorkspaceNestedInput
   aiSalesConfig?: Prisma.AiSalesConfigUpdateOneWithoutWorkspaceNestedInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUpdateManyWithoutWorkspaceNestedInput
 }
 
 export type WorkspaceUncheckedUpdateWithoutConversationActivitiesInput = {
@@ -3382,6 +3831,11 @@ export type WorkspaceUncheckedUpdateWithoutConversationActivitiesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
@@ -3402,6 +3856,7 @@ export type WorkspaceUncheckedUpdateWithoutConversationActivitiesInput = {
   wabaTemplates?: Prisma.WabaTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
   templateDispatches?: Prisma.TemplateDispatchUncheckedUpdateManyWithoutWorkspaceNestedInput
   aiSalesConfig?: Prisma.AiSalesConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUncheckedUpdateManyWithoutWorkspaceNestedInput
 }
 
 export type WorkspaceCreateWithoutSubscriptionsInput = {
@@ -3422,6 +3877,11 @@ export type WorkspaceCreateWithoutSubscriptionsInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
   analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutWorkspaceInput
@@ -3442,6 +3902,7 @@ export type WorkspaceCreateWithoutSubscriptionsInput = {
   wabaTemplates?: Prisma.WabaTemplateCreateNestedManyWithoutWorkspaceInput
   templateDispatches?: Prisma.TemplateDispatchCreateNestedManyWithoutWorkspaceInput
   aiSalesConfig?: Prisma.AiSalesConfigCreateNestedOneWithoutWorkspaceInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentCreateNestedManyWithoutWorkspaceInput
 }
 
 export type WorkspaceUncheckedCreateWithoutSubscriptionsInput = {
@@ -3462,6 +3923,11 @@ export type WorkspaceUncheckedCreateWithoutSubscriptionsInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -3482,6 +3948,7 @@ export type WorkspaceUncheckedCreateWithoutSubscriptionsInput = {
   wabaTemplates?: Prisma.WabaTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
   templateDispatches?: Prisma.TemplateDispatchUncheckedCreateNestedManyWithoutWorkspaceInput
   aiSalesConfig?: Prisma.AiSalesConfigUncheckedCreateNestedOneWithoutWorkspaceInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUncheckedCreateNestedManyWithoutWorkspaceInput
 }
 
 export type WorkspaceCreateOrConnectWithoutSubscriptionsInput = {
@@ -3518,6 +3985,11 @@ export type WorkspaceUpdateWithoutSubscriptionsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutWorkspaceNestedInput
@@ -3538,6 +4010,7 @@ export type WorkspaceUpdateWithoutSubscriptionsInput = {
   wabaTemplates?: Prisma.WabaTemplateUpdateManyWithoutWorkspaceNestedInput
   templateDispatches?: Prisma.TemplateDispatchUpdateManyWithoutWorkspaceNestedInput
   aiSalesConfig?: Prisma.AiSalesConfigUpdateOneWithoutWorkspaceNestedInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUpdateManyWithoutWorkspaceNestedInput
 }
 
 export type WorkspaceUncheckedUpdateWithoutSubscriptionsInput = {
@@ -3558,6 +4031,11 @@ export type WorkspaceUncheckedUpdateWithoutSubscriptionsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutWorkspaceNestedInput
@@ -3578,6 +4056,7 @@ export type WorkspaceUncheckedUpdateWithoutSubscriptionsInput = {
   wabaTemplates?: Prisma.WabaTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
   templateDispatches?: Prisma.TemplateDispatchUncheckedUpdateManyWithoutWorkspaceNestedInput
   aiSalesConfig?: Prisma.AiSalesConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUncheckedUpdateManyWithoutWorkspaceNestedInput
 }
 
 export type WorkspaceCreateWithoutTokenTransactionsInput = {
@@ -3598,6 +4077,11 @@ export type WorkspaceCreateWithoutTokenTransactionsInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
   analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
@@ -3618,6 +4102,7 @@ export type WorkspaceCreateWithoutTokenTransactionsInput = {
   wabaTemplates?: Prisma.WabaTemplateCreateNestedManyWithoutWorkspaceInput
   templateDispatches?: Prisma.TemplateDispatchCreateNestedManyWithoutWorkspaceInput
   aiSalesConfig?: Prisma.AiSalesConfigCreateNestedOneWithoutWorkspaceInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentCreateNestedManyWithoutWorkspaceInput
 }
 
 export type WorkspaceUncheckedCreateWithoutTokenTransactionsInput = {
@@ -3638,6 +4123,11 @@ export type WorkspaceUncheckedCreateWithoutTokenTransactionsInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -3658,6 +4148,7 @@ export type WorkspaceUncheckedCreateWithoutTokenTransactionsInput = {
   wabaTemplates?: Prisma.WabaTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
   templateDispatches?: Prisma.TemplateDispatchUncheckedCreateNestedManyWithoutWorkspaceInput
   aiSalesConfig?: Prisma.AiSalesConfigUncheckedCreateNestedOneWithoutWorkspaceInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUncheckedCreateNestedManyWithoutWorkspaceInput
 }
 
 export type WorkspaceCreateOrConnectWithoutTokenTransactionsInput = {
@@ -3694,6 +4185,11 @@ export type WorkspaceUpdateWithoutTokenTransactionsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
@@ -3714,6 +4210,7 @@ export type WorkspaceUpdateWithoutTokenTransactionsInput = {
   wabaTemplates?: Prisma.WabaTemplateUpdateManyWithoutWorkspaceNestedInput
   templateDispatches?: Prisma.TemplateDispatchUpdateManyWithoutWorkspaceNestedInput
   aiSalesConfig?: Prisma.AiSalesConfigUpdateOneWithoutWorkspaceNestedInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUpdateManyWithoutWorkspaceNestedInput
 }
 
 export type WorkspaceUncheckedUpdateWithoutTokenTransactionsInput = {
@@ -3734,6 +4231,11 @@ export type WorkspaceUncheckedUpdateWithoutTokenTransactionsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
@@ -3754,6 +4256,7 @@ export type WorkspaceUncheckedUpdateWithoutTokenTransactionsInput = {
   wabaTemplates?: Prisma.WabaTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
   templateDispatches?: Prisma.TemplateDispatchUncheckedUpdateManyWithoutWorkspaceNestedInput
   aiSalesConfig?: Prisma.AiSalesConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUncheckedUpdateManyWithoutWorkspaceNestedInput
 }
 
 export type WorkspaceCreateWithoutScrapingJobsInput = {
@@ -3774,6 +4277,11 @@ export type WorkspaceCreateWithoutScrapingJobsInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
   analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
@@ -3794,6 +4302,7 @@ export type WorkspaceCreateWithoutScrapingJobsInput = {
   wabaTemplates?: Prisma.WabaTemplateCreateNestedManyWithoutWorkspaceInput
   templateDispatches?: Prisma.TemplateDispatchCreateNestedManyWithoutWorkspaceInput
   aiSalesConfig?: Prisma.AiSalesConfigCreateNestedOneWithoutWorkspaceInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentCreateNestedManyWithoutWorkspaceInput
 }
 
 export type WorkspaceUncheckedCreateWithoutScrapingJobsInput = {
@@ -3814,6 +4323,11 @@ export type WorkspaceUncheckedCreateWithoutScrapingJobsInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -3834,6 +4348,7 @@ export type WorkspaceUncheckedCreateWithoutScrapingJobsInput = {
   wabaTemplates?: Prisma.WabaTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
   templateDispatches?: Prisma.TemplateDispatchUncheckedCreateNestedManyWithoutWorkspaceInput
   aiSalesConfig?: Prisma.AiSalesConfigUncheckedCreateNestedOneWithoutWorkspaceInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUncheckedCreateNestedManyWithoutWorkspaceInput
 }
 
 export type WorkspaceCreateOrConnectWithoutScrapingJobsInput = {
@@ -3870,6 +4385,11 @@ export type WorkspaceUpdateWithoutScrapingJobsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
@@ -3890,6 +4410,7 @@ export type WorkspaceUpdateWithoutScrapingJobsInput = {
   wabaTemplates?: Prisma.WabaTemplateUpdateManyWithoutWorkspaceNestedInput
   templateDispatches?: Prisma.TemplateDispatchUpdateManyWithoutWorkspaceNestedInput
   aiSalesConfig?: Prisma.AiSalesConfigUpdateOneWithoutWorkspaceNestedInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUpdateManyWithoutWorkspaceNestedInput
 }
 
 export type WorkspaceUncheckedUpdateWithoutScrapingJobsInput = {
@@ -3910,6 +4431,11 @@ export type WorkspaceUncheckedUpdateWithoutScrapingJobsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
@@ -3930,6 +4456,7 @@ export type WorkspaceUncheckedUpdateWithoutScrapingJobsInput = {
   wabaTemplates?: Prisma.WabaTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
   templateDispatches?: Prisma.TemplateDispatchUncheckedUpdateManyWithoutWorkspaceNestedInput
   aiSalesConfig?: Prisma.AiSalesConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUncheckedUpdateManyWithoutWorkspaceNestedInput
 }
 
 export type WorkspaceCreateWithoutDispatchListsInput = {
@@ -3950,6 +4477,11 @@ export type WorkspaceCreateWithoutDispatchListsInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
   analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
@@ -3970,6 +4502,7 @@ export type WorkspaceCreateWithoutDispatchListsInput = {
   wabaTemplates?: Prisma.WabaTemplateCreateNestedManyWithoutWorkspaceInput
   templateDispatches?: Prisma.TemplateDispatchCreateNestedManyWithoutWorkspaceInput
   aiSalesConfig?: Prisma.AiSalesConfigCreateNestedOneWithoutWorkspaceInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentCreateNestedManyWithoutWorkspaceInput
 }
 
 export type WorkspaceUncheckedCreateWithoutDispatchListsInput = {
@@ -3990,6 +4523,11 @@ export type WorkspaceUncheckedCreateWithoutDispatchListsInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -4010,6 +4548,7 @@ export type WorkspaceUncheckedCreateWithoutDispatchListsInput = {
   wabaTemplates?: Prisma.WabaTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
   templateDispatches?: Prisma.TemplateDispatchUncheckedCreateNestedManyWithoutWorkspaceInput
   aiSalesConfig?: Prisma.AiSalesConfigUncheckedCreateNestedOneWithoutWorkspaceInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUncheckedCreateNestedManyWithoutWorkspaceInput
 }
 
 export type WorkspaceCreateOrConnectWithoutDispatchListsInput = {
@@ -4046,6 +4585,11 @@ export type WorkspaceUpdateWithoutDispatchListsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
@@ -4066,6 +4610,7 @@ export type WorkspaceUpdateWithoutDispatchListsInput = {
   wabaTemplates?: Prisma.WabaTemplateUpdateManyWithoutWorkspaceNestedInput
   templateDispatches?: Prisma.TemplateDispatchUpdateManyWithoutWorkspaceNestedInput
   aiSalesConfig?: Prisma.AiSalesConfigUpdateOneWithoutWorkspaceNestedInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUpdateManyWithoutWorkspaceNestedInput
 }
 
 export type WorkspaceUncheckedUpdateWithoutDispatchListsInput = {
@@ -4086,6 +4631,11 @@ export type WorkspaceUncheckedUpdateWithoutDispatchListsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
@@ -4106,6 +4656,7 @@ export type WorkspaceUncheckedUpdateWithoutDispatchListsInput = {
   wabaTemplates?: Prisma.WabaTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
   templateDispatches?: Prisma.TemplateDispatchUncheckedUpdateManyWithoutWorkspaceNestedInput
   aiSalesConfig?: Prisma.AiSalesConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUncheckedUpdateManyWithoutWorkspaceNestedInput
 }
 
 export type WorkspaceCreateWithoutWabaChannelsInput = {
@@ -4126,6 +4677,11 @@ export type WorkspaceCreateWithoutWabaChannelsInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
   analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
@@ -4146,6 +4702,7 @@ export type WorkspaceCreateWithoutWabaChannelsInput = {
   wabaTemplates?: Prisma.WabaTemplateCreateNestedManyWithoutWorkspaceInput
   templateDispatches?: Prisma.TemplateDispatchCreateNestedManyWithoutWorkspaceInput
   aiSalesConfig?: Prisma.AiSalesConfigCreateNestedOneWithoutWorkspaceInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentCreateNestedManyWithoutWorkspaceInput
 }
 
 export type WorkspaceUncheckedCreateWithoutWabaChannelsInput = {
@@ -4166,6 +4723,11 @@ export type WorkspaceUncheckedCreateWithoutWabaChannelsInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -4186,6 +4748,7 @@ export type WorkspaceUncheckedCreateWithoutWabaChannelsInput = {
   wabaTemplates?: Prisma.WabaTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
   templateDispatches?: Prisma.TemplateDispatchUncheckedCreateNestedManyWithoutWorkspaceInput
   aiSalesConfig?: Prisma.AiSalesConfigUncheckedCreateNestedOneWithoutWorkspaceInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUncheckedCreateNestedManyWithoutWorkspaceInput
 }
 
 export type WorkspaceCreateOrConnectWithoutWabaChannelsInput = {
@@ -4222,6 +4785,11 @@ export type WorkspaceUpdateWithoutWabaChannelsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
@@ -4242,6 +4810,7 @@ export type WorkspaceUpdateWithoutWabaChannelsInput = {
   wabaTemplates?: Prisma.WabaTemplateUpdateManyWithoutWorkspaceNestedInput
   templateDispatches?: Prisma.TemplateDispatchUpdateManyWithoutWorkspaceNestedInput
   aiSalesConfig?: Prisma.AiSalesConfigUpdateOneWithoutWorkspaceNestedInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUpdateManyWithoutWorkspaceNestedInput
 }
 
 export type WorkspaceUncheckedUpdateWithoutWabaChannelsInput = {
@@ -4262,6 +4831,11 @@ export type WorkspaceUncheckedUpdateWithoutWabaChannelsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
@@ -4282,6 +4856,7 @@ export type WorkspaceUncheckedUpdateWithoutWabaChannelsInput = {
   wabaTemplates?: Prisma.WabaTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
   templateDispatches?: Prisma.TemplateDispatchUncheckedUpdateManyWithoutWorkspaceNestedInput
   aiSalesConfig?: Prisma.AiSalesConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUncheckedUpdateManyWithoutWorkspaceNestedInput
 }
 
 export type WorkspaceCreateWithoutWabaTemplatesInput = {
@@ -4302,6 +4877,11 @@ export type WorkspaceCreateWithoutWabaTemplatesInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
   analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
@@ -4322,6 +4902,7 @@ export type WorkspaceCreateWithoutWabaTemplatesInput = {
   wabaChannels?: Prisma.WabaChannelCreateNestedManyWithoutWorkspaceInput
   templateDispatches?: Prisma.TemplateDispatchCreateNestedManyWithoutWorkspaceInput
   aiSalesConfig?: Prisma.AiSalesConfigCreateNestedOneWithoutWorkspaceInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentCreateNestedManyWithoutWorkspaceInput
 }
 
 export type WorkspaceUncheckedCreateWithoutWabaTemplatesInput = {
@@ -4342,6 +4923,11 @@ export type WorkspaceUncheckedCreateWithoutWabaTemplatesInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -4362,6 +4948,7 @@ export type WorkspaceUncheckedCreateWithoutWabaTemplatesInput = {
   wabaChannels?: Prisma.WabaChannelUncheckedCreateNestedManyWithoutWorkspaceInput
   templateDispatches?: Prisma.TemplateDispatchUncheckedCreateNestedManyWithoutWorkspaceInput
   aiSalesConfig?: Prisma.AiSalesConfigUncheckedCreateNestedOneWithoutWorkspaceInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUncheckedCreateNestedManyWithoutWorkspaceInput
 }
 
 export type WorkspaceCreateOrConnectWithoutWabaTemplatesInput = {
@@ -4398,6 +4985,11 @@ export type WorkspaceUpdateWithoutWabaTemplatesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
@@ -4418,6 +5010,7 @@ export type WorkspaceUpdateWithoutWabaTemplatesInput = {
   wabaChannels?: Prisma.WabaChannelUpdateManyWithoutWorkspaceNestedInput
   templateDispatches?: Prisma.TemplateDispatchUpdateManyWithoutWorkspaceNestedInput
   aiSalesConfig?: Prisma.AiSalesConfigUpdateOneWithoutWorkspaceNestedInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUpdateManyWithoutWorkspaceNestedInput
 }
 
 export type WorkspaceUncheckedUpdateWithoutWabaTemplatesInput = {
@@ -4438,6 +5031,11 @@ export type WorkspaceUncheckedUpdateWithoutWabaTemplatesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
@@ -4458,6 +5056,7 @@ export type WorkspaceUncheckedUpdateWithoutWabaTemplatesInput = {
   wabaChannels?: Prisma.WabaChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
   templateDispatches?: Prisma.TemplateDispatchUncheckedUpdateManyWithoutWorkspaceNestedInput
   aiSalesConfig?: Prisma.AiSalesConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUncheckedUpdateManyWithoutWorkspaceNestedInput
 }
 
 export type WorkspaceCreateWithoutTemplateDispatchesInput = {
@@ -4478,6 +5077,11 @@ export type WorkspaceCreateWithoutTemplateDispatchesInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
   analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
@@ -4498,6 +5102,7 @@ export type WorkspaceCreateWithoutTemplateDispatchesInput = {
   wabaChannels?: Prisma.WabaChannelCreateNestedManyWithoutWorkspaceInput
   wabaTemplates?: Prisma.WabaTemplateCreateNestedManyWithoutWorkspaceInput
   aiSalesConfig?: Prisma.AiSalesConfigCreateNestedOneWithoutWorkspaceInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentCreateNestedManyWithoutWorkspaceInput
 }
 
 export type WorkspaceUncheckedCreateWithoutTemplateDispatchesInput = {
@@ -4518,6 +5123,11 @@ export type WorkspaceUncheckedCreateWithoutTemplateDispatchesInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -4538,6 +5148,7 @@ export type WorkspaceUncheckedCreateWithoutTemplateDispatchesInput = {
   wabaChannels?: Prisma.WabaChannelUncheckedCreateNestedManyWithoutWorkspaceInput
   wabaTemplates?: Prisma.WabaTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
   aiSalesConfig?: Prisma.AiSalesConfigUncheckedCreateNestedOneWithoutWorkspaceInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUncheckedCreateNestedManyWithoutWorkspaceInput
 }
 
 export type WorkspaceCreateOrConnectWithoutTemplateDispatchesInput = {
@@ -4574,6 +5185,11 @@ export type WorkspaceUpdateWithoutTemplateDispatchesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
@@ -4594,6 +5210,7 @@ export type WorkspaceUpdateWithoutTemplateDispatchesInput = {
   wabaChannels?: Prisma.WabaChannelUpdateManyWithoutWorkspaceNestedInput
   wabaTemplates?: Prisma.WabaTemplateUpdateManyWithoutWorkspaceNestedInput
   aiSalesConfig?: Prisma.AiSalesConfigUpdateOneWithoutWorkspaceNestedInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUpdateManyWithoutWorkspaceNestedInput
 }
 
 export type WorkspaceUncheckedUpdateWithoutTemplateDispatchesInput = {
@@ -4614,6 +5231,11 @@ export type WorkspaceUncheckedUpdateWithoutTemplateDispatchesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
@@ -4634,6 +5256,7 @@ export type WorkspaceUncheckedUpdateWithoutTemplateDispatchesInput = {
   wabaChannels?: Prisma.WabaChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
   wabaTemplates?: Prisma.WabaTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
   aiSalesConfig?: Prisma.AiSalesConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUncheckedUpdateManyWithoutWorkspaceNestedInput
 }
 
 export type WorkspaceCreateWithoutAiSalesConfigInput = {
@@ -4654,6 +5277,11 @@ export type WorkspaceCreateWithoutAiSalesConfigInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
   analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
@@ -4674,6 +5302,7 @@ export type WorkspaceCreateWithoutAiSalesConfigInput = {
   wabaChannels?: Prisma.WabaChannelCreateNestedManyWithoutWorkspaceInput
   wabaTemplates?: Prisma.WabaTemplateCreateNestedManyWithoutWorkspaceInput
   templateDispatches?: Prisma.TemplateDispatchCreateNestedManyWithoutWorkspaceInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentCreateNestedManyWithoutWorkspaceInput
 }
 
 export type WorkspaceUncheckedCreateWithoutAiSalesConfigInput = {
@@ -4694,6 +5323,11 @@ export type WorkspaceUncheckedCreateWithoutAiSalesConfigInput = {
   updatedAt?: Date | string
   tokenBalance?: number
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutWorkspaceInput
   channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -4714,6 +5348,7 @@ export type WorkspaceUncheckedCreateWithoutAiSalesConfigInput = {
   wabaChannels?: Prisma.WabaChannelUncheckedCreateNestedManyWithoutWorkspaceInput
   wabaTemplates?: Prisma.WabaTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
   templateDispatches?: Prisma.TemplateDispatchUncheckedCreateNestedManyWithoutWorkspaceInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUncheckedCreateNestedManyWithoutWorkspaceInput
 }
 
 export type WorkspaceCreateOrConnectWithoutAiSalesConfigInput = {
@@ -4750,6 +5385,11 @@ export type WorkspaceUpdateWithoutAiSalesConfigInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
@@ -4770,6 +5410,7 @@ export type WorkspaceUpdateWithoutAiSalesConfigInput = {
   wabaChannels?: Prisma.WabaChannelUpdateManyWithoutWorkspaceNestedInput
   wabaTemplates?: Prisma.WabaTemplateUpdateManyWithoutWorkspaceNestedInput
   templateDispatches?: Prisma.TemplateDispatchUpdateManyWithoutWorkspaceNestedInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUpdateManyWithoutWorkspaceNestedInput
 }
 
 export type WorkspaceUncheckedUpdateWithoutAiSalesConfigInput = {
@@ -4790,6 +5431,11 @@ export type WorkspaceUncheckedUpdateWithoutAiSalesConfigInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
   hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutWorkspaceNestedInput
   channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
@@ -4810,6 +5456,207 @@ export type WorkspaceUncheckedUpdateWithoutAiSalesConfigInput = {
   wabaChannels?: Prisma.WabaChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
   wabaTemplates?: Prisma.WabaTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
   templateDispatches?: Prisma.TemplateDispatchUncheckedUpdateManyWithoutWorkspaceNestedInput
+  knowledgeDocuments?: Prisma.KnowledgeDocumentUncheckedUpdateManyWithoutWorkspaceNestedInput
+}
+
+export type WorkspaceCreateWithoutKnowledgeDocumentsInput = {
+  id?: string
+  name: string
+  slug: string
+  logoUrl?: string | null
+  primaryColor?: string
+  subscriptionStatus?: $Enums.SubscriptionStatus
+  kirvanoSubscriptionId?: string | null
+  currentPeriodEnd?: Date | string | null
+  trialEndsAt?: Date | string | null
+  plan?: string
+  maxUsers?: number
+  maxConversationsPerMonth?: number
+  conversationsThisMonth?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  tokenBalance?: number
+  hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
+  analyticsDaily?: Prisma.AnalyticsDailyCreateNestedManyWithoutWorkspaceInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutWorkspaceInput
+  channels?: Prisma.ChannelCreateNestedManyWithoutWorkspaceInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutWorkspaceInput
+  conversationActivities?: Prisma.ConversationActivityCreateNestedManyWithoutWorkspaceInput
+  leads?: Prisma.LeadCreateNestedManyWithoutWorkspaceInput
+  messageTemplates?: Prisma.MessageTemplateCreateNestedManyWithoutWorkspaceInput
+  messages?: Prisma.MessageCreateNestedManyWithoutWorkspaceInput
+  notes?: Prisma.NoteCreateNestedManyWithoutWorkspaceInput
+  pipelineStages?: Prisma.PipelineStageCreateNestedManyWithoutWorkspaceInput
+  stageHistory?: Prisma.StageHistoryCreateNestedManyWithoutWorkspaceInput
+  tags?: Prisma.TagCreateNestedManyWithoutWorkspaceInput
+  users?: Prisma.UserCreateNestedManyWithoutWorkspaceInput
+  webhookLogs?: Prisma.WebhookLogCreateNestedManyWithoutWorkspaceInput
+  tokenTransactions?: Prisma.TokenTransactionCreateNestedManyWithoutWorkspaceInput
+  scrapingJobs?: Prisma.ScrapingJobCreateNestedManyWithoutWorkspaceInput
+  dispatchLists?: Prisma.DispatchListCreateNestedManyWithoutWorkspaceInput
+  wabaChannels?: Prisma.WabaChannelCreateNestedManyWithoutWorkspaceInput
+  wabaTemplates?: Prisma.WabaTemplateCreateNestedManyWithoutWorkspaceInput
+  templateDispatches?: Prisma.TemplateDispatchCreateNestedManyWithoutWorkspaceInput
+  aiSalesConfig?: Prisma.AiSalesConfigCreateNestedOneWithoutWorkspaceInput
+}
+
+export type WorkspaceUncheckedCreateWithoutKnowledgeDocumentsInput = {
+  id?: string
+  name: string
+  slug: string
+  logoUrl?: string | null
+  primaryColor?: string
+  subscriptionStatus?: $Enums.SubscriptionStatus
+  kirvanoSubscriptionId?: string | null
+  currentPeriodEnd?: Date | string | null
+  trialEndsAt?: Date | string | null
+  plan?: string
+  maxUsers?: number
+  maxConversationsPerMonth?: number
+  conversationsThisMonth?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  tokenBalance?: number
+  hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: number
+  soraUsedThisMonth?: number
+  soraResetDate?: Date | string | null
+  soraOverflowEnabled?: boolean
+  analyticsDaily?: Prisma.AnalyticsDailyUncheckedCreateNestedManyWithoutWorkspaceInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutWorkspaceInput
+  channels?: Prisma.ChannelUncheckedCreateNestedManyWithoutWorkspaceInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutWorkspaceInput
+  conversationActivities?: Prisma.ConversationActivityUncheckedCreateNestedManyWithoutWorkspaceInput
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutWorkspaceInput
+  messageTemplates?: Prisma.MessageTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutWorkspaceInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutWorkspaceInput
+  pipelineStages?: Prisma.PipelineStageUncheckedCreateNestedManyWithoutWorkspaceInput
+  stageHistory?: Prisma.StageHistoryUncheckedCreateNestedManyWithoutWorkspaceInput
+  tags?: Prisma.TagUncheckedCreateNestedManyWithoutWorkspaceInput
+  users?: Prisma.UserUncheckedCreateNestedManyWithoutWorkspaceInput
+  webhookLogs?: Prisma.WebhookLogUncheckedCreateNestedManyWithoutWorkspaceInput
+  tokenTransactions?: Prisma.TokenTransactionUncheckedCreateNestedManyWithoutWorkspaceInput
+  scrapingJobs?: Prisma.ScrapingJobUncheckedCreateNestedManyWithoutWorkspaceInput
+  dispatchLists?: Prisma.DispatchListUncheckedCreateNestedManyWithoutWorkspaceInput
+  wabaChannels?: Prisma.WabaChannelUncheckedCreateNestedManyWithoutWorkspaceInput
+  wabaTemplates?: Prisma.WabaTemplateUncheckedCreateNestedManyWithoutWorkspaceInput
+  templateDispatches?: Prisma.TemplateDispatchUncheckedCreateNestedManyWithoutWorkspaceInput
+  aiSalesConfig?: Prisma.AiSalesConfigUncheckedCreateNestedOneWithoutWorkspaceInput
+}
+
+export type WorkspaceCreateOrConnectWithoutKnowledgeDocumentsInput = {
+  where: Prisma.WorkspaceWhereUniqueInput
+  create: Prisma.XOR<Prisma.WorkspaceCreateWithoutKnowledgeDocumentsInput, Prisma.WorkspaceUncheckedCreateWithoutKnowledgeDocumentsInput>
+}
+
+export type WorkspaceUpsertWithoutKnowledgeDocumentsInput = {
+  update: Prisma.XOR<Prisma.WorkspaceUpdateWithoutKnowledgeDocumentsInput, Prisma.WorkspaceUncheckedUpdateWithoutKnowledgeDocumentsInput>
+  create: Prisma.XOR<Prisma.WorkspaceCreateWithoutKnowledgeDocumentsInput, Prisma.WorkspaceUncheckedCreateWithoutKnowledgeDocumentsInput>
+  where?: Prisma.WorkspaceWhereInput
+}
+
+export type WorkspaceUpdateToOneWithWhereWithoutKnowledgeDocumentsInput = {
+  where?: Prisma.WorkspaceWhereInput
+  data: Prisma.XOR<Prisma.WorkspaceUpdateWithoutKnowledgeDocumentsInput, Prisma.WorkspaceUncheckedUpdateWithoutKnowledgeDocumentsInput>
+}
+
+export type WorkspaceUpdateWithoutKnowledgeDocumentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
+  subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
+  kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
+  maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
+  maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
+  hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  analyticsDaily?: Prisma.AnalyticsDailyUpdateManyWithoutWorkspaceNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutWorkspaceNestedInput
+  channels?: Prisma.ChannelUpdateManyWithoutWorkspaceNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutWorkspaceNestedInput
+  conversationActivities?: Prisma.ConversationActivityUpdateManyWithoutWorkspaceNestedInput
+  leads?: Prisma.LeadUpdateManyWithoutWorkspaceNestedInput
+  messageTemplates?: Prisma.MessageTemplateUpdateManyWithoutWorkspaceNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutWorkspaceNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutWorkspaceNestedInput
+  pipelineStages?: Prisma.PipelineStageUpdateManyWithoutWorkspaceNestedInput
+  stageHistory?: Prisma.StageHistoryUpdateManyWithoutWorkspaceNestedInput
+  tags?: Prisma.TagUpdateManyWithoutWorkspaceNestedInput
+  users?: Prisma.UserUpdateManyWithoutWorkspaceNestedInput
+  webhookLogs?: Prisma.WebhookLogUpdateManyWithoutWorkspaceNestedInput
+  tokenTransactions?: Prisma.TokenTransactionUpdateManyWithoutWorkspaceNestedInput
+  scrapingJobs?: Prisma.ScrapingJobUpdateManyWithoutWorkspaceNestedInput
+  dispatchLists?: Prisma.DispatchListUpdateManyWithoutWorkspaceNestedInput
+  wabaChannels?: Prisma.WabaChannelUpdateManyWithoutWorkspaceNestedInput
+  wabaTemplates?: Prisma.WabaTemplateUpdateManyWithoutWorkspaceNestedInput
+  templateDispatches?: Prisma.TemplateDispatchUpdateManyWithoutWorkspaceNestedInput
+  aiSalesConfig?: Prisma.AiSalesConfigUpdateOneWithoutWorkspaceNestedInput
+}
+
+export type WorkspaceUncheckedUpdateWithoutKnowledgeDocumentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryColor?: Prisma.StringFieldUpdateOperationsInput | string
+  subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
+  kirvanoSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  trialEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
+  maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
+  maxConversationsPerMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  conversationsThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tokenBalance?: Prisma.IntFieldUpdateOperationsInput | number
+  hasUsedFreeScraping?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  soraMonthlyLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  soraUsedThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  soraResetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  soraOverflowEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  analyticsDaily?: Prisma.AnalyticsDailyUncheckedUpdateManyWithoutWorkspaceNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutWorkspaceNestedInput
+  channels?: Prisma.ChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutWorkspaceNestedInput
+  conversationActivities?: Prisma.ConversationActivityUncheckedUpdateManyWithoutWorkspaceNestedInput
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutWorkspaceNestedInput
+  messageTemplates?: Prisma.MessageTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutWorkspaceNestedInput
+  pipelineStages?: Prisma.PipelineStageUncheckedUpdateManyWithoutWorkspaceNestedInput
+  stageHistory?: Prisma.StageHistoryUncheckedUpdateManyWithoutWorkspaceNestedInput
+  tags?: Prisma.TagUncheckedUpdateManyWithoutWorkspaceNestedInput
+  users?: Prisma.UserUncheckedUpdateManyWithoutWorkspaceNestedInput
+  webhookLogs?: Prisma.WebhookLogUncheckedUpdateManyWithoutWorkspaceNestedInput
+  tokenTransactions?: Prisma.TokenTransactionUncheckedUpdateManyWithoutWorkspaceNestedInput
+  scrapingJobs?: Prisma.ScrapingJobUncheckedUpdateManyWithoutWorkspaceNestedInput
+  dispatchLists?: Prisma.DispatchListUncheckedUpdateManyWithoutWorkspaceNestedInput
+  wabaChannels?: Prisma.WabaChannelUncheckedUpdateManyWithoutWorkspaceNestedInput
+  wabaTemplates?: Prisma.WabaTemplateUncheckedUpdateManyWithoutWorkspaceNestedInput
+  templateDispatches?: Prisma.TemplateDispatchUncheckedUpdateManyWithoutWorkspaceNestedInput
+  aiSalesConfig?: Prisma.AiSalesConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
 }
 
 
@@ -4838,6 +5685,7 @@ export type WorkspaceCountOutputType = {
   wabaChannels: number
   wabaTemplates: number
   templateDispatches: number
+  knowledgeDocuments: number
 }
 
 export type WorkspaceCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -4861,6 +5709,7 @@ export type WorkspaceCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensi
   wabaChannels?: boolean | WorkspaceCountOutputTypeCountWabaChannelsArgs
   wabaTemplates?: boolean | WorkspaceCountOutputTypeCountWabaTemplatesArgs
   templateDispatches?: boolean | WorkspaceCountOutputTypeCountTemplateDispatchesArgs
+  knowledgeDocuments?: boolean | WorkspaceCountOutputTypeCountKnowledgeDocumentsArgs
 }
 
 /**
@@ -5013,6 +5862,13 @@ export type WorkspaceCountOutputTypeCountTemplateDispatchesArgs<ExtArgs extends 
   where?: Prisma.TemplateDispatchWhereInput
 }
 
+/**
+ * WorkspaceCountOutputType without action
+ */
+export type WorkspaceCountOutputTypeCountKnowledgeDocumentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.KnowledgeDocumentWhereInput
+}
+
 
 export type WorkspaceSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -5032,6 +5888,11 @@ export type WorkspaceSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   updatedAt?: boolean
   tokenBalance?: boolean
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: boolean
+  soraUsedThisMonth?: boolean
+  soraResetDate?: boolean
+  soraOverflowEnabled?: boolean
   analyticsDaily?: boolean | Prisma.Workspace$analyticsDailyArgs<ExtArgs>
   subscriptions?: boolean | Prisma.Workspace$subscriptionsArgs<ExtArgs>
   channels?: boolean | Prisma.Workspace$channelsArgs<ExtArgs>
@@ -5053,6 +5914,7 @@ export type WorkspaceSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   wabaTemplates?: boolean | Prisma.Workspace$wabaTemplatesArgs<ExtArgs>
   templateDispatches?: boolean | Prisma.Workspace$templateDispatchesArgs<ExtArgs>
   aiSalesConfig?: boolean | Prisma.Workspace$aiSalesConfigArgs<ExtArgs>
+  knowledgeDocuments?: boolean | Prisma.Workspace$knowledgeDocumentsArgs<ExtArgs>
   _count?: boolean | Prisma.WorkspaceCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["workspace"]>
 
@@ -5074,6 +5936,11 @@ export type WorkspaceSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   updatedAt?: boolean
   tokenBalance?: boolean
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: boolean
+  soraUsedThisMonth?: boolean
+  soraResetDate?: boolean
+  soraOverflowEnabled?: boolean
 }, ExtArgs["result"]["workspace"]>
 
 export type WorkspaceSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -5094,6 +5961,11 @@ export type WorkspaceSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   updatedAt?: boolean
   tokenBalance?: boolean
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: boolean
+  soraUsedThisMonth?: boolean
+  soraResetDate?: boolean
+  soraOverflowEnabled?: boolean
 }, ExtArgs["result"]["workspace"]>
 
 export type WorkspaceSelectScalar = {
@@ -5114,9 +5986,14 @@ export type WorkspaceSelectScalar = {
   updatedAt?: boolean
   tokenBalance?: boolean
   hasUsedFreeScraping?: boolean
+  soraEnabled?: boolean
+  soraMonthlyLimit?: boolean
+  soraUsedThisMonth?: boolean
+  soraResetDate?: boolean
+  soraOverflowEnabled?: boolean
 }
 
-export type WorkspaceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "logoUrl" | "primaryColor" | "subscriptionStatus" | "kirvanoSubscriptionId" | "currentPeriodEnd" | "trialEndsAt" | "plan" | "maxUsers" | "maxConversationsPerMonth" | "conversationsThisMonth" | "createdAt" | "updatedAt" | "tokenBalance" | "hasUsedFreeScraping", ExtArgs["result"]["workspace"]>
+export type WorkspaceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "logoUrl" | "primaryColor" | "subscriptionStatus" | "kirvanoSubscriptionId" | "currentPeriodEnd" | "trialEndsAt" | "plan" | "maxUsers" | "maxConversationsPerMonth" | "conversationsThisMonth" | "createdAt" | "updatedAt" | "tokenBalance" | "hasUsedFreeScraping" | "soraEnabled" | "soraMonthlyLimit" | "soraUsedThisMonth" | "soraResetDate" | "soraOverflowEnabled", ExtArgs["result"]["workspace"]>
 export type WorkspaceInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   analyticsDaily?: boolean | Prisma.Workspace$analyticsDailyArgs<ExtArgs>
   subscriptions?: boolean | Prisma.Workspace$subscriptionsArgs<ExtArgs>
@@ -5139,6 +6016,7 @@ export type WorkspaceInclude<ExtArgs extends runtime.Types.Extensions.InternalAr
   wabaTemplates?: boolean | Prisma.Workspace$wabaTemplatesArgs<ExtArgs>
   templateDispatches?: boolean | Prisma.Workspace$templateDispatchesArgs<ExtArgs>
   aiSalesConfig?: boolean | Prisma.Workspace$aiSalesConfigArgs<ExtArgs>
+  knowledgeDocuments?: boolean | Prisma.Workspace$knowledgeDocumentsArgs<ExtArgs>
   _count?: boolean | Prisma.WorkspaceCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type WorkspaceIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -5168,6 +6046,7 @@ export type $WorkspacePayload<ExtArgs extends runtime.Types.Extensions.InternalA
     wabaTemplates: Prisma.$WabaTemplatePayload<ExtArgs>[]
     templateDispatches: Prisma.$TemplateDispatchPayload<ExtArgs>[]
     aiSalesConfig: Prisma.$AiSalesConfigPayload<ExtArgs> | null
+    knowledgeDocuments: Prisma.$KnowledgeDocumentPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -5187,6 +6066,11 @@ export type $WorkspacePayload<ExtArgs extends runtime.Types.Extensions.InternalA
     updatedAt: Date
     tokenBalance: number
     hasUsedFreeScraping: boolean
+    soraEnabled: boolean
+    soraMonthlyLimit: number
+    soraUsedThisMonth: number
+    soraResetDate: Date | null
+    soraOverflowEnabled: boolean
   }, ExtArgs["result"]["workspace"]>
   composites: {}
 }
@@ -5602,6 +6486,7 @@ export interface Prisma__WorkspaceClient<T, Null = never, ExtArgs extends runtim
   wabaTemplates<T extends Prisma.Workspace$wabaTemplatesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Workspace$wabaTemplatesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WabaTemplatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   templateDispatches<T extends Prisma.Workspace$templateDispatchesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Workspace$templateDispatchesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TemplateDispatchPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   aiSalesConfig<T extends Prisma.Workspace$aiSalesConfigArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Workspace$aiSalesConfigArgs<ExtArgs>>): Prisma.Prisma__AiSalesConfigClient<runtime.Types.Result.GetResult<Prisma.$AiSalesConfigPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  knowledgeDocuments<T extends Prisma.Workspace$knowledgeDocumentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Workspace$knowledgeDocumentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$KnowledgeDocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5648,6 +6533,11 @@ export interface WorkspaceFieldRefs {
   readonly updatedAt: Prisma.FieldRef<"Workspace", 'DateTime'>
   readonly tokenBalance: Prisma.FieldRef<"Workspace", 'Int'>
   readonly hasUsedFreeScraping: Prisma.FieldRef<"Workspace", 'Boolean'>
+  readonly soraEnabled: Prisma.FieldRef<"Workspace", 'Boolean'>
+  readonly soraMonthlyLimit: Prisma.FieldRef<"Workspace", 'Int'>
+  readonly soraUsedThisMonth: Prisma.FieldRef<"Workspace", 'Int'>
+  readonly soraResetDate: Prisma.FieldRef<"Workspace", 'DateTime'>
+  readonly soraOverflowEnabled: Prisma.FieldRef<"Workspace", 'Boolean'>
 }
     
 
@@ -6532,6 +7422,30 @@ export type Workspace$aiSalesConfigArgs<ExtArgs extends runtime.Types.Extensions
    */
   include?: Prisma.AiSalesConfigInclude<ExtArgs> | null
   where?: Prisma.AiSalesConfigWhereInput
+}
+
+/**
+ * Workspace.knowledgeDocuments
+ */
+export type Workspace$knowledgeDocumentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the KnowledgeDocument
+   */
+  select?: Prisma.KnowledgeDocumentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the KnowledgeDocument
+   */
+  omit?: Prisma.KnowledgeDocumentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.KnowledgeDocumentInclude<ExtArgs> | null
+  where?: Prisma.KnowledgeDocumentWhereInput
+  orderBy?: Prisma.KnowledgeDocumentOrderByWithRelationInput | Prisma.KnowledgeDocumentOrderByWithRelationInput[]
+  cursor?: Prisma.KnowledgeDocumentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.KnowledgeDocumentScalarFieldEnum | Prisma.KnowledgeDocumentScalarFieldEnum[]
 }
 
 /**

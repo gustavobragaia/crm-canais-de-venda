@@ -9,11 +9,12 @@ export async function GET() {
       return NextResponse.json({ error: 'Não autorizado.' }, { status: 401 })
     }
 
-    const config = await db.aiSalesConfig.findUnique({
-      where: { workspaceId: session.user.workspaceId },
-    })
+    const [config, workspace] = await Promise.all([
+      db.aiSalesConfig.findUnique({ where: { workspaceId: session.user.workspaceId } }),
+      db.workspace.findUnique({ where: { id: session.user.workspaceId }, select: { soraEnabled: true, soraOverflowEnabled: true } }),
+    ])
 
-    return NextResponse.json({ config })
+    return NextResponse.json({ config, soraEnabled: workspace?.soraEnabled ?? false, soraOverflowEnabled: workspace?.soraOverflowEnabled ?? true })
   } catch (error) {
     console.error('[VENDEDOR CONFIG GET]', error)
     return NextResponse.json({ error: 'Erro interno.' }, { status: 500 })
@@ -45,6 +46,9 @@ export async function POST(req: NextRequest) {
       maxMessagesPerConversation,
       debounceSeconds,
       blockTtlSeconds,
+      handoffMinScore,
+      soraOverflowEnabled,
+      soraEnabled,
     } = body
 
     const config = await db.aiSalesConfig.upsert({
@@ -67,6 +71,7 @@ export async function POST(req: NextRequest) {
         maxMessagesPerConversation: maxMessagesPerConversation ?? 50,
         debounceSeconds: debounceSeconds ?? 15,
         blockTtlSeconds: blockTtlSeconds ?? 2400,
+        handoffMinScore: handoffMinScore ?? 7,
       },
       update: {
         ...(agentName !== undefined && { agentName }),
@@ -85,8 +90,20 @@ export async function POST(req: NextRequest) {
         ...(maxMessagesPerConversation !== undefined && { maxMessagesPerConversation }),
         ...(debounceSeconds !== undefined && { debounceSeconds }),
         ...(blockTtlSeconds !== undefined && { blockTtlSeconds }),
+        ...(handoffMinScore !== undefined && { handoffMinScore }),
       },
     })
+
+    // Persist workspace-level Sora fields
+    if (soraEnabled !== undefined || soraOverflowEnabled !== undefined) {
+      await db.workspace.update({
+        where: { id: session.user.workspaceId },
+        data: {
+          ...(soraEnabled !== undefined && { soraEnabled }),
+          ...(soraOverflowEnabled !== undefined && { soraOverflowEnabled }),
+        },
+      })
+    }
 
     return NextResponse.json({ config })
   } catch (error) {

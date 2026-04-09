@@ -30,12 +30,14 @@ export type AiSalesConfigAvgAggregateOutputType = {
   maxMessagesPerConversation: number | null
   debounceSeconds: number | null
   blockTtlSeconds: number | null
+  handoffMinScore: number | null
 }
 
 export type AiSalesConfigSumAggregateOutputType = {
   maxMessagesPerConversation: number | null
   debounceSeconds: number | null
   blockTtlSeconds: number | null
+  handoffMinScore: number | null
 }
 
 export type AiSalesConfigMinAggregateOutputType = {
@@ -54,6 +56,7 @@ export type AiSalesConfigMinAggregateOutputType = {
   maxMessagesPerConversation: number | null
   debounceSeconds: number | null
   blockTtlSeconds: number | null
+  handoffMinScore: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -74,6 +77,7 @@ export type AiSalesConfigMaxAggregateOutputType = {
   maxMessagesPerConversation: number | null
   debounceSeconds: number | null
   blockTtlSeconds: number | null
+  handoffMinScore: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -97,6 +101,7 @@ export type AiSalesConfigCountAggregateOutputType = {
   maxMessagesPerConversation: number
   debounceSeconds: number
   blockTtlSeconds: number
+  handoffMinScore: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -107,12 +112,14 @@ export type AiSalesConfigAvgAggregateInputType = {
   maxMessagesPerConversation?: true
   debounceSeconds?: true
   blockTtlSeconds?: true
+  handoffMinScore?: true
 }
 
 export type AiSalesConfigSumAggregateInputType = {
   maxMessagesPerConversation?: true
   debounceSeconds?: true
   blockTtlSeconds?: true
+  handoffMinScore?: true
 }
 
 export type AiSalesConfigMinAggregateInputType = {
@@ -131,6 +138,7 @@ export type AiSalesConfigMinAggregateInputType = {
   maxMessagesPerConversation?: true
   debounceSeconds?: true
   blockTtlSeconds?: true
+  handoffMinScore?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -151,6 +159,7 @@ export type AiSalesConfigMaxAggregateInputType = {
   maxMessagesPerConversation?: true
   debounceSeconds?: true
   blockTtlSeconds?: true
+  handoffMinScore?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -174,6 +183,7 @@ export type AiSalesConfigCountAggregateInputType = {
   maxMessagesPerConversation?: true
   debounceSeconds?: true
   blockTtlSeconds?: true
+  handoffMinScore?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -284,6 +294,7 @@ export type AiSalesConfigGroupByOutputType = {
   maxMessagesPerConversation: number
   debounceSeconds: number
   blockTtlSeconds: number
+  handoffMinScore: number
   createdAt: Date
   updatedAt: Date
   _count: AiSalesConfigCountAggregateOutputType | null
@@ -330,6 +341,7 @@ export type AiSalesConfigWhereInput = {
   maxMessagesPerConversation?: Prisma.IntFilter<"AiSalesConfig"> | number
   debounceSeconds?: Prisma.IntFilter<"AiSalesConfig"> | number
   blockTtlSeconds?: Prisma.IntFilter<"AiSalesConfig"> | number
+  handoffMinScore?: Prisma.IntFilter<"AiSalesConfig"> | number
   createdAt?: Prisma.DateTimeFilter<"AiSalesConfig"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"AiSalesConfig"> | Date | string
   workspace?: Prisma.XOR<Prisma.WorkspaceScalarRelationFilter, Prisma.WorkspaceWhereInput>
@@ -354,6 +366,7 @@ export type AiSalesConfigOrderByWithRelationInput = {
   maxMessagesPerConversation?: Prisma.SortOrder
   debounceSeconds?: Prisma.SortOrder
   blockTtlSeconds?: Prisma.SortOrder
+  handoffMinScore?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   workspace?: Prisma.WorkspaceOrderByWithRelationInput
@@ -381,6 +394,7 @@ export type AiSalesConfigWhereUniqueInput = Prisma.AtLeast<{
   maxMessagesPerConversation?: Prisma.IntFilter<"AiSalesConfig"> | number
   debounceSeconds?: Prisma.IntFilter<"AiSalesConfig"> | number
   blockTtlSeconds?: Prisma.IntFilter<"AiSalesConfig"> | number
+  handoffMinScore?: Prisma.IntFilter<"AiSalesConfig"> | number
   createdAt?: Prisma.DateTimeFilter<"AiSalesConfig"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"AiSalesConfig"> | Date | string
   workspace?: Prisma.XOR<Prisma.WorkspaceScalarRelationFilter, Prisma.WorkspaceWhereInput>
@@ -405,6 +419,7 @@ export type AiSalesConfigOrderByWithAggregationInput = {
   maxMessagesPerConversation?: Prisma.SortOrder
   debounceSeconds?: Prisma.SortOrder
   blockTtlSeconds?: Prisma.SortOrder
+  handoffMinScore?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.AiSalesConfigCountOrderByAggregateInput
@@ -436,6 +451,7 @@ export type AiSalesConfigScalarWhereWithAggregatesInput = {
   maxMessagesPerConversation?: Prisma.IntWithAggregatesFilter<"AiSalesConfig"> | number
   debounceSeconds?: Prisma.IntWithAggregatesFilter<"AiSalesConfig"> | number
   blockTtlSeconds?: Prisma.IntWithAggregatesFilter<"AiSalesConfig"> | number
+  handoffMinScore?: Prisma.IntWithAggregatesFilter<"AiSalesConfig"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"AiSalesConfig"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"AiSalesConfig"> | Date | string
 }
@@ -458,6 +474,7 @@ export type AiSalesConfigCreateInput = {
   maxMessagesPerConversation?: number
   debounceSeconds?: number
   blockTtlSeconds?: number
+  handoffMinScore?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   workspace: Prisma.WorkspaceCreateNestedOneWithoutAiSalesConfigInput
@@ -482,6 +499,7 @@ export type AiSalesConfigUncheckedCreateInput = {
   maxMessagesPerConversation?: number
   debounceSeconds?: number
   blockTtlSeconds?: number
+  handoffMinScore?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -504,6 +522,7 @@ export type AiSalesConfigUpdateInput = {
   maxMessagesPerConversation?: Prisma.IntFieldUpdateOperationsInput | number
   debounceSeconds?: Prisma.IntFieldUpdateOperationsInput | number
   blockTtlSeconds?: Prisma.IntFieldUpdateOperationsInput | number
+  handoffMinScore?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   workspace?: Prisma.WorkspaceUpdateOneRequiredWithoutAiSalesConfigNestedInput
@@ -528,6 +547,7 @@ export type AiSalesConfigUncheckedUpdateInput = {
   maxMessagesPerConversation?: Prisma.IntFieldUpdateOperationsInput | number
   debounceSeconds?: Prisma.IntFieldUpdateOperationsInput | number
   blockTtlSeconds?: Prisma.IntFieldUpdateOperationsInput | number
+  handoffMinScore?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -551,6 +571,7 @@ export type AiSalesConfigCreateManyInput = {
   maxMessagesPerConversation?: number
   debounceSeconds?: number
   blockTtlSeconds?: number
+  handoffMinScore?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -573,6 +594,7 @@ export type AiSalesConfigUpdateManyMutationInput = {
   maxMessagesPerConversation?: Prisma.IntFieldUpdateOperationsInput | number
   debounceSeconds?: Prisma.IntFieldUpdateOperationsInput | number
   blockTtlSeconds?: Prisma.IntFieldUpdateOperationsInput | number
+  handoffMinScore?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -596,6 +618,7 @@ export type AiSalesConfigUncheckedUpdateManyInput = {
   maxMessagesPerConversation?: Prisma.IntFieldUpdateOperationsInput | number
   debounceSeconds?: Prisma.IntFieldUpdateOperationsInput | number
   blockTtlSeconds?: Prisma.IntFieldUpdateOperationsInput | number
+  handoffMinScore?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -624,6 +647,7 @@ export type AiSalesConfigCountOrderByAggregateInput = {
   maxMessagesPerConversation?: Prisma.SortOrder
   debounceSeconds?: Prisma.SortOrder
   blockTtlSeconds?: Prisma.SortOrder
+  handoffMinScore?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -632,6 +656,7 @@ export type AiSalesConfigAvgOrderByAggregateInput = {
   maxMessagesPerConversation?: Prisma.SortOrder
   debounceSeconds?: Prisma.SortOrder
   blockTtlSeconds?: Prisma.SortOrder
+  handoffMinScore?: Prisma.SortOrder
 }
 
 export type AiSalesConfigMaxOrderByAggregateInput = {
@@ -650,6 +675,7 @@ export type AiSalesConfigMaxOrderByAggregateInput = {
   maxMessagesPerConversation?: Prisma.SortOrder
   debounceSeconds?: Prisma.SortOrder
   blockTtlSeconds?: Prisma.SortOrder
+  handoffMinScore?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -670,6 +696,7 @@ export type AiSalesConfigMinOrderByAggregateInput = {
   maxMessagesPerConversation?: Prisma.SortOrder
   debounceSeconds?: Prisma.SortOrder
   blockTtlSeconds?: Prisma.SortOrder
+  handoffMinScore?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -678,6 +705,7 @@ export type AiSalesConfigSumOrderByAggregateInput = {
   maxMessagesPerConversation?: Prisma.SortOrder
   debounceSeconds?: Prisma.SortOrder
   blockTtlSeconds?: Prisma.SortOrder
+  handoffMinScore?: Prisma.SortOrder
 }
 
 export type AiSalesConfigCreateNestedOneWithoutWorkspaceInput = {
@@ -730,6 +758,7 @@ export type AiSalesConfigCreateWithoutWorkspaceInput = {
   maxMessagesPerConversation?: number
   debounceSeconds?: number
   blockTtlSeconds?: number
+  handoffMinScore?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -752,6 +781,7 @@ export type AiSalesConfigUncheckedCreateWithoutWorkspaceInput = {
   maxMessagesPerConversation?: number
   debounceSeconds?: number
   blockTtlSeconds?: number
+  handoffMinScore?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -790,6 +820,7 @@ export type AiSalesConfigUpdateWithoutWorkspaceInput = {
   maxMessagesPerConversation?: Prisma.IntFieldUpdateOperationsInput | number
   debounceSeconds?: Prisma.IntFieldUpdateOperationsInput | number
   blockTtlSeconds?: Prisma.IntFieldUpdateOperationsInput | number
+  handoffMinScore?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -812,6 +843,7 @@ export type AiSalesConfigUncheckedUpdateWithoutWorkspaceInput = {
   maxMessagesPerConversation?: Prisma.IntFieldUpdateOperationsInput | number
   debounceSeconds?: Prisma.IntFieldUpdateOperationsInput | number
   blockTtlSeconds?: Prisma.IntFieldUpdateOperationsInput | number
+  handoffMinScore?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -837,6 +869,7 @@ export type AiSalesConfigSelect<ExtArgs extends runtime.Types.Extensions.Interna
   maxMessagesPerConversation?: boolean
   debounceSeconds?: boolean
   blockTtlSeconds?: boolean
+  handoffMinScore?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   workspace?: boolean | Prisma.WorkspaceDefaultArgs<ExtArgs>
@@ -861,6 +894,7 @@ export type AiSalesConfigSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   maxMessagesPerConversation?: boolean
   debounceSeconds?: boolean
   blockTtlSeconds?: boolean
+  handoffMinScore?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   workspace?: boolean | Prisma.WorkspaceDefaultArgs<ExtArgs>
@@ -885,6 +919,7 @@ export type AiSalesConfigSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   maxMessagesPerConversation?: boolean
   debounceSeconds?: boolean
   blockTtlSeconds?: boolean
+  handoffMinScore?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   workspace?: boolean | Prisma.WorkspaceDefaultArgs<ExtArgs>
@@ -909,11 +944,12 @@ export type AiSalesConfigSelectScalar = {
   maxMessagesPerConversation?: boolean
   debounceSeconds?: boolean
   blockTtlSeconds?: boolean
+  handoffMinScore?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type AiSalesConfigOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "workspaceId" | "agentName" | "tone" | "businessName" | "businessDescription" | "targetAudience" | "differentials" | "productsServices" | "commonObjections" | "objectives" | "calendarUrl" | "systemPrompt" | "useCustomPrompt" | "model" | "maxMessagesPerConversation" | "debounceSeconds" | "blockTtlSeconds" | "createdAt" | "updatedAt", ExtArgs["result"]["aiSalesConfig"]>
+export type AiSalesConfigOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "workspaceId" | "agentName" | "tone" | "businessName" | "businessDescription" | "targetAudience" | "differentials" | "productsServices" | "commonObjections" | "objectives" | "calendarUrl" | "systemPrompt" | "useCustomPrompt" | "model" | "maxMessagesPerConversation" | "debounceSeconds" | "blockTtlSeconds" | "handoffMinScore" | "createdAt" | "updatedAt", ExtArgs["result"]["aiSalesConfig"]>
 export type AiSalesConfigInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   workspace?: boolean | Prisma.WorkspaceDefaultArgs<ExtArgs>
 }
@@ -948,6 +984,7 @@ export type $AiSalesConfigPayload<ExtArgs extends runtime.Types.Extensions.Inter
     maxMessagesPerConversation: number
     debounceSeconds: number
     blockTtlSeconds: number
+    handoffMinScore: number
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["aiSalesConfig"]>
@@ -1392,6 +1429,7 @@ export interface AiSalesConfigFieldRefs {
   readonly maxMessagesPerConversation: Prisma.FieldRef<"AiSalesConfig", 'Int'>
   readonly debounceSeconds: Prisma.FieldRef<"AiSalesConfig", 'Int'>
   readonly blockTtlSeconds: Prisma.FieldRef<"AiSalesConfig", 'Int'>
+  readonly handoffMinScore: Prisma.FieldRef<"AiSalesConfig", 'Int'>
   readonly createdAt: Prisma.FieldRef<"AiSalesConfig", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"AiSalesConfig", 'DateTime'>
 }

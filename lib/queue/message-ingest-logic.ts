@@ -3,7 +3,7 @@ import { db } from '@/lib/db'
 import { pusherServer } from '@/lib/pusher'
 import { publishToQueue } from '@/lib/qstash'
 import { tryCreateConversationAtomic, incrementConversationCount } from '@/lib/billing/conversationGate'
-import { processMessageContent } from '@/lib/agents/vendedor'
+import { processMessageContent, processAiResponse } from '@/lib/agents/vendedor'
 import { addToDebounceBuffer, setDebounceTimestamp } from '@/lib/agents/vendedor-redis'
 
 /**
@@ -86,6 +86,8 @@ export async function processMessageIngest(payload: MessageIngestPayload): Promi
     contactPhotoUrl: payload.contactPhotoUrl,
     status: 'UNASSIGNED' as const,
     pipelineStage: 'Não Atribuído',
+    // Auto-activate Sora if the channel has aiAutoActivate enabled
+    ...(channel.aiAutoActivate ? { aiSalesEnabled: true } : {}),
   }
 
   const updateData = payload.provider === 'UAZAPI'
@@ -161,7 +163,7 @@ export async function processMessageIngest(payload: MessageIngestPayload): Promi
 
     const convDetails = await db.conversation.findUnique({
       where: { id: conversationId },
-      select: { pipelineStage: true, aiSalesEnabled: true, dispatchListId: true },
+      select: { pipelineStage: true, aiSalesEnabled: true },
     })
 
     // 9A. Audio transcription (UazAPI only)
@@ -219,8 +221,8 @@ export async function processMessageIngest(payload: MessageIngestPayload): Promi
       }).catch(err => console.error('[MESSAGE-INGEST] dispatch-response publish error:', err))
     }
 
-    // 9E. Vendedor SDR
-    if (convDetails?.aiSalesEnabled && convDetails?.dispatchListId) {
+    // 9E. Vendedor SDR (Sora)
+    if (convDetails?.aiSalesEnabled) {
       const processedContent = await processMessageContent({
         content: payload.content,
         mediaType: payload.mediaType ?? null,
@@ -232,11 +234,21 @@ export async function processMessageIngest(payload: MessageIngestPayload): Promi
         const scheduledAt = Date.now()
         await addToDebounceBuffer(conversationId, processedContent)
         await setDebounceTimestamp(conversationId, scheduledAt)
-        await publishToQueue('/api/queue/vendedor-check', {
-          conversationId,
-          workspaceId,
-          scheduledAt,
-        }, { delay: 15 }).catch(err => console.error('[MESSAGE-INGEST] vendedor publish error:', err))
+
+        const isDevBypass = process.env.NODE_ENV !== 'production' && !process.env.QSTASH_FORCE_PUBLISH
+        if (isDevBypass) {
+          // In dev, run Sora synchronously after debounce window
+          setTimeout(() => {
+            processAiResponse(workspaceId, conversationId, processedContent)
+              .catch(err => console.error('[MESSAGE-INGEST] vendedor dev fallback error:', err))
+          }, (15) * 1000)
+        } else {
+          await publishToQueue('/api/queue/vendedor-check', {
+            conversationId,
+            workspaceId,
+            scheduledAt,
+          }, { delay: 15 }).catch(err => console.error('[MESSAGE-INGEST] vendedor publish error:', err))
+        }
       }
     }
   }
@@ -245,9 +257,9 @@ export async function processMessageIngest(payload: MessageIngestPayload): Promi
   if (payload.direction === 'OUTBOUND' && !payload.aiGenerated) {
     const convDetails = await db.conversation.findUnique({
       where: { id: conversation.id },
-      select: { aiSalesEnabled: true, dispatchListId: true },
+      select: { aiSalesEnabled: true },
     })
-    if (convDetails?.aiSalesEnabled && convDetails?.dispatchListId) {
+    if (convDetails?.aiSalesEnabled) {
       await publishToQueue('/api/queue/human-takeover', {
         conversationId: conversation.id,
         textContent: payload.content,

@@ -4,36 +4,25 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useSession } from 'next-auth/react'
 import {
-  Search, Send, Bot, ChevronRight, Coins, Loader2, ArrowRight,
+  Search, Send, ChevronRight, Coins, Loader2, ArrowRight,
 } from 'lucide-react'
 
 interface TokenData {
   balance: number
 }
 
-interface VendedorConfig {
-  activeConversations?: number
-}
-
 export default function AgentsHubPage() {
   const { data: session } = useSession()
   const slug = session?.user?.workspaceSlug ?? ''
   const [tokenBalance, setTokenBalance] = useState<number | null>(null)
-  const [vendedorEnabled, setVendedorEnabled] = useState(false)
   const [loadingStats, setLoadingStats] = useState(true)
 
   useEffect(() => {
     async function loadStats() {
       try {
-        const [tokensRes, vendedorRes] = await Promise.all([
-          fetch('/api/tokens'),
-          fetch('/api/agents/vendedor/config'),
-        ])
+        const tokensRes = await fetch('/api/tokens')
         const tokensData: TokenData = tokensRes.ok ? await tokensRes.json() : { balance: 0 }
-        const vendedorData: { config: VendedorConfig | null } = vendedorRes.ok ? await vendedorRes.json() : { config: null }
-
         setTokenBalance(tokensData.balance ?? 0)
-        setVendedorEnabled(!!vendedorData.config)
       } catch (err) {
         console.error('Failed to load agent stats:', err)
       } finally {
@@ -98,7 +87,7 @@ export default function AgentsHubPage() {
       )}
 
       {/* Agent Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         {/* Buscador */}
         <Link
           href={`/${slug}/agents/buscador`}
@@ -157,41 +146,6 @@ export default function AgentsHubPage() {
           </div>
         </Link>
 
-        {/* Vendedor */}
-        <Link
-          href={`/${slug}/agents/vendedor`}
-          className="group bg-white border border-gray-100 rounded-2xl shadow-sm p-6 hover:shadow-md hover:-translate-y-0.5 transition-all flex flex-col"
-        >
-          <div className="flex items-start justify-between mb-4">
-            <div className="w-12 h-12 rounded-xl bg-violet-50 flex items-center justify-center">
-              <Bot className="w-6 h-6 text-violet-600" />
-            </div>
-            {vendedorEnabled ? (
-              <span className="inline-flex items-center gap-1.5 text-xs font-medium px-2 py-0.5 rounded-full bg-violet-50 text-violet-700">
-                <span className="w-1.5 h-1.5 rounded-full bg-violet-500 animate-pulse" />
-                Ativo
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1.5 text-xs font-medium px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">
-                <span className="w-1.5 h-1.5 rounded-full bg-gray-400" />
-                Inativo
-              </span>
-            )}
-          </div>
-
-          <p className="text-xs font-semibold uppercase tracking-wide text-violet-600 mb-1">Vendas com IA</p>
-          <h3 className="text-lg font-bold text-gray-900 mb-2">O Vendedor SDR</h3>
-          <p className="text-sm text-gray-500 leading-relaxed flex-1">
-            Atenda e qualifique leads automaticamente com IA. Debounce inteligente, detecção de intervenção humana.
-          </p>
-
-          <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
-            <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-1 bg-violet-50 text-violet-700 rounded-lg">
-              <Coins className="w-3 h-3" /> 1 token = 10 msgs
-            </span>
-            <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-violet-500 transition-colors" />
-          </div>
-        </Link>
       </div>
 
       {/* How it works */}
@@ -232,8 +186,8 @@ export default function AgentsHubPage() {
               3
             </div>
             <div>
-              <p className="font-medium text-gray-900 text-sm">Venda com IA</p>
-              <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">O Vendedor SDR atende as respostas automaticamente e qualifica cada lead.</p>
+              <p className="font-medium text-gray-900 text-sm">Qualifique com Sora</p>
+              <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">A Sora atende as respostas automaticamente, qualifica e transfere para o atendente ideal.</p>
             </div>
           </div>
         </div>

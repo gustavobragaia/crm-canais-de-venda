@@ -171,3 +171,8 @@ export type TemplateDispatch = Prisma.TemplateDispatchModel
  * 
  */
 export type AiSalesConfig = Prisma.AiSalesConfigModel
+/**
+ * Model KnowledgeDocument
+ * 
+ */
+export type KnowledgeDocument = Prisma.KnowledgeDocumentModel

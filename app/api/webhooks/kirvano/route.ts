@@ -102,7 +102,12 @@ export async function POST(req: NextRequest) {
 
       await db.workspace.update({
         where: { id: workspaceId },
-        data: { subscriptionStatus: 'ACTIVE', currentPeriodEnd: nextBilling },
+        data: {
+          subscriptionStatus: 'ACTIVE',
+          currentPeriodEnd: nextBilling,
+          soraUsedThisMonth: 0,
+          soraResetDate: nextBilling,
+        },
       })
       await db.subscription.updateMany({
         where: { workspaceId, status: 'ACTIVE' },

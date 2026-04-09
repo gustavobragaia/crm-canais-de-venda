@@ -1,7 +1,10 @@
 import { db } from '@/lib/db'
 import { pusherServer } from '@/lib/pusher'
 import { sendUazapiMessage } from '@/lib/integrations/uazapi'
-import { consumeTokens, canConsumeTokens } from '@/lib/billing/tokenService'
+import { sendInstagramMessage } from '@/lib/integrations/instagram'
+import { sendFacebookMessage } from '@/lib/integrations/facebook'
+import { decrypt } from '@/lib/crypto'
+import { consumeSoraAttendance } from '@/lib/billing/soraService'
 import { buildSystemPrompt } from './vendedor-prompt'
 import {
   isBlocked,
@@ -282,6 +285,8 @@ export async function processAiResponse(
       id: true,
       aiSalesEnabled: true,
       aiSalesMessageCount: true,
+      qualificationScore: true,
+      aiContextSummary: true,
       contactName: true,
       contactPhone: true,
       channelId: true,
@@ -301,23 +306,27 @@ export async function processAiResponse(
     return
   }
 
-  // 5. Check token balance
-  const msgsUntilNextCharge = 10 - (conversation.aiSalesMessageCount % 10)
-  if (msgsUntilNextCharge === 10) {
-    const canConsume = await canConsumeTokens(workspaceId, 1)
-    if (!canConsume) {
-      console.log(`[VENDEDOR] insufficient tokens | workspace=${workspaceId}`)
+  // 5. Billing — consume 1 atendimento on the first AI message of the conversation
+  if (conversation.aiSalesMessageCount === 0) {
+    const billing = await consumeSoraAttendance(workspaceId, conversationId)
+    if (billing.source === 'blocked') {
+      console.log(`[SORA] no attendances left | workspace=${workspaceId}`)
       return
     }
+    console.log(`[SORA] attendance consumed source=${billing.source} | workspace=${workspaceId}`)
   }
 
   // 6. Get channel
   if (!conversation.channelId) return
   const channel = await db.channel.findUnique({
     where: { id: conversation.channelId },
-    select: { instanceToken: true },
+    select: { instanceToken: true, type: true, provider: true, accessToken: true },
   })
-  if (!channel?.instanceToken) return
+  if (!channel) return
+  if (!channel.instanceToken && !channel.accessToken) {
+    console.log(`[SORA] channel has no credentials | conversation=${conversationId}`)
+    return
+  }
 
   // 7. Load lead context from dispatch list
   let leadContext: { name?: string; businessType?: string; reviewSummary?: string } | undefined
@@ -335,8 +344,23 @@ export async function processAiResponse(
     }
   }
 
+  // 7B. Fallback: use contact name when no dispatch context
+  if (!leadContext && conversation.contactName) {
+    leadContext = { name: conversation.contactName }
+  }
+
   // 8. Build system prompt
-  const systemPrompt = buildSystemPrompt(config, leadContext)
+  const { inferStage } = await import('./vendedor-prompt')
+  const stage = inferStage(conversation.aiSalesMessageCount, conversation.qualificationScore)
+  const mode = conversation.dispatchListId ? 'campaign_followup' : 'inbound_sales'
+  const channelType = (channel.type ?? 'WHATSAPP') as 'WHATSAPP' | 'INSTAGRAM' | 'FACEBOOK'
+
+  const systemPrompt = buildSystemPrompt(config, leadContext, {
+    mode,
+    channelType,
+    stage,
+    contextSummary: conversation.aiContextSummary ?? undefined,
+  })
 
   // 9. Load chat history
   const chatHistory = await loadChatHistory(conversationId)
@@ -425,11 +449,31 @@ export async function processAiResponse(
   const sendTo = conversation.contactPhone
     ?? conversation.externalId.replace('@s.whatsapp.net', '').replace('@g.us', '')
 
+  // Determine send function based on channel type
+  type SendFn = (text: string) => Promise<string>
+  let sendFn: SendFn
+
+  if (channel.type === 'WHATSAPP' && channel.provider === 'UAZAPI' && channel.instanceToken) {
+    sendFn = (text) => sendUazapiMessage(channel.instanceToken!, sendTo, text)
+  } else if (channel.type === 'INSTAGRAM' && channel.accessToken) {
+    const token = decrypt(channel.accessToken)
+    sendFn = (text) => sendInstagramMessage(conversation.externalId, text, token)
+  } else if (channel.type === 'FACEBOOK' && channel.accessToken) {
+    const token = decrypt(channel.accessToken)
+    sendFn = (text) => sendFacebookMessage(conversation.externalId, text, token)
+  } else {
+    console.log(`[SORA] unsupported channel type=${channel.type} provider=${channel.provider} | conversation=${conversationId}`)
+    return
+  }
+
   const allSentLines: string[] = []
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i]
-    const externalId = await sendUazapiMessage(channel.instanceToken, sendTo, line)
+    const externalId = await sendFn(line).catch((err) => {
+      console.error(`[SORA] send failed | conversation=${conversationId}`, err)
+      return ''
+    })
     const savedMsg = await db.message.create({
       data: {
         conversationId,
@@ -437,9 +481,9 @@ export async function processAiResponse(
         direction: 'OUTBOUND',
         content: line,
         externalId: externalId || undefined,
-        status: 'SENT',
+        status: externalId ? 'SENT' : 'FAILED',
         aiGenerated: true,
-        senderName: config.agentName ?? 'AI Vendedor',
+        senderName: config.agentName ?? 'Sora',
         sentAt: new Date(),
       },
     })
@@ -463,15 +507,10 @@ export async function processAiResponse(
     },
   })
 
-  // 15. Token consumption (1 token per 10 msgs)
-  if (newMsgCount % 10 === 0) {
-    await consumeTokens(workspaceId, 1, 'vendedor', conversationId, `SDR: ${newMsgCount} msgs`)
-  }
-
   // 16. Store last AI message for human takeover detection
   await setLastAiMessage(conversationId, allSentLines.join('\n'))
 
-  console.log(`[VENDEDOR] response sent | conversation=${conversationId} | lines=${lines.length} | totalMsgs=${newMsgCount}`)
+  console.log(`[SORA] response sent | conversation=${conversationId} | lines=${lines.length} | totalMsgs=${newMsgCount}`)
 
   // 17. Periodic qualification update every 5 AI messages — publish to queue
   if (newMsgCount % 5 === 0) {
@@ -484,10 +523,69 @@ export async function processAiResponse(
     }).catch((err) => console.error('[VENDEDOR] qualify-lead queue error:', err))
   }
 
-  // 18. Handle handoff if detected
+  // 18. Generate cumulative summary every 10 AI messages
+  if (newMsgCount % 10 === 0) {
+    generateContextSummary(conversationId, chatHistory, apiKey).catch(
+      (err) => console.error('[SORA] summary generation error:', err),
+    )
+  }
+
+  // 19. Handle handoff if detected
   if (hasHandoff) {
+    // Generate summary before handoff for the receiving agent
+    await generateContextSummary(conversationId, chatHistory, apiKey).catch(() => {})
     await handleHandoff(conversationId, workspaceId, 'AI solicitou handoff', chatHistory, apiKey)
   }
+}
+
+// ─── Context Summary ───
+
+async function generateContextSummary(
+  conversationId: string,
+  chatHistory: Array<{ role: 'user' | 'assistant'; content: string }>,
+  apiKey: string,
+): Promise<void> {
+  const summaryPrompt = `Você é um assistente que cria resumos estruturados de conversas de vendas.
+
+Analise a conversa abaixo e crie um resumo ESTRUTURADO com:
+- **Perfil do lead**: nome, empresa, cargo (se mencionado)
+- **Necessidade identificada**: o que o lead está buscando
+- **BANT coletado**: Budget, Authority, Need, Timeline (apenas o que foi mencionado)
+- **Objeções levantadas**: se houver
+- **Estágio**: NEW / DISCOVERY / QUALIFYING / PROPOSAL
+- **Próximos passos**: o que foi combinado ou deve acontecer
+
+Seja conciso. Use bullet points. Português brasileiro.`
+
+  const summaryMessages = [
+    { role: 'system' as const, content: summaryPrompt },
+    ...chatHistory.slice(-20),
+    { role: 'user' as const, content: 'Gere o resumo estruturado da conversa acima.' },
+  ]
+
+  const res = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
+    body: JSON.stringify({
+      model: 'gpt-4o-mini',
+      temperature: 0.3,
+      max_tokens: 400,
+      messages: summaryMessages,
+    }),
+  })
+
+  if (!res.ok) return
+
+  const data = await res.json()
+  const summary = data.choices?.[0]?.message?.content?.trim()
+  if (!summary) return
+
+  await db.conversation.update({
+    where: { id: conversationId },
+    data: { aiContextSummary: summary },
+  })
+
+  console.log(`[SORA] context summary updated | conversation=${conversationId}`)
 }
 
 // ─── Helpers ───

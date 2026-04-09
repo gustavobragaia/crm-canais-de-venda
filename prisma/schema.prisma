@@ -46,6 +46,13 @@ model Workspace {
   wabaTemplates            WabaTemplate[]
   templateDispatches       TemplateDispatch[]
   aiSalesConfig            AiSalesConfig?
+  knowledgeDocuments       KnowledgeDocument[]
+  // Sora
+  soraEnabled              Boolean            @default(false)
+  soraMonthlyLimit         Int                @default(0)
+  soraUsedThisMonth        Int                @default(0)
+  soraResetDate            DateTime?
+  soraOverflowEnabled      Boolean            @default(true)
 
   @@index([slug])
   @@map("workspaces")
@@ -96,6 +103,7 @@ model Channel {
   instanceName      String?
   instanceToken     String?
   isActive          Boolean         @default(true)
+  aiAutoActivate    Boolean         @default(false)
   lastSyncAt        DateTime?
   webhookVerifiedAt DateTime?
   createdAt         DateTime        @default(now())
@@ -128,11 +136,12 @@ model Conversation {
   dispatchListId     String?
   templateDispatchId String?
   source             String             @default("organic")
-  aiSalesEnabled     Boolean            @default(false)
-  aiSalesMessageCount Int               @default(0)
-  qualificationScore Int?
-  qualificationNotes String?
-  handoffBriefing    String?            @db.Text
+  aiSalesEnabled      Boolean            @default(false)
+  aiSalesMessageCount Int                @default(0)
+  qualificationScore  Int?
+  qualificationNotes  String?
+  handoffBriefing     String?            @db.Text
+  aiContextSummary    String?            @db.Text
   lastMessageAt      DateTime?
   lastMessagePreview String?
   unreadCount        Int                @default(0)
@@ -633,9 +642,28 @@ model AiSalesConfig {
   maxMessagesPerConversation Int     @default(50)
   debounceSeconds           Int      @default(15)
   blockTtlSeconds           Int      @default(2400)
+  handoffMinScore           Int      @default(7)
   createdAt                 DateTime @default(now())
   updatedAt                 DateTime @updatedAt
   workspace                 Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
   @@map("ai_sales_configs")
+}
+
+// ─── Sora Knowledge Base ───
+
+model KnowledgeDocument {
+  id          String    @id @default(uuid())
+  workspaceId String
+  name        String
+  content     String    @db.Text
+  chunks      Json?
+  fileUrl     String?
+  fileType    String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
+  @@map("knowledge_documents")
 }

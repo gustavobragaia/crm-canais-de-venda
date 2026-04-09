@@ -17,6 +17,7 @@ interface Message {
   createdAt: string
   isSystem: boolean
   senderName?: string | null
+  aiGenerated?: boolean
   sentBy: { id: string; name: string } | null
   mediaType?: string | null
   mediaUrl?: string | null
@@ -262,9 +263,9 @@ export function MessageThread({ conversationId, contactName, isGroup, aiSalesEna
         )}
         {aiSalesEnabled ? (
           <div className="flex items-center gap-2 px-3 py-1 bg-violet-50 border border-violet-200 rounded-full">
-            <Bot size={13} className="text-violet-600" />
+            <img src="/ai-avatar.svg" alt="Sora" className="w-3.5 h-3.5 rounded-full object-cover animate-pulse-subtle" />
             <span className="text-xs text-violet-700 font-medium">
-              AI Vendedor
+              Sora
               {aiSalesMessageCount != null && ` · ${aiSalesMessageCount} msgs`}
               {qualificationScore != null && ` · ${qualificationScore}/10`}
             </span>
@@ -272,7 +273,7 @@ export function MessageThread({ conversationId, contactName, isGroup, aiSalesEna
               <button
                 onClick={onToggleAi}
                 className="text-xs text-violet-400 hover:text-violet-700 transition-colors ml-0.5"
-                title="Desativar AI"
+                title="Desativar Sora"
               >
                 Desativar
               </button>
@@ -284,22 +285,23 @@ export function MessageThread({ conversationId, contactName, isGroup, aiSalesEna
               onClick={onToggleAi ?? (() => setShowAiUpsell(v => !v))}
               className="flex items-center gap-1.5 text-xs bg-violet-100 text-violet-700 hover:bg-violet-200 px-3 py-1 rounded-full transition-colors"
             >
-              <Bot size={12} /> Ativar AI
+              <img src="/ai-avatar.svg" alt="Sora" className="w-3 h-3 rounded-full object-cover" />
+              Ativar Sora
             </button>
             {showAiUpsell && !isDispatch && (
               <div className="absolute top-full left-0 mt-2 w-64 bg-white border border-violet-200 rounded-2xl shadow-lg p-4 z-50">
                 <div className="flex items-center gap-2 mb-2">
-                  <Bot size={14} className="text-violet-600" />
-                  <span className="text-xs font-semibold text-violet-800">AI Vendedor</span>
+                  <img src="/ai-avatar.svg" alt="Sora" className="w-4 h-4 rounded-full object-cover" />
+                  <span className="text-xs font-semibold text-violet-800">Sora — Agente SDR</span>
                 </div>
                 <p className="text-xs text-gray-600 leading-relaxed mb-3">
-                  O AI Vendedor atua automaticamente em conversas de disparo, qualificando leads e agendando reuniões.
+                  A Sora atende automaticamente qualquer conversa, qualifica leads e transfere para o atendente ideal.
                 </p>
                 <a
-                  href={`/${workspaceSlug}/agents/disparador`}
+                  href={`/${workspaceSlug}/sora`}
                   className="flex items-center gap-1 text-xs font-medium text-violet-600 hover:text-violet-800 transition-colors"
                 >
-                  Contratar via Disparos →
+                  Configurar Sora →
                 </a>
               </div>
             )}
@@ -335,6 +337,7 @@ export function MessageThread({ conversationId, contactName, isGroup, aiSalesEna
               )
             }
             const isOutbound = msg.direction === 'OUTBOUND'
+            const isAiGenerated = msg.aiGenerated === true
             const mediaType = msg.mediaType as 'audio' | 'image' | 'video' | 'document' | null | undefined
 
             return (
@@ -376,6 +379,11 @@ export function MessageThread({ conversationId, contactName, isGroup, aiSalesEna
                   <div className="flex items-center gap-1.5 px-1">
                     {msg.optimistic ? (
                       <Clock size={10} className="text-gray-400" />
+                    ) : isAiGenerated ? (
+                      <span className="flex items-center gap-1 text-xs text-violet-400">
+                        <img src="/ai-avatar.svg" alt="Sora" className="w-3 h-3 rounded-full object-cover" />
+                        {msg.senderName ?? 'Sora'} · {format(new Date(msg.createdAt), 'HH:mm', { locale: ptBR })}
+                      </span>
                     ) : (
                       <span className="text-xs text-gray-400">
                         {isOutbound && msg.sentBy ? `${msg.sentBy.name} · ` : ''}

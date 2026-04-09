@@ -39,6 +39,7 @@ export type ChannelMinAggregateOutputType = {
   instanceName: string | null
   instanceToken: string | null
   isActive: boolean | null
+  aiAutoActivate: boolean | null
   lastSyncAt: Date | null
   webhookVerifiedAt: Date | null
   createdAt: Date | null
@@ -60,6 +61,7 @@ export type ChannelMaxAggregateOutputType = {
   instanceName: string | null
   instanceToken: string | null
   isActive: boolean | null
+  aiAutoActivate: boolean | null
   lastSyncAt: Date | null
   webhookVerifiedAt: Date | null
   createdAt: Date | null
@@ -81,6 +83,7 @@ export type ChannelCountAggregateOutputType = {
   instanceName: number
   instanceToken: number
   isActive: number
+  aiAutoActivate: number
   lastSyncAt: number
   webhookVerifiedAt: number
   createdAt: number
@@ -104,6 +107,7 @@ export type ChannelMinAggregateInputType = {
   instanceName?: true
   instanceToken?: true
   isActive?: true
+  aiAutoActivate?: true
   lastSyncAt?: true
   webhookVerifiedAt?: true
   createdAt?: true
@@ -125,6 +129,7 @@ export type ChannelMaxAggregateInputType = {
   instanceName?: true
   instanceToken?: true
   isActive?: true
+  aiAutoActivate?: true
   lastSyncAt?: true
   webhookVerifiedAt?: true
   createdAt?: true
@@ -146,6 +151,7 @@ export type ChannelCountAggregateInputType = {
   instanceName?: true
   instanceToken?: true
   isActive?: true
+  aiAutoActivate?: true
   lastSyncAt?: true
   webhookVerifiedAt?: true
   createdAt?: true
@@ -240,6 +246,7 @@ export type ChannelGroupByOutputType = {
   instanceName: string | null
   instanceToken: string | null
   isActive: boolean
+  aiAutoActivate: boolean
   lastSyncAt: Date | null
   webhookVerifiedAt: Date | null
   createdAt: Date
@@ -282,6 +289,7 @@ export type ChannelWhereInput = {
   instanceName?: Prisma.StringNullableFilter<"Channel"> | string | null
   instanceToken?: Prisma.StringNullableFilter<"Channel"> | string | null
   isActive?: Prisma.BoolFilter<"Channel"> | boolean
+  aiAutoActivate?: Prisma.BoolFilter<"Channel"> | boolean
   lastSyncAt?: Prisma.DateTimeNullableFilter<"Channel"> | Date | string | null
   webhookVerifiedAt?: Prisma.DateTimeNullableFilter<"Channel"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Channel"> | Date | string
@@ -305,6 +313,7 @@ export type ChannelOrderByWithRelationInput = {
   instanceName?: Prisma.SortOrderInput | Prisma.SortOrder
   instanceToken?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  aiAutoActivate?: Prisma.SortOrder
   lastSyncAt?: Prisma.SortOrderInput | Prisma.SortOrder
   webhookVerifiedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -331,6 +340,7 @@ export type ChannelWhereUniqueInput = Prisma.AtLeast<{
   instanceName?: Prisma.StringNullableFilter<"Channel"> | string | null
   instanceToken?: Prisma.StringNullableFilter<"Channel"> | string | null
   isActive?: Prisma.BoolFilter<"Channel"> | boolean
+  aiAutoActivate?: Prisma.BoolFilter<"Channel"> | boolean
   lastSyncAt?: Prisma.DateTimeNullableFilter<"Channel"> | Date | string | null
   webhookVerifiedAt?: Prisma.DateTimeNullableFilter<"Channel"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Channel"> | Date | string
@@ -354,6 +364,7 @@ export type ChannelOrderByWithAggregationInput = {
   instanceName?: Prisma.SortOrderInput | Prisma.SortOrder
   instanceToken?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  aiAutoActivate?: Prisma.SortOrder
   lastSyncAt?: Prisma.SortOrderInput | Prisma.SortOrder
   webhookVerifiedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -381,6 +392,7 @@ export type ChannelScalarWhereWithAggregatesInput = {
   instanceName?: Prisma.StringNullableWithAggregatesFilter<"Channel"> | string | null
   instanceToken?: Prisma.StringNullableWithAggregatesFilter<"Channel"> | string | null
   isActive?: Prisma.BoolWithAggregatesFilter<"Channel"> | boolean
+  aiAutoActivate?: Prisma.BoolWithAggregatesFilter<"Channel"> | boolean
   lastSyncAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Channel"> | Date | string | null
   webhookVerifiedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Channel"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Channel"> | Date | string
@@ -401,6 +413,7 @@ export type ChannelCreateInput = {
   instanceName?: string | null
   instanceToken?: string | null
   isActive?: boolean
+  aiAutoActivate?: boolean
   lastSyncAt?: Date | string | null
   webhookVerifiedAt?: Date | string | null
   createdAt?: Date | string
@@ -424,6 +437,7 @@ export type ChannelUncheckedCreateInput = {
   instanceName?: string | null
   instanceToken?: string | null
   isActive?: boolean
+  aiAutoActivate?: boolean
   lastSyncAt?: Date | string | null
   webhookVerifiedAt?: Date | string | null
   createdAt?: Date | string
@@ -445,6 +459,7 @@ export type ChannelUpdateInput = {
   instanceName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instanceToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  aiAutoActivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   webhookVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -468,6 +483,7 @@ export type ChannelUncheckedUpdateInput = {
   instanceName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instanceToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  aiAutoActivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   webhookVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -490,6 +506,7 @@ export type ChannelCreateManyInput = {
   instanceName?: string | null
   instanceToken?: string | null
   isActive?: boolean
+  aiAutoActivate?: boolean
   lastSyncAt?: Date | string | null
   webhookVerifiedAt?: Date | string | null
   createdAt?: Date | string
@@ -510,6 +527,7 @@ export type ChannelUpdateManyMutationInput = {
   instanceName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instanceToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  aiAutoActivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   webhookVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -531,6 +549,7 @@ export type ChannelUncheckedUpdateManyInput = {
   instanceName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instanceToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  aiAutoActivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   webhookVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -562,6 +581,7 @@ export type ChannelCountOrderByAggregateInput = {
   instanceName?: Prisma.SortOrder
   instanceToken?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  aiAutoActivate?: Prisma.SortOrder
   lastSyncAt?: Prisma.SortOrder
   webhookVerifiedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -583,6 +603,7 @@ export type ChannelMaxOrderByAggregateInput = {
   instanceName?: Prisma.SortOrder
   instanceToken?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  aiAutoActivate?: Prisma.SortOrder
   lastSyncAt?: Prisma.SortOrder
   webhookVerifiedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -604,6 +625,7 @@ export type ChannelMinOrderByAggregateInput = {
   instanceName?: Prisma.SortOrder
   instanceToken?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  aiAutoActivate?: Prisma.SortOrder
   lastSyncAt?: Prisma.SortOrder
   webhookVerifiedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -695,6 +717,7 @@ export type ChannelCreateWithoutWorkspaceInput = {
   instanceName?: string | null
   instanceToken?: string | null
   isActive?: boolean
+  aiAutoActivate?: boolean
   lastSyncAt?: Date | string | null
   webhookVerifiedAt?: Date | string | null
   createdAt?: Date | string
@@ -716,6 +739,7 @@ export type ChannelUncheckedCreateWithoutWorkspaceInput = {
   instanceName?: string | null
   instanceToken?: string | null
   isActive?: boolean
+  aiAutoActivate?: boolean
   lastSyncAt?: Date | string | null
   webhookVerifiedAt?: Date | string | null
   createdAt?: Date | string
@@ -767,6 +791,7 @@ export type ChannelScalarWhereInput = {
   instanceName?: Prisma.StringNullableFilter<"Channel"> | string | null
   instanceToken?: Prisma.StringNullableFilter<"Channel"> | string | null
   isActive?: Prisma.BoolFilter<"Channel"> | boolean
+  aiAutoActivate?: Prisma.BoolFilter<"Channel"> | boolean
   lastSyncAt?: Prisma.DateTimeNullableFilter<"Channel"> | Date | string | null
   webhookVerifiedAt?: Prisma.DateTimeNullableFilter<"Channel"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Channel"> | Date | string
@@ -787,6 +812,7 @@ export type ChannelCreateWithoutConversationsInput = {
   instanceName?: string | null
   instanceToken?: string | null
   isActive?: boolean
+  aiAutoActivate?: boolean
   lastSyncAt?: Date | string | null
   webhookVerifiedAt?: Date | string | null
   createdAt?: Date | string
@@ -809,6 +835,7 @@ export type ChannelUncheckedCreateWithoutConversationsInput = {
   instanceName?: string | null
   instanceToken?: string | null
   isActive?: boolean
+  aiAutoActivate?: boolean
   lastSyncAt?: Date | string | null
   webhookVerifiedAt?: Date | string | null
   createdAt?: Date | string
@@ -845,6 +872,7 @@ export type ChannelUpdateWithoutConversationsInput = {
   instanceName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instanceToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  aiAutoActivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   webhookVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -867,6 +895,7 @@ export type ChannelUncheckedUpdateWithoutConversationsInput = {
   instanceName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instanceToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  aiAutoActivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   webhookVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -887,6 +916,7 @@ export type ChannelCreateManyWorkspaceInput = {
   instanceName?: string | null
   instanceToken?: string | null
   isActive?: boolean
+  aiAutoActivate?: boolean
   lastSyncAt?: Date | string | null
   webhookVerifiedAt?: Date | string | null
   createdAt?: Date | string
@@ -907,6 +937,7 @@ export type ChannelUpdateWithoutWorkspaceInput = {
   instanceName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instanceToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  aiAutoActivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   webhookVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -928,6 +959,7 @@ export type ChannelUncheckedUpdateWithoutWorkspaceInput = {
   instanceName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instanceToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  aiAutoActivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   webhookVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -949,6 +981,7 @@ export type ChannelUncheckedUpdateManyWithoutWorkspaceInput = {
   instanceName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instanceToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  aiAutoActivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   webhookVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1001,6 +1034,7 @@ export type ChannelSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   instanceName?: boolean
   instanceToken?: boolean
   isActive?: boolean
+  aiAutoActivate?: boolean
   lastSyncAt?: boolean
   webhookVerifiedAt?: boolean
   createdAt?: boolean
@@ -1025,6 +1059,7 @@ export type ChannelSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   instanceName?: boolean
   instanceToken?: boolean
   isActive?: boolean
+  aiAutoActivate?: boolean
   lastSyncAt?: boolean
   webhookVerifiedAt?: boolean
   createdAt?: boolean
@@ -1047,6 +1082,7 @@ export type ChannelSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   instanceName?: boolean
   instanceToken?: boolean
   isActive?: boolean
+  aiAutoActivate?: boolean
   lastSyncAt?: boolean
   webhookVerifiedAt?: boolean
   createdAt?: boolean
@@ -1069,13 +1105,14 @@ export type ChannelSelectScalar = {
   instanceName?: boolean
   instanceToken?: boolean
   isActive?: boolean
+  aiAutoActivate?: boolean
   lastSyncAt?: boolean
   webhookVerifiedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ChannelOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "workspaceId" | "type" | "provider" | "name" | "accessToken" | "phoneNumberId" | "phoneNumber" | "pageId" | "pageName" | "businessAccountId" | "instanceName" | "instanceToken" | "isActive" | "lastSyncAt" | "webhookVerifiedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["channel"]>
+export type ChannelOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "workspaceId" | "type" | "provider" | "name" | "accessToken" | "phoneNumberId" | "phoneNumber" | "pageId" | "pageName" | "businessAccountId" | "instanceName" | "instanceToken" | "isActive" | "aiAutoActivate" | "lastSyncAt" | "webhookVerifiedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["channel"]>
 export type ChannelInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   workspace?: boolean | Prisma.WorkspaceDefaultArgs<ExtArgs>
   conversations?: boolean | Prisma.Channel$conversationsArgs<ExtArgs>
@@ -1109,6 +1146,7 @@ export type $ChannelPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     instanceName: string | null
     instanceToken: string | null
     isActive: boolean
+    aiAutoActivate: boolean
     lastSyncAt: Date | null
     webhookVerifiedAt: Date | null
     createdAt: Date
@@ -1552,6 +1590,7 @@ export interface ChannelFieldRefs {
   readonly instanceName: Prisma.FieldRef<"Channel", 'String'>
   readonly instanceToken: Prisma.FieldRef<"Channel", 'String'>
   readonly isActive: Prisma.FieldRef<"Channel", 'Boolean'>
+  readonly aiAutoActivate: Prisma.FieldRef<"Channel", 'Boolean'>
   readonly lastSyncAt: Prisma.FieldRef<"Channel", 'DateTime'>
   readonly webhookVerifiedAt: Prisma.FieldRef<"Channel", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Channel", 'DateTime'>

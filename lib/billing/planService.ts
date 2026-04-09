@@ -4,6 +4,7 @@ export interface PlanConfig {
   priceCents: number
   userLimit: number
   conversationLimit: number
+  soraMonthlyLimit: number
   checkoutUrl: string
 }
 
@@ -14,6 +15,7 @@ export const PLANS: Record<string, PlanConfig> = {
     priceCents: 0,
     userLimit: 2,
     conversationLimit: 10,
+    soraMonthlyLimit: 0,
     checkoutUrl: '',
   },
   solo: {
@@ -22,6 +24,7 @@ export const PLANS: Record<string, PlanConfig> = {
     priceCents: 9700,
     userLimit: 1,
     conversationLimit: 999999,
+    soraMonthlyLimit: 30,
     checkoutUrl: process.env.NEXT_PUBLIC_KIRVANO_CHECKOUT_URL_SOLO ?? '',
   },
   starter: {
@@ -30,6 +33,7 @@ export const PLANS: Record<string, PlanConfig> = {
     priceCents: 29700,
     userLimit: 3,
     conversationLimit: 999999,
+    soraMonthlyLimit: 100,
     checkoutUrl: process.env.NEXT_PUBLIC_KIRVANO_CHECKOUT_URL_STARTER ?? '',
   },
   growth: {
@@ -38,6 +42,7 @@ export const PLANS: Record<string, PlanConfig> = {
     priceCents: 49700,
     userLimit: 7,
     conversationLimit: 999999,
+    soraMonthlyLimit: 250,
     checkoutUrl: process.env.NEXT_PUBLIC_KIRVANO_CHECKOUT_URL_GROWTH ?? '',
   },
   business: {
@@ -46,6 +51,7 @@ export const PLANS: Record<string, PlanConfig> = {
     priceCents: 99700,
     userLimit: 12,
     conversationLimit: 999999,
+    soraMonthlyLimit: 600,
     checkoutUrl: process.env.NEXT_PUBLIC_KIRVANO_CHECKOUT_URL_BUSINESS ?? '',
   },
 }

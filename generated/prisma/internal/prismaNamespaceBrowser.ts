@@ -76,7 +76,8 @@ export const ModelName = {
   WabaChannel: 'WabaChannel',
   WabaTemplate: 'WabaTemplate',
   TemplateDispatch: 'TemplateDispatch',
-  AiSalesConfig: 'AiSalesConfig'
+  AiSalesConfig: 'AiSalesConfig',
+  KnowledgeDocument: 'KnowledgeDocument'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -112,7 +113,12 @@ export const WorkspaceScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   tokenBalance: 'tokenBalance',
-  hasUsedFreeScraping: 'hasUsedFreeScraping'
+  hasUsedFreeScraping: 'hasUsedFreeScraping',
+  soraEnabled: 'soraEnabled',
+  soraMonthlyLimit: 'soraMonthlyLimit',
+  soraUsedThisMonth: 'soraUsedThisMonth',
+  soraResetDate: 'soraResetDate',
+  soraOverflowEnabled: 'soraOverflowEnabled'
 } as const
 
 export type WorkspaceScalarFieldEnum = (typeof WorkspaceScalarFieldEnum)[keyof typeof WorkspaceScalarFieldEnum]
@@ -153,6 +159,7 @@ export const ChannelScalarFieldEnum = {
   instanceName: 'instanceName',
   instanceToken: 'instanceToken',
   isActive: 'isActive',
+  aiAutoActivate: 'aiAutoActivate',
   lastSyncAt: 'lastSyncAt',
   webhookVerifiedAt: 'webhookVerifiedAt',
   createdAt: 'createdAt',
@@ -184,6 +191,7 @@ export const ConversationScalarFieldEnum = {
   qualificationScore: 'qualificationScore',
   qualificationNotes: 'qualificationNotes',
   handoffBriefing: 'handoffBriefing',
+  aiContextSummary: 'aiContextSummary',
   lastMessageAt: 'lastMessageAt',
   lastMessagePreview: 'lastMessagePreview',
   unreadCount: 'unreadCount',
@@ -560,11 +568,27 @@ export const AiSalesConfigScalarFieldEnum = {
   maxMessagesPerConversation: 'maxMessagesPerConversation',
   debounceSeconds: 'debounceSeconds',
   blockTtlSeconds: 'blockTtlSeconds',
+  handoffMinScore: 'handoffMinScore',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type AiSalesConfigScalarFieldEnum = (typeof AiSalesConfigScalarFieldEnum)[keyof typeof AiSalesConfigScalarFieldEnum]
+
+
+export const KnowledgeDocumentScalarFieldEnum = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  name: 'name',
+  content: 'content',
+  chunks: 'chunks',
+  fileUrl: 'fileUrl',
+  fileType: 'fileType',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type KnowledgeDocumentScalarFieldEnum = (typeof KnowledgeDocumentScalarFieldEnum)[keyof typeof KnowledgeDocumentScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -580,6 +604,14 @@ export const JsonNullValueInput = {
 } as const
 
 export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
 export const QueryMode = {

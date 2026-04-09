@@ -23,6 +23,7 @@ export async function GET() {
         pageName: true,
         instanceName: true,
         isActive: true,
+        aiAutoActivate: true,
         createdAt: true,
       },
     })

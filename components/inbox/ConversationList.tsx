@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { MessageCircle, Instagram, Facebook, Bot } from 'lucide-react'
+import { MessageCircle, Instagram, Facebook } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 
@@ -127,10 +127,11 @@ export function ConversationList({
                   <p className="font-medium text-gray-900 text-sm truncate flex items-center gap-1.5">
                     {conv.contactName}
                     {conv.aiSalesEnabled && (
-                      <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-violet-100 text-violet-700 text-[10px] font-semibold rounded-full flex-shrink-0">
-                        <Bot size={10} />
-                        AI
-                      </span>
+                      <img
+                        src="/ai-avatar.svg"
+                        alt="Sora"
+                        className="w-4 h-4 rounded-full object-cover flex-shrink-0 animate-pulse-subtle"
+                      />
                     )}
                   </p>
                   <div className="flex items-center gap-1.5 flex-shrink-0 ml-2">

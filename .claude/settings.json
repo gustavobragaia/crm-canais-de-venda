@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(npx tsc:*)",
-      "Read(//Users/gustavobrogaia/Documents/CRM-OMBOARDING-CONVERSAS/app/api/**)"
+      "Read(//Users/gustavobrogaia/Documents/CRM-OMBOARDING-CONVERSAS/app/api/**)",
+      "Bash(DIRECT_DATABASE_URL=\"postgresql://postgres.dtfrfrfldnpaxaqbvpgr:2pacshakurWestCoastforlife@aws-1-sa-east-1.pooler.supabase.com:5432/postgres\" npx prisma db push)",
+      "Bash(npx prisma:*)"
     ]
   }
 }

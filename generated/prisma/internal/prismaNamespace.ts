@@ -409,7 +409,8 @@ export const ModelName = {
   WabaChannel: 'WabaChannel',
   WabaTemplate: 'WabaTemplate',
   TemplateDispatch: 'TemplateDispatch',
-  AiSalesConfig: 'AiSalesConfig'
+  AiSalesConfig: 'AiSalesConfig',
+  KnowledgeDocument: 'KnowledgeDocument'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -425,7 +426,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "workspace" | "user" | "channel" | "conversation" | "tag" | "conversationTag" | "note" | "stageHistory" | "message" | "pipelineStage" | "lead" | "analyticsDaily" | "webhookLog" | "plan" | "messageTemplate" | "conversationActivity" | "subscription" | "tokenTransaction" | "tokenPackage" | "scrapingJob" | "dispatchList" | "dispatchListContact" | "wabaChannel" | "wabaTemplate" | "templateDispatch" | "aiSalesConfig"
+    modelProps: "workspace" | "user" | "channel" | "conversation" | "tag" | "conversationTag" | "note" | "stageHistory" | "message" | "pipelineStage" | "lead" | "analyticsDaily" | "webhookLog" | "plan" | "messageTemplate" | "conversationActivity" | "subscription" | "tokenTransaction" | "tokenPackage" | "scrapingJob" | "dispatchList" | "dispatchListContact" | "wabaChannel" | "wabaTemplate" | "templateDispatch" | "aiSalesConfig" | "knowledgeDocument"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2353,6 +2354,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    KnowledgeDocument: {
+      payload: Prisma.$KnowledgeDocumentPayload<ExtArgs>
+      fields: Prisma.KnowledgeDocumentFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.KnowledgeDocumentFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KnowledgeDocumentPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.KnowledgeDocumentFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KnowledgeDocumentPayload>
+        }
+        findFirst: {
+          args: Prisma.KnowledgeDocumentFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KnowledgeDocumentPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.KnowledgeDocumentFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KnowledgeDocumentPayload>
+        }
+        findMany: {
+          args: Prisma.KnowledgeDocumentFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KnowledgeDocumentPayload>[]
+        }
+        create: {
+          args: Prisma.KnowledgeDocumentCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KnowledgeDocumentPayload>
+        }
+        createMany: {
+          args: Prisma.KnowledgeDocumentCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.KnowledgeDocumentCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KnowledgeDocumentPayload>[]
+        }
+        delete: {
+          args: Prisma.KnowledgeDocumentDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KnowledgeDocumentPayload>
+        }
+        update: {
+          args: Prisma.KnowledgeDocumentUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KnowledgeDocumentPayload>
+        }
+        deleteMany: {
+          args: Prisma.KnowledgeDocumentDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.KnowledgeDocumentUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.KnowledgeDocumentUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KnowledgeDocumentPayload>[]
+        }
+        upsert: {
+          args: Prisma.KnowledgeDocumentUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KnowledgeDocumentPayload>
+        }
+        aggregate: {
+          args: Prisma.KnowledgeDocumentAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateKnowledgeDocument>
+        }
+        groupBy: {
+          args: Prisma.KnowledgeDocumentGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.KnowledgeDocumentGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.KnowledgeDocumentCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.KnowledgeDocumentCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -2409,7 +2484,12 @@ export const WorkspaceScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   tokenBalance: 'tokenBalance',
-  hasUsedFreeScraping: 'hasUsedFreeScraping'
+  hasUsedFreeScraping: 'hasUsedFreeScraping',
+  soraEnabled: 'soraEnabled',
+  soraMonthlyLimit: 'soraMonthlyLimit',
+  soraUsedThisMonth: 'soraUsedThisMonth',
+  soraResetDate: 'soraResetDate',
+  soraOverflowEnabled: 'soraOverflowEnabled'
 } as const
 
 export type WorkspaceScalarFieldEnum = (typeof WorkspaceScalarFieldEnum)[keyof typeof WorkspaceScalarFieldEnum]
@@ -2450,6 +2530,7 @@ export const ChannelScalarFieldEnum = {
   instanceName: 'instanceName',
   instanceToken: 'instanceToken',
   isActive: 'isActive',
+  aiAutoActivate: 'aiAutoActivate',
   lastSyncAt: 'lastSyncAt',
   webhookVerifiedAt: 'webhookVerifiedAt',
   createdAt: 'createdAt',
@@ -2481,6 +2562,7 @@ export const ConversationScalarFieldEnum = {
   qualificationScore: 'qualificationScore',
   qualificationNotes: 'qualificationNotes',
   handoffBriefing: 'handoffBriefing',
+  aiContextSummary: 'aiContextSummary',
   lastMessageAt: 'lastMessageAt',
   lastMessagePreview: 'lastMessagePreview',
   unreadCount: 'unreadCount',
@@ -2857,11 +2939,27 @@ export const AiSalesConfigScalarFieldEnum = {
   maxMessagesPerConversation: 'maxMessagesPerConversation',
   debounceSeconds: 'debounceSeconds',
   blockTtlSeconds: 'blockTtlSeconds',
+  handoffMinScore: 'handoffMinScore',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type AiSalesConfigScalarFieldEnum = (typeof AiSalesConfigScalarFieldEnum)[keyof typeof AiSalesConfigScalarFieldEnum]
+
+
+export const KnowledgeDocumentScalarFieldEnum = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  name: 'name',
+  content: 'content',
+  chunks: 'chunks',
+  fileUrl: 'fileUrl',
+  fileType: 'fileType',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type KnowledgeDocumentScalarFieldEnum = (typeof KnowledgeDocumentScalarFieldEnum)[keyof typeof KnowledgeDocumentScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -2877,6 +2975,14 @@ export const JsonNullValueInput = {
 } as const
 
 export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
 export const QueryMode = {
@@ -3233,6 +3339,7 @@ export type GlobalOmitConfig = {
   wabaTemplate?: Prisma.WabaTemplateOmit
   templateDispatch?: Prisma.TemplateDispatchOmit
   aiSalesConfig?: Prisma.AiSalesConfigOmit
+  knowledgeDocument?: Prisma.KnowledgeDocumentOmit
 }
 
 /* Types for Logging */

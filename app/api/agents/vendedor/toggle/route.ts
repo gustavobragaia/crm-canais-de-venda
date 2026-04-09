@@ -15,15 +15,11 @@ export async function POST(req: NextRequest) {
 
   const conversation = await db.conversation.findFirst({
     where: { id: conversationId, workspaceId: session.user.workspaceId },
-    select: { id: true, dispatchListId: true },
+    select: { id: true },
   })
 
   if (!conversation) {
     return NextResponse.json({ error: 'Conversa não encontrada.' }, { status: 404 })
-  }
-
-  if (enabled && !conversation.dispatchListId) {
-    return NextResponse.json({ error: 'AI Vendedor disponível apenas para conversas de disparo.' }, { status: 400 })
   }
 
   await db.conversation.update({
