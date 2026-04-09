@@ -35,7 +35,7 @@ export async function PATCH(
       where: {
         channelId: id,
         workspaceId: session.user.workspaceId,
-        status: { not: 'CLOSED' },
+        status: { not: 'ARCHIVED' },
         aiSalesEnabled: true,
       },
       data: { aiSalesEnabled: false },
