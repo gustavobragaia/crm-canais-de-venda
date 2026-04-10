@@ -74,13 +74,16 @@ export function LeadDetails({ conversationId }: LeadDetailsProps) {
     }).catch(() => {})
   }, [isAdmin])
 
-  // Real-time updates
+  // Real-time updates — re-fetch full conversation to get all fields
   useEffect(() => {
     if (!conversationId) return
     const handler = (e: Event) => {
-      const { conversationId: cid, conversation: updated } = (e as CustomEvent<{ conversationId: string; conversation: Partial<ConversationDetail> }>).detail
-      if (cid === conversationId && updated) {
-        setConversation(prev => prev ? { ...prev, ...updated } : prev)
+      const detail = (e as CustomEvent).detail
+      const cid = detail?.conversationId
+      if (cid === conversationId) {
+        fetch(`/api/conversations/${conversationId}`)
+          .then(r => r.ok ? r.json() : null)
+          .then((data: ConversationDetail | null) => { if (data) setConversation(data) })
       }
     }
     window.addEventListener('conversation-updated', handler)

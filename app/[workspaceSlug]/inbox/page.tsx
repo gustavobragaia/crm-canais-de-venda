@@ -142,8 +142,14 @@ export default function InboxPage() {
     'new-message': () => { silentRefresh() },
     'history-message': () => { silentRefresh() },
     'message-sent': () => { silentRefresh() },
-    'conversation-assigned': () => { silentRefresh() },
-    'conversation-updated': () => { silentRefresh() },
+    'conversation-assigned': (data: unknown) => {
+      silentRefresh()
+      window.dispatchEvent(new CustomEvent('conversation-updated', { detail: data }))
+    },
+    'conversation-updated': (data: unknown) => {
+      silentRefresh()
+      window.dispatchEvent(new CustomEvent('conversation-updated', { detail: data }))
+    },
   })
 
   const selectedConversation = conversations.find((c) => c.id === selectedId)

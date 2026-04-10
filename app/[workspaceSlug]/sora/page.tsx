@@ -1072,6 +1072,16 @@ export default function SoraPage() {
               <p className="text-sm text-gray-500 mt-1">
                 Configure para quem a Sora transfere os leads qualificados.
               </p>
+              <div className="mt-3 bg-violet-50 border border-violet-100 rounded-xl p-3 space-y-1.5">
+                <p className="text-xs font-medium text-violet-700">Como funciona o roteamento?</p>
+                <ol className="text-xs text-violet-600 space-y-1 list-decimal list-inside">
+                  <li>A Sora identifica a <strong>categoria da necessidade</strong> do lead (ex: &quot;direito previdenciário&quot;)</li>
+                  <li>Busca o atendente cuja <strong>especialização</strong> mais se aproxima dessa categoria</li>
+                  <li>Se nenhum atendente tem especialização compatível, transfere para um <strong>admin</strong></li>
+                  <li>Em caso de empate, escolhe quem tem <strong>menos conversas ativas</strong></li>
+                </ol>
+                <p className="text-xs text-violet-500 italic">Adicione especializações para cada membro da equipe para um roteamento mais preciso.</p>
+              </div>
             </div>
 
             {loadingTeam ? (
@@ -1159,7 +1169,7 @@ export default function SoraPage() {
 
             <div className="px-6 py-4 border-t border-gray-100 bg-gray-50">
               <p className="text-xs text-gray-500">
-                ℹ️ A Sora transfere para o atendente cuja especialização mais se aproxima da necessidade do lead. Se nenhum match, transfere para um admin.
+                Clique nas especializações para editar. Sem especializações, o lead será transferido para um admin.
               </p>
             </div>
           </div>

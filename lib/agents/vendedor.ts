@@ -228,6 +228,7 @@ async function handleHandoff(
       direction: 'OUTBOUND',
       content: `[BRIEFING_JSON]${JSON.stringify(briefingData)}`,
       status: 'SENT',
+      isSystem: true,
       aiGenerated: true,
       senderName: 'Sistema',
       sentAt: new Date(),
@@ -245,6 +246,22 @@ async function handleHandoff(
   await pusherServer.trigger(`workspace-${workspaceId}`, 'new-message', {
     conversationId,
     message: systemMsg,
+  }).catch(() => {})
+
+  // Notify UI of conversation changes (assignment, score, briefing, stage, aiSalesEnabled)
+  const updatedFields = {
+    aiSalesEnabled: false,
+    pipelineStage: newStage,
+    qualificationScore: qualification?.score ?? null,
+    qualificationNotes: qualification?.notes ?? null,
+    handoffBriefing: qualification?.briefing ?? null,
+    assignedTo: bestAgent ? { id: bestAgent.id, name: bestAgent.name } : null,
+    status: bestAgent ? 'IN_PROGRESS' : 'UNASSIGNED',
+  }
+
+  await pusherServer.trigger(`workspace-${workspaceId}`, 'conversation-updated', {
+    conversationId,
+    conversation: updatedFields,
   }).catch(() => {})
 
   if (bestAgent) {
