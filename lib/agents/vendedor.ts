@@ -156,11 +156,17 @@ async function findBestAgent(
 
   if (!users.length) return null
 
-  const needle = needCategory.toLowerCase()
+  // Normalize: lowercase + remove diacritics
+  const norm = (s: string) => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
 
-  // Filter users with matching specialization
+  const needleWords = norm(needCategory).split(/\s+/)
+
+  // Word-by-word match: any word in specialization (len > 2) that appears in needCategory
   const matches = users.filter(u =>
-    u.specializations.some(s => s.toLowerCase().includes(needle) || needle.includes(s.toLowerCase()))
+    u.specializations.some(s => {
+      const specWords = norm(s).split(/\s+/)
+      return specWords.some(w => w.length > 2 && needleWords.some(n => n.includes(w) || w.includes(n)))
+    })
   )
 
   const pool = matches.length > 0 ? matches : users.filter(u => u.role === 'ADMIN')

@@ -7,7 +7,7 @@ import { toast } from 'sonner'
 import {
   Loader2, TrendingUp, MessageSquare, Users, RefreshCw,
   Plus, Trash2, ChevronDown, ChevronRight, Check, Save,
-  Upload, FileText,
+  Upload, FileText, Pencil, X,
 } from 'lucide-react'
 
 // ─── Brand icons ───
@@ -1110,54 +1110,91 @@ export default function SoraPage() {
                         </td>
                         <td className="px-5 py-4">
                           {editingUserId === u.id ? (
-                            <div className="space-y-1.5">
-                              <div className="flex flex-wrap gap-1">
+                            <div className="space-y-2">
+                              <div className="flex flex-wrap gap-1.5 min-h-[24px]">
+                                {u.specializations.length === 0 && (
+                                  <span className="text-xs text-gray-400 italic">Nenhuma especialização</span>
+                                )}
                                 {u.specializations.map(s => (
-                                  <span key={s} className="inline-flex items-center gap-1 text-xs bg-violet-100 text-violet-700 px-2 py-0.5 rounded-full">
+                                  <span key={s} className="inline-flex items-center gap-1 text-xs bg-violet-100 text-violet-700 px-2.5 py-1 rounded-full">
                                     {s}
                                     <button
-                                      onClick={() => updateUserSpec(u.id, u.specializations.filter(x => x !== s))}
-                                      className="text-violet-400 hover:text-violet-700"
-                                    >×</button>
+                                      onMouseDown={e => {
+                                        e.preventDefault()
+                                        updateUserSpec(u.id, u.specializations.filter(x => x !== s))
+                                      }}
+                                      className="text-violet-400 hover:text-violet-700 ml-0.5"
+                                      title="Remover"
+                                    >
+                                      <X size={10} strokeWidth={2.5} />
+                                    </button>
                                   </span>
                                 ))}
                               </div>
-                              <input
-                                type="text"
-                                placeholder="Adicionar (Enter)"
-                                value={specInput}
-                                onChange={e => setSpecInput(e.target.value)}
-                                onKeyDown={e => {
-                                  if (e.key === 'Enter' && specInput.trim()) {
-                                    e.preventDefault()
-                                    const tag = specInput.trim().toLowerCase()
-                                    if (!u.specializations.includes(tag)) {
-                                      updateUserSpec(u.id, [...u.specializations, tag])
+                              <div className="flex items-center gap-1.5">
+                                <input
+                                  type="text"
+                                  placeholder="Nova especialização..."
+                                  value={specInput}
+                                  onChange={e => setSpecInput(e.target.value)}
+                                  onKeyDown={e => {
+                                    if (e.key === 'Enter' && specInput.trim()) {
+                                      e.preventDefault()
+                                      const tag = specInput.trim().toLowerCase()
+                                      if (!u.specializations.includes(tag)) {
+                                        updateUserSpec(u.id, [...u.specializations, tag])
+                                      }
+                                      setSpecInput('')
                                     }
-                                    setSpecInput('')
-                                  }
-                                  if (e.key === 'Escape') setEditingUserId(null)
-                                }}
-                                onBlur={() => setEditingUserId(null)}
-                                autoFocus
-                                className="text-xs px-2 py-1 border border-violet-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-violet-500 w-36"
-                              />
+                                    if (e.key === 'Escape') setEditingUserId(null)
+                                  }}
+                                  autoFocus
+                                  className="text-xs px-2.5 py-1.5 border border-violet-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-violet-500 flex-1 min-w-0"
+                                />
+                                <button
+                                  onMouseDown={e => {
+                                    e.preventDefault()
+                                    if (specInput.trim()) {
+                                      const tag = specInput.trim().toLowerCase()
+                                      if (!u.specializations.includes(tag)) {
+                                        updateUserSpec(u.id, [...u.specializations, tag])
+                                      }
+                                      setSpecInput('')
+                                    }
+                                  }}
+                                  className="p-1.5 bg-violet-600 hover:bg-violet-700 text-white rounded-lg"
+                                  title="Adicionar"
+                                >
+                                  <Plus size={12} strokeWidth={2.5} />
+                                </button>
+                                <button
+                                  onClick={() => setEditingUserId(null)}
+                                  className="p-1.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg"
+                                  title="Pronto"
+                                >
+                                  <Check size={12} strokeWidth={2.5} />
+                                </button>
+                              </div>
                             </div>
                           ) : (
-                            <button
-                              onClick={() => { setEditingUserId(u.id); setSpecInput('') }}
-                              className="text-left"
-                            >
-                              {u.specializations.length > 0 ? (
-                                <div className="flex flex-wrap gap-1">
-                                  {u.specializations.map(s => (
-                                    <span key={s} className="text-xs bg-violet-100 text-violet-700 px-2 py-0.5 rounded-full">{s}</span>
-                                  ))}
-                                </div>
-                              ) : (
-                                <span className="text-xs text-gray-400 hover:text-violet-600">+ Adicionar</span>
-                              )}
-                            </button>
+                            <div className="flex items-center gap-2 group">
+                              <div className="flex flex-wrap gap-1 flex-1">
+                                {u.specializations.length > 0 ? (
+                                  u.specializations.map(s => (
+                                    <span key={s} className="text-xs bg-violet-100 text-violet-700 px-2.5 py-1 rounded-full">{s}</span>
+                                  ))
+                                ) : (
+                                  <span className="text-xs text-gray-400">Sem especialização</span>
+                                )}
+                              </div>
+                              <button
+                                onClick={() => { setEditingUserId(u.id); setSpecInput('') }}
+                                className="p-1.5 text-gray-400 hover:text-violet-600 hover:bg-violet-50 rounded-lg flex-shrink-0"
+                                title="Editar especializações"
+                              >
+                                <Pencil size={13} />
+                              </button>
+                            </div>
                           )}
                         </td>
                       </tr>
@@ -1169,7 +1206,7 @@ export default function SoraPage() {
 
             <div className="px-6 py-4 border-t border-gray-100 bg-gray-50">
               <p className="text-xs text-gray-500">
-                Clique nas especializações para editar. Sem especializações, o lead será transferido para um admin.
+                Passe o mouse sobre uma linha e clique no lápis para editar. Sem especializações, o lead será transferido para um admin.
               </p>
             </div>
           </div>
