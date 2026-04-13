@@ -111,11 +111,16 @@ export async function extractQualification(
           {
             role: 'system',
             content: `Analise a conversa de vendas e retorne um JSON com:
-- score: número 1-10 representando a qualificação BANT (1-3 frio, 4-6 morno, 7-10 quente)
+- score: número 1-10 representando a qualificação BANT. CRITÉRIO RIGOROSO:
+  * 1-3 (frio): lead apenas iniciou contato, fez pergunta genérica, ou deu informações mínimas
+  * 4-6 (morno): lead explicou a necessidade mas faltam detalhes (urgência, autoridade, budget ou timeline)
+  * 7-9 (quente): lead explicou claramente a demanda, tem contexto suficiente, sinalizou intenção real
+  * 10: lead pediu explicitamente para contratar/fechar/agendar
+  IMPORTANTE: score 7+ SOMENTE se o lead já explicou sua necessidade específica. Se a conversa tem menos de 3 trocas ou o lead ainda não descreveu o problema, score máximo é 5.
 - notes: resumo de 2-3 frases sobre o lead
 - needCategory: categoria principal da necessidade (ex: "marketing digital", "direito trabalhista", "contabilidade")
 - urgency: "low" | "medium" | "high"
-- briefing: resumo de 3-5 frases para o atendente humano que vai assumir a conversa
+- briefing: resumo de 3-5 frases para o atendente humano que vai assumir a conversa, incluindo o que o lead já explicou sobre sua situação
 
 Responda SOMENTE com o JSON, sem texto adicional.`,
           },
@@ -521,8 +526,8 @@ export async function processAiResponse(
 
   console.log(`[SORA] response sent | conversation=${conversationId} | lines=${lines.length} | totalMsgs=${newMsgCount}`)
 
-  // 17. Rule-based qualification + auto handoff (every 3 AI messages, or at message 2)
-  if (newMsgCount >= 2 && (newMsgCount % 3 === 0 || newMsgCount === 2)) {
+  // 17. Rule-based qualification + auto handoff (every 3 AI messages)
+  if (newMsgCount >= 3 && newMsgCount % 3 === 0) {
     const qualification = await extractQualification(chatHistory, apiKey)
     if (qualification) {
       await db.conversation.update({

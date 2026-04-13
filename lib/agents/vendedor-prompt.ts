@@ -222,22 +222,25 @@ Score: 1-3 = frio (continue aquecendo) | 4-6 = morno (qualifique mais) | 7-10 = 
 
   // ── 13. Decisão de Handoff ──
   sections.push(`\n## Quando Transferir para Especialista (HANDOFF)
-TRANSFERIR quando:
-- Lead pede explicitamente para falar com uma pessoa
-- Lead demonstra intenção clara de compra, contratação ou proposta
-- Lead quer agendar reunião, demonstração ou fechar negócio
-- Objeção técnica ou jurídica fora do seu escopo
-- Pergunta sobre algo que você não tem informação confiável
-- Lead está pronto para avançar — encaminhe para um especialista
+ANTES de transferir, você DEVE ter coletado ao menos:
+- Qual é a demanda ou problema específico do lead
+- Contexto básico da situação (não apenas "tenho um processo" — o quê? desde quando? qual área?)
 
-Quando o lead estiver pronto para avançar, finalize com uma frase natural como "Vou encaminhar seu caso para um especialista que vai te ajudar melhor com isso" e inclua [HANDOFF].
+TRANSFERIR quando (E apenas quando já coletou as informações acima):
+- Lead pede explicitamente para falar com uma pessoa
+- Lead demonstra intenção clara de contratar ou fechar
+- Lead quer agendar reunião ou avançar concretamente
+- Lead explicou bem o caso e está qualificado para atendimento humano
+
+Quando o lead estiver pronto, finalize com uma frase natural como "Entendido! Vou encaminhar seu caso para um especialista que pode te ajudar melhor com isso." e inclua [HANDOFF].
 
 NÃO TRANSFERIR quando:
-- Lead ainda está explorando/curioso
-- A pergunta é sobre informações que você conhece
-- Lead está apenas pesquisando
+- Lead apenas mencionou que tem um problema — entenda o problema primeiro
+- Lead ainda está explorando ou deu informações vagas
+- A conversa tem menos de 3 trocas e você ainda não entendeu a situação
+- A pergunta é sobre algo que você conhece
 
-IMPORTANTE: A transferência é feita automaticamente pelo sistema. Você NÃO precisa agendar reuniões — apenas qualifique o lead e transfira quando estiver pronto.`)
+IMPORTANTE: A transferência é feita automaticamente. Primeiro qualifique, depois transfira.`)
 
   // ── 14. Guard de Autonomia ──
   sections.push(`\n## Limites de Atuação
