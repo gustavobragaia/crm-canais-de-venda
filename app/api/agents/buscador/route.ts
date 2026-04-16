@@ -2,6 +2,7 @@
 import { auth } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { canSearch, processScrapingJob } from '@/lib/agents/buscador'
+import { publishToQueue } from '@/lib/qstash'
 
 export async function POST(req: NextRequest) {
   const session = await auth()
@@ -29,10 +30,13 @@ export async function POST(req: NextRequest) {
     data: { workspaceId, query, city, zip: zip || null, maxLeads },
   })
 
-  // Fire-and-forget — call directly (no HTTP round-trip)
-  processScrapingJob(job.id).catch((err) =>
-    console.error('[BUSCADOR] processScrapingJob error:', err)
-  )
+  // Enqueue via QStash (durable, with retries)
+  try {
+    await publishToQueue('/api/queue/buscador-process', { jobId: job.id }, { retries: 2 })
+  } catch (err) {
+    console.error('[BUSCADOR] QStash publish failed, falling back:', err)
+    processScrapingJob(job.id).catch((e) => console.error('[BUSCADOR] fallback error:', e))
+  }
 
   return NextResponse.json({ jobId: job.id, isFree })
 }

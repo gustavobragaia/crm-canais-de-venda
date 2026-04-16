@@ -26,7 +26,7 @@ import { db } from '@/lib/db'
 import { activatePlan, cancelPlan } from '@/lib/billing/subscriptionService'
 import { POST } from '@/app/api/webhooks/kirvano/route'
 
-const mockDb = db as {
+const mockDb = db as unknown as {
   workspace: { findUnique: ReturnType<typeof vi.fn>; update: ReturnType<typeof vi.fn> }
   subscription: { updateMany: ReturnType<typeof vi.fn>; create: ReturnType<typeof vi.fn> }
   $transaction: ReturnType<typeof vi.fn>
@@ -156,9 +156,15 @@ describe('POST /api/webhooks/kirvano', () => {
 
       const res = await POST(req)
       expect(res.status).toBe(200)
+      const nextBilling = new Date('2026-05-18 10:00:00')
       expect(mockDb.workspace.update).toHaveBeenCalledWith({
         where: { id: 'ws-123' },
-        data: { subscriptionStatus: 'ACTIVE', currentPeriodEnd: new Date('2026-05-18 10:00:00') },
+        data: {
+          subscriptionStatus: 'ACTIVE',
+          currentPeriodEnd: nextBilling,
+          soraUsedThisMonth: 0,
+          soraResetDate: nextBilling,
+        },
       })
       expect(mockDb.subscription.updateMany).toHaveBeenCalledWith({
         where: { workspaceId: 'ws-123', status: 'ACTIVE' },
