@@ -88,6 +88,13 @@ export default function BuscadorPage() {
       setLists(listsData.lists ?? [])
       setTokenBalance(tokensData.balance ?? 0)
       setHasUsedFree(jobsData.hasUsedFreeScraping ?? false)
+
+      // Resume polling if a job is still running (e.g. after page reload)
+      const runningJob = fetchedJobs.find((j) => j.status === 'RUNNING' || j.status === 'QUEUED')
+      if (runningJob) {
+        setActiveJobId((prev) => prev ?? runningJob.id)
+        setSearching(true)
+      }
     } catch (err) {
       console.error('Error fetching buscador data:', err)
     }
