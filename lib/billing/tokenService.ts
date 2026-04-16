@@ -21,38 +21,36 @@ export async function consumeTokens(
   referenceId: string,
   description?: string,
 ): Promise<{ success: boolean; newBalance: number }> {
-  return await db.$transaction(async (tx) => {
-    const workspace = await tx.workspace.findUnique({
-      where: { id: workspaceId },
-      select: { tokenBalance: true },
-    })
-    if (!workspace || workspace.tokenBalance < amount) {
-      return { success: false, newBalance: workspace?.tokenBalance ?? 0 }
-    }
+  // Atomic conditional debit — single statement compatible with PgBouncer transaction pooling
+  const rows = await db.$queryRaw<{ tokenBalance: number }[]>`
+    UPDATE workspaces
+    SET "tokenBalance" = "tokenBalance" - ${amount}
+    WHERE id = ${workspaceId} AND "tokenBalance" >= ${amount}
+    RETURNING "tokenBalance"
+  `
 
-    const balanceBefore = workspace.tokenBalance
-    const balanceAfter = balanceBefore - amount
+  if (rows.length === 0) {
+    const ws = await db.workspace.findUnique({ where: { id: workspaceId }, select: { tokenBalance: true } })
+    return { success: false, newBalance: ws?.tokenBalance ?? 0 }
+  }
 
-    await tx.workspace.update({
-      where: { id: workspaceId },
-      data: { tokenBalance: balanceAfter },
-    })
+  const balanceAfter = rows[0].tokenBalance
+  const balanceBefore = balanceAfter + amount
 
-    await tx.tokenTransaction.create({
-      data: {
-        workspaceId,
-        type: TokenTransactionType.CONSUMPTION,
-        amount: -amount,
-        balanceBefore,
-        balanceAfter,
-        referenceType,
-        referenceId,
-        description: description ?? `Consumo ${referenceType}`,
-      },
-    })
-
-    return { success: true, newBalance: balanceAfter }
+  await db.tokenTransaction.create({
+    data: {
+      workspaceId,
+      type: TokenTransactionType.CONSUMPTION,
+      amount: -amount,
+      balanceBefore,
+      balanceAfter,
+      referenceType,
+      referenceId,
+      description: description ?? `Consumo ${referenceType}`,
+    },
   })
+
+  return { success: true, newBalance: balanceAfter }
 }
 
 export async function addTokens(
@@ -62,20 +60,19 @@ export async function addTokens(
   referenceId?: string,
   description?: string,
 ): Promise<{ newBalance: number }> {
-  return await db.$transaction(async (tx) => {
-    const workspace = await tx.workspace.findUnique({
-      where: { id: workspaceId },
-      select: { tokenBalance: true },
-    })
-    const balanceBefore = workspace?.tokenBalance ?? 0
-    const balanceAfter = Math.max(0, balanceBefore + amount)
+  const workspace = await db.workspace.findUnique({
+    where: { id: workspaceId },
+    select: { tokenBalance: true },
+  })
+  const balanceBefore = workspace?.tokenBalance ?? 0
+  const balanceAfter = Math.max(0, balanceBefore + amount)
 
-    await tx.workspace.update({
+  await db.$transaction([
+    db.workspace.update({
       where: { id: workspaceId },
       data: { tokenBalance: balanceAfter },
-    })
-
-    await tx.tokenTransaction.create({
+    }),
+    db.tokenTransaction.create({
       data: {
         workspaceId,
         type,
@@ -88,10 +85,10 @@ export async function addTokens(
           : undefined,
         description,
       },
-    })
+    }),
+  ])
 
-    return { newBalance: balanceAfter }
-  })
+  return { newBalance: balanceAfter }
 }
 
 export async function getTransactionHistory(
