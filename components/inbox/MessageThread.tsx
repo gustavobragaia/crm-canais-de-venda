@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback, Fragment } from 'react'
 import { useSession } from 'next-auth/react'
 import { usePusherChannel } from '@/hooks/usePusher'
 import { Send, Loader2, Paperclip, X, Bot, User, Clock } from 'lucide-react'
@@ -316,85 +316,107 @@ export function MessageThread({ conversationId, contactName, isGroup, aiSalesEna
             <Loader2 size={24} className="animate-spin" />
           </div>
         ) : (
-          messages.map((msg) => {
-            if (msg.isSystem) {
-              const isBriefing = msg.content?.startsWith('[BRIEFING_JSON]')
-              const isQualification = msg.content?.startsWith('IA atualizou qualificação')
+          (() => {
+            let lastDay: string | null = null
+            return messages.map((msg) => {
+              const day = format(new Date(msg.createdAt), 'dd/MM/yyyy')
+              const showSeparator = day !== lastDay
+              lastDay = day
+
+              let messageNode: React.ReactNode
+              if (msg.isSystem) {
+                const isBriefing = msg.content?.startsWith('[BRIEFING_JSON]')
+                const isQualification = msg.content?.startsWith('IA atualizou qualificação')
+                messageNode = (
+                  <div className={`flex my-1 ${isBriefing ? 'justify-start' : 'justify-center'}`}>
+                    {isBriefing ? (
+                      <BriefingCard content={msg.content} />
+                    ) : isQualification ? (
+                      <span className="text-xs text-violet-600 italic bg-violet-50 border border-violet-100 px-3 py-1 rounded-full flex items-center gap-1.5">
+                        <Bot size={11} /> {msg.content}
+                      </span>
+                    ) : (
+                      <span className="text-xs text-gray-400 italic bg-gray-100 px-3 py-1 rounded-full">
+                        {msg.content}
+                      </span>
+                    )}
+                  </div>
+                )
+              } else {
+                const isOutbound = msg.direction === 'OUTBOUND'
+                const isAiGenerated = msg.aiGenerated === true
+                const mediaType = msg.mediaType as 'audio' | 'image' | 'video' | 'document' | null | undefined
+
+                messageNode = (
+                  <div className={`flex ${isOutbound ? 'justify-end' : 'justify-start'} ${msg.optimistic ? 'opacity-60' : ''}`}>
+                    <div className={`max-w-sm lg:max-w-md ${isOutbound ? 'items-end' : 'items-start'} flex flex-col gap-0.5`}>
+                      {!isOutbound && isGroup && msg.senderName && (
+                        <span className="text-xs font-semibold text-blue-500 px-1 mb-0.5">
+                          {msg.senderName}
+                        </span>
+                      )}
+
+                      <div
+                        className={`px-4 py-2.5 rounded-2xl text-sm ${
+                          isOutbound
+                            ? 'bg-blue-500 text-white rounded-br-sm'
+                            : 'bg-white text-gray-900 border border-gray-200 rounded-bl-sm'
+                        }`}
+                      >
+                        {mediaType === 'audio' ? (
+                          <AudioMessage
+                            messageId={msg.id}
+                            mediaUrl={msg.mediaUrl ?? null}
+                            transcription={msg.transcription ?? null}
+                          />
+                        ) : mediaType === 'image' || mediaType === 'video' || mediaType === 'document' ? (
+                          <MediaMessage
+                            mediaType={mediaType}
+                            mediaUrl={msg.mediaUrl ?? null}
+                            mediaName={msg.mediaName ?? null}
+                            mediaMime={msg.mediaMime ?? null}
+                            caption={msg.content || undefined}
+                            messageId={msg.id}
+                          />
+                        ) : (
+                          msg.content
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-1.5 px-1">
+                        {msg.optimistic ? (
+                          <Clock size={10} className="text-gray-400" />
+                        ) : isAiGenerated ? (
+                          <span className="flex items-center gap-1 text-xs text-violet-400">
+                            <img src="/ai-avatar.svg" alt="Sora" className="w-3 h-3 rounded-full object-cover" />
+                            {msg.senderName ?? 'Sora'} · {format(new Date(msg.createdAt), 'HH:mm', { locale: ptBR })}
+                          </span>
+                        ) : (
+                          <span className="text-xs text-gray-400">
+                            {isOutbound && msg.sentBy ? `${msg.sentBy.name} · ` : ''}
+                            {format(new Date(msg.createdAt), 'HH:mm', { locale: ptBR })}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )
+              }
+
               return (
-                <div key={msg.id} className={`flex my-1 ${isBriefing ? 'justify-start' : 'justify-center'}`}>
-                  {isBriefing ? (
-                    <BriefingCard content={msg.content} />
-                  ) : isQualification ? (
-                    <span className="text-xs text-violet-600 italic bg-violet-50 border border-violet-100 px-3 py-1 rounded-full flex items-center gap-1.5">
-                      <Bot size={11} /> {msg.content}
-                    </span>
-                  ) : (
-                    <span className="text-xs text-gray-400 italic bg-gray-100 px-3 py-1 rounded-full">
-                      {msg.content}
-                    </span>
+                <Fragment key={msg.id}>
+                  {showSeparator && (
+                    <div className="flex justify-center my-3">
+                      <span className="text-xs font-medium text-gray-500 bg-white border border-gray-200 px-3 py-1 rounded-full shadow-sm">
+                        {day}
+                      </span>
+                    </div>
                   )}
-                </div>
+                  {messageNode}
+                </Fragment>
               )
-            }
-            const isOutbound = msg.direction === 'OUTBOUND'
-            const isAiGenerated = msg.aiGenerated === true
-            const mediaType = msg.mediaType as 'audio' | 'image' | 'video' | 'document' | null | undefined
-
-            return (
-              <div key={msg.id} className={`flex ${isOutbound ? 'justify-end' : 'justify-start'} ${msg.optimistic ? 'opacity-60' : ''}`}>
-                <div className={`max-w-sm lg:max-w-md ${isOutbound ? 'items-end' : 'items-start'} flex flex-col gap-0.5`}>
-                  {!isOutbound && isGroup && msg.senderName && (
-                    <span className="text-xs font-semibold text-blue-500 px-1 mb-0.5">
-                      {msg.senderName}
-                    </span>
-                  )}
-
-                  <div
-                    className={`px-4 py-2.5 rounded-2xl text-sm ${
-                      isOutbound
-                        ? 'bg-blue-500 text-white rounded-br-sm'
-                        : 'bg-white text-gray-900 border border-gray-200 rounded-bl-sm'
-                    }`}
-                  >
-                    {mediaType === 'audio' ? (
-                      <AudioMessage
-                        messageId={msg.id}
-                        mediaUrl={msg.mediaUrl ?? null}
-                        transcription={msg.transcription ?? null}
-                      />
-                    ) : mediaType === 'image' || mediaType === 'video' || mediaType === 'document' ? (
-                      <MediaMessage
-                        mediaType={mediaType}
-                        mediaUrl={msg.mediaUrl ?? null}
-                        mediaName={msg.mediaName ?? null}
-                        mediaMime={msg.mediaMime ?? null}
-                        caption={msg.content || undefined}
-                        messageId={msg.id}
-                      />
-                    ) : (
-                      msg.content
-                    )}
-                  </div>
-
-                  <div className="flex items-center gap-1.5 px-1">
-                    {msg.optimistic ? (
-                      <Clock size={10} className="text-gray-400" />
-                    ) : isAiGenerated ? (
-                      <span className="flex items-center gap-1 text-xs text-violet-400">
-                        <img src="/ai-avatar.svg" alt="Sora" className="w-3 h-3 rounded-full object-cover" />
-                        {msg.senderName ?? 'Sora'} · {format(new Date(msg.createdAt), 'HH:mm', { locale: ptBR })}
-                      </span>
-                    ) : (
-                      <span className="text-xs text-gray-400">
-                        {isOutbound && msg.sentBy ? `${msg.sentBy.name} · ` : ''}
-                        {format(new Date(msg.createdAt), 'HH:mm', { locale: ptBR })}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )
-          })
+            })
+          })()
         )}
         <div ref={bottomRef} />
       </div>
