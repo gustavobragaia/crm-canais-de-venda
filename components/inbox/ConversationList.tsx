@@ -12,6 +12,8 @@ const CHANNEL_STYLES = {
   FACEBOOK: { color: '#1877F2', icon: Facebook, bg: 'bg-blue-100', label: 'Facebook' },
 }
 
+const UNKNOWN_CHANNEL_STYLE = { color: '#9CA3AF', icon: MessageCircle, bg: 'bg-gray-100', label: 'Desconhecido' }
+
 const STATUS_LABELS: Record<string, { label: string; className: string }> = {
   UNASSIGNED: { label: 'Não atribuído', className: 'bg-red-100 text-red-700' },
   ASSIGNED: { label: 'Atribuído', className: 'bg-yellow-100 text-yellow-700' },
@@ -28,7 +30,7 @@ interface Conversation {
   lastMessageAt: string | null
   unreadCount: number
   status: keyof typeof STATUS_LABELS
-  channel: { type: keyof typeof CHANNEL_STYLES }
+  channel: { type: keyof typeof CHANNEL_STYLES } | null
   assignedTo: { name: string } | null
   aiSalesEnabled?: boolean
   source?: string | null
@@ -96,7 +98,7 @@ export function ConversationList({
   return (
     <div className="overflow-y-auto flex-1 flex flex-col">
       {conversations.map((conv) => {
-        const channelStyle = CHANNEL_STYLES[conv.channel.type]
+        const channelStyle = conv.channel ? CHANNEL_STYLES[conv.channel.type] : UNKNOWN_CHANNEL_STYLE
         const Icon = channelStyle.icon
         const isSelected = conv.id === selectedId
         const statusStyle = STATUS_LABELS[conv.status]

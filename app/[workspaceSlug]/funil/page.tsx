@@ -36,7 +36,7 @@ interface Conversation {
   pipelineStage: string | null
   assignedToId: string | null
   contactPhotoUrl: string | null
-  channel: { type: string }
+  channel: { type: string } | null
   isRecurringClient?: boolean
 }
 
@@ -259,9 +259,9 @@ export default function FunilPage() {
                         <div
                           className="w-2 h-2 rounded-full shrink-0"
                           style={{
-                            backgroundColor: CHANNEL_COLORS[conv.channel.type] ?? '#9CA3AF',
+                            backgroundColor: CHANNEL_COLORS[conv.channel?.type ?? ''] ?? '#9CA3AF',
                           }}
-                          title={conv.channel.type}
+                          title={conv.channel?.type ?? 'Desconhecido'}
                         />
                       </div>
                     </div>

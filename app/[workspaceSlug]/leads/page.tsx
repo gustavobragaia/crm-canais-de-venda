@@ -20,7 +20,7 @@ interface Conversation {
   lastMessageAt: string | null
   pipelineStage: string | null
   unreadCount: number
-  channel: { type: keyof typeof CHANNEL_ICONS; name: string }
+  channel: { type: keyof typeof CHANNEL_ICONS; name: string } | null
   assignedTo: { name: string } | null
 }
 
@@ -78,7 +78,7 @@ export default function LeadsPage() {
             </thead>
             <tbody className="divide-y divide-gray-100">
               {leads.map((lead) => {
-                const channelInfo = CHANNEL_ICONS[lead.channel.type]
+                const channelInfo = lead.channel ? CHANNEL_ICONS[lead.channel.type] : undefined
                 const Icon = channelInfo?.icon ?? MessageCircle
 
                 return (
@@ -103,7 +103,7 @@ export default function LeadsPage() {
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-1.5">
                         <Icon size={14} color={channelInfo?.color} />
-                        <span className="text-sm text-gray-600">{lead.channel.type}</span>
+                        <span className="text-sm text-gray-600">{lead.channel?.type ?? 'Desconhecido'}</span>
                       </div>
                     </td>
                     <td className="px-5 py-4">
