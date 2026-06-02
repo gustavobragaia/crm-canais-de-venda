@@ -32,10 +32,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    await db.channel.update({
-      where: { id: channelId },
-      data: { isActive: false, accessToken: null },
-    })
+    await db.channel.delete({ where: { id: channelId } })
 
     return NextResponse.json({ success: true })
   } catch (error) {
