@@ -680,7 +680,9 @@ export default function SettingsPage() {
                             </div>
                             <div className="flex-1 min-w-0">
                               <p className="text-sm font-medium text-gray-900 truncate">{ch.pageName ?? ch.name}</p>
-                              <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700 font-medium">Conectado</span>
+                              <span className={`text-xs px-2 py-0.5 rounded-full font-medium flex items-center gap-1 w-fit ${ch.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                                {ch.isActive ? <><CheckCircle2 size={11} /> Conectado</> : 'Desconectado'}
+                              </span>
                             </div>
                             <button
                               onClick={() => handleMetaResubscribe(ch.id)}
