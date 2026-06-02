@@ -80,6 +80,19 @@ export async function POST(req: NextRequest) {
 
     if (!pages.length) {
       console.warn('[META CONNECT] No pages returned for user token')
+
+      try {
+        const meRes = await fetch(`${GRAPH_URL}/me?fields=id,name&access_token=${userToken}`)
+        const me = await meRes.json()
+        console.warn('[META CONNECT] OAuth user:', JSON.stringify(me))
+
+        const permsRes = await fetch(`${GRAPH_URL}/me/permissions?access_token=${userToken}`)
+        const perms = await permsRes.json()
+        console.warn('[META CONNECT] Permissions:', JSON.stringify(perms.data))
+      } catch (err) {
+        console.warn('[META CONNECT] Failed to fetch diagnostic info:', err)
+      }
+
       return NextResponse.json({ error: 'Nenhuma página encontrada nesta conta. Certifique-se de que sua conta Facebook tem uma Página vinculada e que você autorizou o acesso a ela.' }, { status: 400 })
     }
 
