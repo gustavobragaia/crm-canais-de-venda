@@ -6,6 +6,7 @@ import { User, Tag, FileText, GitBranch, Bot, ShieldOff } from 'lucide-react'
 import { TagSelector } from '@/components/ui/TagSelector'
 import { NotesList } from '@/components/ui/NotesList'
 import { StageHistoryTimeline } from '@/components/ui/StageHistoryTimeline'
+import { ConversationDocuments } from '@/components/inbox/ConversationDocuments'
 
 interface TagItem {
   id: string
@@ -54,6 +55,7 @@ export function LeadDetails({ conversationId }: LeadDetailsProps) {
   const [stages, setStages] = useState<Array<{ id: string; name: string; color: string }>>([])
   const [aiToggling, setAiToggling] = useState(false)
   const [aiUnblocking, setAiUnblocking] = useState(false)
+  const [activeTab, setActiveTab] = useState<'detalhes' | 'documentos'>('detalhes')
 
   const isAdmin = session?.user.role === 'ADMIN'
 
@@ -163,11 +165,36 @@ export function LeadDetails({ conversationId }: LeadDetailsProps) {
 
   return (
     <div className="w-80 border-l border-gray-100 bg-white overflow-y-auto flex-shrink-0">
-      {/* Header */}
-      <div className="p-5 border-b border-gray-100">
-        <h3 className="font-semibold text-gray-900 text-sm">Detalhes do contato</h3>
+      {/* Header with tabs */}
+      <div className="border-b border-gray-100">
+        <h3 className="px-5 pt-5 pb-3 font-semibold text-gray-900 text-sm">Detalhes do contato</h3>
+        <div className="flex px-5 gap-4">
+          <button
+            onClick={() => setActiveTab('detalhes')}
+            className={`pb-2 text-xs font-medium border-b-2 transition-colors ${
+              activeTab === 'detalhes'
+                ? 'border-violet-600 text-violet-700'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            Detalhes
+          </button>
+          <button
+            onClick={() => setActiveTab('documentos')}
+            className={`pb-2 text-xs font-medium border-b-2 transition-colors ${
+              activeTab === 'documentos'
+                ? 'border-violet-600 text-violet-700'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            Documentos
+          </button>
+        </div>
       </div>
 
+      {activeTab === 'documentos' ? (
+        <ConversationDocuments conversationId={conversationId} />
+      ) : (
       <div className="p-5 space-y-5">
         {/* Contact Info */}
         <div className="bg-white border border-gray-100 rounded-2xl shadow-sm p-4 space-y-2">
@@ -349,6 +376,7 @@ export function LeadDetails({ conversationId }: LeadDetailsProps) {
           <NotesList conversationId={conversationId} />
         </div>
       </div>
+      )}
     </div>
   )
 }

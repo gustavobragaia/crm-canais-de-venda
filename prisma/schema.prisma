@@ -47,6 +47,7 @@ model Workspace {
   templateDispatches       TemplateDispatch[]
   aiSalesConfig            AiSalesConfig?
   knowledgeDocuments       KnowledgeDocument[]
+  conversationDocuments    ConversationDocument[]
   // Sora
   soraEnabled              Boolean            @default(false)
   soraMonthlyLimit         Int                @default(0)
@@ -79,6 +80,7 @@ model User {
   notes                   Note[]
   sentMessages            Message[]
   stageHistory            StageHistory[]
+  uploadedDocuments       ConversationDocument[] @relation("UploadedDocuments")
   workspace               Workspace              @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
   @@unique([workspaceId, email])
@@ -154,6 +156,7 @@ model Conversation {
   workspace          Workspace          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   activities         ConversationActivity[]
   conversationTags   ConversationTag[]
+  documents          ConversationDocument[]
   lead               Lead?
   messages           Message[]
   notes              Note[]
@@ -166,6 +169,26 @@ model Conversation {
   @@index([workspaceId, status])
   @@index([workspaceId, lastMessageAt(sort: Desc)])
   @@map("conversations")
+}
+
+model ConversationDocument {
+  id             String       @id @default(uuid())
+  conversationId String
+  workspaceId    String
+  uploadedById   String?
+  name           String
+  fileType       String
+  mimeType       String
+  sizeBytes      Int
+  storagePath    String
+  createdAt      DateTime     @default(now())
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  workspace      Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  uploadedBy     User?        @relation("UploadedDocuments", fields: [uploadedById], references: [id], onDelete: SetNull)
+
+  @@index([conversationId, createdAt(sort: Desc)])
+  @@index([workspaceId])
+  @@map("conversation_documents")
 }
 
 model Tag {

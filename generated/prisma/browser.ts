@@ -38,6 +38,11 @@ export type Channel = Prisma.ChannelModel
  */
 export type Conversation = Prisma.ConversationModel
 /**
+ * Model ConversationDocument
+ * 
+ */
+export type ConversationDocument = Prisma.ConversationDocumentModel
+/**
  * Model Tag
  * 
  */

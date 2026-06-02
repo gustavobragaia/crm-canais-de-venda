@@ -12,6 +12,7 @@
   "dependencies": {
     "@prisma/adapter-pg": "^7.4.2",
     "@prisma/client": "^7.4.2",
+    "@supabase/supabase-js": "^2.107.0",
     "@types/pg": "^8.18.0",
     "@upstash/qstash": "^2.10.1",
     "@upstash/ratelimit": "^2.0.8",

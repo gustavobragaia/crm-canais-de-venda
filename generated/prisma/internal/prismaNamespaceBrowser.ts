@@ -55,6 +55,7 @@ export const ModelName = {
   User: 'User',
   Channel: 'Channel',
   Conversation: 'Conversation',
+  ConversationDocument: 'ConversationDocument',
   Tag: 'Tag',
   ConversationTag: 'ConversationTag',
   Note: 'Note',
@@ -201,6 +202,22 @@ export const ConversationScalarFieldEnum = {
 } as const
 
 export type ConversationScalarFieldEnum = (typeof ConversationScalarFieldEnum)[keyof typeof ConversationScalarFieldEnum]
+
+
+export const ConversationDocumentScalarFieldEnum = {
+  id: 'id',
+  conversationId: 'conversationId',
+  workspaceId: 'workspaceId',
+  uploadedById: 'uploadedById',
+  name: 'name',
+  fileType: 'fileType',
+  mimeType: 'mimeType',
+  sizeBytes: 'sizeBytes',
+  storagePath: 'storagePath',
+  createdAt: 'createdAt'
+} as const
+
+export type ConversationDocumentScalarFieldEnum = (typeof ConversationDocumentScalarFieldEnum)[keyof typeof ConversationDocumentScalarFieldEnum]
 
 
 export const TagScalarFieldEnum = {

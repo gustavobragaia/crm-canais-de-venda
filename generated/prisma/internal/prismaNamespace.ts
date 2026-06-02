@@ -388,6 +388,7 @@ export const ModelName = {
   User: 'User',
   Channel: 'Channel',
   Conversation: 'Conversation',
+  ConversationDocument: 'ConversationDocument',
   Tag: 'Tag',
   ConversationTag: 'ConversationTag',
   Note: 'Note',
@@ -426,7 +427,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "workspace" | "user" | "channel" | "conversation" | "tag" | "conversationTag" | "note" | "stageHistory" | "message" | "pipelineStage" | "lead" | "analyticsDaily" | "webhookLog" | "plan" | "messageTemplate" | "conversationActivity" | "subscription" | "tokenTransaction" | "tokenPackage" | "scrapingJob" | "dispatchList" | "dispatchListContact" | "wabaChannel" | "wabaTemplate" | "templateDispatch" | "aiSalesConfig" | "knowledgeDocument"
+    modelProps: "workspace" | "user" | "channel" | "conversation" | "conversationDocument" | "tag" | "conversationTag" | "note" | "stageHistory" | "message" | "pipelineStage" | "lead" | "analyticsDaily" | "webhookLog" | "plan" | "messageTemplate" | "conversationActivity" | "subscription" | "tokenTransaction" | "tokenPackage" | "scrapingJob" | "dispatchList" | "dispatchListContact" | "wabaChannel" | "wabaTemplate" | "templateDispatch" | "aiSalesConfig" | "knowledgeDocument"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -723,6 +724,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.ConversationCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.ConversationCountAggregateOutputType> | number
+        }
+      }
+    }
+    ConversationDocument: {
+      payload: Prisma.$ConversationDocumentPayload<ExtArgs>
+      fields: Prisma.ConversationDocumentFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ConversationDocumentFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConversationDocumentPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ConversationDocumentFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConversationDocumentPayload>
+        }
+        findFirst: {
+          args: Prisma.ConversationDocumentFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConversationDocumentPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ConversationDocumentFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConversationDocumentPayload>
+        }
+        findMany: {
+          args: Prisma.ConversationDocumentFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConversationDocumentPayload>[]
+        }
+        create: {
+          args: Prisma.ConversationDocumentCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConversationDocumentPayload>
+        }
+        createMany: {
+          args: Prisma.ConversationDocumentCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ConversationDocumentCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConversationDocumentPayload>[]
+        }
+        delete: {
+          args: Prisma.ConversationDocumentDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConversationDocumentPayload>
+        }
+        update: {
+          args: Prisma.ConversationDocumentUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConversationDocumentPayload>
+        }
+        deleteMany: {
+          args: Prisma.ConversationDocumentDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ConversationDocumentUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ConversationDocumentUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConversationDocumentPayload>[]
+        }
+        upsert: {
+          args: Prisma.ConversationDocumentUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConversationDocumentPayload>
+        }
+        aggregate: {
+          args: Prisma.ConversationDocumentAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateConversationDocument>
+        }
+        groupBy: {
+          args: Prisma.ConversationDocumentGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ConversationDocumentGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ConversationDocumentCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ConversationDocumentCountAggregateOutputType> | number
         }
       }
     }
@@ -2574,6 +2649,22 @@ export const ConversationScalarFieldEnum = {
 export type ConversationScalarFieldEnum = (typeof ConversationScalarFieldEnum)[keyof typeof ConversationScalarFieldEnum]
 
 
+export const ConversationDocumentScalarFieldEnum = {
+  id: 'id',
+  conversationId: 'conversationId',
+  workspaceId: 'workspaceId',
+  uploadedById: 'uploadedById',
+  name: 'name',
+  fileType: 'fileType',
+  mimeType: 'mimeType',
+  sizeBytes: 'sizeBytes',
+  storagePath: 'storagePath',
+  createdAt: 'createdAt'
+} as const
+
+export type ConversationDocumentScalarFieldEnum = (typeof ConversationDocumentScalarFieldEnum)[keyof typeof ConversationDocumentScalarFieldEnum]
+
+
 export const TagScalarFieldEnum = {
   id: 'id',
   workspaceId: 'workspaceId',
@@ -3318,6 +3409,7 @@ export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
   channel?: Prisma.ChannelOmit
   conversation?: Prisma.ConversationOmit
+  conversationDocument?: Prisma.ConversationDocumentOmit
   tag?: Prisma.TagOmit
   conversationTag?: Prisma.ConversationTagOmit
   note?: Prisma.NoteOmit
