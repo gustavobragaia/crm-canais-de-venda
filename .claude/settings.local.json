@@ -9,7 +9,8 @@
       "Bash(ls -la /Users/gustavobragaia/Documents/CRM-OMBOARDING-CONVERSAS/app/[workspaceSlug]/agents/)",
       "Bash(mkdir -p /Users/gustavobragaia/Documents/CRM-OMBOARDING-CONVERSAS/app/api/queue/message-ingest)",
       "Bash(mkdir -p /Users/gustavobragaia/Documents/CRM-OMBOARDING-CONVERSAS/app/api/queue/message-status-update)",
-      "Bash(mkdir -p /Users/gustavobragaia/Documents/CRM-OMBOARDING-CONVERSAS/app/api/queue/channel-status-update)"
+      "Bash(mkdir -p /Users/gustavobragaia/Documents/CRM-OMBOARDING-CONVERSAS/app/api/queue/channel-status-update)",
+      "Bash(awk '/const isDemo = session\\\\?\\\\.user\\\\.workspaceSlug === .demonstracao./{found=1} found && /&& isDemo/{print NR\": \"$0; exit}' /Users/gustavobragaia/Documents/CRM-OMBOARDING-CONVERSAS/app/\\\\[workspaceSlug\\\\]/agents/disparador/page.tsx)"
     ]
   }
 }

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { LeadDrawer } from '@/components/LeadDrawer'
+import { RecurringBadge } from '@/components/ui/RecurringBadge'
 import { usePusherChannel } from '@/hooks/usePusher'
 
 const ORGANIC_STAGES = [
@@ -36,6 +37,7 @@ interface Conversation {
   assignedToId: string | null
   contactPhotoUrl: string | null
   channel: { type: string }
+  isRecurringClient?: boolean
 }
 
 const CHANNEL_COLORS: Record<string, string> = {
@@ -250,9 +252,12 @@ export default function FunilPage() {
                           )}
                         </div>
                       </div>
-                      <div className="flex items-center justify-end">
+                      <div className="flex items-center justify-between gap-1">
+                        <div className="flex items-center gap-1 flex-wrap">
+                          {conv.isRecurringClient && <RecurringBadge />}
+                        </div>
                         <div
-                          className="w-2 h-2 rounded-full"
+                          className="w-2 h-2 rounded-full shrink-0"
                           style={{
                             backgroundColor: CHANNEL_COLORS[conv.channel.type] ?? '#9CA3AF',
                           }}

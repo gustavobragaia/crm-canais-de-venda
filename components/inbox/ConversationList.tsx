@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react'
 import { MessageCircle, Instagram, Facebook } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
+import { RecurringBadge } from '@/components/ui/RecurringBadge'
 
 const CHANNEL_STYLES = {
   WHATSAPP: { color: '#25D366', icon: MessageCircle, bg: 'bg-green-100', label: 'WhatsApp' },
@@ -35,6 +36,7 @@ interface Conversation {
   qualificationScore?: number | null
   aiSalesMessageCount?: number
   contactPhotoUrl?: string | null
+  isRecurringClient?: boolean
 }
 
 interface ConversationListProps {
@@ -179,6 +181,7 @@ export function ConversationList({
                       Disparo
                     </span>
                   )}
+                  {conv.isRecurringClient && <RecurringBadge />}
                   {conv.assignedTo && (
                     <span className="text-xs text-gray-400 truncate">
                       → {conv.assignedTo.name}

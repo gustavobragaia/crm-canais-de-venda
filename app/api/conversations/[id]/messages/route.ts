@@ -143,10 +143,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         const to = conversation.contactPhone
           ?? conversation.externalId.replace('@s.whatsapp.net', '').replace('@g.us', '')
         externalId = await sendUazapiMedia(channel.instanceToken, to, mediaType as 'audio' | 'image' | 'video' | 'document', mediaUrl, content || undefined, mediaName)
-      } else if (channel?.type === 'INSTAGRAM' && channel.accessToken) {
+      } else if (channel?.type === 'INSTAGRAM') {
+        if (!channel.accessToken) throw new Error('Canal do Instagram desconectado. Reconecte o canal nas configurações.')
         const token = decrypt(channel.accessToken)
         externalId = await sendInstagramMedia(conversation.externalId, mediaType, mediaUrl, token)
-      } else if (channel?.type === 'FACEBOOK' && channel.accessToken) {
+      } else if (channel?.type === 'FACEBOOK') {
+        if (!channel.accessToken) throw new Error('Canal do Facebook desconectado. Reconecte o canal nas configurações.')
         const token = decrypt(channel.accessToken)
         externalId = await sendFacebookMedia(conversation.externalId, mediaType, mediaUrl, token)
       }
@@ -164,11 +166,11 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
           externalId = await sendUazapiMessage(channel.instanceToken, to, content)
         }
       } else if (channel && channel.type === 'INSTAGRAM') {
-        const accessToken = channel.accessToken ? decrypt(channel.accessToken) : ''
-        externalId = await sendInstagramMessage(conversation.externalId, content, accessToken)
+        if (!channel.accessToken) throw new Error('Canal do Instagram desconectado. Reconecte o canal nas configurações.')
+        externalId = await sendInstagramMessage(conversation.externalId, content, decrypt(channel.accessToken))
       } else if (channel && channel.type === 'FACEBOOK') {
-        const accessToken = channel.accessToken ? decrypt(channel.accessToken) : ''
-        externalId = await sendFacebookMessage(conversation.externalId, content, accessToken)
+        if (!channel.accessToken) throw new Error('Canal do Facebook desconectado. Reconecte o canal nas configurações.')
+        externalId = await sendFacebookMessage(conversation.externalId, content, decrypt(channel.accessToken))
       }
     } catch (err) {
       sendError = err instanceof Error ? err.message : String(err)

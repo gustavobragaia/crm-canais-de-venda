@@ -192,6 +192,7 @@ export const ConversationScalarFieldEnum = {
   qualificationNotes: 'qualificationNotes',
   handoffBriefing: 'handoffBriefing',
   aiContextSummary: 'aiContextSummary',
+  isRecurringClient: 'isRecurringClient',
   lastMessageAt: 'lastMessageAt',
   lastMessagePreview: 'lastMessagePreview',
   unreadCount: 'unreadCount',

@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { RecurringBadge } from '@/components/ui/RecurringBadge'
 
 interface Tag {
   id: string
@@ -18,6 +19,7 @@ interface PipelineCardConversation {
   contactPhotoUrl: string | null
   channel: { type: string } | null
   conversationTags?: Array<{ tag: Tag }>
+  isRecurringClient?: boolean
 }
 
 interface PipelineCardProps {
@@ -110,6 +112,7 @@ export function PipelineCard({ conversation: initial, onClick }: PipelineCardPro
       {/* Tags + channel indicator */}
       <div className="flex items-center justify-between gap-1">
         <div className="flex items-center gap-1 flex-wrap">
+          {conv.isRecurringClient && <RecurringBadge />}
           {tags.map(tag => (
             <span
               key={tag.id}

@@ -36,7 +36,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
   const { id } = await params
   const body = await req.json()
-  const { status, pipelineStage, assignedToId, assignedById } = body
+  const { status, pipelineStage, assignedToId, assignedById, isRecurringClient } = body
 
   const conversation = await db.conversation.findFirst({
     where: { id, workspaceId: session.user.workspaceId },
@@ -83,6 +83,8 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
   // Explicit pipelineStage always wins
   if (pipelineStage !== undefined) updateData.pipelineStage = pipelineStage
+
+  if (isRecurringClient !== undefined) updateData.isRecurringClient = isRecurringClient
 
   // Determine the final resolved stage (after all auto-sync logic)
   const resolvedStage = (updateData.pipelineStage as string | undefined) ?? pipelineStage

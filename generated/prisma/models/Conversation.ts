@@ -61,6 +61,7 @@ export type ConversationMinAggregateOutputType = {
   qualificationNotes: string | null
   handoffBriefing: string | null
   aiContextSummary: string | null
+  isRecurringClient: boolean | null
   lastMessageAt: Date | null
   lastMessagePreview: string | null
   unreadCount: number | null
@@ -91,6 +92,7 @@ export type ConversationMaxAggregateOutputType = {
   qualificationNotes: string | null
   handoffBriefing: string | null
   aiContextSummary: string | null
+  isRecurringClient: boolean | null
   lastMessageAt: Date | null
   lastMessagePreview: string | null
   unreadCount: number | null
@@ -121,6 +123,7 @@ export type ConversationCountAggregateOutputType = {
   qualificationNotes: number
   handoffBriefing: number
   aiContextSummary: number
+  isRecurringClient: number
   lastMessageAt: number
   lastMessagePreview: number
   unreadCount: number
@@ -165,6 +168,7 @@ export type ConversationMinAggregateInputType = {
   qualificationNotes?: true
   handoffBriefing?: true
   aiContextSummary?: true
+  isRecurringClient?: true
   lastMessageAt?: true
   lastMessagePreview?: true
   unreadCount?: true
@@ -195,6 +199,7 @@ export type ConversationMaxAggregateInputType = {
   qualificationNotes?: true
   handoffBriefing?: true
   aiContextSummary?: true
+  isRecurringClient?: true
   lastMessageAt?: true
   lastMessagePreview?: true
   unreadCount?: true
@@ -225,6 +230,7 @@ export type ConversationCountAggregateInputType = {
   qualificationNotes?: true
   handoffBriefing?: true
   aiContextSummary?: true
+  isRecurringClient?: true
   lastMessageAt?: true
   lastMessagePreview?: true
   unreadCount?: true
@@ -342,6 +348,7 @@ export type ConversationGroupByOutputType = {
   qualificationNotes: string | null
   handoffBriefing: string | null
   aiContextSummary: string | null
+  isRecurringClient: boolean
   lastMessageAt: Date | null
   lastMessagePreview: string | null
   unreadCount: number
@@ -395,6 +402,7 @@ export type ConversationWhereInput = {
   qualificationNotes?: Prisma.StringNullableFilter<"Conversation"> | string | null
   handoffBriefing?: Prisma.StringNullableFilter<"Conversation"> | string | null
   aiContextSummary?: Prisma.StringNullableFilter<"Conversation"> | string | null
+  isRecurringClient?: Prisma.BoolFilter<"Conversation"> | boolean
   lastMessageAt?: Prisma.DateTimeNullableFilter<"Conversation"> | Date | string | null
   lastMessagePreview?: Prisma.StringNullableFilter<"Conversation"> | string | null
   unreadCount?: Prisma.IntFilter<"Conversation"> | number
@@ -435,6 +443,7 @@ export type ConversationOrderByWithRelationInput = {
   qualificationNotes?: Prisma.SortOrderInput | Prisma.SortOrder
   handoffBriefing?: Prisma.SortOrderInput | Prisma.SortOrder
   aiContextSummary?: Prisma.SortOrderInput | Prisma.SortOrder
+  isRecurringClient?: Prisma.SortOrder
   lastMessageAt?: Prisma.SortOrderInput | Prisma.SortOrder
   lastMessagePreview?: Prisma.SortOrderInput | Prisma.SortOrder
   unreadCount?: Prisma.SortOrder
@@ -479,6 +488,7 @@ export type ConversationWhereUniqueInput = Prisma.AtLeast<{
   qualificationNotes?: Prisma.StringNullableFilter<"Conversation"> | string | null
   handoffBriefing?: Prisma.StringNullableFilter<"Conversation"> | string | null
   aiContextSummary?: Prisma.StringNullableFilter<"Conversation"> | string | null
+  isRecurringClient?: Prisma.BoolFilter<"Conversation"> | boolean
   lastMessageAt?: Prisma.DateTimeNullableFilter<"Conversation"> | Date | string | null
   lastMessagePreview?: Prisma.StringNullableFilter<"Conversation"> | string | null
   unreadCount?: Prisma.IntFilter<"Conversation"> | number
@@ -519,6 +529,7 @@ export type ConversationOrderByWithAggregationInput = {
   qualificationNotes?: Prisma.SortOrderInput | Prisma.SortOrder
   handoffBriefing?: Prisma.SortOrderInput | Prisma.SortOrder
   aiContextSummary?: Prisma.SortOrderInput | Prisma.SortOrder
+  isRecurringClient?: Prisma.SortOrder
   lastMessageAt?: Prisma.SortOrderInput | Prisma.SortOrder
   lastMessagePreview?: Prisma.SortOrderInput | Prisma.SortOrder
   unreadCount?: Prisma.SortOrder
@@ -557,6 +568,7 @@ export type ConversationScalarWhereWithAggregatesInput = {
   qualificationNotes?: Prisma.StringNullableWithAggregatesFilter<"Conversation"> | string | null
   handoffBriefing?: Prisma.StringNullableWithAggregatesFilter<"Conversation"> | string | null
   aiContextSummary?: Prisma.StringNullableWithAggregatesFilter<"Conversation"> | string | null
+  isRecurringClient?: Prisma.BoolWithAggregatesFilter<"Conversation"> | boolean
   lastMessageAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Conversation"> | Date | string | null
   lastMessagePreview?: Prisma.StringNullableWithAggregatesFilter<"Conversation"> | string | null
   unreadCount?: Prisma.IntWithAggregatesFilter<"Conversation"> | number
@@ -583,6 +595,7 @@ export type ConversationCreateInput = {
   qualificationNotes?: string | null
   handoffBriefing?: string | null
   aiContextSummary?: string | null
+  isRecurringClient?: boolean
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -623,6 +636,7 @@ export type ConversationUncheckedCreateInput = {
   qualificationNotes?: string | null
   handoffBriefing?: string | null
   aiContextSummary?: string | null
+  isRecurringClient?: boolean
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -655,6 +669,7 @@ export type ConversationUpdateInput = {
   qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   aiContextSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isRecurringClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -695,6 +710,7 @@ export type ConversationUncheckedUpdateInput = {
   qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   aiContextSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isRecurringClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -731,6 +747,7 @@ export type ConversationCreateManyInput = {
   qualificationNotes?: string | null
   handoffBriefing?: string | null
   aiContextSummary?: string | null
+  isRecurringClient?: boolean
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -757,6 +774,7 @@ export type ConversationUpdateManyMutationInput = {
   qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   aiContextSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isRecurringClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -787,6 +805,7 @@ export type ConversationUncheckedUpdateManyInput = {
   qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   aiContextSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isRecurringClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -833,6 +852,7 @@ export type ConversationCountOrderByAggregateInput = {
   qualificationNotes?: Prisma.SortOrder
   handoffBriefing?: Prisma.SortOrder
   aiContextSummary?: Prisma.SortOrder
+  isRecurringClient?: Prisma.SortOrder
   lastMessageAt?: Prisma.SortOrder
   lastMessagePreview?: Prisma.SortOrder
   unreadCount?: Prisma.SortOrder
@@ -869,6 +889,7 @@ export type ConversationMaxOrderByAggregateInput = {
   qualificationNotes?: Prisma.SortOrder
   handoffBriefing?: Prisma.SortOrder
   aiContextSummary?: Prisma.SortOrder
+  isRecurringClient?: Prisma.SortOrder
   lastMessageAt?: Prisma.SortOrder
   lastMessagePreview?: Prisma.SortOrder
   unreadCount?: Prisma.SortOrder
@@ -899,6 +920,7 @@ export type ConversationMinOrderByAggregateInput = {
   qualificationNotes?: Prisma.SortOrder
   handoffBriefing?: Prisma.SortOrder
   aiContextSummary?: Prisma.SortOrder
+  isRecurringClient?: Prisma.SortOrder
   lastMessageAt?: Prisma.SortOrder
   lastMessagePreview?: Prisma.SortOrder
   unreadCount?: Prisma.SortOrder
@@ -1200,6 +1222,7 @@ export type ConversationCreateWithoutWorkspaceInput = {
   qualificationNotes?: string | null
   handoffBriefing?: string | null
   aiContextSummary?: string | null
+  isRecurringClient?: boolean
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -1238,6 +1261,7 @@ export type ConversationUncheckedCreateWithoutWorkspaceInput = {
   qualificationNotes?: string | null
   handoffBriefing?: string | null
   aiContextSummary?: string | null
+  isRecurringClient?: boolean
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -1303,6 +1327,7 @@ export type ConversationScalarWhereInput = {
   qualificationNotes?: Prisma.StringNullableFilter<"Conversation"> | string | null
   handoffBriefing?: Prisma.StringNullableFilter<"Conversation"> | string | null
   aiContextSummary?: Prisma.StringNullableFilter<"Conversation"> | string | null
+  isRecurringClient?: Prisma.BoolFilter<"Conversation"> | boolean
   lastMessageAt?: Prisma.DateTimeNullableFilter<"Conversation"> | Date | string | null
   lastMessagePreview?: Prisma.StringNullableFilter<"Conversation"> | string | null
   unreadCount?: Prisma.IntFilter<"Conversation"> | number
@@ -1329,6 +1354,7 @@ export type ConversationCreateWithoutAssignedByInput = {
   qualificationNotes?: string | null
   handoffBriefing?: string | null
   aiContextSummary?: string | null
+  isRecurringClient?: boolean
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -1367,6 +1393,7 @@ export type ConversationUncheckedCreateWithoutAssignedByInput = {
   qualificationNotes?: string | null
   handoffBriefing?: string | null
   aiContextSummary?: string | null
+  isRecurringClient?: boolean
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -1409,6 +1436,7 @@ export type ConversationCreateWithoutAssignedToInput = {
   qualificationNotes?: string | null
   handoffBriefing?: string | null
   aiContextSummary?: string | null
+  isRecurringClient?: boolean
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -1447,6 +1475,7 @@ export type ConversationUncheckedCreateWithoutAssignedToInput = {
   qualificationNotes?: string | null
   handoffBriefing?: string | null
   aiContextSummary?: string | null
+  isRecurringClient?: boolean
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -1521,6 +1550,7 @@ export type ConversationCreateWithoutChannelInput = {
   qualificationNotes?: string | null
   handoffBriefing?: string | null
   aiContextSummary?: string | null
+  isRecurringClient?: boolean
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -1559,6 +1589,7 @@ export type ConversationUncheckedCreateWithoutChannelInput = {
   qualificationNotes?: string | null
   handoffBriefing?: string | null
   aiContextSummary?: string | null
+  isRecurringClient?: boolean
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -1617,6 +1648,7 @@ export type ConversationCreateWithoutConversationTagsInput = {
   qualificationNotes?: string | null
   handoffBriefing?: string | null
   aiContextSummary?: string | null
+  isRecurringClient?: boolean
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -1656,6 +1688,7 @@ export type ConversationUncheckedCreateWithoutConversationTagsInput = {
   qualificationNotes?: string | null
   handoffBriefing?: string | null
   aiContextSummary?: string | null
+  isRecurringClient?: boolean
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -1703,6 +1736,7 @@ export type ConversationUpdateWithoutConversationTagsInput = {
   qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   aiContextSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isRecurringClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1742,6 +1776,7 @@ export type ConversationUncheckedUpdateWithoutConversationTagsInput = {
   qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   aiContextSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isRecurringClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1773,6 +1808,7 @@ export type ConversationCreateWithoutNotesInput = {
   qualificationNotes?: string | null
   handoffBriefing?: string | null
   aiContextSummary?: string | null
+  isRecurringClient?: boolean
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -1812,6 +1848,7 @@ export type ConversationUncheckedCreateWithoutNotesInput = {
   qualificationNotes?: string | null
   handoffBriefing?: string | null
   aiContextSummary?: string | null
+  isRecurringClient?: boolean
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -1859,6 +1896,7 @@ export type ConversationUpdateWithoutNotesInput = {
   qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   aiContextSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isRecurringClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1898,6 +1936,7 @@ export type ConversationUncheckedUpdateWithoutNotesInput = {
   qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   aiContextSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isRecurringClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1929,6 +1968,7 @@ export type ConversationCreateWithoutStageHistoryInput = {
   qualificationNotes?: string | null
   handoffBriefing?: string | null
   aiContextSummary?: string | null
+  isRecurringClient?: boolean
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -1968,6 +2008,7 @@ export type ConversationUncheckedCreateWithoutStageHistoryInput = {
   qualificationNotes?: string | null
   handoffBriefing?: string | null
   aiContextSummary?: string | null
+  isRecurringClient?: boolean
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -2015,6 +2056,7 @@ export type ConversationUpdateWithoutStageHistoryInput = {
   qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   aiContextSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isRecurringClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2054,6 +2096,7 @@ export type ConversationUncheckedUpdateWithoutStageHistoryInput = {
   qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   aiContextSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isRecurringClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2085,6 +2128,7 @@ export type ConversationCreateWithoutMessagesInput = {
   qualificationNotes?: string | null
   handoffBriefing?: string | null
   aiContextSummary?: string | null
+  isRecurringClient?: boolean
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -2124,6 +2168,7 @@ export type ConversationUncheckedCreateWithoutMessagesInput = {
   qualificationNotes?: string | null
   handoffBriefing?: string | null
   aiContextSummary?: string | null
+  isRecurringClient?: boolean
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -2171,6 +2216,7 @@ export type ConversationUpdateWithoutMessagesInput = {
   qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   aiContextSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isRecurringClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2210,6 +2256,7 @@ export type ConversationUncheckedUpdateWithoutMessagesInput = {
   qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   aiContextSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isRecurringClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2241,6 +2288,7 @@ export type ConversationCreateWithoutLeadInput = {
   qualificationNotes?: string | null
   handoffBriefing?: string | null
   aiContextSummary?: string | null
+  isRecurringClient?: boolean
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -2280,6 +2328,7 @@ export type ConversationUncheckedCreateWithoutLeadInput = {
   qualificationNotes?: string | null
   handoffBriefing?: string | null
   aiContextSummary?: string | null
+  isRecurringClient?: boolean
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -2327,6 +2376,7 @@ export type ConversationUpdateWithoutLeadInput = {
   qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   aiContextSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isRecurringClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2366,6 +2416,7 @@ export type ConversationUncheckedUpdateWithoutLeadInput = {
   qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   aiContextSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isRecurringClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2397,6 +2448,7 @@ export type ConversationCreateWithoutActivitiesInput = {
   qualificationNotes?: string | null
   handoffBriefing?: string | null
   aiContextSummary?: string | null
+  isRecurringClient?: boolean
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -2436,6 +2488,7 @@ export type ConversationUncheckedCreateWithoutActivitiesInput = {
   qualificationNotes?: string | null
   handoffBriefing?: string | null
   aiContextSummary?: string | null
+  isRecurringClient?: boolean
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -2483,6 +2536,7 @@ export type ConversationUpdateWithoutActivitiesInput = {
   qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   aiContextSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isRecurringClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2522,6 +2576,7 @@ export type ConversationUncheckedUpdateWithoutActivitiesInput = {
   qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   aiContextSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isRecurringClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2556,6 +2611,7 @@ export type ConversationCreateManyWorkspaceInput = {
   qualificationNotes?: string | null
   handoffBriefing?: string | null
   aiContextSummary?: string | null
+  isRecurringClient?: boolean
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -2582,6 +2638,7 @@ export type ConversationUpdateWithoutWorkspaceInput = {
   qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   aiContextSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isRecurringClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2620,6 +2677,7 @@ export type ConversationUncheckedUpdateWithoutWorkspaceInput = {
   qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   aiContextSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isRecurringClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2655,6 +2713,7 @@ export type ConversationUncheckedUpdateManyWithoutWorkspaceInput = {
   qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   aiContextSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isRecurringClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2684,6 +2743,7 @@ export type ConversationCreateManyAssignedByInput = {
   qualificationNotes?: string | null
   handoffBriefing?: string | null
   aiContextSummary?: string | null
+  isRecurringClient?: boolean
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -2713,6 +2773,7 @@ export type ConversationCreateManyAssignedToInput = {
   qualificationNotes?: string | null
   handoffBriefing?: string | null
   aiContextSummary?: string | null
+  isRecurringClient?: boolean
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -2739,6 +2800,7 @@ export type ConversationUpdateWithoutAssignedByInput = {
   qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   aiContextSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isRecurringClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2777,6 +2839,7 @@ export type ConversationUncheckedUpdateWithoutAssignedByInput = {
   qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   aiContextSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isRecurringClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2812,6 +2875,7 @@ export type ConversationUncheckedUpdateManyWithoutAssignedByInput = {
   qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   aiContextSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isRecurringClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2838,6 +2902,7 @@ export type ConversationUpdateWithoutAssignedToInput = {
   qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   aiContextSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isRecurringClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2876,6 +2941,7 @@ export type ConversationUncheckedUpdateWithoutAssignedToInput = {
   qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   aiContextSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isRecurringClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2911,6 +2977,7 @@ export type ConversationUncheckedUpdateManyWithoutAssignedToInput = {
   qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   aiContextSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isRecurringClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2940,6 +3007,7 @@ export type ConversationCreateManyChannelInput = {
   qualificationNotes?: string | null
   handoffBriefing?: string | null
   aiContextSummary?: string | null
+  isRecurringClient?: boolean
   lastMessageAt?: Date | string | null
   lastMessagePreview?: string | null
   unreadCount?: number
@@ -2966,6 +3034,7 @@ export type ConversationUpdateWithoutChannelInput = {
   qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   aiContextSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isRecurringClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -3004,6 +3073,7 @@ export type ConversationUncheckedUpdateWithoutChannelInput = {
   qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   aiContextSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isRecurringClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -3039,6 +3109,7 @@ export type ConversationUncheckedUpdateManyWithoutChannelInput = {
   qualificationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   handoffBriefing?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   aiContextSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isRecurringClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMessagePreview?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -3136,6 +3207,7 @@ export type ConversationSelect<ExtArgs extends runtime.Types.Extensions.Internal
   qualificationNotes?: boolean
   handoffBriefing?: boolean
   aiContextSummary?: boolean
+  isRecurringClient?: boolean
   lastMessageAt?: boolean
   lastMessagePreview?: boolean
   unreadCount?: boolean
@@ -3177,6 +3249,7 @@ export type ConversationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   qualificationNotes?: boolean
   handoffBriefing?: boolean
   aiContextSummary?: boolean
+  isRecurringClient?: boolean
   lastMessageAt?: boolean
   lastMessagePreview?: boolean
   unreadCount?: boolean
@@ -3211,6 +3284,7 @@ export type ConversationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   qualificationNotes?: boolean
   handoffBriefing?: boolean
   aiContextSummary?: boolean
+  isRecurringClient?: boolean
   lastMessageAt?: boolean
   lastMessagePreview?: boolean
   unreadCount?: boolean
@@ -3245,6 +3319,7 @@ export type ConversationSelectScalar = {
   qualificationNotes?: boolean
   handoffBriefing?: boolean
   aiContextSummary?: boolean
+  isRecurringClient?: boolean
   lastMessageAt?: boolean
   lastMessagePreview?: boolean
   unreadCount?: boolean
@@ -3252,7 +3327,7 @@ export type ConversationSelectScalar = {
   updatedAt?: boolean
 }
 
-export type ConversationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "workspaceId" | "channelId" | "contactName" | "contactPhone" | "contactEmail" | "contactPhotoUrl" | "externalId" | "assignedToId" | "assignedAt" | "assignedById" | "status" | "pipelineStage" | "dispatchListId" | "templateDispatchId" | "source" | "aiSalesEnabled" | "aiSalesMessageCount" | "qualificationScore" | "qualificationNotes" | "handoffBriefing" | "aiContextSummary" | "lastMessageAt" | "lastMessagePreview" | "unreadCount" | "createdAt" | "updatedAt", ExtArgs["result"]["conversation"]>
+export type ConversationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "workspaceId" | "channelId" | "contactName" | "contactPhone" | "contactEmail" | "contactPhotoUrl" | "externalId" | "assignedToId" | "assignedAt" | "assignedById" | "status" | "pipelineStage" | "dispatchListId" | "templateDispatchId" | "source" | "aiSalesEnabled" | "aiSalesMessageCount" | "qualificationScore" | "qualificationNotes" | "handoffBriefing" | "aiContextSummary" | "isRecurringClient" | "lastMessageAt" | "lastMessagePreview" | "unreadCount" | "createdAt" | "updatedAt", ExtArgs["result"]["conversation"]>
 export type ConversationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   assignedBy?: boolean | Prisma.Conversation$assignedByArgs<ExtArgs>
   assignedTo?: boolean | Prisma.Conversation$assignedToArgs<ExtArgs>
@@ -3316,6 +3391,7 @@ export type $ConversationPayload<ExtArgs extends runtime.Types.Extensions.Intern
     qualificationNotes: string | null
     handoffBriefing: string | null
     aiContextSummary: string | null
+    isRecurringClient: boolean
     lastMessageAt: Date | null
     lastMessagePreview: string | null
     unreadCount: number
@@ -3776,6 +3852,7 @@ export interface ConversationFieldRefs {
   readonly qualificationNotes: Prisma.FieldRef<"Conversation", 'String'>
   readonly handoffBriefing: Prisma.FieldRef<"Conversation", 'String'>
   readonly aiContextSummary: Prisma.FieldRef<"Conversation", 'String'>
+  readonly isRecurringClient: Prisma.FieldRef<"Conversation", 'Boolean'>
   readonly lastMessageAt: Prisma.FieldRef<"Conversation", 'DateTime'>
   readonly lastMessagePreview: Prisma.FieldRef<"Conversation", 'String'>
   readonly unreadCount: Prisma.FieldRef<"Conversation", 'Int'>

@@ -142,6 +142,7 @@ model Conversation {
   qualificationNotes  String?
   handoffBriefing     String?            @db.Text
   aiContextSummary    String?            @db.Text
+  isRecurringClient  Boolean            @default(false)
   lastMessageAt      DateTime?
   lastMessagePreview String?
   unreadCount        Int                @default(0)

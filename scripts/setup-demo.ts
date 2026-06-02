@@ -26,9 +26,7 @@ async function main() {
     process.exit(1)
   }
 
-  // Billing cycle: started 5 days ago, renews in 25 days (simulates mid-cycle)
-  const periodStart = new Date(Date.now() - 5 * 24 * 60 * 60 * 1000)
-  const currentPeriodEnd = new Date(Date.now() + 25 * 24 * 60 * 60 * 1000)
+  const currentPeriodEnd = new Date('2100-01-01T00:00:00.000Z')
 
   await db.workspace.update({
     where: { slug: DEMO_WORKSPACE_SLUG },
@@ -56,7 +54,7 @@ async function main() {
   })
 
   console.log(`✓ Workspace "${workspace.name}" (${DEMO_WORKSPACE_SLUG}) set to Growth plan.`)
-  console.log(`  Period: ${periodStart.toLocaleDateString('pt-BR')} → ${currentPeriodEnd.toLocaleDateString('pt-BR')}`)
+  console.log(`  Period: agora → ${currentPeriodEnd.toLocaleDateString('pt-BR')}`)
   console.log(`  maxUsers: 7 | conversas: ilimitadas`)
 }
 

@@ -25,6 +25,7 @@ interface ConversationDetail {
   conversationTags: Array<{ tag: TagItem }>
   assignedTo: { id: string; name: string } | null
   channel: { type: string; name: string } | null
+  isRecurringClient?: boolean
 }
 
 interface Message {
@@ -233,6 +234,23 @@ export function LeadDrawer({ conversationId, onClose }: LeadDrawerProps) {
                 </div>
               </div>
             )}
+
+            {/* Recurring client */}
+            <div className="px-5 py-4">
+              <label className="block text-xs font-medium text-gray-500 mb-1.5">É cliente recorrente?</label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="sr-only peer"
+                  checked={conversation.isRecurringClient ?? false}
+                  onChange={e => patchConversation({ isRecurringClient: e.target.checked })}
+                />
+                <div className="relative w-9 h-5 bg-gray-200 rounded-full peer-checked:bg-violet-600 transition-colors after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-4" />
+                <span className="text-sm text-gray-700">
+                  {conversation.isRecurringClient ? 'Sim' : 'Não'}
+                </span>
+              </label>
+            </div>
 
             {/* Tags */}
             <div className="px-5 py-4">
