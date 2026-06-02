@@ -34,6 +34,11 @@ async function getLongLivedToken(shortToken: string): Promise<string> {
 async function getPages(userToken: string): Promise<Array<{ id: string; name: string; access_token: string }>> {
   const res = await fetch(`${GRAPH_URL}/me/accounts?fields=id,name,access_token&access_token=${userToken}`)
   const data = await res.json()
+  if (data.error) {
+    console.error('[META CONNECT] /me/accounts error:', JSON.stringify(data.error))
+    throw new Error(data.error.message ?? 'Erro ao listar páginas')
+  }
+  console.log('[META CONNECT] /me/accounts returned', data.data?.length ?? 0, 'pages')
   return data.data ?? []
 }
 
@@ -74,7 +79,8 @@ export async function POST(req: NextRequest) {
     const pages = await getPages(userToken)
 
     if (!pages.length) {
-      return NextResponse.json({ error: 'Nenhuma página encontrada nesta conta.' }, { status: 400 })
+      console.warn('[META CONNECT] No pages returned for user token')
+      return NextResponse.json({ error: 'Nenhuma página encontrada nesta conta. Certifique-se de que sua conta Facebook tem uma Página vinculada e que você autorizou o acesso a ela.' }, { status: 400 })
     }
 
     // If only one page, auto-select it
